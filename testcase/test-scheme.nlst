@@ -1,0 +1,11 @@
+(netlist 1.0 "and test logic")
+
+(timescale @1ns / @1ps)
+
+(drv 1 @0 #t)
+(pulse 2 p @5 @10)
+
+(and 1 2 3)
+(or 1 2 4)
+(xor 1 2 5)
+(not 1 6)
