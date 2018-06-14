@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Digital Circuit Simulation)
+ *  OpenDSIM (Opensource Circuit Simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or

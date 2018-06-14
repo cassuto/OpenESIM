@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Digital Circuit Simulation)
+ *  OpenDSIM (Opensource Circuit Simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -45,14 +45,14 @@ test_scheme_lexing( const char *filename )
   ds_scheme_synlist_t *synlist = NULL;
   int rc = 0;
   
-  trace_info((" Lexing %s\n", filename));
+  trace_info(("Lexing %s\n", filename));
 
   finput = fopen( filename, "r" );
   ds_test_check ( NULL==finput, "open inputfile" );
 
   ds_scheme_t *sc = lisp_create( scheme_read, finput );
   ds_test_check ( NULL==sc, "open inputfile" );
-  
+
   for ( ;; )
     {
       rc = lisp_lex( sc, &synlist );

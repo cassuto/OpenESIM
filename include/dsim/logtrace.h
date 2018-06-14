@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Digital Circuit Simulation)
+ *  OpenDSIM (Opensource Circuit Simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -75,14 +75,18 @@ void ds_panic( int rc );
     ds_log_unlock(); \
   } while(0)
 
-#define trace_debug(msg) \
-  do { \
-    ds_log_lock(); \
-    ds_log_set_unit (TRACE_UNIT, __FILE__, __LINE__); \
-    ds_log_set_level (LOG_DEBUG); \
-    ds_log_trace msg ; \
-    ds_log_unlock(); \
-  } while(0)
+#if DEBUG_TARCE
+# define trace_debug(msg) \
+    do { \
+      ds_log_lock(); \
+      ds_log_set_unit (TRACE_UNIT, __FILE__, __LINE__); \
+      ds_log_set_level (LOG_DEBUG); \
+      ds_log_trace msg ; \
+      ds_log_unlock(); \
+    } while(0)
+#else
+# define trace_debug(msg)
+#endif
 
 #define TRACE_ASSERT(expr) \
   do { \

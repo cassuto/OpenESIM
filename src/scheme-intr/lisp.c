@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Digital Circuit Simulation)
+ *  OpenDSIM (Opensource Circuit Simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@ lisp_create( ds_scheme_pfn_read stream_in_read, void *stream_opaque )
     goto err_out;
   if ( lisp_lexer_init( sc ) )
     goto err_out;
-  if ( !(sc->symbols = hashmap_create( HASHMAP_KEY_INT, 64 )) )
+  if ( hashmap_init( &sc->symbols, HASHMAP_KEY_INTPTR, 64 ) )
     goto err_out;
 
   return sc;
@@ -59,7 +59,8 @@ lisp_release( ds_scheme_t *sc )
 {
   if ( sc )
     {
-      hashmap_free( sc->symbols, lisp_symbol_free );
+      hashmap_clear( &sc->symbols, lisp_symbol_free );
+      hashmap_uninit( &sc->symbols );
       ds_heap_free( sc );
     }
 }
@@ -178,14 +179,14 @@ lisp_add_symbol( ds_scheme_t *sc, const char *symbol_name, ds_scheme_pfn_symbol_
   symbol->symbol_name_len = strlen( symbol_name );
   symbol->pfn_handle = pfn_handle;
 
-  hashmap_insert( sc->symbols, (hashmap_key_t)(symbol->symbol_name), symbol );
+  hashmap_insert( &sc->symbols, (hashmap_key_t)(symbol->symbol_name), hashmap_node(symbol) );
   return 0;
 }
 
 int
 lookup_for_symbol( ds_scheme_t *sc, const char *symbol_name, DS_OUT ds_scheme_symbol_t **symout )
 {
-  *symout = hashmap_at( sc->symbols, (hashmap_key_t)symbol_name );
+  *symout = hashmap_entry( hashmap_at( &sc->symbols, (hashmap_key_t)symbol_name ), ds_scheme_symbol_t );
   return *symout ? 0 : -DS_FAULT;
 }
 

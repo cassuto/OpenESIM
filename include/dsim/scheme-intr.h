@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Digital Circuit Simulation)
+ *  OpenDSIM (Opensource Circuit Simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -43,7 +43,7 @@ typedef int (*ds_scheme_pfn_symbol_handle)( ds_scheme_t *sc, ds_scheme_synlist_t
 
 typedef struct ds_scheme_s
 {
-  hashmap_t *symbols;
+  hashmap_t symbols;
 
   char buffer[LISP_BUFFER_UNGET_SIZE + LISP_BUFFER_CHUNK_SIZE];
   int buffer_write_pos;

@@ -4,7 +4,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Digital Circuit Simulation)
+ *  OpenDSIM (Opensource Circuit Simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -162,16 +162,16 @@
  */
 #define UNUSED(var) (void)var
 
-/** @def WS_CURRENT_FUNCTION
+/** @def DS_CURRENT_FUNCTION
  * Default compiler macros to figure out the name of current function.
  */
 #if COMPILER(GCC)
-#define WS_CURRENT_FUNCTION __PRETTY_FUNCTION__
+#define DS_CURRENT_FUNCTION __PRETTY_FUNCTION__
 #else
-#define WS_CURRENT_FUNCTION __FUNCTION__
+#define DS_CURRENT_FUNCTION __FUNCTION__
 #endif
-#define WS_CURRENT_FILE __FILE__
-#define WS_CURRENT_LINE __LINE__
+#define DS_CURRENT_FILE __FILE__
+#define DS_CURRENT_LINE __LINE__
 
 
 
@@ -259,5 +259,9 @@
 #endif
 
 #define DS_OUT
+
+#define GET_CONTAINER_OF(ptr, type, member) ({            \
+      const typeof( ((type *)0)->member ) *__mptr = (ptr);    \
+      (type *)( (char *)__mptr - GET_OFFSETOF(type, member) );})
 
 #endif //!defined(DS_MISC_H_)

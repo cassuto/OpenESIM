@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Digital Circuit Simulation)
+ *  OpenDSIM (Opensource Circuit Simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -136,5 +136,10 @@ typedef union UINT64U {
  * Make a uint32 number from two uint16 numbers.
  */
 #define MAKE_UINT32(a, b) ((uint32_t)(((uint16_t)(a)) | ((uint32_t)((uint16_t)(b))) << 16))
+
+/* callback function to copy element in container */
+typedef void *(pfn_copy_elem)( const void *src );
+/* callback function to free element in container */
+typedef void (pfn_free_elem)( void *elem );
 
 #endif //!defined(DS_TYPES_H_)
