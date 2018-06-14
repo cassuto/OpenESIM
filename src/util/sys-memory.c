@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Digital Circuit Simulation)
+ *  OpenDSIM (Opensource Circuit Simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -100,7 +100,7 @@ void
 ds_heap_free (void *mem)
 {
   void *ptr = mem;
-  if (mem)
+  if ( LIKELY(mem) )
     {
 #if ENABLE(HEAP_TRACK)
       ptr = mem - sizeof(heap_block_t);

@@ -1,7 +1,3 @@
-/**@file
- * Test framework
- */
-
 /*
  *  OpenDSIM (Opensource Circuit Simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
@@ -18,52 +14,37 @@
  */
 
 #include <stdlib.h>
-#include <math.h>
+#include <stdio.h>
 
 #define TRACE_UNIT "tsf"
 
 #include <dsim/logtrace.h>
-#include <dsim/misc.h>
 #include <dsim/string.h>
+#include <dsim/memory.h>
 
-#include "test.h"
+#include <dsim/bound.h>
+
+#include "tsf/test.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
 int
-ds_test_init( const char *itemname )
+main( int argc, char *argv[] )
 {
-  ds_log_init();
+  static unsigned long seq[] = { 4, 8, 10, 12, 14, 16, 18, 20 };
+  if ( ds_test_init( "test-bound" ) ) return 1;
 
-  trace_info(("name %s.\n", itemname));
+  const unsigned long * p = lower_bound( seq+2, seq+6, 12 );
+  ds_test_check( (*p != 12 ), "lower_bound()" );
+
+  p = lower_bound( seq+2, seq+6, 11 );
+  ds_test_check( (*p != 12 ), "lower_bound()" );
+
+  p = upper_bound( seq+2, seq+6, 16 );
+  ds_test_check( (*p != 18 ), "upper_bound()" );
+
+  p = upper_bound( seq+2, seq+6, 15 );
+  ds_test_check( (*p != 16 ), "upper_bound()" );
+
   return 0;
-}
-
-int
-ds_test_check2( int rc, const char *file, int line, const char *msg )
-{
-  if ( rc )
-    {
-      if ( msg )
-        trace_error(("failed: %s:%d: rc = %d (%s)\n", file, line, rc, msg));
-      else
-        trace_error(("failed: %s:%d: rc = %d\n", file, line, rc));
-      ds_test_exit( rc < 0 ? -rc : rc );
-    }
-  return rc;
-}
-
-int
-ds_test_check_float2( float src, float dst, float error, const char *file, int line, const char *msg )
-{
-  if ( fabs( src - dst ) < error )
-    return 0;
-  else
-    return ds_test_check2( 1, file, line, msg );
-}
-
-int
-ds_test_exit( int rc )
-{
-  exit ( rc );
 }
