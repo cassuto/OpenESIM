@@ -7,32 +7,25 @@ CFLAGS += -Wno-unused-function -Wno-unused-but-set-variable
 #########################################################################
 # Targets.
 
-SRC := $(SUB_DEPTH)/src
-OBJS += $(SRC)/util/logtrace.c.o \
-		$(SRC)/util/string.c.o \
-		$(SRC)/util/sys-memory.c.o \
-		$(SRC)/util/hashmap.c.o \
-		$(SRC)/util/list.c.o \
-
-OBJS += $(SRC)/scheme-intr/lisp-buffer.c.o \
-		$(SRC)/scheme-intr/lisp-fault.c.o \
-		$(SRC)/scheme-intr/lisp-lexer.c.o \
-		$(SRC)/scheme-intr/lisp-parser.c.o \
-		$(SRC)/scheme-intr/lisp.c.o
-
+LIBS += opendsim
 OBJS += tsf/tsf.c.o
-        
+
 INCS += tsf
 INCS += $(SRC)
 
 CONFIG_TESTCASE := y
 
-OBJS_TEST_SCHEME_LEX = test-scheme-lex.c.o
-OBJS_TEST_HASHMAP = test-hashmap.c.o
+SRCS_TEST := \
+	test-hashmap.c \
+	test-list.c \
+	test-rbtree.c \
+	test-bound.c \
+	test-circmatrix.c \
+	test-scheme-lex.c
 
-.PHONY: all clean dotest
+.PHONY: all clean makelib dotest
 
-all: dotest
+all: makelib dotest
 
 clean: generic_clean
 
@@ -45,13 +38,21 @@ include $(SUB_DEPTH)/targets/rules.generic.mk
 #########################################################################
 # Main rules.
 
+EXECS_TEST := $(foreach name,$(SRCS_TEST),$(patsubst %.c,%.$(.EXEC),$(name)))
 
-test-scheme-lex.$(.EXEC): $(OBJS) $(OBJS_TEST_SCHEME_LEX)
-test-hashmap.$(.EXEC): $(OBJS) $(OBJS_TEST_HASHMAP)
 
-dotest: test-scheme-lex.$(.EXEC) test-hashmap.$(.EXEC)
-	@./test-hashmap
-	@./test-scheme-lex
+define GENERATE_LINK_RULE
+$(1): $(OBJS) $(LIBOPENDSIM) $(2)
+endef
+
+$(foreach exec,$(EXECS_TEST),$(eval $(call GENERATE_LINK_RULE,$(exec),$(patsubst %.$(.EXEC),%.o,$(exec)))) )
+POST_CMD := $(foreach exec,$(EXECS_TEST),./$(exec) && )
+
+makelib:
+	@make -C $(SUB_DEPTH)/src all
+
+dotest: $(EXECS_TEST)
+	@$(POST_CMD) echo.
 	@echo =====================================
 	@echo test: all tests have succeeded!
 	@echo =====================================

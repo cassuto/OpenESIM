@@ -1,9 +1,9 @@
 ## @file
-# The root makefile of webradio project
+# The root makefile of OpenDSIM project
 #
 
 #
-#  OpenDSIM (Opensource Digital Circuit Simulation)
+#  OpenDSIM (Opensource Circuit Simulator)
 #  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
 #
 #  This project is free software; you can redistribute it and/or
@@ -52,8 +52,8 @@ $(OUT_DIR):
 #
 version: $(OUT_DIR)/version-generated.h
 
-appName = WebRadio v0.1.0 (an Opensource webstream firmware)
-appNameShort = WebRadio
+appName = OpenDSIM (Opensource Circuit Simulator)
+appNameShort = OpenDSIM
 
 $(OUT_DIR)/version-generated.h:
 	$(PYTHON) "$(GEN-VERSION)" \
