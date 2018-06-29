@@ -1,0 +1,34 @@
+.PHONY: all clean
+
+SUB_DEPTH = ./..
+
+include $(SUB_DEPTH)/autoconf.mk
+
+CXXFLAGS += -Wno-unused-function -Wno-unused-but-set-variable
+
+#########################################################################
+# Targets.
+
+TARGET = opendsim-edit.$(.EXEC)
+LIBS += opendsim dsimmodel dsimdevice
+
+OBJS += opendsim-edit.cxx.o \
+
+QT_RCCS += resources.qrc
+
+QT_SRCS += mainwindow.cxx \
+          schemawidget.cxx \
+          schemaview.cxx \
+          schemagraph.cxx \
+
+#########################################################################
+# Building rules.
+
+include $(SUB_DEPTH)/build-aux/rules.qt5.mk
+include $(SUB_DEPTH)/build-aux/rules.generic.mk
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+
+clean: genclean

@@ -3,7 +3,7 @@
 #
 
 #
-#  OpenDSIM (Opensource Circuit Simulator)
+#  OpenDSIM (A/D mixed circuit simulator)
 #  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
 #
 #  This project is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
 # Include generic part
 
 include $(SUB_DEPTH)/config.mk
-include $(SUB_DEPTH)/targets/rules.mk
+include $(SUB_DEPTH)/build-aux/rules.mk
 
 
 #########################################################################
@@ -67,10 +67,10 @@ LDFLAGS  += $(addprefix -L, $(LIB_DIR)) $(addprefix -l, $(LIBS))
 	$(call run-command,$(CC) $(CFLAGS) -MM -MF $@ $<,"  DEP       $@")
 	-@sed -i 's,\($(notdir $*)\)\.o[ :]*,$<.o: ,g' '$@'
 
-%.cpp.o: %.cpp
+%.cxx.o: %.cxx
 	$(call run-command,$(CXX) $(CXXFLAGS) -c $< -o $@,"  CXX       $@")
 
-%.cpp.d: %.cpp
+%.cxx.d: %.cxx
 	$(call run-command,$(CXX) $(CXXFLAGS) -MM -MF $@ $<,"  DEP      $@")
 	-@sed -i 's,\($(notdir $*)\)\.o[ :]*,$<.o: ,g' '$@'
 

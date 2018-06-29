@@ -3,7 +3,7 @@
 #
 
 #
-#  OpenDSIM (Opensource Circuit Simulator)
+#  OpenDSIM (A/D mixed circuit simulator)
 #  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
 #
 #  This project is free software; you can redistribute it and/or
@@ -27,6 +27,8 @@
 #       else consts from config.mak.
 #
 
+ifndef RULES_MK_
+RULES_MK_:= 1
 
 #########################################################################
 # Sub dirs relative addressing
@@ -84,11 +86,12 @@ DEPS += $(patsubst %.o,%.d,$(filter %.o,$(OBJS)))
 -include *.d
 -include $(DEPS)
 
-
 #########################################################################
-# Generic cleaning rules
+# Generic rules
 
-.PHONY: generic_clean
+.PHONY: genclean
 
-generic_clean:
-	-$(RM) -f *.o $(OBJS) *.d $(DEPS) *.$(.EXEC) *.$(.LIB) *.$(.DLIB) *.$(.SYSMOD)
+genclean:
+	-$(RM) -f *.moc.cxx *.rcc.cxx *.o $(OBJS) *.d $(DEPS) *.$(.EXEC) *.$(.LIB) *.$(.DLIB) *.$(.SYSMOD)
+
+endif # ifndef RULES_MK_

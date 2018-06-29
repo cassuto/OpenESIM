@@ -1,15 +1,21 @@
+.PHONY: all clean subs subs_clean
+
 SUB_DEPTH = ./..
 
 include $(SUB_DEPTH)/autoconf.mk
 
 CFLAGS += -Wno-unused-function -Wno-unused-but-set-variable
+CXXFLAGS += -Wno-unused-function -Wno-unused-but-set-variable
 
 #########################################################################
 # Targets.
 
+TARGET = libopendsim.$(.LIB)
+
 OBJS += util/logtrace.c.o \
 		util/string.c.o \
 		util/sys-memory.c.o \
+		util/sys-memory.cxx.o \
 		util/hashmap.c.o \
 		util/list.c.o \
 		util/rbtree.c.o \
@@ -25,28 +31,24 @@ OBJS += scheme-intr/lisp-buffer.c.o \
 OBJS += math/circ-matrix/circmatrix.c.o \
 
 OBJS += circuit/circuit.c.o \
+		circuit/circ-pin.c.o \
 		circuit/circ-node.c.o \
 		circuit/circ-element.c.o \
 
-.PHONY: all clean subs subs_clean opendsim
-
-all: subs opendsim
-
-clean: subs_clean generic_clean
-
 #########################################################################
-# Standard rules.
+# Building rules.
 
-include $(SUB_DEPTH)/targets/rules.generic.mk
+include $(SUB_DEPTH)/build-aux/rules.generic.mk
 
+all: subs $(TARGET)
+clean: subs_clean
 
-#########################################################################
-# Main rules.
-
-opendsim: libopendsim.$(.LIB)
-
-libopendsim.$(.LIB): $(OBJS)
+$(TARGET): $(OBJS)
 
 subs:
-
+	$(MAKE) -C models all
+	$(MAKE) -C devices all
+	
 subs_clean:
+	$(MAKE) -C models clean
+	$(MAKE) -C devices clean
