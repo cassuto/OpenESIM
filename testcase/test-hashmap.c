@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -33,7 +33,6 @@ typedef struct node_s
   int value;
 } node_t;
 
-////////////////////////////////////////////////////////////////////////////////
 
 
 int
@@ -43,7 +42,7 @@ main( int argc, char *argv[] )
 
   if ( ds_test_init( "test-hashmap" ) ) return 1;
 
-  node_t *node = NULL;
+  node_t *node = NULL, *node2;
   hashmap_t map;
 
   ds_test_check( hashmap_init( &map, HASHMAP_KEY_INTPTR, 3 ), "hashmap_create()" );
@@ -55,6 +54,8 @@ main( int argc, char *argv[] )
 
       hashmap_insert( &map, i, hashmap_node(node) );
     }
+
+  ds_test_check( hashmap_empty( &map ), "hasmap_empty()" );
 
   int k = 0;
   foreach_hashmap( node_t, node, &map )
@@ -99,7 +100,9 @@ main( int argc, char *argv[] )
 
   hashmap_clear( &map, ds_heap_free );
 
-  hashmap_uninit( &map );
+  ds_test_check( !hashmap_empty( &map ), "hasmap_empty()" );
+
+  hashmap_release( &map, ds_heap_free );
 
   /*
    * testing string hash
@@ -134,9 +137,52 @@ main( int argc, char *argv[] )
       ds_test_check( !(node && node->value == i), "hashmap_at()" );
     }
 
-  hashmap_clear( &map, ds_heap_free );
+  hashmap_release( &map, ds_heap_free );
 
-  hashmap_uninit( &map );
+  /*
+   * Test hashmap memory Allocator
+   */
+  hashmap_init( &map, HASHMAP_KEY_INTPTR, 0 );
 
+  for (int i = 0; i < 8; i++)
+    {
+      node = hashmap_alloc_node( &map, node_t );
+      node->value = i+1;
+
+      hashmap_insert( &map, (hashmap_key_t)i, hashmap_node(node) );
+    }
+
+  hashmap_clear( &map, NULL /*collect*/ );
+
+  for (int i = 0; i < 8; i++)
+    {
+      node = hashmap_alloc_node( &map, node_t );
+      ds_test_check( node==NULL, "hashmap_collect() || hashmap_alloc_node()" );
+      ds_test_check( (node->value < 1 || node->value > 8), "hashmap_collect() || hashmap_alloc_node()" );
+    }
+
+  hashmap_release( &map, ds_heap_free );
+  hashmap_init( &map, HASHMAP_KEY_INTPTR, 0 );
+
+  node = hashmap_alloc_node( &map, node_t );
+  node->value = 332;
+  hashmap_insert( &map, (hashmap_key_t)1, hashmap_node(node) );
+
+  node = hashmap_alloc_node( &map, node_t );
+  node->value = 418;
+  hashmap_insert( &map, (hashmap_key_t)1008, hashmap_node(node) );
+
+  hashmap_remove( &map, 1, NULL /*collect*/ );
+  hashmap_remove( &map, 1008, NULL /*collect*/ );
+
+  node2 = hashmap_alloc_node( &map, node_t );
+  ds_test_check( node2==NULL, "hashmap_collect() || hashmap_alloc_node()" );
+  ds_test_check( (node2->value != 418), "hashmap_collect() || hashmap_alloc_node()" );
+
+  node2 = hashmap_alloc_node( &map, node_t );
+  ds_test_check( node2==NULL, "hashmap_collect() || hashmap_alloc_node()" );
+  ds_test_check( (node2->value != 332), "hashmap_collect() || hashmap_alloc_node()" );
+
+  hashmap_release( &map, ds_heap_free );
   return 0;
 }

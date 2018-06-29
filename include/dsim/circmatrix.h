@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -17,16 +17,18 @@
 
 #include <dsim/types.h>
 #include <dsim/list.h>
+#include <dsim/cdecl.h>
 
 #include <model/circ-node.h>
 #include <model/circ-element.h>
+
+C_DECLS
 
 typedef struct circ_matrix_s
 {
   int num_nodes;
 
   const list_t *node_list;
-  const list_t *element_list;
 
   double **circ_matrix;
   double *coef_vector;
@@ -40,16 +42,17 @@ typedef struct circ_matrix_s
 
   bool admit_changed;
   bool curr_changed;
+  bool inited;
 } circ_matrix_t;
 
 
 circ_matrix_t *matrix_create( void );
 void matrix_print( circ_matrix_t *matrix );
-int matrix_init( circ_matrix_t *matrix, const list_t *node_list, const list_t *element_list );
+int matrix_init( circ_matrix_t *matrix, const list_t *node_list );
 void matrix_stamp( circ_matrix_t *matrix, int row, int col, double value );
 void matrix_stamp_coef( circ_matrix_t *matrix, int row, double value );
 int matrix_simplify( circ_matrix_t *matrix );
-bool matrix_solve( circ_matrix_t *matrix );
+int matrix_solve( circ_matrix_t *matrix );
 void matrix_free( circ_matrix_t *matrix );
 
 /* helper functions */
@@ -57,5 +60,7 @@ static inline double **
 matrix_get( const circ_matrix_t *matrix ){ return matrix->circ_matrix; }
 static inline double *
 matrix_get_coeff_vect( const circ_matrix_t *matrix ){ return matrix->coef_vector; }
+
+END_C_DECLS
 
 #endif //!defined(CIRCMATRIX_H_)

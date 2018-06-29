@@ -4,7 +4,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -208,34 +208,6 @@
 #endif
 #endif
 
-/** @def BEGIN_C_DECLS
- * Used to start a block of function declarations which are shared
- * between C and C++ program.
- */
-
-/** @def END_C_DECLS
- * Used to end a block of function declarations which are shared
- * between C and C++ program.
- */
-
-#if defined(__cplusplus)
-# define BEGIN_C_DECLS extern "C" {
-# define END_C_DECLS   }
-#else
-# define BEGIN_C_DECLS
-# define END_C_DECLS
-#endif
-
-/** @def NAMESPACE
- * Namespace definition both in C/C++ codes
- * @param   name    Name of the namespace.
- */
-#ifdef __cplusplus
-# define NAMESPACE(name) namespace name
-#else
-# define NAMESPACE(name)
-#endif
-
 /** @def asm_decl
  * Declare an internal assembly function.
  * @param   type    The return type of the function declaration.
@@ -263,5 +235,27 @@
 #define GET_CONTAINER_OF(ptr, type, member) ({            \
       const typeof( ((type *)0)->member ) *__mptr = (ptr);    \
       (type *)( (char *)__mptr - GET_OFFSETOF(type, member) );})
+
+/** @def DebugBreakPoint
+ * Emit a debug breakpoint instruction.
+ */
+#if COMPILER(GCC)
+# if ARCH(AMD64) || ARCH(X86)
+#  if !defined(__L4ENV__)
+#   define DebugBreakPoint()      __asm__ __volatile__("int $3\n\tnop\n\t")
+#  else
+#   define DebugBreakPoint()      __asm__ __volatile__("int3; jmp 1f; 1:\n\t")
+#  endif
+# elif ARCH(SPARC64)
+#  define DebugBreakPoint()       __asm__ __volatile__("illtrap 0\n\t")   /** @todo Sparc64: this is just a wild guess. */
+# elif ARCH(SPARC)
+#  define DebugBreakPoint()       __asm__ __volatile__("unimp 0\n\t")     /** @todo Sparc: this is just a wild guess (same as Sparc64, just different name). */
+# endif
+#elif COMPILER(MSC)
+# define DebugBreakPoint()        __debugbreak()
+#else
+/* This compiler/arch is not supported! */
+# define DebugBreakPoint()        ((void)0)
+#endif
 
 #endif //!defined(DS_MISC_H_)

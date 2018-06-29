@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -16,6 +16,7 @@
 #ifndef LISP_INTERNAL_H_
 #define LISP_INTERNAL_H_
 
+#include <stdio.h>
 #include <string.h>
 #include <math.h>
 

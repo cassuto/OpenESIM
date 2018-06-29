@@ -3,7 +3,7 @@
 #
 
 #
-#  OpenDSIM (Opensource Circuit Simulator)
+#  OpenDSIM (A/D mixed circuit simulator)
 #  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
 #
 #  This project is free software; you can redistribute it and/or
@@ -16,6 +16,9 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 #  Lesser General Public License for more details.
 #
+
+ifndef CONFIG_MK_
+CONFIG_MK_ := 1
 
 include $(SUB_DEPTH)/autoconf.mk
 
@@ -31,6 +34,8 @@ OUT_DIR := out
 OUT_TESTS_DIR = testcase
 
 LIBOPENDSIM := $(SUB_DEPTH)/$(OUT_DIR)/libopendsim.$(.LIB)
+LIBDSIMMODEL := $(SUB_DEPTH)/$(OUT_DIR)/libdsimmodel.$(.LIB)
+LIBDSIMDEVICE := $(SUB_DEPTH)/$(OUT_DIR)/libdsimdevice.$(.LIB)
 
 #########################################################################
 # Toolchain
@@ -62,3 +67,38 @@ endif
 appVersionMajor = 0
 appVersionMinor = 0
 appVersionBuild = 1
+
+
+#########################################################################
+# Qt5 binaries dirs
+#
+ifneq ($(QT_PATH),)
+  QT_INCLUDE := $(QT_PATH)/include
+  QT_INCLUDE += $(QT_PATH)/include/QtCore
+  QT_INCLUDE += $(QT_PATH)/include/QtGui
+  QT_INCLUDE += $(QT_PATH)/include/QtWidgets
+  QT_INCLUDE += $(QT_PATH)/include/QtPrintSupport
+  QT_LIBS := $(QT_PATH)/lib
+  QT_BIN := $(QT_PATH)/bin
+  QT_UIC := $(QT_BIN)/uic
+  QT_MOC := $(QT_BIN)/moc
+  QT_RCC := $(QT_BIN)/rcc
+else
+  QT_UIC := uic
+  QT_MOC := moc
+  QT_RCC := rcc
+endif
+
+#########################################################################
+# SDK - Qt5
+#
+ifneq ($(QT_PATH),)
+  INCS += $(QT_INCLUDE)
+  LIB_DIR += $(QT_LIBS)
+endif
+ifeq ($(USING_QT5),y)
+  LIBS +=  Qt5Widgets Qt5Gui Qt5Concurrent Qt5Xml Qt5Core Qt5PrintSupport
+  DEFS += UNICODE QT_NO_DEBUG QT_WIDGETS_LIB QT_GUI_LIB QT_CONCURRENT_LIB QT_XML_LIB QT_CORE_LIB  QT_PRINTSUPPORT_LIB
+endif
+
+endif # ifndef CONFIG_MK_

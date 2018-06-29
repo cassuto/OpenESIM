@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -15,7 +15,13 @@
 #ifndef DSIM_BOUND_H_
 #define DSIM_BOUND_H_
 
+#include <dsim/cdecl.h>
+
+C_DECLS
+
 const unsigned long *lower_bound(const unsigned long *first, const unsigned long *last, unsigned long value);
 const unsigned long *upper_bound (const unsigned long *first, const unsigned long *last, unsigned long value);
+
+END_C_DECLS
 
 #endif //!defined(DSIM_BOUND_H_)

@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -18,8 +18,11 @@
 
 #include <dsim/types.h>
 #include <dsim/scheme-intr.h>
+#include <dsim/cdecl.h>
 
 #define NETLIST_VERSION (1.0f)
+
+C_DECLS
 
 typedef struct ds_netlist_parser_s
 {
@@ -31,5 +34,7 @@ typedef struct ds_netlist_parser_s
 
 ds_netlist_parser_t *netlist_parser_create( struct ds_scheme_s *sc );
 netlist_parser_release( ds_netlist_parser_t *nlst );
+
+END_C_DECLS
 
 #endif //!defined(DSIM_NETLIST_PARSER_H_)

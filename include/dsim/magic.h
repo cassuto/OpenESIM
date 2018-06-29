@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -19,5 +19,7 @@
 #include <dsim/types.h>
 
 typedef uint32_t ds_magic_t;
+
+#define MAGIC_MEM_BLOCK (0xaab6e01f)
 
 #endif //!defined(DSIM_MAGIC_H_)

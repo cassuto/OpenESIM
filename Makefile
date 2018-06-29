@@ -3,7 +3,7 @@
 #
 
 #
-#  OpenDSIM (Opensource Circuit Simulator)
+#  OpenDSIM (A/D mixed circuit simulator)
 #  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
 #
 #  This project is free software; you can redistribute it and/or
@@ -36,11 +36,15 @@ include config.mk
 #########################################################################
 # note! the following code required a unix shell.
 
-all: $(OUT_DIR)
-	$(MAKE) all -C ./src
+all: $(OUT_DIR) version
+	$(MAKE) -C $(SUB_DEPTH)/src -f Makefile.lib all
+	$(MAKE) -C $(SUB_DEPTH)/src -f Makefile.edit all
+#	$(MAKE) -C $(SUB_DEPTH)/testcase all
 
 clean:
-	$(MAKE) clean -C ./src
+	$(MAKE) -C $(SUB_DEPTH)/src -f Makefile.edit clean
+	$(MAKE) -C $(SUB_DEPTH)/src -f Makefile.lib clean
+	$(MAKE) -C $(SUB_DEPTH)/testcase clean
 	-$(RM) -f out/*.$(.EXEC) out/*.$(.LIB) *.$(.DLIB) *.$(.SYSMOD) out/*.h
 
 $(OUT_DIR):
@@ -52,7 +56,7 @@ $(OUT_DIR):
 #
 version: $(OUT_DIR)/version-generated.h
 
-appName = OpenDSIM (Opensource Circuit Simulator)
+appName = OpenDSIM (A/D mixed circuit simulator)
 appNameShort = OpenDSIM
 
 $(OUT_DIR)/version-generated.h:

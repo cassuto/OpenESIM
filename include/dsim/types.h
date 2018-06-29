@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -17,7 +17,10 @@
 #define DS_TYPES_H_
 
 #include <dsim/misc.h>
+#include <dsim/cdecl.h>
 #include <dsim/stdint.h>
+
+C_DECLS
 
 /*
  Run-time library defined standard C types.
@@ -138,8 +141,10 @@ typedef union UINT64U {
 #define MAKE_UINT32(a, b) ((uint32_t)(((uint16_t)(a)) | ((uint32_t)((uint16_t)(b))) << 16))
 
 /* callback function to copy element in container */
-typedef void *(pfn_copy_elem)( const void *src );
+typedef void *(pfn_copy_elem)( void *dst_list, const void *src );
 /* callback function to free element in container */
 typedef void (pfn_free_elem)( void *elem );
+
+END_C_DECLS
 
 #endif //!defined(DS_TYPES_H_)

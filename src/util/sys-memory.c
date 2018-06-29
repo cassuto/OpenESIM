@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -22,8 +22,10 @@
 #include <dsim/logtrace.h>
 #include <dsim/misc.h>
 #include <dsim/memory.h>
+#include <dsim/magic.h>
 
 #include <stdlib.h>
+#include <string.h>
 
 #define ENABLE_HEAP_TRACK 1
 
@@ -31,6 +33,7 @@
 
 typedef struct heap_block_s
 {
+  ds_magic_t magic;
   size_t size;
 } heap_block_t;
 
@@ -40,21 +43,22 @@ size_t peak_heap_size = 0;
 
 #endif
 
-////////////////////////////////////////////////////////////////////////////////
 
 /* Allocate a memory block on the heap */
 void *
 ds_heap_alloc (size_t size)
 {
 #if ENABLE(HEAP_TRACK)
-  void *ptr = malloc (size + sizeof(heap_block_t));
+  void *ptr = malloc (size + sizeof(heap_block_t)), *block;
 #else
   void *ptr = malloc (size);
 #endif
-  if (ptr)
+  trace_assert( size ); /* zero allocation is not allowed */
+  if( ptr )
     {
 #if ENABLE(HEAP_TRACK)
       heap_block_t *hp = (heap_block_t *)ptr;
+      hp->magic = MAGIC_MEM_BLOCK; /* set magic number */
       hp->size = size;
       current_heap_size += size;
 
@@ -62,7 +66,9 @@ ds_heap_alloc (size_t size)
       if ( current_heap_size > peak_heap_size)
         peak_heap_size = current_heap_size;
 
-      return (char*)ptr + sizeof(heap_block_t);
+      block = (char*)ptr + sizeof(heap_block_t);
+      memset( block, 0xbd, size ); /* set initial value */
+      return block;
 #else
       return ptr;
 #endif
@@ -78,9 +84,9 @@ ds_heap_realloc( void *mem, size_t newsize )
   ptr = mem - sizeof(heap_block_t);
   newsize += sizeof(heap_block_t);
 #endif
-  if (mem)
+  if( mem )
     {
-      if (!newsize) /* free the original memory */
+      if( !newsize ) /* free the original memory */
         {
           ds_heap_free( ptr );
           return NULL;
@@ -95,17 +101,24 @@ ds_heap_realloc( void *mem, size_t newsize )
   return newptr;
 }
 
-/* free a heap block with pointer checking. */
+/* free a heap block with NULL pointer checking. */
 void
 ds_heap_free (void *mem)
 {
   void *ptr = mem;
-  if ( LIKELY(mem) )
+  if( mem )
     {
 #if ENABLE(HEAP_TRACK)
       ptr = mem - sizeof(heap_block_t);
       heap_block_t *hp = (heap_block_t *)(ptr);
+
+      /* validate the magic number of memory block */
+      if( hp->magic != MAGIC_MEM_BLOCK )
+        {
+          trace_panic(("ds_heap_free() invalid memory block %p that going to free\n", mem));
+        }
       current_heap_size -= hp->size;
+      hp->magic = 0xbadbeeef;
 
 #if 0
       trace_debug(("free %u bytes\n", hp->size));
@@ -113,8 +126,13 @@ ds_heap_free (void *mem)
         {
           __asm__ __volatile__("int $3\n\tnop\n\t");
         }
+      if( (uintptr_t)mem == 0x003E01A0 )
+          __asm__ __volatile__("int $3\n\tnop\n\t");
+      trace_info(("%p = mem\n", mem));
 #endif
-#endif
+      memset( mem, 0xbd, hp->size ); /* destroy the original data */
+#endif // ENABLE(HEAP_TRACK)
+
       free (ptr);
     }
 }

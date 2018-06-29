@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -26,7 +26,6 @@
 
 #include "lisp-internal.h"
 
-////////////////////////////////////////////////////////////////////////////////
 
 int
 lisp_buffer_init( ds_scheme_t *sc, ds_scheme_pfn_read stream_in_read, void *stream_opaque )
@@ -94,7 +93,7 @@ lisp_buffer_ungetc( ds_scheme_t *sc )
        * buffer would be lost. However, json_unget should be performed within the
        * maximum cancelable bytes specified by JSON_BUFFER_UNGET_SIZE, otherwise we will get an assert failure.
        */
-      TRACE_ASSERT(0);
+      trace_assert(0);
       return;
     }
 

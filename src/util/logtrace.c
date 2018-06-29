@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -33,7 +33,6 @@ static const char *log_unit_filename = 0;
 static int log_unit_line = 0;
 static ds_log_level_t log_level = LOG_INFO;
 
-////////////////////////////////////////////////////////////////////////////////
 
 static
 void dev_out( unsigned char c )
@@ -87,8 +86,10 @@ ds_log_trace( const char *format, ... )
 void
 ds_panic( int rc )
 {
+#if 1
+  DebugBreakPoint();
+#endif
   exit( 1 );
-  while (1); /* loop forever until hard reseting */
 }
 
 #define _USE_XFUNC_OUT  1   /* 1: Use output functions */
@@ -105,7 +106,6 @@ ds_panic( int rc )
 
 static char *outptr;
 
-////////////////////////////////////////////////////////////////////////////////
 
 void (*term_func_out)(unsigned char);   /* Pointer to the output stream */
 

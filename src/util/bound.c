@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -21,7 +21,6 @@
 
 #include <dsim/bound.h>
 
-////////////////////////////////////////////////////////////////////////////////
 
 /* find first element not before value, the series must be ordered */
 const unsigned long *

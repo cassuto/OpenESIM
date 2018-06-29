@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -18,6 +18,9 @@
 
 #include <dsim/misc.h>
 #include <dsim/types.h>
+#include <dsim/cdecl.h>
+
+C_DECLS
 
 typedef struct rb_node_s
 {
@@ -62,9 +65,10 @@ rb_node_t *rb_next( rb_node_t *node );
 /*
  * rbtree foreach
  *
- * note: never remove or free the node within foreach_list() code block.
+ * note: never remove or free the node within foreach_rbtree() code block, unless
+ * break; or return; after you did.
  *
- * @param _type Static Type of element pointer in the list, must be a pointer.
+ * @param _type Static Type of element pointer in the tree, must be a pointer.
  * @param _valname The symbol name of variable
  * @param _list Pointer to the source list.
  */
@@ -73,5 +77,6 @@ rb_node_t *rb_next( rb_node_t *node );
       NULL!=_valname; \
       _valname = rb_entry(rb_next(rb_node(_valname)), _type))
 
+END_C_DECLS
 
 #endif //!defined(DSIM_RBTREE_H_)

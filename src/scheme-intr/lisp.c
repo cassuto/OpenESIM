@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -30,7 +30,6 @@
 
 #include "lisp-internal.h"
 
-////////////////////////////////////////////////////////////////////////////////
 
 
 ds_scheme_t *
@@ -59,10 +58,9 @@ lisp_release( ds_scheme_t *sc )
 {
   if ( sc )
     {
-      hashmap_clear( &sc->symbols, lisp_symbol_free );
-      hashmap_uninit( &sc->symbols );
-      ds_heap_free( sc );
+      hashmap_release( &sc->symbols, lisp_symbol_free );
     }
+  ds_heap_free( sc );
 }
 
 ds_scheme_synlist_t *
@@ -164,7 +162,7 @@ lisp_symbol_free( void *elem )
 int
 lisp_add_symbol( ds_scheme_t *sc, const char *symbol_name, ds_scheme_pfn_symbol_handle pfn_handle)
 {
-  TRACE_ASSERT( symbol_name && pfn_handle );
+  trace_assert( symbol_name && pfn_handle );
 
   ds_scheme_symbol_t *symbol = (ds_scheme_symbol_t*)ds_heap_alloc(sizeof(*symbol));
   if ( !symbol )

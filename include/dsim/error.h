@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -23,9 +23,14 @@
 #define DS_NO_MEMORY (4)
 #define DS_WRONG_FORMAT (5)
 #define DS_OVERFLOW (6)
-#define DS_CONNECTION_FAILED (7)
-#define DS_SERVICE_ERR (8)
-#define DS_UNIMPLEMENTED (9)
-#define DS_EOF (10)
+#define DS_UNIMPLEMENTED (7)
+#define DS_EOF (8)
+#define DS_DUP_MODEL_SYMBOL (9)
+#define DS_READONLY (10)
+#define DS_SOLVE_MATRIX (11)
+#define DS_WRITE_FILE (12)
+#define DS_READ_FILE (13)
+
+#define UPDATE_RC(_rc_) do { if( _rc_ ) return _rc_; } while(0)
 
 #endif //!defined(DSIM_ERROR_H_)

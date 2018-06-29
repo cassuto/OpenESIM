@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -31,7 +31,6 @@
 
 #include <dsim/netlist-parser.h>
 
-////////////////////////////////////////////////////////////////////////////////
 
 #define GET_NLST(_sc, _nlst) ds_netlist_parser_t *_nlst = (ds_netlist_parser_t*)lisp_get_opaque( _sc )
 

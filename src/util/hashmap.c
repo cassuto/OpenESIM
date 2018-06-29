@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -48,7 +48,6 @@ static pfnKeyComp comp_funcs[] =
     NULL
 };
 
-////////////////////////////////////////////////////////////////////////////////
 
 static unsigned long
 hash_string( hashmap_key_t key )
@@ -125,8 +124,16 @@ hashmap_init( hashmap_t *hashmap, hashmap_type_t keytype, size_t init_size )
 {
   trace_assert( keytype > HASHMAP_KEY_INVALID && keytype<= HASHMAP_KEY_INTPTR );
 
-  if( !init_size ) init_size = 10;
-  hashmap->nodes = (hashmap_node_t**)ds_heap_alloc( init_size * sizeof(hashmap_node_t*) );
+  if( init_size )
+    {
+      /* Allocate buckets */
+      hashmap->nodes = (hashmap_node_t**)ds_heap_alloc( init_size * sizeof(hashmap_node_t*) );
+      if ( ! hashmap->nodes )
+        return -DS_NO_MEMORY;
+      memset( hashmap->nodes, 0, init_size * sizeof(hashmap_node_t*) );
+    }
+  else
+    hashmap->nodes = NULL;
   hashmap->keytype = keytype;
   hashmap->size = init_size;
   hashmap->element_count = 0;
@@ -135,13 +142,10 @@ hashmap_init( hashmap_t *hashmap, hashmap_type_t keytype, size_t init_size )
   hashmap->next_resize = init_size;
   hashmap->max_load_factor = 1.0f;
   hashmap->growth_factor = 2.0f;
+  hashmap->collected_root = NULL;
+  hashmap->collected_tail = NULL;
 
-  if ( hashmap->nodes )
-    {
-      memset( hashmap->nodes, 0, init_size * sizeof(hashmap_node_t*) );
-      return 0;
-    }
-  return -DS_NO_MEMORY;
+  return 0;
 }
 
 static void
@@ -161,11 +165,11 @@ rehash( hashmap_t *hashmap, int newsize )
           node = hashmap->nodes[i];
           while ( node )
             {
-              cur = node; node = node->prev;
+              cur = node; node = node->next;
 
               id = hashmap->hash_func( cur->key ) % newsize;
 
-              cur->prev = ns[id];
+              cur->next = ns[id];
               ns[id] = cur;
             }
         }
@@ -190,7 +194,7 @@ hashmap_insert( hashmap_t *hashmap, hashmap_key_t key, hashmap_node_t *node )
 
   node->key = key;
 
-  node->prev = hashmap->nodes[id];
+  node->next = hashmap->nodes[id];
   hashmap->nodes[id] = node;
 
   hashmap->element_count++;
@@ -202,6 +206,7 @@ hashmap_at( hashmap_t *hashmap, hashmap_key_t key )
   int hash = hashmap->hash_func( key );
   pfnKeyComp comp_func = hashmap->comp_func;
   hashmap_node_t *node;
+  if( !hashmap->element_count ) return NULL;
 
   node = hashmap->nodes[hash % hashmap->size];
 
@@ -209,25 +214,13 @@ hashmap_at( hashmap_t *hashmap, hashmap_key_t key )
     {
       if ( comp_func( key, node->key ) )
         return node;
-      node = node->prev;
+      node = node->next;
     }
 
   return NULL;
 }
 
-bool
-hashmap_contain_node( hashmap_t *hashmap, hashmap_key_t key, hashmap_node_t *node )
-{
-  const hashmap_node_t *orig = hashmap_at( hashmap, key );
-  return( orig == node );
-}
-
-bool
-hashmap_contain_key( hashmap_t *hashmap, hashmap_key_t key )
-{
-  return( NULL!=hashmap_at( hashmap, key ) );
-}
-
+/* if free_elem==NULL then collect the memory for the next allocation */
 int
 hashmap_remove( hashmap_t *hashmap, hashmap_key_t key, pfn_free_elem free_elem )
 {
@@ -242,20 +235,25 @@ hashmap_remove( hashmap_t *hashmap, hashmap_key_t key, pfn_free_elem free_elem )
       if ( comp_func( key, node->key ) )
         {
           if ( LIKELY( lastnode ) )
-            lastnode->prev = node->prev;
+            lastnode->next = node->next;
           else
-            hashmap->nodes[hash % hashmap->size] = node->prev;
+            hashmap->nodes[hash % hashmap->size] = node->next;
           if ( free_elem ) free_elem( node );
+          else hashmap_collect( hashmap, node );
+
+          hashmap->element_count --;
+          trace_assert(hashmap->element_count >= 0);
           return 0;
         }
 
       lastnode = node;
-      node = node->prev;
+      node = node->next;
     }
 
   return -DS_FAULT;
 }
 
+/* if free_elem==NULL then collect the memory for the next allocation */
 void
 hashmap_clear( hashmap_t *hashmap, pfn_free_elem free_elem )
 {
@@ -267,16 +265,38 @@ hashmap_clear( hashmap_t *hashmap, pfn_free_elem free_elem )
           while ( node )
             {
               cur = node;
-              node = cur->prev;
+              node = cur->next;
               free_elem( cur );
             }
         }
+      else if( hashmap->nodes[i] )
+        {
+          /* collect the whole bucket elements without free */
+          if ( LIKELY(hashmap->collected_tail) )
+            hashmap->collected_tail->next = hashmap->nodes[i];
+          else
+            hashmap->collected_root = hashmap->nodes[i];
+          hashmap->collected_tail = hashmap->nodes[i];
+        }
       hashmap->nodes[i] = NULL;
     }
+  hashmap->element_count = 0;
 }
 
 void
-hashmap_uninit( hashmap_t *hashmap )
+hashmap_release( hashmap_t *hashmap, pfn_free_elem free_elem )
 {
+  /* free collected elements */
+  hashmap_node_t *node = hashmap->collected_root, *cur;
+  while( node )
+    {
+      cur = node;
+      node = node->next;
+
+      free_elem( cur );
+    }
+  hashmap->collected_root = hashmap->collected_tail = NULL;
+
+  hashmap_clear( hashmap, free_elem );
   ds_heap_free( hashmap->nodes );
 }

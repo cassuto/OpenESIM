@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -32,7 +32,6 @@
 
 #include <dsim/netlist-parser.h>
 
-////////////////////////////////////////////////////////////////////////////////
 
 ds_netlist_parser_t *
 netlist_parser_create( ds_scheme_t *sc )

@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -33,7 +33,6 @@ typedef struct node_s
   int value;
 } node_t;
 
-////////////////////////////////////////////////////////////////////////////////
 
 static int
 int_cmp(const rb_node_t *left, const rb_node_t *right)

@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -47,12 +47,26 @@ matrix_create( void )
 static void
 free_vectors( circ_matrix_t *matrix )
 {
-  if( matrix->circ_matrix ) ds_heap_free( matrix->circ_matrix );
+  if ( matrix->circ_matrix )
+    {
+      ds_heap_free( matrix->circ_matrix[0] );
+      ds_heap_free( matrix->circ_matrix );
+      matrix->circ_matrix = NULL;
+    }
+  if ( matrix->a )
+    {
+      ds_heap_free( matrix->a[0] );
+      ds_heap_free( matrix->a );
+      matrix->a = NULL;
+    }
   if( matrix->node_volt ) ds_heap_free( matrix->node_volt );
   if( matrix->coef_vector ) ds_heap_free( matrix->coef_vector );
-  if( matrix->a ) ds_heap_free( matrix->a );
   if( matrix->b ) ds_heap_free( matrix->b );
   if( matrix->ipvt ) ds_heap_free( matrix->ipvt );
+  matrix->node_volt =
+  matrix->coef_vector =
+  matrix->b = NULL;
+  matrix->ipvt = NULL;
 }
 
 void
@@ -60,14 +74,9 @@ matrix_free( circ_matrix_t *matrix )
 {
   if ( matrix )
     {
-      if ( matrix->circ_matrix )
-        {
-          ds_heap_free(matrix->circ_matrix[0]);
-          ds_heap_free(matrix->circ_matrix);
-        }
       free_vectors( matrix );
-      ds_heap_free( matrix );
     }
+  ds_heap_free( matrix );
 }
 
 static double **
@@ -88,17 +97,15 @@ matrix_alloc( int rows, int cols )
 
 /* After called matrix_init(), 'node_list' and 'element_list' should NOT be changed until the matrix is out of use */
 int
-matrix_init( circ_matrix_t *matrix, const list_t *node_list, const list_t *element_list )
+matrix_init( circ_matrix_t *matrix, const list_t *node_list )
 {
   int i = 0;
 
+  matrix->inited = false;
   matrix->node_list = node_list;
-  matrix->element_list = element_list;
+  matrix->num_nodes = list_size( matrix->node_list );
 
-  if ( (i = matrix_simplify( matrix )) < 0 )
-    return i;
-
-  matrix->num_nodes = i; /* i <= list_size( &matrix->node_list ) */
+  if( !matrix->num_nodes ) return -DS_FAULT;
 
   /*
    * Reallocate memory for matrix and vectors
@@ -153,6 +160,7 @@ matrix_init( circ_matrix_t *matrix, const list_t *node_list, const list_t *eleme
           i++;
         }
     }
+  matrix->inited = true;
   return 0;
 }
 
@@ -161,6 +169,7 @@ matrix_stamp( circ_matrix_t *matrix, int row, int col, double value )
 {
   if( ( row == 0 )|( col == 0 ) ) return;
 
+  trace_assert( matrix->inited );
   trace_debug(("matrix_stamp() row: %d, col: %d, value: %f\n", row, col, value));
 
   matrix->admit_changed = true;
@@ -172,16 +181,18 @@ matrix_stamp_coef( circ_matrix_t *matrix, int row, double value )
 {
   if( row == 0 ) return;
 
+  trace_assert( matrix->inited );
   trace_debug(("matrix_stamp_coef() row: %d, value: %f\n", row, value));
 
   matrix->curr_changed = true;
   matrix->coef_vector[row-1] = value;
 }
 
-bool
+int
 matrix_solve( circ_matrix_t *matrix )
 {
-  if( !matrix->admit_changed && !matrix->curr_changed ) return true;
+  int rc = 0;
+  if( !matrix->admit_changed && !matrix->curr_changed ) return 0;
 
   int n = matrix->num_nodes;
 
@@ -192,7 +203,7 @@ matrix_solve( circ_matrix_t *matrix )
        * matrix to be factored.  ipvt[] returns an integer vector of pivot
        * indices, used in the lu_solve() routine. */
 
-      memcpy( matrix->a, matrix->circ_matrix, matrix->circ_matrix_size );  /* Copy matrix */
+      memcpy( matrix->a[0], matrix->circ_matrix[0], matrix->circ_matrix_size );  /* Copy matrix */
 
       double scaleFactors[n];
       int i,j,k;
@@ -207,7 +218,7 @@ matrix_solve( circ_matrix_t *matrix )
               if( x > largest ) largest = x;
             }
           /* if all zeros, it's a singular matrix */
-          if( largest == 0 ) return false;
+          if( largest == 0 ) return -DS_FAULT;
           scaleFactors[i] = 1.0/largest;
         }
 
@@ -307,19 +318,20 @@ matrix_solve( circ_matrix_t *matrix )
   matrix->curr_changed  = false;
 
   /*
-   * Update the node volt
+   * Update node volt, notifying all nodes
    */
   i = 0;
   double volt;
   foreach_list( circ_node_t, node, matrix->node_list )
     {
       volt = matrix->b[i];
-      if( isnan( volt ) ) return false;
+      if( isnan( volt ) ) return -DS_FAULT;
 
-      circ_node_set_volt( node, volt );
+      if( (rc = circ_node_set_volt( node, volt )) )
+        return rc;
       i++;
     }
-  return true;
+  return 0;
 }
 
 /* return > 0: the new size of matrix
@@ -360,7 +372,7 @@ matrix_simplify( circ_matrix_t *matrix )
     }
   trace_debug(( "\nmatrix_simplify()\n"));
 
-  list_clear( &single_els, ds_heap_free );
+  list_release( &single_els, ds_heap_free );
   return y;
 }
 

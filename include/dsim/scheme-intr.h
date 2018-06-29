@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -18,6 +18,9 @@
 
 #include <dsim/misc.h>
 #include <dsim/hashmap.h>
+#include <dsim/cdecl.h>
+
+C_DECLS
 
 /** static buffer used for source reading */
 #define LISP_BUFFER_UNGET_SIZE (4)
@@ -28,7 +31,7 @@
 #define LISP_CHUNK_SIZE (1024)
 
 #ifndef EOF
-#define EOF (-1)
+# define EOF (-1)
 #endif
 
 typedef struct ds_scheme_s ds_scheme_t;
@@ -170,5 +173,7 @@ lisp_get_opaque( ds_scheme_t *sc )
 #define lispval_number(_vallist) ((_vallist)->synnode.val.number)
 #define lispval_symbol(_vallist) ((_vallist)->synnode.val.symbol)
 #define lispval_time(_vallist) ((_vallist)->synnode.val.time)
+
+END_C_DECLS
 
 #endif //!defined(SCHEME_INTR_H_)

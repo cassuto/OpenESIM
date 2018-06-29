@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -28,7 +28,6 @@
 
 #include "tsf/test.h"
 
-////////////////////////////////////////////////////////////////////////////////
 
 
 int
@@ -40,7 +39,7 @@ main( int argc, char *argv[] )
   list_t node_list;
   list_t element_list;
   float v[3];
-  float error = 0.001f;
+  float error = 1e-3;
   int i = 0;
 
   circ_matrix_t *matrix = matrix_create();
@@ -52,14 +51,14 @@ main( int argc, char *argv[] )
 
   for( int i=0; i< 3; i++)
     {
-      circ_node_t *node = circ_node_create( NULL );
+      circ_node_t *node = circ_node_create( NULL, true );
       ds_test_check( (node == NULL), "circ_node_create()" );
 
       circ_node_init( node );
       list_insert( &node_list, list_node(node) );
     }
 
-  rc = matrix_init( matrix, &node_list, &element_list );
+  rc = matrix_init( matrix, &node_list );
   ds_test_check( rc, "matrix_init()" );
 
   matrix_stamp( matrix, 1, 1, 1.0f );
@@ -79,8 +78,7 @@ main( int argc, char *argv[] )
 
   matrix_print( matrix );
 
-  bool ret = matrix_solve( matrix );
-  ds_test_check( ( ret == false), "matrix_solve()\n" );
+  ds_test_check( matrix_solve( matrix ), "matrix_solve()\n" );
 
   i = 0;
   foreach_list( circ_node_t, node, &node_list )

@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -27,7 +27,6 @@
 
 #include "lisp-internal.h"
 
-////////////////////////////////////////////////////////////////////////////////
 
 int
 lisp_parse( ds_scheme_t *sc, const ds_scheme_synlist_t *synlist, DS_OUT ds_scheme_vallist_t **out )

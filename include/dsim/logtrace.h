@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -15,6 +15,10 @@
 
 #ifndef DSIM_LOGTRACE_H_
 #define DSIM_LOGTRACE_H_
+
+#include <dsim/cdecl.h>
+
+C_DECLS
 
 #ifndef TRACE_UNIT
 # define TRACE_UNIT 0
@@ -46,6 +50,7 @@ void ds_panic( int rc );
     ds_log_set_level (LOG_PANIC); \
     ds_log_trace msg ; \
     ds_log_unlock(); \
+    ds_panic(1); \
   } while(0)
 
 #define trace_error(msg) \
@@ -85,27 +90,16 @@ void ds_panic( int rc );
       ds_log_unlock(); \
     } while(0)
 #else
-# define trace_debug(msg)
+# define trace_debug(msg) ((void)0)
 #endif
 
-#define TRACE_ASSERT(expr) \
+#define trace_assert(expr) \
   do { \
     if (!(expr)) \
       { \
         trace_panic(("assert failure. expt = %s\n", #expr)); \
-        ds_panic(1); \
       } \
   } while(0)
-
-static inline void
-trace_assert( int expr )
-{
-  if (!(expr)) \
-    { \
-      trace_panic(("assert failure.\n")); \
-      ds_panic(1); \
-    } \
-}
 
 void ds_putc (char c);
 void ds_puts (const char* str);
@@ -120,5 +114,7 @@ extern unsigned char (*term_func_in)(void);
 
 #define ds_set_dev_out(func) term_func_out = (void(*)(unsigned char))(func)
 #define ds_set_dev_in(func) term_func_in = (unsigned char(*)(void))(func)
+
+END_C_DECLS
 
 #endif //!defined(DSIM_LOGTRACE_H_)

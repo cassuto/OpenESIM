@@ -3,7 +3,7 @@
  */
 
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -21,6 +21,9 @@
 #define DSIM_STDINT_H_
 
 #include <dsim/misc.h>
+#include <dsim/cdecl.h>
+
+C_DECLS
 
 /*
  * Use the stdint.h on systems that have one.
@@ -218,5 +221,7 @@ typedef uint64_t            uintptr_t;
 # define INTMAX_MAX         INT64_MAX
 # define UINTMAX_MAX        UINT64_MAX
 #endif
+
+END_C_DECLS
 
 #endif //!defined(DSIM_STDINT_H_)

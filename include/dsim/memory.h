@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -17,11 +17,16 @@
 #define DSIM_MEMORY_H_
 
 #include <dsim/types.h>
+#include <dsim/cdecl.h>
+
+C_DECLS
 
 void *ds_heap_alloc( size_t size );
 void *ds_heap_realloc( void *mem, size_t newsize );
 void ds_heap_free( void *mem );
 
 void ds_heap_print_stat( void );
+
+END_C_DECLS
 
 #endif //!defined(DSIM_MEMORY_H_)

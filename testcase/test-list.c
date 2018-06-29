@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyright (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
 #include <dsim/logtrace.h>
 #include <dsim/string.h>
 #include <dsim/memory.h>
-
+#define IN_TESTCASE
 #include <dsim/list.h>
 
 #include "tsf/test.h"
@@ -33,12 +33,11 @@ typedef struct node_s
   int value;
 } node_t;
 
-////////////////////////////////////////////////////////////////////////////////
 
 static void *
-my_copy( const void *src )
+my_copy( void *dst_list, const void *src )
 {
-  node_t *node = (node_t*)ds_heap_alloc( sizeof(*node) );
+  node_t *node = list_alloc_node((list_t*)dst_list, node_t);
   if ( node )
     {
       node->value = list_entry(src, node_t)->value;
@@ -50,10 +49,11 @@ int
 main( int argc, char *argv[] )
 {
   int elem_num = 1024;
+  node_t **old_ptr = (node_t **)ds_heap_alloc(sizeof(node_t *) * elem_num);
 
   if ( ds_test_init( "test-list" ) ) return 1;
 
-  node_t *node = NULL, *rootnode = NULL, *tailnode = NULL;
+  node_t *node = NULL, *node2, *rootnode = NULL, *tailnode = NULL;
   list_t list, list2;
   int i = 0;
 
@@ -118,11 +118,42 @@ main( int argc, char *argv[] )
 
   ds_test_check( ( list_size( &list ) != elem_num-1 ), "list_insert() || list_size()" );
 
-  /* clear list */
-  list_clear( &list, ds_heap_free );
+  /* test memory collector ( allocator ) */
+  i = 0;
+  foreach_list( node_t, node, &list )
+    {
+      old_ptr[i++] = node;
+    }
+  elem_num = i;
+  list_clear( &list, NULL /*collect*/ );
 
   foreach_list( node_t, node, &list )
     ds_test_check( 1, "list_clear()" );
+
+  for( i=0; i<elem_num; i++ )
+    {
+      node = list_alloc_node( &list, node_t );
+      ds_test_check( node != old_ptr[i], "list_clear() with collector" );
+    }
+
+  ds_test_check( list.collected_root != NULL, "list_alloc_node()" );
+
+  node = list_alloc_node( &list, node_t );
+  node->value = 255;
+
+  node2 = list_alloc_node( &list, node_t );
+  node2->value = 33;
+
+  list_collect( &list, node );
+  list_collect( &list, node2 );
+
+  node = list_alloc_node( &list, node_t );
+  ds_test_check( node->value != 33, "list_alloc_node() || list_collect()" );
+
+  node2 = list_alloc_node( &list, node_t );
+  ds_test_check( node2->value != 255, "list_alloc_node() || list_collect()" );
+
+  list_release( &list, ds_heap_free );
 
   return 0;
 }

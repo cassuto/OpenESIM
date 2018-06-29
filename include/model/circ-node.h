@@ -1,5 +1,5 @@
 /*
- *  OpenDSIM (Opensource Circuit Simulator)
+ *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
  *  This project is free software; you can redistribute it and/or
@@ -19,6 +19,10 @@
 #include <dsim/list.h>
 #include <dsim/hashmap.h>
 #include <dsim/types.h>
+#include <model/logic_signal.h>
+#include <dsim/cdecl.h>
+
+C_DECLS
 
 typedef struct circuit_s circuit_t;
 typedef struct circ_pin_s circ_pin_t;
@@ -27,18 +31,19 @@ typedef struct circ_node_s
 {
   DS_LIST_NODE();
 
-  list_t pin_list;
-
-  hashmap_t admit_list;
-  hashmap_t curr_list;
-  hashmap_t node_list;
-
-  hashmap_t admit;
-  double total_admit;
-
+  bool analog;
   double volt;
+  logic_state_t logic_state;
   int   node_index;
-  int   num_cons;
+
+  list_t pin_list; /* voidptr_node */
+
+  hashmap_t admit_list; /* double_node */
+  hashmap_t curr_list;  /* double_node */
+  hashmap_t node_list;  /* int_node */
+
+  hashmap_t admit;      /* double_node */
+  double total_admit;
 
   bool need_fast_update;
   bool curr_changed;
@@ -46,19 +51,40 @@ typedef struct circ_node_s
   bool changed;
   bool single;
 
+  list_t changed_fast_list; /* voidptr_node */
+  list_t react_list;        /* voidptr_node */
+  list_t non_linear_list;   /* voidptr_node */
+  list_t logic_list; /* voidptr_node */
+
   circuit_t *circuit;
 } circ_node_t;
 
-circ_node_t* circ_node_create( circuit_t *circuit );
+typedef struct circ_element_s circ_element_t;
+
+circ_node_t* circ_node_create( circuit_t *circuit, bool analog );
 void circ_node_init( circ_node_t *node );
-void circ_node_stamp_current( circ_node_t * node, circ_pin_t* pin, double data );
-void circ_node_stamp_admit( circ_node_t * node, circ_pin_t* pin, double data );
+int circ_node_stamp_current( circ_node_t * node, circ_pin_t* pin, double data );
+int circ_node_stamp_admit( circ_node_t * node, circ_pin_t* pin, double data );
 void circ_node_set_index( circ_node_t * node, int n );
 int circ_node_stamp_matrix( circ_node_t * node );
-void circ_node_set_volt( circ_node_t *node, double v );
-void circ_node_free( circ_node_t *node );
+int circ_node_set_volt( circ_node_t *node, double v );
+int circ_node_set_state( circ_node_t *node, logic_state_t state );
+int circ_node_add_pin( circ_node_t *node, circ_pin_t *pin );
+int circ_node_remove_pin( circ_node_t *node, circ_pin_t *pin );
+int circ_node_connect_pin( circ_node_t *node, circ_pin_t * pin, int node_comp_index );
+int circ_node_add_changed_fast( circ_node_t *node, circ_element_t* element );
+int circ_node_add_react( circ_node_t *node, circ_element_t* element );
+int circ_node_add_non_linear( circ_node_t *node, circ_element_t* element );
+int circ_node_add_logic( circ_node_t *node, circ_element_t* element );
+void circ_node_free( void *node );
 
-/* true if this eNode can calculate it's own Volt */
+static inline logic_state_t
+circ_node_get_logic_state( circ_node_t *node )
+{
+  return node->logic_state;
+}
+
+/* true if this node can calculate it's own Volt */
 static inline void
 circ_node_set_single( circ_node_t *node, bool single )
 {
@@ -76,5 +102,7 @@ circ_node_get_index( const circ_node_t *node )
 {
   return node->node_index;
 }
+
+END_C_DECLS
 
 #endif //!defined(CIRC_NODE_H_)
