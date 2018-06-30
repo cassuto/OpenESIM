@@ -61,9 +61,9 @@ void SchemaGraph::drawBackground ( QPainter*  painter, const QRectF & rect )
 
   if( !m_paintGrid ) return;
 
-  int startx = int(m_scenerect.x());///2;
+  int startx = int(m_scenerect.x());
   int endx   = int(m_scenerect.width())/2;
-  int starty = int(m_scenerect.y());///2;
+  int starty = int(m_scenerect.y());
   int endy   = int(m_scenerect.height())/2;
 
   for (int i = 4; i<endx; i+=8)

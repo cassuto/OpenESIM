@@ -1,4 +1,4 @@
-﻿/*
+/*
  *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
@@ -13,39 +13,29 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef SCHEMAGRAPH_H_
-#define SCHEMAGRAPH_H_
+#ifndef COMPONENTPICKWIDGET_H
+#define COMPONENTPICKWIDGET_H
 
-#include <QtGui>
-#include <QGraphicsScene>
+#include <QDockWidget>
+
+class QLineEdit;
 
 namespace dsim
 {
 
-class SchemaGraph : public QGraphicsScene
+class ComponentPickTree;
+
+class ComponentPickWidget : public QDockWidget
 {
   Q_OBJECT
 
 public:
-  SchemaGraph( qreal x, qreal y, qreal width, qreal height, QGraphicsView*  parent );
-  ~SchemaGraph();
-
-static SchemaGraph*  instance() { return m_pschemagraph; }
-
-  void remove();
-  bool paintGrid();
-  void setPaintGrid( bool paint );
+  ComponentPickWidget( QWidget *parent );
+  ~ComponentPickWidget();
 
 private:
-  void drawBackground( QPainter*  painter, const QRectF & rect );
-
-private:
-  static SchemaGraph*   m_pschemagraph;
-  QRect                 m_scenerect;
-  QGraphicsView*        m_graphicView;
-
-  bool                  m_paintGrid;
-
+  QLineEdit         *filterText;
+  ComponentPickTree *componentPickTree;
 };
 
 } // namespace dsim

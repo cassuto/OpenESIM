@@ -13,8 +13,8 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef CIRCUITVIEW_H
-#define CIRCUITVIEW_H
+#ifndef SCHEMAVIEW_H_
+#define SCHEMAVIEW_H_
 
 #include <QtGui>
 #include <QGraphicsView>

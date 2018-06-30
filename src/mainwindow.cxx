@@ -37,6 +37,7 @@
 #include <dsim/version.h>
 
 #include "schemawidget.h"
+#include "schemaeditorform.h"
 #include "mainwindow.h"
 
 namespace dsim
@@ -113,24 +114,6 @@ void MainWindow::createActions()
   fileQuit = new QAction(tr("&Quit"), this);
   fileQuit->setStatusTip(tr("Quit the dsim."));
   connect(fileQuit, SIGNAL(triggered()), SLOT(slotFileQuit()));
-
-  /*
-   * Mode actions
-   */
-  modeSelection = new QAction(QIcon((":/arts/modeselection.png")), tr("Selection mode"), this);
-  modeSelection->setStatusTip(tr("Enter the selection drawing mode."));
-  modeDrawComponent = new QAction(QIcon((":/arts/modecomponent.png")), tr("Drawing the component mode"), this);
-  modeDrawComponent->setStatusTip(tr("Enter the drawing the component mode."));
-  modeDrawJunctionDot = new QAction(QIcon((":/arts/modejunctiondot.png")), tr("Drawing the junction dot mode"), this);
-  modeDrawJunctionDot->setStatusTip(tr("Enter the drawing the junction dot mode mode."));
-  modeDrawLable = new QAction(QIcon((":/arts/modelabel.png")), tr("Drawing the label mode"), this);
-  modeDrawLable->setStatusTip(tr("Enter the drawing the label mode."));
-  modeDrawScript = new QAction(QIcon((":/arts/modescript.png")), tr("Drawing the script mode"), this);
-  modeDrawScript->setStatusTip(tr("Enter the drawing the script mode mode."));
-  modeDrawBus = new QAction(QIcon((":/arts/modebus.png")), tr("Drawing the bus mode"), this);
-  modeDrawBus->setStatusTip(tr("Enter the drawing the bus mode mode."));
-  modeDrawSubCircuit = new QAction(QIcon((":/arts/modesubcircuit.png")), tr("Drawing the sub circuit mode"), this);
-  modeDrawSubCircuit->setStatusTip(tr("Enter the drawing the sub circuit mode mode."));
 }
 
 void MainWindow::createMenuBar()
@@ -150,7 +133,6 @@ void MainWindow::createMenuBar()
   fileMenu->addAction(fileQuit);
 
   menuBar()->addMenu(fileMenu);
-  menuBar()->show();
 }
 
 void MainWindow::createToolBars()
@@ -164,23 +146,6 @@ void MainWindow::createToolBars()
   fileToolBar->addAction(fileSave);
   fileToolBar->setIconSize(QSize(16, 16));
   this->addToolBar(fileToolBar);
-  fileToolBar->show();
-
-  /*
-   * ToolBar drawing mode.
-   */
-  modeToolBar = new QToolBar(tr("Mode"));
-  modeToolBar->addAction(modeSelection);
-  modeToolBar->addAction(modeDrawComponent);
-  modeToolBar->addAction(modeDrawJunctionDot);
-  modeToolBar->addAction(modeDrawLable);
-  modeToolBar->addAction(modeDrawScript);
-  modeToolBar->addAction(modeDrawBus);
-  modeToolBar->addAction(modeDrawSubCircuit);
-  modeToolBar->addSeparator();
-  modeToolBar->setIconSize(QSize(16, 16));
-  this->addToolBar(Qt::LeftToolBarArea, modeToolBar);
-  modeToolBar->show();
 }
 
 void MainWindow::createWorkspace()
@@ -190,7 +155,6 @@ void MainWindow::createWorkspace()
    */
   workspace = new QMdiArea(this);
   this->setCentralWidget(workspace);
-  workspace->show();
 }
 
 void MainWindow::createStatusBar()
@@ -200,7 +164,6 @@ void MainWindow::createStatusBar()
    */
   statusLabel = new QLabel(tr("Ready..."));
   statusBar()->addWidget(statusLabel);
-  statusBar()->show();
 }
 
 /***************************************************
@@ -240,7 +203,7 @@ void MainWindow::slotFileQuit()
 int MainWindow::newDocument()
 {
   int rc;
-  SchemaWidget *schema = new SchemaWidget( 0 );
+  SchemaEditorForm *schema = new SchemaEditorForm( 0l );
 
   this->workspace->addSubWindow( schema );
   schema->showMaximized();

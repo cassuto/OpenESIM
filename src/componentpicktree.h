@@ -1,4 +1,4 @@
-﻿/*
+/*
  *  OpenDSIM (A/D mixed circuit simulator)
  *  Copyleft (C) 2016, The first Middle School in Yongsheng Lijiang China
  *
@@ -13,41 +13,40 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef SCHEMAGRAPH_H_
-#define SCHEMAGRAPH_H_
+#ifndef COMPONENTPICKTREE_H_
+#define COMPONENTPICKTREE_H_
 
-#include <QtGui>
-#include <QGraphicsScene>
+#include <QtWidgets>
+#include <QHash>
+#include <QString>
 
 namespace dsim
 {
 
-class SchemaGraph : public QGraphicsScene
+class ComponentPickTree : public QTreeWidget
 {
   Q_OBJECT
 
 public:
-  SchemaGraph( qreal x, qreal y, qreal width, qreal height, QGraphicsView*  parent );
-  ~SchemaGraph();
+  ComponentPickTree( QWidget* parent );
+  ~ComponentPickTree();
 
-static SchemaGraph*  instance() { return m_pschemagraph; }
+  void addCategory( const QString &category );
+  void addComponent( const QString &name, const QString &category, const QString &type );
 
-  void remove();
-  bool paintGrid();
-  void setPaintGrid( bool paint );
+protected:
+  void mouseReleaseEvent(QMouseEvent*);
+
+private slots:
+  void slotItemClicked( QTreeWidgetItem* item, int column );
+  void slotContextMenu(const QPoint&);
+  void slotRemoveComponent();
 
 private:
-  void drawBackground( QPainter*  painter, const QRectF & rect );
-
-private:
-  static SchemaGraph*   m_pschemagraph;
-  QRect                 m_scenerect;
-  QGraphicsView*        m_graphicView;
-
-  bool                  m_paintGrid;
+  QHash<QString, QTreeWidgetItem *> m_categories;
 
 };
 
-} // namespace dsim
+}
 
 #endif

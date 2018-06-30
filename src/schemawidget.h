@@ -13,8 +13,8 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef CIRCUITWIDGET_H
-#define CIRCUITWIDGET_H
+#ifndef SCHEMAWIDGET_H_
+#define SCHEMAWIDGET_H_
 
 #include <QVBoxLayout>
 #include <QWidget>

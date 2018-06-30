@@ -20,6 +20,9 @@ QT_SRCS += mainwindow.cxx \
           schemawidget.cxx \
           schemaview.cxx \
           schemagraph.cxx \
+          schemaeditorform.cxx \
+          componentpickwidget.cxx \
+          componentpicktree.cxx \
 
 #########################################################################
 # Building rules.

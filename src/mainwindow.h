@@ -57,16 +57,8 @@ private:
             *fileOpen,
             *fileSave,
             *fileQuit;
-    QAction *modeSelection,
-            *modeDrawComponent,
-            *modeDrawJunctionDot,
-            *modeDrawLable,
-            *modeDrawScript,
-            *modeDrawBus,
-            *modeDrawSubCircuit;
     QMenu *fileMenu;
     QToolBar *fileToolBar;
-    QToolBar *modeToolBar;
     QMdiArea *workspace;
     QLabel *statusLabel;
 
