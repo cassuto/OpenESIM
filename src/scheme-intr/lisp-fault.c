@@ -40,6 +40,6 @@ lisp_fault( ds_scheme_t *sc, const char *msg, ...)
   vsnprintf( buff, sizeof(buff), msg, args );
   va_end( args );
 
-  trace_error(("line %d: %s", sc->buffer_linenum, buff));
+  trace_error(("line %d: %s\n", sc->buffer_linenum, buff));
   return -DS_FAULT;
 }

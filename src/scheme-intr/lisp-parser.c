@@ -33,11 +33,6 @@ lisp_parse( ds_scheme_t *sc, const ds_scheme_synlist_t *synlist, DS_OUT ds_schem
 {
   int rc = 0;
 
-  if ( synlist->synnode.type != SCHEME_VAL_PAIR )
-    return -DS_FAULT;
-
-  synlist = synlist->child;
-
   switch ( synlist->synnode.type )
   {
     case SCHEME_VAL_PAIR:

@@ -15,7 +15,15 @@
 
 #include <QAction>
 #include <QToolBar>
+#include <QFileDialog>
 
+#include <fstream>
+#include <dsim/error.h>
+#include <device/libentry.h>
+
+#include "domdataset.h"
+#include "schemasheet.h"
+#include "mainwindow.h"
 #include "componentpickwidget.h"
 #include "schemawidget.h"
 #include "schemaeditorform.h"
@@ -23,9 +31,13 @@
 namespace dsim
 {
 
-SchemaEditorForm::SchemaEditorForm( QWidget *parent ) :
-    QMainWindow(parent)
+SchemaEditorForm::SchemaEditorForm( QWidget *parent_ )
+                : QMainWindow( parent_ )
+                , dom( new DomDataset( MainWindow::instance()->dompool() ) )
+                , schsheet( new SchemaSheet() )
 {
+  dom->ref();
+
   createActions();
   createToolbars();
   createWidgets();
@@ -33,6 +45,8 @@ SchemaEditorForm::SchemaEditorForm( QWidget *parent ) :
 
 SchemaEditorForm::~SchemaEditorForm()
 {
+  dom->release();
+  delete schsheet;
 }
 
 void SchemaEditorForm::createActions()
@@ -81,13 +95,57 @@ void SchemaEditorForm::createWidgets()
    */
   componentPick = new ComponentPickWidget( this );
   componentPick->setAllowedAreas( Qt::AllDockWidgetAreas );
-  this->addDockWidget( Qt::LeftDockWidgetArea, componentPick );
+  this->addDockWidget( Qt::RightDockWidgetArea, componentPick );
 
   /*
    * Schema Editor View
    */
-  schema = new SchemaWidget( this );
+  schema = new SchemaWidget( this, schsheet, dom );
   this->setCentralWidget( schema );
+
+  connect( componentPick, SIGNAL(deviceInserted( const DeviceLibraryEntry * )), this, SLOT(onDeviceInserted( const DeviceLibraryEntry * )) );
+}
+
+void SchemaEditorForm::onDeviceInserted( const DeviceLibraryEntry *entry )
+{
+  dom->addPickedDevice( entry );
+}
+
+void SchemaEditorForm::onFileSave()
+{
+  using namespace std;
+
+  QString filename = QFileDialog::getSaveFileName( this, tr("Save schema..."), QString(), tr("Schema file(*.sch)") );
+  if( filename.length() )
+    {
+      std::string fn = filename.toStdString();
+      ofstream stream( fn.c_str() );
+      if( stream.good() )
+        {
+          MainWindow::instance()->processRc( schema->view()->serialize( DOM_SCHEMA, stream ) );
+        }
+      else
+        MainWindow::instance()->processRc( -DS_CREATE_FILE );
+    }
+}
+
+int SchemaEditorForm::openSchemaFile( std::ifstream & stream )
+{
+  using namespace std;
+
+  int rc = schema->view()->deserialize( DOM_SCHEMA, stream ); UPDATE_RC(rc);
+
+  componentPick->clearDevices();
+
+  const list<const DeviceLibraryEntry *> &pickedDevices = dom->pickedDevices();
+
+  for( list<const DeviceLibraryEntry *>::const_iterator it=pickedDevices.begin(); it!=pickedDevices.end(); it++ )
+    {
+      const DeviceLibraryEntry *entry = *it;
+      componentPick->addComponent( entry );
+    }
+
+  return 0;
 }
 
 } // namespace dsim

@@ -39,8 +39,13 @@ OBJS += $(foreach src,$(QT_SRCS),$(patsubst %.cxx,%.moc.cxx.o,$(src)))
 
 OBJS += $(foreach src,$(QT_RCCS),$(patsubst %.qrc,%.rcc.cxx.o,$(src)))
 
+FILTEROUT_OBJDEP += %.moc.cxx.o %.rcc.cxx.o
+
 #########################################################################
 # building files
+
+%.moc.cxx: %.cxx
+%.rcc.cxx: %.rcc
 
 %.moc.cxx.o: %.moc.cxx
 %.rcc.cxx.o: %.rcc.cxx

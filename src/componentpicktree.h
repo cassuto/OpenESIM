@@ -20,6 +20,8 @@
 #include <QHash>
 #include <QString>
 
+class DeviceLibraryEntry;
+
 namespace dsim
 {
 
@@ -32,15 +34,15 @@ public:
   ~ComponentPickTree();
 
   void addCategory( const QString &category );
-  void addComponent( const QString &name, const QString &category, const QString &type );
+  void addComponent( const QString &category, const DeviceLibraryEntry *entry );
 
 protected:
   void mouseReleaseEvent(QMouseEvent*);
 
 private slots:
-  void slotItemClicked( QTreeWidgetItem* item, int column );
-  void slotContextMenu(const QPoint&);
-  void slotRemoveComponent();
+  void onItemClicked( QTreeWidgetItem* item, int column );
+  void onContextMenu(const QPoint&);
+  void onRemoveComponent();
 
 private:
   QHash<QString, QTreeWidgetItem *> m_categories;

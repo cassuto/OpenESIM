@@ -29,7 +29,7 @@ public:
   virtual int init();
   virtual int pin_count();
   virtual circ_pin_t * pin( int index );
-  virtual int render_frame( IGraph *graph );
+  virtual int render_frame( IDeviceGraph *graph );
   virtual int uninit();
 };
 

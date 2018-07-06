@@ -22,31 +22,65 @@
 namespace dsim
 {
 
+class SchemaView;
+
 class SchemaGraph : public QGraphicsScene
 {
   Q_OBJECT
 
 public:
-  SchemaGraph( qreal x, qreal y, qreal width, qreal height, QGraphicsView*  parent );
+  SchemaGraph( qreal x, qreal y, qreal width, qreal height, SchemaView* parent );
   ~SchemaGraph();
-
-static SchemaGraph*  instance() { return m_pschemagraph; }
 
   void remove();
   bool paintGrid();
   void setPaintGrid( bool paint );
 
+  inline SchemaView *view() { return m_schemaView; }
+
 private:
   void drawBackground( QPainter*  painter, const QRectF & rect );
 
 private:
-  static SchemaGraph*   m_pschemagraph;
   QRect                 m_scenerect;
-  QGraphicsView*        m_graphicView;
-
+  SchemaView*           m_schemaView;
   bool                  m_paintGrid;
-
 };
+
+inline int roundDown( int x, int roundness )
+{
+  if( x < 0 ) return (x-roundness+1) / roundness;
+  else        return (x / roundness);
+}
+
+inline int roundDown( float x, int roundness ) { return roundDown( int(x), roundness ); }
+
+inline QPoint roundDown( const QPoint & p, int roundness )
+{
+  return QPoint( roundDown( p.x(), roundness ), roundDown( p.y(), roundness ) );
+}
+
+inline int snapToGrid( int x  ) { return roundDown( x, 8 )*8 + 4; }
+
+inline QPointF togrid( QPointF point )
+{
+  int valor;
+  valor = snapToGrid( (int)point.x() );
+  point.rx() = (float)valor;
+  valor = snapToGrid( (int)point.y() );
+  point.ry() = (float)valor;
+  return point;
+}
+
+inline QPoint togrid( QPoint point )
+{
+  int valor;
+  valor = snapToGrid( (int)point.x() );
+  point.rx() = valor;
+  valor = snapToGrid( (int)point.y() );
+  point.ry() = valor;
+  return point;
+}
 
 } // namespace dsim
 

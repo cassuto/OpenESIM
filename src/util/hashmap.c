@@ -190,6 +190,8 @@ hashmap_insert( hashmap_t *hashmap, hashmap_key_t key, hashmap_node_t *node )
       rehash( hashmap, rc );
     }
 
+  trace_assert( NULL==node->next ); /* never try to insert a existing node once again */
+
   id = hashmap->hash_func( key ) % hashmap->size;
 
   node->key = key;

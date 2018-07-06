@@ -44,7 +44,7 @@ lisp_create( ds_scheme_pfn_read stream_in_read, void *stream_opaque )
     goto err_out;
   if ( lisp_lexer_init( sc ) )
     goto err_out;
-  if ( hashmap_init( &sc->symbols, HASHMAP_KEY_INTPTR, 64 ) )
+  if ( hashmap_init( &sc->symbols, HASHMAP_KEY_CHR, 64 ) )
     goto err_out;
 
   return sc;
@@ -164,7 +164,7 @@ lisp_add_symbol( ds_scheme_t *sc, const char *symbol_name, ds_scheme_pfn_symbol_
 {
   trace_assert( symbol_name && pfn_handle );
 
-  ds_scheme_symbol_t *symbol = (ds_scheme_symbol_t*)ds_heap_alloc(sizeof(*symbol));
+  ds_scheme_symbol_t *symbol = hashmap_alloc_node( &sc->symbols, ds_scheme_symbol_t );
   if ( !symbol )
     return fault_no_memory();
 
@@ -174,6 +174,7 @@ lisp_add_symbol( ds_scheme_t *sc, const char *symbol_name, ds_scheme_pfn_symbol_
       ds_heap_free( symbol );
       return fault_no_memory();
     }
+
   symbol->symbol_name_len = strlen( symbol_name );
   symbol->pfn_handle = pfn_handle;
 
@@ -197,16 +198,32 @@ lisp_eval( ds_scheme_t *sc )
 
   for ( ;; )
     {
-      rc = lisp_lex( sc, &synlist );
+      rc = lisp_lex( sc, 0, &synlist );
       if ( rc == -DS_EOF )
-         eof = 1;
+        {
+          eof = 1;
+        }
       else if ( rc )
-         return rc;
+        {
+          trace_error((" error %d\n ", rc));
+          return rc;
+        }
 
-      if ( (rc = lisp_parse( sc, synlist, &vallist )) ) return rc;
+      if ( synlist->synnode.type != SCHEME_VAL_PAIR )
+        return -DS_FAULT;
+
+      synlist = synlist->child;
+
+      while( synlist )
+        {
+          if ( (rc = lisp_parse( sc, synlist, &vallist )) ) return rc;
+
+          //lisp_parse_free ( synlist, vallist );
+
+          synlist = synlist->next;
+        }
 
       lisp_synlist_free ( synlist );
-      lisp_parse_free ( synlist, vallist );
 
       if ( eof ) break;
     }

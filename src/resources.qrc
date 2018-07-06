@@ -3,7 +3,7 @@
         <file>arts/filenew.png</file>
         <file>arts/fileopen.png</file>
         <file>arts/filesave.png</file>
-        
+        <file>arts/insertdevice.png</file>
         <file>arts/modeselection.png</file>
         <file>arts/modecomponent.png</file>
         <file>arts/modejunctiondot.png</file>
@@ -11,5 +11,10 @@
         <file>arts/modescript.png</file>
         <file>arts/modebus.png</file>
         <file>arts/modesubcircuit.png</file>
+        <file>arts/modepin.png</file>
+        <file>arts/modeline.png</file>
+        <file>arts/modetext.png</file>
+        <file>arts/moderect.png</file>
+        <file>arts/moderound.png</file>
     </qresource>
 </RCC>

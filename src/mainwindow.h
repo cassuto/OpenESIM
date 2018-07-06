@@ -17,7 +17,8 @@
 #define MAINWINDOW_H_
 
 #include <QtGui>
-#include <QtWidgets/QMainWindow>
+#include <QMainWindow>
+#include <QList>
 
 class QMenuBar;
 class QToolBar;
@@ -28,57 +29,78 @@ class QLabel;
 namespace dsim
 {
 
+class DomPool;
+class TemplateStyle;
+class SchemaEditorForm;
+class SchSymbolEditorForm;
+
 /***************************************************
   *****     MainWindow object                  *****
   ***************************************************/
 
 class MainWindow : public QMainWindow {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    MainWindow();
-    ~MainWindow();
+  MainWindow();
+  ~MainWindow();
 
-    static MainWindow* instance() { return m_pinstance; }
+  void processRc( int rc );
+  void noMemory();
 
-    QSettings &settings() { return m_settings; }
+public:
+  static MainWindow* instance() { return m_pinstance; }
+
+  inline QSettings *settings() { return &m_settings; }
+  inline DomPool *dompool() { return m_dompool; }
+  inline TemplateStyle *templatestyle() { return m_template; }
 
 protected:
-    void closeEvent( QCloseEvent *event );
+  void closeEvent( QCloseEvent *event );
+  QSize sizeHint () const;
 
 private:
-    int newDocument();
+  QSettings m_settings;
 
-private:
-    QSettings m_settings;
+  TemplateStyle *m_template;
 
-    QAction *fileNewProject,
-            *fileNewSchema,
-            *fileOpen,
-            *fileSave,
-            *fileQuit;
-    QMenu *fileMenu;
-    QToolBar *fileToolBar;
-    QMdiArea *workspace;
-    QLabel *statusLabel;
+  DomPool *m_dompool;
 
-    static MainWindow *m_pinstance;
+  QAction *fileNewProject,
+          *fileNewSchema,
+          *fileNewSchemaSymbol,
+          *fileOpen,
+          *fileSave,
+          *fileQuit;
+  QMenu *fileMenu;
+  QToolBar *fileToolBar;
+  QMdiArea *workspace;
+  QLabel *statusLabel;
 
-    void readSettings();
-    void writeSettings();
-    void createActions();
-    void createMenuBar();
-    void createToolBars();
-    void createWorkspace();
-    void createStatusBar();
+  static MainWindow *m_pinstance;
+
+  void readSettings();
+  void writeSettings();
+  void createActions();
+  void createMenuBar();
+  void createToolBars();
+  void createWorkspace();
+  void createStatusBar();
+
+  void connectDocument( QObject *form );
+  SchemaEditorForm *newSchemaDocument();
+  SchSymbolEditorForm *newSchemaSymbolDocument();
 
 private slots:
-    void slotFileNewProject();
-    void slotFileNewSchema();
-    void slotFileOpen();
-    void slotFileSave();
-    void slotFileQuit();
+  void onFileNewProject();
+  void onFileNewSchema();
+  void onFileNewSchemaSymbol();
+  void onFileOpen();
+  void onFileSave();
+  void onFileQuit();
 
+signals:
+  void saveDocument( const QString &filename );
 };
 
 } // namespace dsim

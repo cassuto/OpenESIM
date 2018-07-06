@@ -37,7 +37,7 @@ clean: genclean
 # Standard rules.
 
 include $(SUB_DEPTH)/build-aux/rules.generic.mk
-
+include $(SUB_DEPTH)/build-aux/rules.end.mk
 
 #########################################################################
 # Main rules.

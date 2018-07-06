@@ -35,6 +35,7 @@ SRCS_TEST = $(SRC)
 # Building rules.
 
 include $(SUB_DEPTH)/build-aux/rules.generic.mk
+include $(SUB_DEPTH)/build-aux/rules.end.mk
 
 all: makelib dotest
 

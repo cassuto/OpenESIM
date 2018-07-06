@@ -208,6 +208,28 @@
 #endif
 #endif
 
+/** @def callback_decl
+ * Declare an internal assembly function.
+ * @param   type    The return type of the function declaration.
+ */
+#ifdef __cplusplus
+# if COMPILER(MSC) || OS(OS2)
+#  define callback_decl(type)          extern "C" type __cdecl
+# elif COMPILER(GCC) && ARCH(X86)
+#  define callback_decl(type)          extern "C" type __attribute__((cdecl,regparm(0)))
+# else
+#  define callback_decl(type)          extern "C" type
+# endif
+#else
+# if COMPILER(MSC) || OS(OS2)
+#  define callback_decl(type)          type __cdecl
+# elif COMPILER(GCC) && ARCH(X86)
+#  define callback_decl(type)          type __attribute__((cdecl,regparm(0)))
+# else
+#  define callback_decl(type)          type
+# endif
+#endif
+
 /** @def asm_decl
  * Declare an internal assembly function.
  * @param   type    The return type of the function declaration.

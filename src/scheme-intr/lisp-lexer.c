@@ -247,7 +247,10 @@ parse_string( ds_scheme_t *sc, DS_OUT ds_scheme_synlist_t **synlist )
         }
       buff[buff_pos++] = ch;
     }
-  buff[buff_pos++] = 0;
+  if( buff ) buff[buff_pos++] = 0;
+  else buff = ds_strdup("");
+
+  if( NULL==buff ) return fault_no_memory();
 
   *synlist = lisp_synlist_create();
   if ( !*synlist )
@@ -268,7 +271,7 @@ parse_symbol( ds_scheme_t *sc, char c, DS_OUT ds_scheme_synlist_t **synlist )
   sc->string_pool_pos = 0;
   for ( ;; )
     {
-      if ( isspace(ch) )
+      if ( isspace( ch ) || ch == '(' || ch == ')' || ch == '\"' )
         break;
       if ( sc->string_pool_pos + 2 < sizeof(sc->string_pool) )
         sc->string_pool[sc->string_pool_pos++] = ch;
@@ -281,6 +284,8 @@ parse_symbol( ds_scheme_t *sc, char c, DS_OUT ds_scheme_synlist_t **synlist )
       if ( ch == EOF )
         return lisp_fault(sc, "string truncation\n");
     }
+  lisp_buffer_ungetc( sc );
+
   sc->string_pool[sc->string_pool_pos++] = 0;
 
   *synlist = lisp_vallist_create();
@@ -298,7 +303,7 @@ parse_symbol( ds_scheme_t *sc, char c, DS_OUT ds_scheme_synlist_t **synlist )
 }
 
 int
-lisp_lex( ds_scheme_t *sc, DS_OUT ds_scheme_synlist_t **synout )
+lisp_lex( ds_scheme_t *sc, int dep, DS_OUT ds_scheme_synlist_t **synout )
 {
   int rc = 0;
   register char ch;
@@ -343,7 +348,8 @@ lisp_lex( ds_scheme_t *sc, DS_OUT ds_scheme_synlist_t **synout )
       /* parse the pair */
       else if ( ch == '(' )
         {
-          if ( (rc = lisp_lex( sc, &synlist )) ) return rc;
+          rc = lisp_lex( sc, dep+1, &synlist );
+          if( rc == -DS_EOF ) break; else if( rc )  return rc;
         }
       else if ( ch == ')' )
         break;
@@ -365,5 +371,6 @@ lisp_lex( ds_scheme_t *sc, DS_OUT ds_scheme_synlist_t **synout )
 
   (*synout)->synnode.type = SCHEME_VAL_PAIR;
   (*synout)->child = synroot;
+
   return rc;
 }

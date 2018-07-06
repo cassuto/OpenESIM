@@ -19,27 +19,36 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "schemaview.h"
+
 namespace dsim
 {
 
-class SchemaView;
+class SchemaGraph;
+class SchemaSheet;
+class DomDataset;
 
 class SchemaWidget : public QWidget
 {
   Q_OBJECT
 
 public:
-  SchemaWidget( QWidget *parent );
+  SchemaWidget( QWidget *parent, SchemaSheet *sheet, DomDataset *dataset );
   ~SchemaWidget();
 
   void clear();
 
+  void setMode( DrawMode mode );
+
+  inline SchemaView *view() { return m_view; }
 
 public slots:
 
 private:
   QVBoxLayout  *m_verticalLayout;
-  SchemaView  *m_circView;
+  SchemaView  *m_view;
+  SchemaSheet *m_sheet;
+  DomDataset  *m_dom;
 };
 
 } // namespace dsim

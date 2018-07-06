@@ -24,7 +24,7 @@ C_DECLS
 
 char *ds_strdup(const char *src);
 int ds_strcasecmp( const char *s1, const char *s2 );
-int ds_strncasecmp( const char *s1, const char *s2, register int n );
+int ds_strncasecmp( const char *s1, const char *s2, int n );
 int ds_atoi( const char *src, int len, int DS_OUT *val );
 int ds_atof( const char *src, int len, float DS_OUT *val );
 int ds_atob(const char *src, int len, bool DS_OUT *bl);

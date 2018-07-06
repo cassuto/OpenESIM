@@ -21,17 +21,20 @@
 #endif
 
 #include <dsim/types.h>
+#include <dsim/circuit.h>
 
 class IDevice;
 
-typedef IDevice *(*pfn_device_construct)( const char *reference, int id );
+typedef IDevice *(*pfn_device_construct)( const char *reference, int id, circuit_t *circuit, void *reserved );
 
 class DeviceLibraryEntry
 {
 public:
-  DeviceLibraryEntry( const char *symbol_name_, const char *description_, const char *manufacturer_, pfn_device_construct construct_, void *reserved_ )
+  DeviceLibraryEntry( const char *symbol_name_, const char *category_,const char *sub_category_, const char *description_, const char *manufacturer_, pfn_device_construct construct_, void *reserved_ )
     : reserved( reserved_ ),
       symbol_name( symbol_name_ ),
+      category( category_ ),
+      sub_category( sub_category_ ),
       description( description_ ),
       manufacturer( manufacturer_ ),
       construct( construct_ )
@@ -40,6 +43,8 @@ public:
 public:
   void       *reserved;
   const char *symbol_name;
+  const char *category;
+  const char *sub_category;
   const char *description;
   const char *manufacturer;
   pfn_device_construct construct;

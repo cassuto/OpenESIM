@@ -30,6 +30,12 @@
 #define DS_SOLVE_MATRIX (11)
 #define DS_WRITE_FILE (12)
 #define DS_READ_FILE (13)
+#define DS_CREATE_FILE (14)
+#define DS_PARSE_SCHEMA (15)
+#define DS_INVALID_FILE_TYPE (16)
+#define DS_TYPE_MISMATCH (17)
+#define DS_INVALID_ELEMENT_ID (18)
+#define DS_SOLVE_SUBELEMENTS (19)
 
 #define UPDATE_RC(_rc_) do { if( _rc_ ) return _rc_; } while(0)
 

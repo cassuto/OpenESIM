@@ -35,7 +35,7 @@ int lisp_fault( ds_scheme_t *sc, const char *msg, ... );
 
 /* lisp-lexer.c */
 int lisp_lexer_init( ds_scheme_t *sc );
-int lisp_lex( ds_scheme_t *sc, DS_OUT ds_scheme_synlist_t **synout );
+int lisp_lex( ds_scheme_t *sc, int dep, DS_OUT ds_scheme_synlist_t **synout );
 
 #define fault_no_memory()           (lisp_fault(sc, "no memory\n"), -DS_NO_MEMORY)
 #define fault_unexpected_token()    (lisp_fault(sc, "unexpected token\n"), -DS_NO_MEMORY)

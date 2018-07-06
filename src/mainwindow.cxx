@@ -20,24 +20,25 @@
 #define TRACE_UNIT "mainwnd"
 #include <dsim/logtrace.h>
 
-#include <QtCore/QObject>
-#include <QtCore/QString>
-#include <QtGui/QtGui>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QMainWindow>
-#include <QtWidgets/QWidget>
-#include <QtWidgets/QMenu>
-#include <QtWidgets/QMenuBar>
-#include <QtWidgets/QToolBar>
-#include <QtWidgets/QMdiArea>
-#include <QtWidgets/QStatusBar>
-#include <QtWidgets/QLabel>
+#include <fstream>
+#include <sstream>
+#include <string>
 
+#include <QObject>
+#include <QString>
+#include <QtGui>
+#include <QApplication>
+#include <QtWidgets>
 #include <dsim/error.h>
 #include <dsim/version.h>
 
+#include "domdataset.h"
+#include "dompool.h"
 #include "schemawidget.h"
 #include "schemaeditorform.h"
+#include "schsymboleditorform.h"
+#include "templatestyle.h"
+
 #include "mainwindow.h"
 
 namespace dsim
@@ -46,6 +47,8 @@ namespace dsim
 MainWindow *MainWindow::m_pinstance = 0;
 
 MainWindow::MainWindow()
+          : m_template( new TemplateStyle )
+          , m_dompool( new DomPool )
 {
   this->setWindowTitle( appBanner );
 
@@ -67,22 +70,26 @@ MainWindow::~MainWindow()
 
 void MainWindow::readSettings()
 {
-  restoreGeometry( m_settings.value("geometry").toByteArray());
-  restoreState( m_settings.value("windowState").toByteArray());
+  restoreGeometry( settings()->value("geometry").toByteArray());
+  restoreState( settings()->value("windowState").toByteArray());
 }
 
 void MainWindow::writeSettings()
 {
-  m_settings.setValue( "geometry", saveGeometry() );
-  m_settings.setValue( "windowState", saveState() );
+  settings()->setValue( "geometry", saveGeometry() );
+  //settings()->setValue( "windowState", saveState() );
 }
 
 void MainWindow::closeEvent( QCloseEvent *event )
 {
-  // write the settings
-  MainWindow::instance()->settings().setValue( "geometry", saveGeometry() );
+  //writeSettings();
 
   event->accept();
+}
+
+QSize MainWindow::sizeHint () const
+{
+  return QSize( 1087, 572 );
 }
 
 /***************************************************
@@ -97,23 +104,27 @@ void MainWindow::createActions()
   fileNewProject = new QAction(QIcon((":/arts/filenew.png")), tr("&New project"), this);
   fileNewProject->setShortcut(Qt::CTRL+Qt::Key_N);
   fileNewProject->setStatusTip(tr("Create a new project."));
-  connect(fileNewProject, SIGNAL(triggered()), SLOT(slotFileNewProject()));
+  connect(fileNewProject, SIGNAL(triggered()), SLOT(onFileNewProject()));
 
   fileNewSchema = new QAction(tr("&New Schema file"), this);
   fileNewSchema->setStatusTip(tr("Create a new schema file."));
-  connect(fileNewSchema, SIGNAL(triggered()), SLOT(slotFileNewSchema()));
+  connect(fileNewSchema, SIGNAL(triggered()), SLOT(onFileNewSchema()));
+
+  fileNewSchemaSymbol = new QAction(tr("&New Schema Symbol file"), this);
+  fileNewSchemaSymbol->setStatusTip(tr("Create a new schema symbol file."));
+  connect(fileNewSchemaSymbol, SIGNAL(triggered()), SLOT(onFileNewSchemaSymbol()));
 
   fileOpen = new QAction(QIcon((":/arts/fileopen.png")), tr("&Open"), this);
   fileOpen->setStatusTip(tr("Open a file."));
-  connect(fileOpen, SIGNAL(triggered()), SLOT(slotFileOpen()));
+  connect(fileOpen, SIGNAL(triggered()), SLOT(onFileOpen()));
 
   fileSave = new QAction(QIcon((":/arts/filesave.png")), tr("&Save"), this);
   fileSave->setStatusTip(tr("Save the current file."));
-  connect(fileSave, SIGNAL(triggered()), SLOT(slotFileSave()));
+  connect(fileSave, SIGNAL(triggered()), SLOT(onFileSave()));
 
   fileQuit = new QAction(tr("&Quit"), this);
   fileQuit->setStatusTip(tr("Quit the dsim."));
-  connect(fileQuit, SIGNAL(triggered()), SLOT(slotFileQuit()));
+  connect(fileQuit, SIGNAL(triggered()), SLOT(onFileQuit()));
 }
 
 void MainWindow::createMenuBar()
@@ -121,11 +132,12 @@ void MainWindow::createMenuBar()
   /*
    * Menu entry file.
    */
-  fileMenu = new QMenu(tr("&File"));
+  fileMenu = new QMenu( tr("&File") );
   fileMenu->addAction(fileNewProject);
 
   QMenu *fileNewfilesMenu = new QMenu(tr("New..."));
-  fileNewfilesMenu->addAction(fileNewSchema);
+  fileNewfilesMenu->addAction( fileNewSchema );
+  fileNewfilesMenu->addAction( fileNewSchemaSymbol );
   fileMenu->addMenu(fileNewfilesMenu);
   fileMenu->addAction(fileOpen);
   fileMenu->addAction(fileSave);
@@ -140,7 +152,7 @@ void MainWindow::createToolBars()
   /*
    * ToolBar file.
    */
-  fileToolBar = new QToolBar(tr("File")); // toolBar file
+  fileToolBar = new QToolBar( tr("File") ); // toolBar file
   fileToolBar->addAction(fileNewProject);
   fileToolBar->addAction(fileOpen);
   fileToolBar->addAction(fileSave);
@@ -170,24 +182,59 @@ void MainWindow::createStatusBar()
   *****  Slot Responding                       *****
   ***************************************************/
 
-void MainWindow::slotFileNewProject()
+void MainWindow::onFileNewProject()
 {
-  newDocument();
+  newSchemaDocument();
 }
 
-void MainWindow::slotFileNewSchema()
+void MainWindow::onFileNewSchema()
 {
+  newSchemaDocument();
 }
 
-void MainWindow::slotFileOpen()
+void MainWindow::onFileNewSchemaSymbol()
 {
+  newSchemaSymbolDocument();
 }
 
-void MainWindow::slotFileSave()
+void MainWindow::onFileOpen()
 {
+  using namespace std;
+  QString filename = QFileDialog::getOpenFileName( this, tr("Open a file"), QString(), tr("Schema & Symbol files (*.sch *.ssym)") );
+  if( filename.length() )
+    {
+      QFileInfo file( filename );
+      string fn = filename.toStdString();
+
+      ifstream stream( fn.c_str() );
+      if( stream.good() )
+        {
+          if( file.suffix() == "sch" )
+            {
+              SchemaEditorForm *schema = newSchemaDocument();
+              MainWindow::instance()->processRc( schema->openSchemaFile( stream ) );
+            }
+          else if( file.suffix() == "ssym" )
+            {
+              SchSymbolEditorForm *symbol = newSchemaSymbolDocument();
+              MainWindow::instance()->processRc( symbol->openSymbolFile( stream ) );
+            }
+          else
+            {
+              MainWindow::instance()->processRc( -DS_INVALID_FILE_TYPE );
+            }
+        }
+      else
+        MainWindow::instance()->processRc( -DS_CREATE_FILE );
+    }
 }
 
-void MainWindow::slotFileQuit()
+void MainWindow::onFileSave()
+{
+
+}
+
+void MainWindow::onFileQuit()
 {
 }
 
@@ -196,19 +243,57 @@ void MainWindow::slotFileQuit()
   *****  Logical Functions                     *****
   ***************************************************/
 
-/**
- * Create a document and add it to document pool.
- * @return status code
- */
-int MainWindow::newDocument()
+void MainWindow::connectDocument( QObject *form )
 {
-  int rc;
+  connect( fileSave, SIGNAL(triggered()), form, SLOT(onFileSave()) );
+}
+
+SchemaEditorForm *MainWindow::newSchemaDocument()
+{
   SchemaEditorForm *schema = new SchemaEditorForm( 0l );
 
   this->workspace->addSubWindow( schema );
+
+  connectDocument( schema );
+
   schema->showMaximized();
-  return 0;
+  return schema;
 }
 
+SchSymbolEditorForm *MainWindow::newSchemaSymbolDocument()
+{
+  SchSymbolEditorForm *symbol = new SchSymbolEditorForm( 0l );
+
+  this->workspace->addSubWindow( symbol );
+
+  connectDocument( symbol );
+
+  symbol->showMaximized();
+  return symbol;
+}
+
+//
+// deal with the error code
+//
+void MainWindow::processRc( int rc )
+{
+  if( !rc ) return;
+
+  if( rc == -DS_NO_MEMORY ) noMemory();
+
+  std::stringstream ss;
+  ss << "An error has occurred.\n" << "rc = " << rc;
+  std::string s = ss.str();
+
+  QMessageBox::critical( this, tr("Fault"), s.c_str(), QMessageBox::Abort | QMessageBox::Cancel );
+}
+
+void MainWindow::noMemory()
+{
+  QMessageBox::critical( this, tr("No Memory"),
+                       tr("There is no memory left and the program must be terminated unexpectedly.\n"
+                          "However, we will try to backup the current document and then crash."),
+                       QMessageBox::Ok );
+}
 
 } // namespace dsim

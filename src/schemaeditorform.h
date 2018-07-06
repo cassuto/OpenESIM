@@ -16,7 +16,10 @@
 #ifndef SCHEMAEDITORFORM_H_
 #define SCHEMAEDITORFORM_H_
 
+#include <fstream>
 #include <QMainWindow>
+
+#include <device/libentry.h>
 
 class QAction;
 class QToolBar;
@@ -26,6 +29,8 @@ namespace dsim
 
 class ComponentPickWidget;
 class SchemaWidget;
+class DomDataset;
+class SchemaSheet;
 
 /***************************************************
   *****  Schema editor MDI sub window object   *****
@@ -38,10 +43,16 @@ public:
   SchemaEditorForm( QWidget *parent );
   ~SchemaEditorForm();
 
+  int openSchemaFile( std::ifstream & stream );
+
 private:
   void createActions();
   void createToolbars();
   void createWidgets();
+
+private slots:
+  void onDeviceInserted( const DeviceLibraryEntry *entry );
+  void onFileSave();
 
 private:
   QAction *modeSelection,
@@ -56,6 +67,10 @@ private:
   ComponentPickWidget *componentPick;
 
   SchemaWidget *schema;
+
+  DomDataset *dom;
+
+  SchemaSheet *schsheet;
 };
 
 } // namespace dsim

@@ -44,7 +44,7 @@ int dev_ks0108::init()
   return IDevice::baseinit( "d_ks0108" );
 }
 
-int dev_ks0108::render_frame( IGraph *graph )
+int dev_ks0108::render_frame( IDeviceGraph *graph )
 {
   return 0;
 }

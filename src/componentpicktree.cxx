@@ -13,6 +13,8 @@
  *  Lesser General Public License for more details.
  */
 
+#include <device/libentry.h>
+
 #include "componentpicktree.h"
 
 namespace dsim
@@ -25,17 +27,16 @@ ComponentPickTree::ComponentPickTree( QWidget* parent )
   setDragDropMode( QAbstractItemView::DragOnly );
   setIndentation( 12 );
   setRootIsDecorated( true );
-  setCursor( Qt::OpenHandCursor );
   headerItem()->setHidden( true );
-  setIconSize( QSize( 32, 24));
+  setIconSize( QSize( 16, 16));
 
   setContextMenuPolicy( Qt::CustomContextMenu );
 
   connect( this, SIGNAL(customContextMenuRequested(const QPoint&)),
-           this, SLOT  (slotContextMenu(const QPoint&)));
+           this, SLOT  (onContextMenu(const QPoint&)));
 
   connect( this, SIGNAL(itemPressed(QTreeWidgetItem*, int)),
-           this, SLOT  (slotItemClicked(QTreeWidgetItem*, int)) );
+           this, SLOT  (onItemClicked(QTreeWidgetItem*, int)) );
 }
 ComponentPickTree::~ComponentPickTree()
 {
@@ -61,42 +62,44 @@ void ComponentPickTree::addCategory( const QString &category )
   m_categories[category] = treeitem;
 }
 
-void ComponentPickTree::addComponent( const QString &name, const QString &category, const QString &type )
+void ComponentPickTree::addComponent( const QString &category, const DeviceLibraryEntry *entry )
 {
   QTreeWidgetItem* treeentry = m_categories[category];
 
   if( !treeentry ) return;
 
+  QTreeWidgetItemIterator it( this ); // check if there is no existing item before
+  while( *it )
+    {
+      if( (*it)->data( 0, Qt::UserRole + 100 ).value<void *>() == entry )
+        return;
+      it++;
+    }
+
   QTreeWidgetItem* treeitem =  new QTreeWidgetItem(0);
-  QFont font = treeitem->font(0);
-  font.setWeight( QFont::Bold );
-  treeitem->setFont( 0, font );
-  treeitem->setText( 0, name );
+  treeitem->setText( 0, entry->symbol_name );
   treeitem->setFlags( QFlag(32) );
   treeitem->setIcon( 0, QIcon(":arts/modecomponent.png") );
-  treeitem->setData( 0, Qt::UserRole, type );
+  treeitem->setData( 0, Qt::UserRole + 100, QVariant::fromValue( (void *)entry ) );
 
   treeentry->addChild( treeitem );
 }
 
 void ComponentPickTree::mouseReleaseEvent( QMouseEvent* event )
 {
-    setCursor( Qt::OpenHandCursor );
 }
 
-void ComponentPickTree::slotItemClicked( QTreeWidgetItem* item, int column)
+void ComponentPickTree::onItemClicked( QTreeWidgetItem* item, int column)
 {
   Q_UNUSED( column );
 
   if( !item ) return;
-
-  QString type = item->data(0, Qt::UserRole).toString();
-  if( type == "" ) return;
+  const DeviceLibraryEntry *entry = (const DeviceLibraryEntry *)(item->data( 0, Qt::UserRole + 100 ).value<void *>());
+  if( 0l == entry ) return;
 
   QMimeData *mimeData = new QMimeData;
 
-  mimeData->setText( item->text(0) );
-  mimeData->setHtml( type );
+  mimeData->setText( entry->symbol_name );
 
   QDrag *drag = new QDrag(this);
   drag->setMimeData(mimeData);
@@ -104,17 +107,17 @@ void ComponentPickTree::slotItemClicked( QTreeWidgetItem* item, int column)
   drag->exec( Qt::CopyAction | Qt::MoveAction, Qt::CopyAction );
 }
 
-void ComponentPickTree::slotContextMenu( const QPoint& point )
+void ComponentPickTree::onContextMenu( const QPoint& point )
 {
   QMenu menu;
 
   QAction* managePluginAction = menu.addAction( tr("Remove Component") );
-  connect( managePluginAction, SIGNAL(triggered()), this, SLOT(slotRemoveComponent()) );
+  connect( managePluginAction, SIGNAL(triggered()), this, SLOT(onRemoveComponent()) );
 
   menu.exec( mapToGlobal(point) );
 }
 
-void ComponentPickTree::slotRemoveComponent()
+void ComponentPickTree::onRemoveComponent()
 {
 
 }

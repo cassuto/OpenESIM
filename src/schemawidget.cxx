@@ -13,31 +13,37 @@
  *  Lesser General Public License for more details.
  */
 
+#include "schemasheet.h"
 #include "schemaview.h"
+#include "domdataset.h"
+
 #include "schemawidget.h"
 
 namespace dsim
 {
 
-SchemaWidget::SchemaWidget( QWidget *parent )
-    : QWidget( parent )
+SchemaWidget::SchemaWidget( QWidget *parent, SchemaSheet *sheet, DomDataset *dom )
+            : QWidget( parent )
+            , m_sheet( sheet )
+            , m_dom( dom )
 {
-  m_circView = new SchemaView( this );
+  m_view = new SchemaView( m_sheet, m_dom, this );
 
   m_verticalLayout = new QVBoxLayout( this );
   m_verticalLayout->setObjectName(tr("verticalLayout"));
   m_verticalLayout->setContentsMargins(0, 0, 0, 0);
   m_verticalLayout->setSpacing(0);
 
-  m_verticalLayout->addWidget( m_circView );
+  m_verticalLayout->addWidget( m_view );
 }
 
 SchemaWidget::~SchemaWidget()
 {}
 
 void SchemaWidget::clear()
-{
-  m_circView->clear();
-}
+{ m_view->clear(); }
+
+void SchemaWidget::setMode( DrawMode mode )
+{ m_view->setMode( mode ); }
 
 } // namespace dsim

@@ -96,6 +96,11 @@ circ_pin_t * IDevice::pin( int index )
   return m_mdel->pin_vector[index];
 }
 
+struct IRECT IDevice::get_bound()
+{
+  return IRECT( 0, 0, 0, 0 );
+}
+
 int IDevice::mdel_init()
   { return 0; }
 int IDevice::mdel_stamp()

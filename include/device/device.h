@@ -27,12 +27,24 @@ typedef struct circ_element_s circ_element_t;
 typedef struct circuit_s circuit_t;
 typedef struct circ_pin_s circ_pin_t;
 
-class IGraph;
+class IDeviceGraph;
 
 enum device_type
 {
   DEV_ANALOG = 0,
   DEV_DIGITAL
+};
+
+struct IRECT
+{
+public:
+  int x, y, w, h;
+
+public:
+  IRECT(int left, int top, int width, int height)
+    : x(left), y(top), w(width), h(height)
+  {}
+
 };
 
 class IDevice
@@ -44,11 +56,13 @@ public:
   //
   // Component Interface
   //
-  virtual int           init()=0;
+  virtual int           create() {return 0;}
+  virtual int           init() {return 0;}
   virtual int           pin_count();
   virtual circ_pin_t *  pin( int index );
-  virtual int           render_frame( IGraph *graph )=0;
-  virtual int           uninit()=0;
+  virtual struct IRECT  get_bound();
+  virtual int           render_frame( IDeviceGraph *graph ) {return 0;}
+  virtual int           uninit() { return 0; }
 
   //
   // Inline model Interface
@@ -79,9 +93,5 @@ protected:
   circ_element_t *m_mdel;
   circuit_t      *m_circuit;
 };
-
-int device_lib_init();
-const list_t *device_lib_get_list();
-void device_lib_uninit();
 
 #endif //!defined(CIRC_DEVICE_H_)

@@ -79,14 +79,6 @@ DEFS += $(DEFS.$(CONFIG_TARGET_ARCH)) $(DEFS.$(CONFIG_TARGET_OS))
 DEFS += OPENDSIM=1
 
 #########################################################################
-# Dependency rules
-
-DEPS += $(patsubst %.o,%.d,$(filter %.o,$(OBJS)))
-
--include *.d
--include $(DEPS)
-
-#########################################################################
 # Generic rules
 
 .PHONY: genclean

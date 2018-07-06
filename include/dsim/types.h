@@ -145,6 +145,11 @@ typedef void *(pfn_copy_elem)( void *dst_list, const void *src );
 /* callback function to free element in container */
 typedef void (pfn_free_elem)( void *elem );
 
+typedef struct ds_color_s
+{
+  int r, g, b;
+} ds_color_t;
+
 END_C_DECLS
 
 #endif //!defined(DS_TYPES_H_)

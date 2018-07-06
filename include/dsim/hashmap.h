@@ -105,6 +105,7 @@ hashmap_empty( hashmap_t *hashmap )
         (hashmap)->collected_root = _node_->next; \
       else \
         _node_ = (hashmap_node_t *)ds_heap_alloc(sizeof(type)); \
+      if( _node_ ) _node_->next = 0; \
       (hashmap_entry(_node_, type)); \
     })
 

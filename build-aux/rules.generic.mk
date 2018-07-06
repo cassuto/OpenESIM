@@ -1,5 +1,5 @@
 ## @file
-# Rules - generic
+# Rules - GCC generic
 #
 
 #
@@ -32,7 +32,7 @@ CXX := $(GXX)
 
 CFLAGS += -std=c99 -O1 -Wall -Wstrict-prototypes -Wno-unused-variable
 CXXFLAGS += -O1 -Wall -Wno-unused-variable
-LDFLAGS += -lstdc++
+LDFLAGS += -lstdc++ -lsupc++
 ARFLAGS +=
 
 ifeq ($(CONFIG_TARGET_OS),win32)
@@ -75,7 +75,7 @@ LDFLAGS  += $(addprefix -L, $(LIB_DIR)) $(addprefix -l, $(LIBS))
 	-@sed -i 's,\($(notdir $*)\)\.o[ :]*,$<.o: ,g' '$@'
 
 %.$(.EXEC):
-	$(call run-command,$(CC) $(filter %.o %.a,$^) $(LDFLAGS) -o $@,"  LINK      $@")
+	$(call run-command,$(CC) $(filter %.o,$^) $(LDFLAGS) -o $@,"  LINK      $@")
 ifneq ($(CONFIG_TESTCASE),y)
 	@$(MV) $@ $(SUB_DEPTH)/$(OUT_DIR)/$@
 endif

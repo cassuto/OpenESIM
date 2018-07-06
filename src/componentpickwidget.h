@@ -18,7 +18,10 @@
 
 #include <QDockWidget>
 
+class DeviceLibraryEntry;
+
 class QLineEdit;
+class QAction;
 
 namespace dsim
 {
@@ -32,6 +35,20 @@ class ComponentPickWidget : public QDockWidget
 public:
   ComponentPickWidget( QWidget *parent );
   ~ComponentPickWidget();
+
+  void addComponent( const DeviceLibraryEntry *entry );
+  void clearDevices();
+
+private:
+  void createWidgets();
+  void createActions();
+
+private slots:
+  void onInsertDevice();
+  void slotInsertDevice( const DeviceLibraryEntry *entry );
+
+signals:
+  void deviceInserted( const DeviceLibraryEntry *entry );
 
 private:
   QLineEdit         *filterText;

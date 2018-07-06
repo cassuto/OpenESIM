@@ -46,7 +46,7 @@ ds_strcasecmp( const char *s1, const char *s2 )
 }
 
 int
-ds_strncasecmp( const char *s1, const char *s2, register int n )
+ds_strncasecmp( const char *s1, const char *s2, int n )
 {
   while (--n >= 0 && toupper((unsigned char)*s1) == toupper((unsigned char)*s2++))
     if (*s1++ == '\0')  return 0;

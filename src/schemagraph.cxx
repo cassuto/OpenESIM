@@ -13,25 +13,23 @@
  *  Lesser General Public License for more details.
  */
 
+#include "schemaview.h"
+
 #include "schemagraph.h"
 
 namespace dsim
 {
 
-SchemaGraph*  SchemaGraph::m_pschemagraph = 0l;
-
-SchemaGraph::SchemaGraph( qreal x, qreal y, qreal width, qreal height, QGraphicsView*  parent)
-    : QGraphicsScene( x, y, width, height, (QObject*)parent )
+SchemaGraph::SchemaGraph( qreal x, qreal y, qreal width, qreal height, SchemaView*  parent)
+           : QGraphicsScene( x, y, width, height, (QObject*)parent )
+           , m_schemaView( parent )
 {
   setObjectName( "Circuit" );
   setParent( (QObject*)parent );
-  m_graphicView = parent;
   m_scenerect.setRect( x, y, width, height );
   setSceneRect( QRectF(x, y, width, height) );
 
   m_paintGrid = true;
-
-  m_pschemagraph = this;
 }
 
 SchemaGraph::~SchemaGraph()
