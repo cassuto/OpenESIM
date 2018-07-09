@@ -36,6 +36,8 @@ OUT_TESTS_DIR = testcase
 LIBOPENDSIM := $(SUB_DEPTH)/$(OUT_DIR)/libopendsim.$(.LIB)
 LIBDSIMMODEL := $(SUB_DEPTH)/$(OUT_DIR)/libdsimmodel.$(.LIB)
 LIBDSIMDEVICE := $(SUB_DEPTH)/$(OUT_DIR)/libdsimdevice.$(.LIB)
+INCS += $(SUB_DEPTH)/src-core
+INCS += $(SUB_DEPTH)/src-frontend
 
 #########################################################################
 # Toolchain

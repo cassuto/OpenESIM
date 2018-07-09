@@ -123,6 +123,7 @@ typedef struct ds_scheme_symbol_s
 
 /* lisp.c */
 ds_scheme_t *lisp_create( ds_scheme_pfn_read stream_in_read, void *stream_opaque );
+int lisp_lex_all( ds_scheme_t *sc, DS_OUT ds_scheme_synlist_t **synout );
 int lisp_eval( ds_scheme_t *sc );
 int lisp_print( ds_scheme_vallist_t *vallist, char *buff, int maxlen );
 void lisp_release( ds_scheme_t *sc );
@@ -146,6 +147,12 @@ void lisp_parse_free( const ds_scheme_synlist_t *synlist, ds_scheme_vallist_t *v
 }
 
 /* opaque for stream callback */
+static inline void
+lisp_set_stream_opaque( ds_scheme_t *sc, void *opaque )
+{
+  sc->stream_opaque = opaque;
+}
+
 static inline void *
 lisp_get_stream_opaque( ds_scheme_t *sc )
 {

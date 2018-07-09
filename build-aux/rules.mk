@@ -57,7 +57,7 @@ endif # !defined(MAK_CONFIG_QUIET)
 #########################################################################
 # Define the generic parametrs
 
-INCS += $(SUB_DEPTH)/src ./ ./include
+INCS += ./ ./include
 INCS += $(SUB_DEPTH)/$(OUT_DIR)
 INCS += $(SUB_DEPTH) $(SUB_DEPTH)/include
 DEFS +=
@@ -77,13 +77,5 @@ DEFS.openbsd = OS_OPENBSD
 DEFS += $(DEFS.$(CONFIG_TARGET_ARCH)) $(DEFS.$(CONFIG_TARGET_OS))
 
 DEFS += OPENDSIM=1
-
-#########################################################################
-# Generic rules
-
-.PHONY: genclean
-
-genclean:
-	-$(RM) -f *.moc.cxx *.rcc.cxx *.o $(OBJS) *.d $(DEPS) *.$(.EXEC) *.$(.LIB) *.$(.DLIB) *.$(.SYSMOD)
 
 endif # ifndef RULES_MK_

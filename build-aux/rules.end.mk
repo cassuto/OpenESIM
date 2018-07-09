@@ -30,4 +30,12 @@ $(info deps:$(DEPS))
 -include *.d
 -include $(DEPS)
 
+#########################################################################
+# Generic rules
+
+.PHONY: genclean
+
+genclean:
+	-$(RM) -f *.moc.cxx *.rcc.cxx *.o $(OBJS) *.d $(DEPS) *.$(.EXEC) *.$(.LIB) *.$(.DLIB) *.$(.SYSMOD)
+
 endif # ifndef RULESEND_MK_

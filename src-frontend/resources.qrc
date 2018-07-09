@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>bitmaps/filenew.png</file>
+        <file>bitmaps/fileopen.png</file>
+        <file>bitmaps/filesave.png</file>
+        <file>bitmaps/insertdevice.png</file>
+        <file>bitmaps/modeselection.png</file>
+        <file>bitmaps/modecomponent.png</file>
+        <file>bitmaps/modejunctiondot.png</file>
+        <file>bitmaps/modelabel.png</file>
+        <file>bitmaps/modescript.png</file>
+        <file>bitmaps/modebus.png</file>
+        <file>bitmaps/modesubcircuit.png</file>
+        <file>bitmaps/modepin.png</file>
+        <file>bitmaps/modeline.png</file>
+        <file>bitmaps/modetext.png</file>
+        <file>bitmaps/moderect.png</file>
+        <file>bitmaps/moderound.png</file>
+    </qresource>
+</RCC>
