@@ -22,6 +22,10 @@
 
 USING_QT5 = y
 
+#DEFS.qt.debug = QT_FORCE_ASSERTS
+#DEFS.qt.release =
+#DEFS += $(DEFS.qt.$(CONFIG_MAK_TYPE))
+
 include $(SUB_DEPTH)/config.mk
 include $(SUB_DEPTH)/build-aux/rules.mk
 
@@ -39,7 +43,7 @@ OBJS += $(foreach src,$(QT_SRCS),$(patsubst %.cxx,%.moc.cxx.o,$(src)))
 
 OBJS += $(foreach src,$(QT_RCCS),$(patsubst %.qrc,%.rcc.cxx.o,$(src)))
 
-FILTEROUT_OBJDEP += %.moc.cxx.o %.rcc.cxx.o
+FILTEROUT_OBJDEP += %.rcc.cxx.o
 
 #########################################################################
 # building files

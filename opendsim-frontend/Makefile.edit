@@ -1,0 +1,64 @@
+.PHONY: all clean subs subsclean
+
+SUB_DEPTH = ./..
+
+include $(SUB_DEPTH)/autoconf.mk
+
+CXXFLAGS += -Wno-unused-function -Wno-unused-but-set-variable
+
+#########################################################################
+# Targets.
+
+TARGET = opendsim-edit.$(.EXEC)
+LIBS += dsimdevice opendsim dsimmodel 
+
+OBJS += opendsim-edit.cxx.o \
+		componentgraph.cxx.o \
+		lispdataset.cxx.o \
+		domitem.cxx.o \
+		idallocator.cxx.o \
+		schemasheet.cxx.o \
+		templatestyle.cxx.o \
+		elementbase.cxx.o \
+		componentgraphitem.cxx.o \
+    	elementpin.cxx.o \
+      	elementtext.cxx.o \
+      	elementrect.cxx.o \
+		elementline.cxx.o \
+      	staffgraphitem.cxx.o \
+      	staffpad.cxx.o \
+      	schemaviewactions.cxx.o \
+
+QT_RCCS += resources.qrc
+
+QT_SRCS += mainwindow.cxx \
+          schemawidget.cxx \
+          schemaview.cxx \
+          schemagraph.cxx \
+          schemaeditorform.cxx \
+          componentpickwidget.cxx \
+          componentpicktree.cxx \
+          componentlibrarydialog.cxx \
+
+#########################################################################
+# Building rules.
+
+include $(SUB_DEPTH)/build-aux/rules.qt5.mk
+include $(SUB_DEPTH)/build-aux/rules.generic.mk
+include $(SUB_DEPTH)/build-aux/rules.end.mk
+
+elementgraphitem.h: elementgraphitemfunctions.hxx
+templatestyle.h: templatestylefunctions.hxx
+lispdataset.h: lispdatasetfunctions.hxx
+
+all: subs $(TARGET)
+
+$(TARGET): $(OBJS) $(LIBDSIMDEVICE) $(LIBOPENDSIM) $(LIBDSIMMODEL)
+
+clean: subsclean genclean
+
+subs:
+	$(MAKE) -C devices all
+	
+subsclean:
+	$(MAKE) -C devices clean

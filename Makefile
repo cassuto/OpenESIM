@@ -37,13 +37,13 @@ include config.mk
 # note! the following code required a unix shell.
 
 all: $(OUT_DIR) version
-	$(MAKE) -C $(SUB_DEPTH)/src-core -f Makefile.lib all
-	$(MAKE) -C $(SUB_DEPTH)/src-frontend -f Makefile.edit all
+	$(MAKE) -C $(SUB_DEPTH)/opendsim-core -f Makefile.lib all
+	$(MAKE) -C $(SUB_DEPTH)/opendsim-frontend -f Makefile.edit all
 #	$(MAKE) -C $(SUB_DEPTH)/testcase all
 
 clean:
-	$(MAKE) -C $(SUB_DEPTH)/src-core -f Makefile.edit clean
-	$(MAKE) -C $(SUB_DEPTH)/src-frontend -f Makefile.lib clean
+	$(MAKE) -C $(SUB_DEPTH)/opendsim-core -f Makefile.edit clean
+	$(MAKE) -C $(SUB_DEPTH)/opendsim-frontend -f Makefile.lib clean
 	$(MAKE) -C $(SUB_DEPTH)/testcase clean
 	-$(RM) -f out/*.$(.EXEC) out/*.$(.LIB) *.$(.DLIB) *.$(.SYSMOD) out/*.h
 
