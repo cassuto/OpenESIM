@@ -14,7 +14,7 @@
  */
 
 #include <dsim/error.h>
-
+#include <cstdio>
 #include "lispdataset.h"
 #include "componentgraphitem.h"
 #include "elementtext.h"
@@ -24,21 +24,20 @@
 namespace dsim
 {
 
-ElementPin::ElementPin( ElemDirect direct, const QPointF &pos, ElementText *text, int id, SchemaGraph *scene, bool editable, QGraphicsItem *parent )
+ElementPin::ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symbol, int id, SchemaGraph *scene, bool editable, QGraphicsItem *parent )
           : ElementGraphItem<QGraphicsItem>( id, scene, editable, parent )
-          , m_symbolLabel( text )
+          , m_symbolLabel( symbol )
 {
-  setFlag( QGraphicsItem::ItemStacksBehindParent, true );
-  setFlag( QGraphicsItem::ItemIsSelectable, true );
+  setStyle( "pin" );
   setBoundingRect( QRect(-4, -4, 12, 8) );
 
   setPos( pos );
   setDirect( direct );
-  setLength( 32 );
+  setLength( 16 );
 
   if( !editable ) setCursor( Qt::CrossCursor );
 
-  setSub( text );
+  setSub( symbol );
 }
 
 ElementPin::~ElementPin()
@@ -87,7 +86,7 @@ void ElementPin::setLayout()
 {
   if( !m_symbolLabel ) return;
 
-  QFontMetrics fm( m_symbolLabel->font() );
+  QRectF symbolBound = m_symbolLabel->boundingRect();
 
   int xlabelpos = pos().x();
   int ylabelpos = pos().y();
@@ -95,26 +94,26 @@ void ElementPin::setLayout()
   switch( m_direct )
   {
     case ELEM_RIGHT:
-      xlabelpos -= fm.width(m_symbolLabel->text())+m_length+1;
+      xlabelpos -= symbolBound.width()+m_length+4;
       ylabelpos -= 5;
       m_symbolLabel->setDirect( ELEM_LEFT );
       break;
 
     case ELEM_TOP:
       xlabelpos += 5;
-      ylabelpos += m_length+1;
+      ylabelpos += m_length+4;
       m_symbolLabel->setDirect( m_direct );
       break;
 
     case ELEM_LEFT:
-      xlabelpos += m_length+1;
+      xlabelpos += m_length+4;
       ylabelpos -= 5;
       m_symbolLabel->setDirect( ELEM_LEFT );
       break;
 
     case ELEM_BOTTOM:
       xlabelpos -= 5;
-      ylabelpos -= m_length+1;
+      ylabelpos -= m_length+4;
       m_symbolLabel->setDirect( m_direct );
       break;
   }
@@ -161,19 +160,21 @@ void ElementPin::paint( QPainter* painter, const QStyleOptionGraphicsItem* optio
 {
   Q_UNUSED(option); Q_UNUSED(widget);
 
-  QPen pen(Qt::black, 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
+  Templatestyle::apply( painter, style(), isSelected() );
 
-  if( isSelected() ) pen.setColor( Qt::darkGray);
-
+  QPen pen = painter->pen();
+  pen.setCapStyle( Qt::SquareCap );
+  pen.setJoinStyle( Qt::RoundJoin );
   painter->setPen( pen );
 
   if( m_length < 1 ) m_length = 1;
   painter->drawLine( 0, 0, m_length-1, 0);
-
+/*
   pen.setColor( Qt::red );
   pen.setWidthF( 0.7 );
   painter->setPen( pen );
   painter->drawEllipse( -4, -4, 8, 8 );
+  */
 }
 
 }

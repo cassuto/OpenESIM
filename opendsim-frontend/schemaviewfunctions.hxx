@@ -13,35 +13,37 @@
  *  Lesser General Public License for more details.
  */
 
-#include <dsim/error.h>
+#ifndef SCHEMAVIEW_H_
+# include "schemaview.h"
+#endif
 
-#include "Schemaview.h"
+#ifndef SCHEMAVIEWFUNCTIONS_H_
+#define SCHEMAVIEWFUNCTIONS_H_
 
-#include "staffpad.h"
+#include "elementbase.h"
 
 namespace dsim
 {
 
-StaffPad::StaffPad( int index, const QPointF &pos, SchemaGraph *schgraph, QGraphicsItem *parent, StaffEvents* events )
-          : StaffGraphItem( index, schgraph, parent, events )
-{
-  setPos( pos );
-  setBoundingRect( QRect( 0, 0, 4, 4 ) );
-}
-
-StaffPad::~StaffPad()
-{
-}
-
-void StaffPad::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
-{
-  QBrush brush = painter->brush();
-  brush.setStyle( Qt::SolidPattern );
-  brush.setColor( Qt::red );
-  painter->setBrush( brush );
-  painter->setPen( Qt::red );
-
-  painter->drawRect( boundingRect() );
-}
+// T must be a subclass of ElementGraphItem<>
+template <typename T>
+  bool SchemaView::keyPressRotate( QKeyEvent *event, T *element )
+  {
+    if( event->key() == Qt::Key_Space )
+      {
+        if( element )
+          {
+            if( m_hintDirect < ELEM_BOTTOM )
+              ++m_hintDirect;
+            else
+              m_hintDirect = 0;
+            element->setDirect( (ElemDirect)m_hintDirect );
+            return false;
+          }
+      }
+    return true;
+  }
 
 }
+
+#endif

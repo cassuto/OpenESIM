@@ -81,8 +81,8 @@ void SchemaEditorForm::createActions()
   modeDrawLine->setStatusTip(tr("Drawing a line..."));
   modeDrawRect = new QAction(QIcon((":/bitmaps/moderect.png")), tr("Drawing a rectangle"), this);
   modeDrawRect->setStatusTip(tr("Drawing a rectangle..."));
-  modeDrawRound = new QAction(QIcon((":/bitmaps/moderound.png")), tr("Drawing a round"), this);
-  modeDrawRound->setStatusTip(tr("Drawing a round..."));
+  modeDrawEllipse = new QAction(QIcon((":/bitmaps/modeellipse.png")), tr("Drawing a ellipse"), this);
+  modeDrawEllipse->setStatusTip(tr("Drawing a ellipse..."));
   modeDrawText = new QAction(QIcon((":/bitmaps/modetext.png")), tr("Drawing a text"), this);
   modeDrawText->setStatusTip(tr("Drawing a text..."));
 
@@ -92,7 +92,7 @@ void SchemaEditorForm::createActions()
 
   connect( modeDrawRect, SIGNAL(triggered()), this, SLOT(onModeRect()) );
 
-  connect( modeDrawRound, SIGNAL(triggered()), this, SLOT(onModeRound()) );
+  connect( modeDrawEllipse, SIGNAL(triggered()), this, SLOT(onModeEllipse()) );
 
   connect( modeDrawText, SIGNAL(triggered()), this, SLOT(onModeText()) );
 
@@ -124,7 +124,7 @@ void SchemaEditorForm::createToolbars()
     }
   modeToolBar->addAction( modeDrawLine );
   modeToolBar->addAction( modeDrawRect );
-  modeToolBar->addAction( modeDrawRound );
+  modeToolBar->addAction( modeDrawEllipse );
   modeToolBar->addAction( modeDrawText );
   modeToolBar->addAction( modeDrawScript );
 
@@ -190,8 +190,8 @@ void SchemaEditorForm::onModeLine()
 { schema->setMode( MODE_LINE ); }
 void SchemaEditorForm::onModeRect()
 { schema->setMode( MODE_RECT ); }
-void SchemaEditorForm::onModeRound()
-{ schema->setMode( MODE_ROUND ); }
+void SchemaEditorForm::onModeEllipse()
+{ schema->setMode( MODE_ELLIPSE ); }
 void SchemaEditorForm::onModeText()
 { schema->setMode( MODE_TEXT ); }
 void SchemaEditorForm::onModeScript()

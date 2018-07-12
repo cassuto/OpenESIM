@@ -15,6 +15,6 @@
         <file>bitmaps/modeline.png</file>
         <file>bitmaps/modetext.png</file>
         <file>bitmaps/moderect.png</file>
-        <file>bitmaps/moderound.png</file>
+        <file>bitmaps/modeellipse.png</file>
     </qresource>
 </RCC>

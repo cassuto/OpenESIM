@@ -26,6 +26,7 @@
 #include "elementtext.h"
 #include "elementpin.h"
 #include "elementrect.h"
+#include "elementellipse.h"
 
 #include "schemaview.h"
 
@@ -63,9 +64,11 @@ SchemaView::SchemaView( SchemaSheet *sheet, QWidget *parent )
   m_hintElement = 0l;
   m_hintComponent = 0l;
   m_hintDirect = ELEM_LEFT;
+  m_hintCount = 0;
   m_moving = false;
   m_mousePressEvent = 0l;
   m_mouseMoveEvent = 0l;
+  m_resetEvent = 0l;
 
   setMode( MODE_SELECTION );
 }
@@ -89,7 +92,7 @@ void SchemaView::clear()
 }
 
 
-ElementBase *SchemaView::createElement( const char *classname, const QPoint &pos, bool editable, bool deser )
+ElementBase *SchemaView::createElement( const char *classname, const QPointF &pos, bool editable, bool deser )
 {
   int id = 0;
   ElementBase *element = 0l;
@@ -116,6 +119,11 @@ ElementBase *SchemaView::createElement( const char *classname, const QPoint &pos
     {
       ElementRect *rectElement = new ElementRect( QRectF( pos, pos ), id, m_schemaGraph, editable );
       element = rectElement;
+    }
+  else if( 0==std::strcmp( classname, "ellipse" ) )
+    {
+      ElementEllipse *ellipseElement = new ElementEllipse( QRectF( pos, pos ), id, m_schemaGraph, editable );
+      element = ellipseElement;
     }
 
   element->addToScene( m_schemaGraph );
@@ -303,9 +311,11 @@ void SchemaView::mouseReleaseEvent( QMouseEvent *event )
 void SchemaView::keyPressEvent( QKeyEvent *event )
 {
   if( m_keyPressEvent && !(this->*m_keyPressEvent)( event ) )
-      return;
+    return;
   if( event->key() == Qt::Key_Shift )
     setDragMode( QGraphicsView::ScrollHandDrag );
+  if( event->key() == Qt::Key_Escape )
+    setMode( MODE_SELECTION );
   if( event->key() == Qt::Key_Delete )
     {
       foreach( QGraphicsItem *item, m_schemaGraph->selectedItems() )

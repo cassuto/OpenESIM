@@ -50,6 +50,11 @@ template <class T>
     inline bool editable() const { return m_editable; }
 
   protected:
+    void mousePressEvent( QGraphicsSceneMouseEvent *event );
+    void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
+    void mouseReleaseEvent( QGraphicsSceneMouseEvent *event );
+
+  protected:
     bool                      m_editable;
     ElemDirect                m_direct;
     std::string               m_style;
@@ -57,7 +62,7 @@ template <class T>
 
 static ElementBase *elementbase_cast( QGraphicsItem *graphicsItem )
 {
-  return static_cast<ElementBase *>( (graphicsItem->data( 1 ).value<void *>()) );
+  return static_cast<ElementBase *>( (graphicsItem->data(0).value<void *>()) );
 }
 
 }

@@ -257,8 +257,10 @@ void MainWindow::processRc( int rc )
 
   if( rc == -DS_NO_MEMORY ) noMemory();
 
+  //const ds_error_info_t *error = ds_get_error( rc );
+
   std::stringstream ss;
-  ss << "An error has occurred.\n" << "rc = " << rc;
+  ss << "An error has occurred.\n" << "rc = " << rc /*<< "(" << error->msgDefine << ") :" << error->msgFull*/;
   std::string s = ss.str();
 
   QMessageBox::critical( this, tr("Fault"), s.c_str(), QMessageBox::Abort | QMessageBox::Cancel );

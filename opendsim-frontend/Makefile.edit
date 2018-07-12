@@ -25,6 +25,7 @@ OBJS += opendsim-edit.cxx.o \
       	elementtext.cxx.o \
       	elementrect.cxx.o \
 		elementline.cxx.o \
+		elementellipse.cxx.o \
       	staffgraphitem.cxx.o \
       	staffpad.cxx.o \
       	schemaviewactions.cxx.o \
@@ -39,6 +40,7 @@ QT_SRCS += mainwindow.cxx \
           componentpickwidget.cxx \
           componentpicktree.cxx \
           componentlibrarydialog.cxx \
+          textsettingsdialog.cxx \
 
 #########################################################################
 # Building rules.

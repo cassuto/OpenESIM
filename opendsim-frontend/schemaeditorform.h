@@ -56,7 +56,7 @@ private slots:
   void onModePin();
   void onModeLine();
   void onModeRect();
-  void onModeRound();
+  void onModeEllipse();
   void onModeText();
   void onModeScript();
 
@@ -72,7 +72,7 @@ private:
   QAction *modeDrawPin,
           *modeDrawLine,
           *modeDrawRect,
-          *modeDrawRound,
+          *modeDrawEllipse,
           *modeDrawText;
 
   QToolBar *modeToolBar;

@@ -64,7 +64,16 @@ StyleItem Templatestyle::lineStyle( const char *styleName, bool selected )
       if( selected )
         { style.color.r = 128; style.color.g = 0; style.color.b = 0; }
       else
-        { style.color.r = 0; style.color.g = 0; style.color.b = 0; }
+        { style.color.r = 0; style.color.g = 128; style.color.b = 255; }
+    }
+  else if( 0 == strcmp( styleName, "wire" ) )
+    {
+      style.line = LINE_SOLID;
+      style.width = 1.0f;
+      if( selected )
+        { style.color.r = 128; style.color.g = 0; style.color.b = 0; }
+      else
+        { style.color.r = 128; style.color.g = 0; style.color.b = 128; }
     }
   return style;
 }
@@ -90,36 +99,18 @@ StyleItem Templatestyle::textStyle( const char *styleName, bool selected )
       if( selected )
         { style.color.r = 128; style.color.g = 0; style.color.b = 0; }
       else
-        { style.color.r = 0; style.color.g = 0; style.color.b = 128; }
-      style.weight = 12;
+        { style.color.r = 128; style.color.g = 0; style.color.b = 128; }
+      style.size = 8;
     }
   else if( 0 == strcmp( styleName, "pin" ) )
     {
       if( selected )
         { style.color.r = 128; style.color.g = 0; style.color.b = 0; }
       else
-        { style.color.r = 128; style.color.g = 0; style.color.b = 0; }
-      style.weight = 12;
+        { style.color.r = 0; style.color.g = 0; style.color.b = 255; }
+      style.size = 8;
     }
   return style;
-}
-
-void Templatestyle::applyStyle( QGraphicsSimpleTextItem *text, const char *style, bool selected )
-{
-  if( !Templatestyle::instance()->isStyle( style ) )
-      return;
-
-  StyleItem s = Templatestyle::instance()->textStyle( style, selected );
-
-  QFont font = text->font();
-  font.setWeight( s.weight );
-  font.setBold( s.bold );
-  font.setItalic( s.italic );
-  text->setFont( font );
-
-  QBrush brush = text->brush();
-  brush.setColor( QColor( s.color.r, s.color.g, s.color.b ) );
-  text->setBrush( brush );
 }
 
 Qt::PenStyle Templatestyle::toQtPenStyle( LineStyle line )

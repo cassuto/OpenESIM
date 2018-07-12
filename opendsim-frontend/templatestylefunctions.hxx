@@ -29,7 +29,7 @@ namespace dsim
 {
 
 template <class T>
-  void Templatestyle::applyStyle( T *painter, const char *style, bool selected )
+  void Templatestyle::apply( T *painter, const char *style, bool selected )
   {
     if( !Templatestyle::instance()->isStyle( style ) )
       return;
@@ -58,6 +58,25 @@ template <class T>
 
     painter->setBrush( brush );
     painter->setPen( pen );
+  }
+
+template <>
+  inline void Templatestyle::apply( QGraphicsSimpleTextItem *text, const char *style, bool selected )
+  {
+    if( !Templatestyle::instance()->isStyle( style ) )
+        return;
+
+    StyleItem s = Templatestyle::instance()->textStyle( style, selected );
+
+    QFont font = text->font();
+    font.setPointSize( s.size );
+    font.setBold( s.bold );
+    font.setItalic( s.italic );
+    text->setFont( font );
+
+    QBrush brush = text->brush();
+    brush.setColor( QColor( s.color.r, s.color.g, s.color.b ) );
+    text->setBrush( brush );
   }
 
 }

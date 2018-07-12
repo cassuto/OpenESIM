@@ -29,7 +29,7 @@ namespace dsim
 class StyleItem
 {
 public:
-  StyleItem() : line( LINE_SOLID ), brush( BRUSH_NONE ), width( 1.0 ), weight( 0 ), bold( false )
+  StyleItem() : line( LINE_SOLID ), brush( BRUSH_NONE ), width( 1.0 ), size( 0 ), bold( false )
               , italic( false )
     {
       color.r = color.g = color.b = -1;
@@ -41,7 +41,7 @@ public:
   float         width;
   ds_color_t    color;
   bool          usebkcolor;
-  int           weight;
+  int           size; // 1 points = 1/72 inch
   bool          bold;
   bool          italic;
 };
@@ -63,10 +63,8 @@ public:
   static Qt::PenStyle toQtPenStyle( LineStyle line );
   static Qt::BrushStyle toQtBrushStyle( BrushStyle brush );
 
-  void applyStyle( QGraphicsSimpleTextItem *text, const char *style, bool selected );
-
   template<class T>
-    static void applyStyle( T *painter, const char *style, bool selected );
+    static void apply( T *painter, const char *style, bool selected );
 
 private:
   static Templatestyle *m_ptemplatestyle;

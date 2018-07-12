@@ -17,6 +17,7 @@
 
 #include "templatestyle.h"
 #include "lispdataset.h"
+#include "textsettingsdialog.h"
 
 #include "elementtext.h"
 
@@ -87,9 +88,21 @@ int ElementText::deserialize( LispDataset *dataset )
   return rc;
 }
 
+void ElementText::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
+{
+  if( event->button() == Qt::LeftButton )
+    {
+      TextSettingsDialog settings( text() );
+      if( settings.exec() == QDialog::Accepted )
+        {
+          setText( settings.text() );
+        }
+    }
+}
+
 void ElementText::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
 {
-  Templatestyle::applyStyle( this, style(), isSelected() );
+  Templatestyle::apply( static_cast<QGraphicsSimpleTextItem *>(this), style(), isSelected() );
 
   QGraphicsSimpleTextItem::paint( painter, option, widget );
 }

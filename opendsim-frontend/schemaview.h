@@ -34,7 +34,7 @@ enum DrawMode
   MODE_LINE,
   MODE_TEXT,
   MODE_RECT,
-  MODE_ROUND,
+  MODE_ELLIPSE,
   MODE_SCRIPT,
   MODE_COMPONENT
 };
@@ -46,7 +46,8 @@ class ComponentGraphItem;
 class SchemaView;
 
 typedef bool (SchemaView::*pfnMouseEvent)( QMouseEvent* );
-typedef bool (SchemaView::*pfnkeyEvent)( QKeyEvent *event );
+typedef bool (SchemaView::*pfnKeyEvent)( QKeyEvent *event );
+typedef void (SchemaView::*pfnResetEvent)();
 
 class SchemaView : public QGraphicsView, public DomItem
 {
@@ -62,7 +63,7 @@ public:
 
   void setMode( DrawMode mode );
 
-  ElementBase *createElement( const char *classname, const QPoint &pos, bool editable = true, bool deser = false );
+  ElementBase *createElement( const char *classname, const QPointF &pos, bool editable = true, bool deser = false );
   void removeElement( ElementBase *element );
 
   int serialize( LispDataset *dom );
@@ -115,28 +116,42 @@ private: // schemaviewactions.cxx
   bool mouseReleaseSelect( QMouseEvent *event );
   bool mousePressComponent( QMouseEvent *event );
   bool mouseMoveComponent( QMouseEvent *event );
-  bool mousePressLine( QMouseEvent *event );
-  bool mouseMoveLine( QMouseEvent *event );
-  bool mouseReleaseLine( QMouseEvent *event );
-  bool mousePressRect( QMouseEvent *event );
-  bool mouseMoveRect( QMouseEvent *event );
-  bool mouseReleaseRect( QMouseEvent *event );
   bool mousePressPin( QMouseEvent *event );
   bool mouseMovePin( QMouseEvent *event );
+  bool mousePressLine( QMouseEvent *event );
+  bool mouseMoveLine( QMouseEvent *event );
+  bool mousePressRect( QMouseEvent *event );
+  bool mousePressText( QMouseEvent *event );
+  bool mouseMoveText( QMouseEvent *event );
+  bool mouseMoveRect( QMouseEvent *event );
+  bool mouseReleaseRect( QMouseEvent *event );
+  bool mousePressEllipse( QMouseEvent *event );
+  bool mouseMoveEllipse( QMouseEvent *event );
+  bool mouseReleaseEllipse( QMouseEvent *event );
   bool keyPressComponent( QKeyEvent *event );
   bool keyPressPin( QKeyEvent *event );
+  bool keyPressText( QKeyEvent *event );
+  void resetLine();
+
+  // T must be a subclass of ElementGraphItem<>
+  template <typename T>
+    bool keyPressRotate( QKeyEvent *event, T *element );
 
   DrawMode      m_mode;
   ElementBase  *m_hintElement;
   ComponentGraphItem *m_hintComponent;
   int           m_hintDirect;
+  int           m_hintCount;
   bool          m_moving;
   pfnMouseEvent m_mousePressEvent;
   pfnMouseEvent m_mouseMoveEvent;
   pfnMouseEvent m_mouseReleaseEvent;
-  pfnkeyEvent   m_keyPressEvent;
+  pfnKeyEvent   m_keyPressEvent;
+  pfnResetEvent m_resetEvent;
 };
 
 }
+
+#include "schemaviewfunctions.hxx"
 
 #endif

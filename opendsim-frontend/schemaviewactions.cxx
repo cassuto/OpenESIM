@@ -22,6 +22,7 @@
 #include "elementtext.h"
 #include "elementpin.h"
 #include "elementrect.h"
+#include "elementellipse.h"
 
 #include "schemaview.h"
 
@@ -41,7 +42,7 @@ void SchemaView::setMode( DrawMode mode )
     case MODE_LINE:
     case MODE_TEXT:
     case MODE_RECT:
-    case MODE_ROUND:
+    case MODE_ELLIPSE:
     case MODE_SCRIPT:
     case MODE_COMPONENT:
       this->setCursor( QCursor( Qt::CrossCursor ));
@@ -51,6 +52,7 @@ void SchemaView::setMode( DrawMode mode )
   switch( mode )
   {
     case MODE_SELECTION:
+      if( m_resetEvent ) (this->*m_resetEvent)();
       if ( m_hintElement )
         {
           removeElement( m_hintElement );
@@ -62,6 +64,7 @@ void SchemaView::setMode( DrawMode mode )
       m_mouseMoveEvent = &mouseMoveSelect;
       m_mouseReleaseEvent = &mouseReleaseSelect;
       m_keyPressEvent = 0l;
+      m_resetEvent = 0l;
       break;
 
     case MODE_PIN:
@@ -71,25 +74,23 @@ void SchemaView::setMode( DrawMode mode )
 
         m_hintElement = createElement( "pin", QPoint( 0, 0 ) );
         ((ElementPin *)m_hintElement)->setSub( (ElementText *)symbol );
-
         ((ElementPin *)m_hintElement)->setVisible( false );
 
         m_mousePressEvent = &mousePressPin;
         m_mouseMoveEvent = &mouseMovePin;
         m_mouseReleaseEvent = 0l;
         m_keyPressEvent = &keyPressPin;
+        m_resetEvent = 0l;
         break;
       }
 
     case MODE_LINE:
       {
-        m_hintElement = createElement( "line", QPoint( 0, 0 ) );
-        ((ElementLine *)m_hintElement)->setVisible( false );
-
         m_mousePressEvent = &mousePressLine;
         m_mouseMoveEvent = &mouseMoveLine;
-        m_mouseReleaseEvent = &mouseReleaseLine;
+        m_mouseReleaseEvent = 0l;
         m_keyPressEvent = 0l;
+        m_resetEvent = &resetLine;
         break;
       }
       break;
@@ -97,20 +98,32 @@ void SchemaView::setMode( DrawMode mode )
       {
         m_hintElement = createElement( "text", QPoint( 0, 0 ) );
         ((ElementText *)m_hintElement)->setVisible( false );
+
+        m_mousePressEvent = &mousePressText;
+        m_mouseMoveEvent = &mouseMoveText;
+        m_mouseReleaseEvent = 0l;
+        m_keyPressEvent = &keyPressText;
+        m_resetEvent = 0l;
         break;
       }
     case MODE_RECT:
       {
-        m_hintElement = createElement( "rect", QPoint( 0, 0 ) );
-        ((ElementRect *)m_hintElement)->setVisible( false );
-
         m_mousePressEvent = &mousePressRect;
         m_mouseMoveEvent = &mouseMoveRect;
         m_mouseReleaseEvent = &mouseReleaseRect;
         m_keyPressEvent = 0l;
+        m_resetEvent = 0l;
         break;
       }
-    case MODE_ROUND:
+    case MODE_ELLIPSE:
+      {
+        m_mousePressEvent = &mousePressEllipse;
+        m_mouseMoveEvent = &mouseMoveEllipse;
+        m_mouseReleaseEvent = &mouseReleaseEllipse;
+        m_keyPressEvent = 0l;
+        m_resetEvent = 0l;
+        break;
+      }
     case MODE_SCRIPT:
     case MODE_COMPONENT:
       break;
@@ -166,9 +179,28 @@ bool SchemaView::mousePressPin( QMouseEvent *event )
 
 bool SchemaView::mouseMovePin( QMouseEvent *event )
 {
-  ((ElementPin *)m_hintElement)->setPos( togrid( mapToScene( event->pos() ) ) );
+  m_hintElement->graphicsItem()->setPos( togrid( mapToScene( event->pos() ) ) );
   m_hintElement->setLayout();
-  ((ElementPin *)m_hintElement)->setVisible( true );
+  ((ElementText *)m_hintElement)->setVisible( true );
+  return true;
+}
+
+// ------------------------------------------------------------------ //
+// Mouse actions for text mode
+// ------------------------------------------------------------------ //
+
+bool SchemaView::mousePressText( QMouseEvent *event )
+{
+  m_hintElement = 0l; // accept this text
+
+  setMode( MODE_SELECTION );
+  return true;
+}
+
+bool SchemaView::mouseMoveText( QMouseEvent *event )
+{
+  m_hintElement->graphicsItem()->setPos( togrid( mapToScene( event->pos() ) ) );
+  m_hintElement->graphicsItem()->setVisible( true );
   return true;
 }
 
@@ -180,14 +212,21 @@ bool SchemaView::mousePressLine( QMouseEvent *event )
 {
   if( event->button() == Qt::LeftButton )
     {
-      ElementLine *lineElement = static_cast<ElementLine *>(m_hintElement);
       QPointF cp = togrid( mapToScene( event->pos() ) );
 
-      if( m_moving == false ) // set the origin
+
+      if( !m_hintElement ) // set the origin
         {
-          lineElement->setPos( cp );
+          m_hintElement = createElement( "line", cp );
         }
-      lineElement->addPoint( cp );
+      else
+        {
+          ((ElementLine *)m_hintElement)->addPoint( cp );
+        }
+
+      ElementLine *lineElement = static_cast<ElementLine *>(m_hintElement);
+
+      m_hintCount = lineElement->pointCount();
 
       m_moving = true;
       event->accept();
@@ -195,11 +234,6 @@ bool SchemaView::mousePressLine( QMouseEvent *event )
     }
   else if( event->button() == Qt::RightButton )
     {
-      ElementLine *lineElement = static_cast<ElementLine *>(m_hintElement);
-      if( lineElement->pointCount() > 0 )
-        {
-          m_hintElement = 0l; // accept this line
-        }
       setMode( MODE_SELECTION );
 
       event->accept();
@@ -214,22 +248,11 @@ bool SchemaView::mouseMoveLine( QMouseEvent *event )
     {
       ElementLine *line = static_cast<ElementLine *>(m_hintElement);
 
-      line->setLastPoint( togrid( mapToScene( event->pos() ) ) );
+      if( line->pointCount() == m_hintCount )
+        line->addPoint( togrid( mapToScene( event->pos() ) ) );
+      else
+        line->setLastPoint( togrid( mapToScene( event->pos() ) ) );
 
-      event->accept();
-      return false;
-    }
-  return true;
-}
-
-bool SchemaView::mouseReleaseLine( QMouseEvent *event )
-{
-  if( m_moving )
-    {
-      m_hintElement->setLayout();
-      m_hintElement->graphicsItem()->setVisible( true );
-
-      m_moving = false;
       event->accept();
       return false;
     }
@@ -244,12 +267,20 @@ bool SchemaView::mousePressRect( QMouseEvent *event )
 {
   if( event->button() == Qt::LeftButton )
     {
-      ElementRect *rectElement = static_cast<ElementRect *>(m_hintElement);
-      rectElement->setPos( togrid( mapToScene( event->pos() ) ) );
+      if( 0l == m_hintElement )
+        {
+          m_hintElement = createElement( "rect", QPoint( 0, 0 ) );
+          ElementRect *rectElement = static_cast<ElementRect *>(m_hintElement);
+          rectElement->setVisible( false );
 
-      m_moving = true;
-      event->accept();
-      return false;
+          QRectF rect = rectElement->rect();
+          rect.setTopLeft( togrid( mapToScene( event->pos() ) ) );
+          rectElement->setRect( rect );
+
+          m_moving = true;
+        }
+        event->accept();
+        return false;
     }
   else if( event->button() == Qt::RightButton )
     {
@@ -269,6 +300,7 @@ bool SchemaView::mouseMoveRect( QMouseEvent *event )
       QRectF rect = rectElement->rect();
       rect.setBottomRight( togrid( mapToScene( event->pos() ) ) );
       rectElement->setRect( rect );
+      rectElement->setVisible( true );
 
       event->accept();
       return false;
@@ -285,12 +317,80 @@ bool SchemaView::mouseReleaseRect( QMouseEvent *event )
 
       if( rect.topLeft() != rect.bottomRight() ) // accept this rectangle
         {
-          if( rect.width() < gridWh ) rect.setWidth( gridWh );
-          if( rect.height() < gridHt ) rect.setHeight( gridHt );
-
-          rectElement->setRect( rect );
-          rectElement->setLayout();
           m_hintElement->graphicsItem()->setVisible( true );
+          m_hintElement = 0l;
+        }
+
+      m_moving = false;
+
+      setMode( MODE_SELECTION );
+      event->accept();
+      return false;
+    }
+  return true;
+}
+
+// ------------------------------------------------------------------ //
+// Mouse actions for ellipse mode
+// ------------------------------------------------------------------ //
+
+bool SchemaView::mousePressEllipse( QMouseEvent *event )
+{
+  if( event->button() == Qt::LeftButton )
+    {
+      if( 0l == m_hintElement )
+        {
+          m_hintElement = createElement( "ellipse", QPoint( 0, 0 ) );
+          ElementEllipse *ellipseElement = static_cast<ElementEllipse *>(m_hintElement);
+          ellipseElement->setVisible( false );
+
+          QRectF rect = ellipseElement->rect();
+          rect.setTopLeft( togrid( mapToScene( event->pos() ) ) );
+          ellipseElement->setRect( rect );
+
+          m_moving = true;
+        }
+      event->accept();
+      return false;
+    }
+  else if( event->button() == Qt::RightButton )
+    {
+      setMode( MODE_SELECTION ); // give up drawing
+
+      event->accept();
+      return false;
+    }
+  return true;
+}
+
+bool SchemaView::mouseMoveEllipse( QMouseEvent *event )
+{
+  if( m_moving )
+    {
+      ElementEllipse *ellipseElement = static_cast<ElementEllipse *>(m_hintElement);
+      QRectF rect = ellipseElement->rect();
+      rect.setBottomRight( togrid( mapToScene( event->pos() ) ) );
+      ellipseElement->setRect( rect );
+      ellipseElement->setVisible( true );
+
+      event->accept();
+      return false;
+    }
+  return true;
+}
+
+bool SchemaView::mouseReleaseEllipse( QMouseEvent *event )
+{
+  if( m_moving )
+    {
+      ElementEllipse *ellipseElement = static_cast<ElementEllipse *>(m_hintElement);
+      QRectF rect = ellipseElement->rect();
+
+      if( rect.topLeft() != rect.bottomRight() ) // accept this ellipse
+        {
+          ellipseElement->setVisible( true );
+          ellipseElement->setRect( rect );
+          m_hintElement = 0l;
         }
 
       m_moving = false;
@@ -359,37 +459,44 @@ void SchemaView::dropEvent( QGraphicsSceneDragDropEvent *event )
 
 bool SchemaView::keyPressComponent( QKeyEvent *event )
 {
-  if( event->key() == Qt::Key_Space )
-    {
-      if( m_hintElement )
-        {
-          if( m_hintDirect < ELEM_BOTTOM )
-            ++m_hintDirect;
-          else
-            m_hintDirect = 0;
-          ((ComponentGraphItem *)m_hintElement)->setDirect( (ElemDirect)m_hintDirect );
-          return true;
-        }
-    }
-  return false;
+  return keyPressRotate( event, m_hintComponent );
 }
+
+// ------------------------------------------------------------------ //
+// Keyboard actions for pin mode
+// ------------------------------------------------------------------ //
 
 bool SchemaView::keyPressPin( QKeyEvent *event )
 {
-  if( event->key() == Qt::Key_Space )
-    {
-      if( m_hintElement )
-        {
-          if( m_hintDirect < ELEM_BOTTOM )
-            ++m_hintDirect;
-          else
-            m_hintDirect = 0;
-          ((ElementPin *)m_hintElement)->setDirect( (ElemDirect)m_hintDirect );
-          return true;
-        }
-    }
-  return false;
+  return keyPressRotate( event, static_cast<ElementPin *>(m_hintElement) );
 }
 
+// ------------------------------------------------------------------ //
+// Keyboard actions for text mode
+// ------------------------------------------------------------------ //
+
+bool SchemaView::keyPressText( QKeyEvent *event )
+{
+  return keyPressRotate( event, static_cast<ElementText *>(m_hintElement) );
+}
+
+// ------------------------------------------------------------------ //
+// Reset actions for line mode
+// ------------------------------------------------------------------ //
+
+void SchemaView::resetLine()
+{
+  ElementLine *lineElement = static_cast<ElementLine *>(m_hintElement);
+
+  if( lineElement )
+    {
+      lineElement->removeLastPoint();
+
+      if( lineElement->pointCount() > 0 )
+        {
+          m_hintElement = 0l; // accept this line
+        }
+    }
+}
 
 }

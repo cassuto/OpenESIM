@@ -37,6 +37,7 @@ public:
   void setStyle( const char *style );
   void addPoint( const QPointF &point );
   void setLastPoint( const QPointF &point );
+  void removeLastPoint();
   int pointCount();
 
   int serialize( LispDataset *dataset );

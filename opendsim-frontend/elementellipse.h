@@ -13,46 +13,44 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef ELEMENTPIN_H_
-#define ELEMENTPIN_H_
+#ifndef ELEMENTROUND_H_
+#define ELEMENTROUND_H_
 
 #include <QtWidgets>
 
 #include "elementgraphitem.h"
+#include "staffgraphitem.h"
 
 namespace dsim
 {
 
-class ElementText;
+class StaffPad;
 
-class ElementPin : public ElementGraphItem<QGraphicsItem>
+class ElementEllipse : public ElementGraphItem<QGraphicsEllipseItem>, public StaffEvents
 {
 public:
-  ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symbol, int id, SchemaGraph *scene, bool editable, QGraphicsItem *parent = 0 );
-  ~ElementPin();
+  ElementEllipse( const QRectF &rect, int id, SchemaGraph *scene, bool edit, QGraphicsEllipseItem* parent = 0 );
+  ~ElementEllipse();
 
-  const char *classname() { return "pin"; }
-  QRectF boundingRect() const { return m_bounding; }
-  void setBoundingRect( const QRect &bounding );
+  const char *classname() { return "ellipse"; }
 
-  void setDirect( ElemDirect direct );
-  void setLength( int length );
-  void setSub( ElementText *symbol );
-  void setLayout();
+  void setStyle( const char *style );
+  void setRect( const QRectF &rect );
 
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
-  int resolveSubElements();
+
+  void setSelected( bool selected );
 
 protected:
-  void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget );
+  void staffMoveEvent( int index, QGraphicsSceneMouseEvent *event );
+  void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0 );
 
 private:
-  int                       m_length;
-  QRectF                    m_bounding;
-  ElementText              *m_symbolLabel;
-};
+  void updatePads();
 
+  StaffPad *m_pads[4];
+};
 
 }
 

@@ -14,7 +14,7 @@
  */
 
 #include "schemaview.h"
-
+#include <cstdio>
 #include "schemagraph.h"
 
 namespace dsim
@@ -58,6 +58,12 @@ void SchemaGraph::drawBackground ( QPainter*  painter, const QRectF & rect )
   painter->setPen( QColor( 210, 210, 210 ) );
 
   if( !m_paintGrid ) return;
+
+  double scaleFactor = painter->matrix().m11();
+
+  QPen pen = painter->pen();
+  pen.setWidthF( pen.widthF() / scaleFactor );
+  painter->setPen( pen );
 
   int startx = int(m_scenerect.x());
   int endx   = int(m_scenerect.width())/2;

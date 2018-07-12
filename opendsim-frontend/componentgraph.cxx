@@ -35,7 +35,7 @@ ComponentGraph::~ComponentGraph()
 
 void ComponentGraph::setStyle( const char *style )
 {
-  Templatestyle::applyStyle( m_painter, style, m_selected );
+  Templatestyle::apply( m_painter, style, m_selected );
 }
 
 void ComponentGraph::setBrushColor( int r, int g, int b )

@@ -37,6 +37,9 @@ template <class base>
   {
     setGraphicsItem( this );
     base::setData( 0, QVariant::fromValue( static_cast<void *>(static_cast<ElementBase *>(this)) ) );
+
+    base::setFlag( QGraphicsItem::ItemStacksBehindParent, true );
+    base::setFlag( QGraphicsItem::ItemIsSelectable, true );
   }
 
 template <class base>
@@ -50,7 +53,7 @@ template <class base>
 template <class base>
   void ElementGraphItem<base>::setSelected( bool selected )
   {
-    setSelected( selected );
+    base::setSelected( selected );
 
     foreach( ElementBase *element, elements() )
       {
@@ -126,6 +129,60 @@ template <class base>
         QGraphicsItem *item= element->graphicsItem();
         if( !item->isSelected() )
           item->setPos( item->scenePos() + delta );
+      }
+  }
+
+template <class base>
+  void ElementGraphItem<base>::mousePressEvent( QGraphicsSceneMouseEvent *event )
+  {
+    if( m_editable )
+      {
+        if( event->button() == Qt::LeftButton )
+          {
+            event->accept();
+
+            if( !base::isSelected() )     // Deselect the other elements
+              {
+                QList<QGraphicsItem*> itemlist = ElementBase::scene()->selectedItems();
+
+                foreach( QGraphicsItem* item, itemlist ) item->setSelected( false );
+
+                this->setSelected( true );
+              }
+
+            base::grabMouse();
+          }
+      }
+  }
+
+template <class base>
+  void ElementGraphItem<base>::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
+  {
+    if( m_editable )
+      {
+        event->accept();
+
+        QList<QGraphicsItem*> itemlist = ElementBase::scene()->selectedItems();
+        if ( !itemlist.isEmpty() )
+          {
+            QPointF delta = togrid(event->scenePos()) - togrid(event->lastScenePos());
+
+            foreach( QGraphicsItem* item , itemlist )
+              {
+                ElementGraphItem* element =  qgraphicsitem_cast<ElementGraphItem* >( item );
+                if( element ) element->move( delta );
+              }
+          }
+      }
+  }
+
+template <class base>
+  void ElementGraphItem<base>::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
+  {
+    if( m_editable )
+      {
+        event->accept();
+        base::ungrabMouse();
       }
   }
 

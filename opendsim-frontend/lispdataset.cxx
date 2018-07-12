@@ -167,7 +167,7 @@ int LispDataset::serialize( std::ofstream & outstream )
   /*
    * Serialize the format and version infomation
    */
-  rc = beginNode( "format" );                           UPDATE_RC(rc);
+  rc = beginNode( false, "format" );                    UPDATE_RC(rc);
   {
     switch( type() )
     {
@@ -424,7 +424,7 @@ int LispDataset::endNode( bool sub )
 {
   if( sub )
     {
-      outstream() << ")"; return outstream().good() ? 0 : -DS_WRITE_FILE;
+      outstream() << ") "; return outstream().good() ? 0 : -DS_WRITE_FILE;
     }
   else
     {

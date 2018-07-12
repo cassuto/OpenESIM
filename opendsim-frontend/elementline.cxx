@@ -27,11 +27,11 @@ namespace dsim
 
 ElementLine::ElementLine( const QPointF &p0, int id, SchemaGraph *scene, bool edit, QGraphicsItem* parent )
           : ElementGraphItem<QGraphicsItem>( id, scene, edit, parent )
-          , m_lastpoint( p0 )
 {
   setStyle( "component" );
 
   ElementGraphItem<QGraphicsItem>::setPos( p0 );
+  m_lastpoint = p0 - pos();
 }
 
 ElementLine::~ElementLine()
@@ -62,6 +62,7 @@ void ElementLine::addPoint( const QPointF &point )
           QLineF l = line->line();
           l.setP2( rp );
           line->setLine( l );
+          m_lastpoint = rp;
           return;
         }
     }
@@ -80,6 +81,7 @@ void ElementLine::addPoint( const QPointF &point )
   StaffPad *pad = new StaffPad( m_pads.count(), rp, ElementBase::scene(), this, this );
   pad->setVisible( false );
 
+  m_lastpoint = rp;
   m_lines.append( line );
   m_pads.append( pad );
 }
@@ -89,13 +91,31 @@ void ElementLine::setLastPoint( const QPointF &point )
   if( !m_lines.empty() )
     {
       QGraphicsLineItem *line = m_lines.last();
+      QPointF rp = point - pos(); // relevant position
 
       prepareGeometryChange();
 
       QLineF l = line->line();
-      l.setP2( point - pos() );
+      l.setP2( rp );
       line->setLine( l );
+      m_lastpoint = rp;
     }
+}
+
+void ElementLine::removeLastPoint()
+{
+  if( !m_lines.empty() )
+      {
+        QGraphicsLineItem *line = m_lines.last();
+
+        m_lastpoint = line->line().p1();
+        ElementBase::scene()->removeItem( line );
+        m_lines.removeOne( line );
+
+        StaffPad *pad = m_pads.last();
+        delete pad;
+        m_pads.removeOne( pad );
+      }
 }
 
 int ElementLine::pointCount() // the origin is not included
@@ -148,6 +168,7 @@ int ElementLine::deserialize( LispDataset *dataset )
   rc = dataset->des( y );                                   UPDATE_RC(rc);
   setPos( QPointF( x, y ) );
 
+  bool x0 = true;
   DomEntry entry;
 
   rc = dataset->des( entry, "points" );                     UPDATE_RC(rc);
@@ -163,8 +184,15 @@ int ElementLine::deserialize( LispDataset *dataset )
           rc = dataset->des( x1 );                          UPDATE_RC(rc);
           rc = dataset->des( y1 );                          UPDATE_RC(rc);
 
-          addPoint( QPointF( x1, y1 ) );
-          printf("%f %f\n", x1, y1 );
+          if( x0 ) // set origin ( start point )
+            {
+              m_lastpoint = QPointF( x1, y1 ) - pos();
+              x0 = false;
+            }
+          else
+            {
+              addPoint( QPointF( x1, y1 ) );
+            }
         } // auto pop
     }
 
@@ -253,7 +281,7 @@ void ElementLine::staffMoveEvent( int index, QGraphicsSceneMouseEvent *event )
 
 void ElementLine::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
 {
-  Templatestyle::applyStyle( painter, style(), isSelected() );
+  Templatestyle::apply( painter, style(), isSelected() );
 
   foreach( QGraphicsLineItem *line, m_lines )
     {
