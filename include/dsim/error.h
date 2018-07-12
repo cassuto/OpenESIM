@@ -16,34 +16,89 @@
 #ifndef DSIM_ERROR_H_
 #define DSIM_ERROR_H_
 
+#include <dsim/misc.h>
+
+//C_DECLS
+
+/*
+ * The following Macro definitions participate in automatic generation of error
+ * messages data ( errors-generated.h ), which begins with gen\{\{ and ends with \}\}gen
+ * comment.
+ */
+
+/* gen{{ */
+
+/** Operation has been successfully completed */
 #define DS_SUCCEEDED (0)
+/** Operation has been failed */
 #define DS_FAULT (1)
+/** Operation is time-out */
 #define DS_TIMEOUT (2)
+/** Operation has been aborted */
 #define DS_ABORTED (3)
+/** Out of memory */
 #define DS_NO_MEMORY (4)
+/** Unexpected token */
 #define DS_UNEXPECTED_TOKEN (5)
+/** Wrong format */
 #define DS_WRONG_FORMAT (6)
+/** Buffer/Number Overflow */
 #define DS_OVERFLOW (7)
+/** Interface unimplemented */
 #define DS_UNIMPLEMENTED (8)
+/** End Of File */
 #define DS_EOF (9)
+/** Duplicated model symbol name */
 #define DS_DUP_MODEL_SYMBOL (10)
+/** Read only (can't be written) */
 #define DS_READONLY (11)
+/** Failed to solve the matrix */
 #define DS_SOLVE_MATRIX (12)
+/** Failed to write target file */
 #define DS_WRITE_FILE (13)
+/** Failed to read from file */
 #define DS_READ_FILE (14)
+/** Failed to create new file */
 #define DS_CREATE_FILE (15)
+/** Failed to open target file */
 #define DS_OPEN_FILE (16)
+/** Failed to parse schematic */
 #define DS_PARSE_SCHEMA (17)
+/** Invalid file type */
 #define DS_INVALID_FILE_TYPE (18)
+/** (scheme-lisp) Type mismatch */
 #define DS_TYPE_MISMATCH (19)
+/** Target element ID is invalid */
 #define DS_INVALID_ELEMENT_ID (20)
+/** Target element symbol is invalid */
 #define DS_INVALID_ELEMENT_SYMBOL (21)
+/** Target device symbol is invalid */
 #define DS_INVALID_DEVICE_SYMBOL (22)
+/** Can't resolve sub elements */
 #define DS_SOLVE_SUBELEMENTS (23)
+/** Target element has been referenced before */
 #define DS_REREFERENCE (24)
-#define DS_DUP_CENTRAL_ELEMENT (25)
+/** Not matched */
 #define DS_NOT_MATCHED (26)
 
+/* }}gen */
+
 #define UPDATE_RC(_rc_) do { if( _rc_ ) return _rc_; } while(0)
+
+typedef struct ds_error_info_s
+{
+  /** Pointer to the short message string. */
+  const char *msgShort;
+  /** Pointer to the full message string. */
+  const char *msgFull;
+  /** Pointer to the define string. */
+  const char *msgDefine;
+  /** Status code number. */
+  int        code;
+} ds_error_info_t;
+
+const ds_error_info_t *ds_get_error( int rc );
+
+//END_C_DECLS
 
 #endif //!defined(DSIM_ERROR_H_)

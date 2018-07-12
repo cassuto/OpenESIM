@@ -21,6 +21,7 @@ OBJS += util/logtrace.c.o \
 		util/rbtree.c.o \
 		util/prime.c.o \
 		util/bound.c.o \
+		util/errors.c.o \
 
 OBJS += scheme-intr/lisp-buffer.c.o \
 		scheme-intr/lisp-fault.c.o \
@@ -51,3 +52,14 @@ subs:
 	
 subsclean:
 	$(MAKE) -C models clean
+
+#
+# Generate the status code descriptors.
+#
+util/errors.c.o: $(SUB_DEPTH)/$(OUT_DIR)/errors-generated.h
+
+$(SUB_DEPTH)/$(OUT_DIR)/errors-generated.h: \
+		util/errors.sed \
+		$(SUB_DEPTH)/include/dsim/error.h
+        
+	$(call run-command,$(SED) -f $< $(filter %.h,$^) > $@,"  SED      $@")
