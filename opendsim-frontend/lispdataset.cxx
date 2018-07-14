@@ -103,6 +103,7 @@ DomEntry LispDataset::entry( ds_scheme_synlist_t *node, const char *symbol )
                     {
                       if( 0==std::strcmp( lispval_string(sym), symbol ) )
                         {
+                          m_synlist = node; // move current position
                           return DomEntry( sym->next );
                         }
                     }
@@ -296,6 +297,11 @@ int LispDataset::ser( const std::string &val, bool symbol )
   return ser( val.c_str(), symbol );
 }
 
+int LispDataset::ser( const bool &val )
+{
+  return ser( val ? "#t" : "#f" );
+}
+
 #define DES_TEMPLATE(_val, _schemetype, _schemeval, _ctype) \
 do { \
   if( current() ) \
@@ -325,6 +331,11 @@ int LispDataset::des( float &val )
 int LispDataset::des( double &val )
 {
   DES_TEMPLATE(val, SCHEME_VAL_NUMBER, lispval_number, double); return 0;
+}
+
+int LispDataset::des( bool &val )
+{
+  DES_TEMPLATE(val, SCHEME_VAL_BOOLEAN, lispval_boolean, bool); return 0;
 }
 
 int LispDataset::des( std::string &val, bool symbol )
@@ -381,12 +392,14 @@ int LispDataset::des( DomEntry &ent, const char *symbol )
           if( 0==std::strcmp( lispval_symbol(current()->child), symbol ) )
             {
               ent = DomEntry( current()->child->next );
+              m_synlist = current()->next;
               return 0;
             }
         }
       else if( current()->child && symbol[0] == '\0' )
         {
           ent = DomEntry( current()->child );
+          m_synlist = current()->next;
           return 0;
         }
     }
@@ -440,8 +453,8 @@ void LispDataset::deserializePush( ds_scheme_synlist_t *synlist )
 
 void LispDataset::deserializePop()
 {
+  m_synlist = m_synqueue.top();
   m_synqueue.pop();
-  m_synlist = m_synqueue.front();
 }
 
 void LispDataset::uninit()

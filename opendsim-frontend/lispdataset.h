@@ -20,7 +20,7 @@
 #include <sstream>
 #include <list>
 #include <string>
-#include <queue>
+#include <stack>
 
 #include <QList>
 #include <dsim/error.h>
@@ -79,12 +79,14 @@ public:
   int ser( const QList<ElementBase *> &ids );
   int ser( const char *val, bool symbol = false );
   int ser( const std::string &val, bool symbol = false );
+  int ser( const bool &val );
 
   int deserialize( std::ifstream & instream );
 
   int des( int &val );
   int des( float &val );
   int des( double &val );
+  int des( bool &val );
   int des( std::string &val, bool symbol = false );
   int des( QList<int> &ids );
   int des( DomEntry &node, const char *symbol = "" );
@@ -131,7 +133,7 @@ private:
   ds_scheme_synlist_t *m_synlist;
   ds_scheme_synlist_t *m_synlist_root;
 
-  std::queue<ds_scheme_synlist_t *> m_synqueue;
+  std::stack<ds_scheme_synlist_t *> m_synqueue;
   int           m_node_deepth;
 };
 
