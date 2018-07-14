@@ -32,7 +32,7 @@ public:
   ~SchemaSheet();
 
   IDevice *createDevice( const char *symbol, const char *reference, int id );
-  IDevice *createDevice( DeviceLibraryEntry *entry, const char *reference, int id );
+  IDevice *createDevice( const DeviceLibraryEntry *entry, const char *reference, int id );
   void deleteDevice( IDevice *device );
 
   void addDevice( IDevice *device );

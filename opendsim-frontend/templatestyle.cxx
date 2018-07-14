@@ -41,6 +41,8 @@ bool Templatestyle::isStyle( const char *style )
     return true;
   else if( 0 == strcmp( style, "pin" ) )
     return true;
+  else if( 0 == strcmp( style, "wire" ) )
+    return true;
   return false;
 }
 
@@ -111,6 +113,67 @@ StyleItem Templatestyle::textStyle( const char *styleName, bool selected )
       style.size = 8;
     }
   return style;
+}
+
+std::list<std::string> Templatestyle::templates()
+{ using namespace std;
+
+  list<string> ret;
+
+  ret.push_front( string("wire") );
+  ret.push_front( string("pin") );
+  ret.push_front( string("component") );
+
+  return ret;
+}
+
+void Templatestyle::apply( QGraphicsSimpleTextItem *text, TemplateCustom *customText, const char *style, bool selected )
+{
+  if( !Templatestyle::instance()->isStyle( style ) )
+      return;
+
+  StyleItem s = Templatestyle::instance()->textStyle( style, selected );
+  if( customText ) customText->apply( &s );
+
+  QFont font = text->font();
+  font.setPointSize( s.size );
+  font.setBold( s.bold );
+  font.setItalic( s.italic );
+  text->setFont( font );
+
+  QBrush brush = text->brush();
+  if( s.color.r >= 0 && s.color.g >= 0 && s.color.b >= 0 )
+    {
+      brush.setColor( QColor( s.color.r, s.color.g, s.color.b ) );
+    }
+  text->setBrush( brush );
+}
+
+const char *Templatestyle::toLineStyleName( LineStyle line )
+{
+  switch( line )
+  {
+    case LINE_NONE:         return "None";
+    case LINE_SOLID:        return "Solid";
+    case LINE_DASH:         return "Dash";
+    case LINE_DOT:          return "Dot";
+    case LINE_DASH_DOT:     return "DashDot";
+    case LINE_DASH_DOTDOT:  return "DashDotDot";
+    default:                return "None";
+  }
+}
+
+const char *Templatestyle::toBrushStyleName( BrushStyle brush )
+{
+  switch( brush )
+  {
+    case BRUSH_NONE:        return "None";
+    case BRUSH_SOLID:       return "Solid";
+    case BRUSH_HOR:         return "Horizontal Lines";
+    case BRUSH_VER:         return "Vertical Lines";
+    case BRUSH_CROSS:       return "Cross Lines";
+    default:                return "None";
+  }
 }
 
 Qt::PenStyle Templatestyle::toQtPenStyle( LineStyle line )

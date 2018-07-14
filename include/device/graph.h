@@ -29,7 +29,8 @@ enum LineStyle
   LINE_DASH,
   LINE_DOT,
   LINE_DASH_DOT,
-  LINE_DASH_DOTDOT
+  LINE_DASH_DOTDOT,
+  LINE_RESERVED_MAX
 };
 
 enum BrushStyle
@@ -38,7 +39,8 @@ enum BrushStyle
   BRUSH_SOLID,
   BRUSH_HOR,
   BRUSH_VER,
-  BRUSH_CROSS
+  BRUSH_CROSS,
+  BRUSH_RESERVED_MAX
 };
 
 enum ElemDirect

@@ -78,7 +78,6 @@ public:
 public:
   inline SchemaSheet *sheet() const { return m_sheet; }
 
-public slots:
 
 protected:
   void dragMoveEvent( QDragMoveEvent *event );
@@ -109,6 +108,18 @@ private:
   QList<ElementBase *>m_elements[2];
   IdAllocator   m_id[2];
   bool          m_editable[2];
+  ElementBase  *m_selectedElements;
+
+private: // schemaviewmenus.cxx
+  QAction      *m_actionEditProperties;
+
+  void createContextMenus();
+
+private slots:
+  void onEditProperties( bool checked = false );
+
+protected:
+  void contextMenuEvent( QContextMenuEvent* event );
 
 private: // schemaviewactions.cxx
   bool mousePressSelect( QMouseEvent *event );
@@ -124,10 +135,8 @@ private: // schemaviewactions.cxx
   bool mousePressText( QMouseEvent *event );
   bool mouseMoveText( QMouseEvent *event );
   bool mouseMoveRect( QMouseEvent *event );
-  bool mouseReleaseRect( QMouseEvent *event );
   bool mousePressEllipse( QMouseEvent *event );
   bool mouseMoveEllipse( QMouseEvent *event );
-  bool mouseReleaseEllipse( QMouseEvent *event );
   bool keyPressComponent( QKeyEvent *event );
   bool keyPressPin( QKeyEvent *event );
   bool keyPressText( QKeyEvent *event );

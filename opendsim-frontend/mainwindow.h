@@ -45,7 +45,7 @@ public:
   MainWindow();
   ~MainWindow();
 
-  void processRc( int rc );
+  int processRc( int rc );
   void noMemory();
 
 public:

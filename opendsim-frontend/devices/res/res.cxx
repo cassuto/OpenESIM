@@ -23,6 +23,7 @@ DeviceLibraryEntry *dev_res::libraryEntry()
 {
   return new DeviceLibraryEntry(
       /* symbol_name */     "RES",
+      /* reference_name */  "R",
       /* category */        "Registers",
       /* sub_category */    "Generic",
       /* description */     "Generic Register Device",

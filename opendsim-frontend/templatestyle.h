@@ -18,6 +18,8 @@
 
 #include <QColor>
 
+#include <list>
+#include <string>
 #include <device/graph.h>
 #include <dsim/types.h>
 
@@ -26,20 +28,23 @@ class QGraphicsSimpleTextItem;
 namespace dsim
 {
 
+class TemplateCustom;
+
 class StyleItem
 {
 public:
   StyleItem() : line( LINE_SOLID ), brush( BRUSH_NONE ), width( 1.0 ), size( 0 ), bold( false )
               , italic( false )
     {
-      color.r = color.g = color.b = -1;
+      color.r = color.g = color.b =
+      bkcolor.r = bkcolor.g = bkcolor.b = -1;
       usebkcolor = true;
     }
 public:
   LineStyle     line;
   BrushStyle    brush;
   float         width;
-  ds_color_t    color;
+  ds_color_t    color, bkcolor;
   bool          usebkcolor;
   int           size; // 1 points = 1/72 inch
   bool          bold;
@@ -60,11 +65,17 @@ public:
   StyleItem fillStyle( const char *style, bool selected );
   StyleItem textStyle( const char *style, bool selected );
 
+  std::list<std::string> templates();
+
   static Qt::PenStyle toQtPenStyle( LineStyle line );
   static Qt::BrushStyle toQtBrushStyle( BrushStyle brush );
+  static const char *toLineStyleName( LineStyle line );
+  static const char *toBrushStyleName( BrushStyle brush );
 
   template<class T>
-    static void apply( T *painter, const char *style, bool selected );
+    static void apply( T *painter, TemplateCustom *customLine, TemplateCustom *customFill, const char *style, bool selected );
+
+  static void apply( QGraphicsSimpleTextItem *text, TemplateCustom *customText, const char *style, bool selected );
 
 private:
   static Templatestyle *m_ptemplatestyle;

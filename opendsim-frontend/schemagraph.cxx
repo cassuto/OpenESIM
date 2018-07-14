@@ -53,7 +53,7 @@ void SchemaGraph::drawBackground ( QPainter*  painter, const QRectF & rect )
 {
   Q_UNUSED( rect );
 
-  painter->setBrush(QColor( 240, 240, 210 ) );
+  painter->setBrush( QColor( 255, 255, 255 ) ); //QColor( 240, 240, 210 ) );
   painter->drawRect( m_scenerect );
   painter->setPen( QColor( 210, 210, 210 ) );
 
@@ -70,16 +70,29 @@ void SchemaGraph::drawBackground ( QPainter*  painter, const QRectF & rect )
   int starty = int(m_scenerect.y());
   int endy   = int(m_scenerect.height())/2;
 
-  for (int i = 4; i<endx; i+=8)
+#if 0 // lines grid
+  for( int i = 4; i<endx; i+=8 )
     {
       painter->drawLine( i, starty, i, endy );
       painter->drawLine(-i, starty,-i, endy );
     }
-  for (int i = 4; i<endy; i+=8)
+  for( int i = 4; i<endy; i+=8 )
     {
       painter->drawLine( startx, i, endx, i);
       painter->drawLine( startx,-i, endx,-i);
     }
+#else // points grid
+  for( int x = 4; x<endx; x+=8 )
+    {
+      for( int y = 4; y<endy; y+=8 )
+        {
+          painter->drawPoint( x, y );
+          painter->drawPoint( -x, y );
+          painter->drawPoint( x, -y );
+          painter->drawPoint( -x, -y );
+        }
+    }
+#endif
 }
 
 } // namespace dsim

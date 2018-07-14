@@ -19,6 +19,7 @@ OBJS += opendsim-edit.cxx.o \
 		idallocator.cxx.o \
 		schemasheet.cxx.o \
 		templatestyle.cxx.o \
+		templatecustom.cxx.o \
 		elementbase.cxx.o \
 		componentgraphitem.cxx.o \
     	elementpin.cxx.o \
@@ -29,6 +30,7 @@ OBJS += opendsim-edit.cxx.o \
       	staffgraphitem.cxx.o \
       	staffpad.cxx.o \
       	schemaviewactions.cxx.o \
+      	schemaviewmenus.cxx.o \
 
 QT_RCCS += resources.qrc
 
@@ -41,6 +43,8 @@ QT_SRCS += mainwindow.cxx \
           componentpicktree.cxx \
           componentlibrarydialog.cxx \
           textsettingsdialog.cxx \
+          propertiescustomdialog.cxx \
+          presscombobox.cxx \
 
 #########################################################################
 # Building rules.

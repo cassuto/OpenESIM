@@ -251,9 +251,9 @@ SchemaEditorForm *MainWindow::newSchemaDocument( DomType type )
  * Report the error code
  * param rc status code
  */
-void MainWindow::processRc( int rc )
+int MainWindow::processRc( int rc )
 {
-  if( !rc ) return;
+  if( !rc ) return rc;
 
   if( rc == -DS_NO_MEMORY ) noMemory();
 
@@ -264,6 +264,7 @@ void MainWindow::processRc( int rc )
   std::string s = ss.str();
 
   QMessageBox::critical( this, tr("Fault"), s.c_str(), QMessageBox::Abort | QMessageBox::Cancel );
+  return rc;
 }
 
 void MainWindow::noMemory()

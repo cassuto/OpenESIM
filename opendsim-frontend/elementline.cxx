@@ -281,7 +281,7 @@ void ElementLine::staffMoveEvent( int index, QGraphicsSceneMouseEvent *event )
 
 void ElementLine::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
 {
-  Templatestyle::apply( painter, style(), isSelected() );
+  Templatestyle::apply( painter, customLine(), customFill(), style(), isSelected() );
 
   foreach( QGraphicsLineItem *line, m_lines )
     {

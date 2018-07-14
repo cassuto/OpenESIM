@@ -24,6 +24,7 @@
 #include "schemasheet.h"
 #include "schemagraph.h"
 #include "templatestyle.h"
+#include "templatecustom.h"
 
 namespace dsim
 {
@@ -89,6 +90,9 @@ template <class base>
     int rc = ElementBase::serialize( dataset );           UPDATE_RC(rc);
         rc = dataset->ser( int(m_direct) );               UPDATE_RC(rc);
         rc = dataset->ser( m_style );                     UPDATE_RC(rc);
+        rc = customLine()->serialize( dataset );          UPDATE_RC(rc);
+        rc = customFill()->serialize( dataset );          UPDATE_RC(rc);
+        rc = customText()->serialize( dataset );          UPDATE_RC(rc);
     return rc;
   }
 
@@ -101,6 +105,9 @@ template <class base>
     int rc = ElementBase::deserialize( dataset );         UPDATE_RC(rc);
         rc = dataset->des( direct );                      UPDATE_RC(rc);
         rc = dataset->des( style );                       UPDATE_RC(rc);
+        rc = customLine()->deserialize( dataset );        UPDATE_RC(rc);
+        rc = customFill()->deserialize( dataset );        UPDATE_RC(rc);
+        rc = customText()->deserialize( dataset );        UPDATE_RC(rc);
 
     setDirect( (ElemDirect)direct );
     setStyle( style.c_str() );

@@ -24,9 +24,10 @@
 namespace dsim
 {
 
-ElementPin::ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symbol, int id, SchemaGraph *scene, bool editable, QGraphicsItem *parent )
+ElementPin::ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symbol, ElementText *reference, int id, SchemaGraph *scene, bool editable, QGraphicsItem *parent )
           : ElementGraphItem<QGraphicsItem>( id, scene, editable, parent )
-          , m_symbolLabel( symbol )
+          , m_symbolLabel( 0l )
+          , m_referenceLabel( 0l )
 {
   setStyle( "pin" );
   setBoundingRect( QRect(-4, -4, 12, 8) );
@@ -37,7 +38,7 @@ ElementPin::ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symb
 
   if( !editable ) setCursor( Qt::CrossCursor );
 
-  setSub( symbol );
+  setSub( symbol, reference );
 }
 
 ElementPin::~ElementPin()
@@ -70,14 +71,15 @@ void ElementPin::setLength( int length )
   setBoundingRect( QRect(-4, -4, m_length + 4, 8) );
 }
 
-void ElementPin::setSub( ElementText *symbol )
+void ElementPin::setSub( ElementText *symbol, ElementText *reference )
 {
-  if( !m_symbolLabel && symbol )
+  if( 0l==m_symbolLabel && symbol && 0l==m_referenceLabel && reference )
     {
-      addElement( symbol );
-      m_symbolLabel = symbol;
+      m_symbolLabel = symbol;           addElement( symbol );
+      m_referenceLabel = reference;     addElement( reference );
 
-      symbol->setStyle( "pin" );
+      m_symbolLabel->setStyle( "pin" );
+      m_referenceLabel->setStyle( "pin" );
       setLayout();
     }
 }
@@ -96,28 +98,34 @@ void ElementPin::setLayout()
     case ELEM_RIGHT:
       xlabelpos -= symbolBound.width()+m_length+4;
       ylabelpos -= 5;
+      m_referenceLabel->setDirect( ELEM_LEFT );
       m_symbolLabel->setDirect( ELEM_LEFT );
       break;
 
     case ELEM_TOP:
       xlabelpos += 5;
       ylabelpos += m_length+4;
+      m_referenceLabel->setDirect( m_direct );
       m_symbolLabel->setDirect( m_direct );
       break;
 
     case ELEM_LEFT:
       xlabelpos += m_length+4;
       ylabelpos -= 5;
+      m_referenceLabel->setDirect( ELEM_LEFT );
       m_symbolLabel->setDirect( ELEM_LEFT );
       break;
 
     case ELEM_BOTTOM:
       xlabelpos -= 5;
       ylabelpos -= m_length+4;
+      m_referenceLabel->setDirect( m_direct );
       m_symbolLabel->setDirect( m_direct );
       break;
   }
   m_symbolLabel->setPos( QPointF(xlabelpos, ylabelpos) );
+
+  m_referenceLabel->setPos( QPointF(xlabelpos - m_referenceLabel->boundingRect().width(), ylabelpos) );
 }
 
 int ElementPin::serialize( LispDataset *dataset )
@@ -152,7 +160,6 @@ int ElementPin::resolveSubElements()
   int rc = ElementGraphItem::resolveSubElements(); UPDATE_RC(rc);
 
   m_symbolLabel = static_cast<ElementText *>(elements()[0]);
-  setLayout();
   return 0;
 }
 
@@ -160,7 +167,7 @@ void ElementPin::paint( QPainter* painter, const QStyleOptionGraphicsItem* optio
 {
   Q_UNUSED(option); Q_UNUSED(widget);
 
-  Templatestyle::apply( painter, style(), isSelected() );
+  Templatestyle::apply( painter, customLine(), customFill(), style(), isSelected() );
 
   QPen pen = painter->pen();
   pen.setCapStyle( Qt::SquareCap );

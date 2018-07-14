@@ -24,6 +24,7 @@
 #include "elementrect.h"
 #include "elementellipse.h"
 
+#include "mainwindow.h"
 #include "schemaview.h"
 
 namespace dsim
@@ -72,8 +73,11 @@ void SchemaView::setMode( DrawMode mode )
         ElementBase *symbol = createElement( "text", QPoint( 0, 0 ) );
         ((ElementText *)symbol)->setText( "PIN 1" );
 
+        ElementBase *reference = createElement( "text", QPoint( 0, 0 ) );
+        ((ElementText *)reference)->setText( "1" );
+
         m_hintElement = createElement( "pin", QPoint( 0, 0 ) );
-        ((ElementPin *)m_hintElement)->setSub( (ElementText *)symbol );
+        ((ElementPin *)m_hintElement)->setSub( (ElementText *)symbol, ((ElementText *)reference) );
         ((ElementPin *)m_hintElement)->setVisible( false );
 
         m_mousePressEvent = &mousePressPin;
@@ -110,7 +114,7 @@ void SchemaView::setMode( DrawMode mode )
       {
         m_mousePressEvent = &mousePressRect;
         m_mouseMoveEvent = &mouseMoveRect;
-        m_mouseReleaseEvent = &mouseReleaseRect;
+        m_mouseReleaseEvent = 0l;
         m_keyPressEvent = 0l;
         m_resetEvent = 0l;
         break;
@@ -119,7 +123,7 @@ void SchemaView::setMode( DrawMode mode )
       {
         m_mousePressEvent = &mousePressEllipse;
         m_mouseMoveEvent = &mouseMoveEllipse;
-        m_mouseReleaseEvent = &mouseReleaseEllipse;
+        m_mouseReleaseEvent = 0l;
         m_keyPressEvent = 0l;
         m_resetEvent = 0l;
         break;
@@ -149,9 +153,11 @@ bool SchemaView::mouseReleaseSelect( QMouseEvent *event )
 
 bool SchemaView::mousePressComponent( QMouseEvent *event )
 {
-  m_hintComponent->setLayout();
-  m_hintComponent = 0l;
-
+  if( event->button() == Qt::LeftButton )
+    {
+      m_hintComponent->setLayout();
+      m_hintComponent = 0l;
+    }
   setMode( MODE_SELECTION );
   return true;
 }
@@ -170,9 +176,11 @@ bool SchemaView::mouseMoveComponent( QMouseEvent *event )
 
 bool SchemaView::mousePressPin( QMouseEvent *event )
 {
-  m_hintElement->setLayout();
-  m_hintElement = 0l;
-
+  if( event->button() == Qt::LeftButton )
+    {
+      m_hintElement->setLayout();
+      m_hintElement = 0l;
+    }
   setMode( MODE_SELECTION );
   return true;
 }
@@ -191,8 +199,10 @@ bool SchemaView::mouseMovePin( QMouseEvent *event )
 
 bool SchemaView::mousePressText( QMouseEvent *event )
 {
-  m_hintElement = 0l; // accept this text
-
+  if( event->button() == Qt::LeftButton )
+    {
+      m_hintElement = 0l; // accept this text
+    }
   setMode( MODE_SELECTION );
   return true;
 }
@@ -251,7 +261,7 @@ bool SchemaView::mouseMoveLine( QMouseEvent *event )
       if( line->pointCount() == m_hintCount )
         line->addPoint( togrid( mapToScene( event->pos() ) ) );
       else
-        line->setLastPoint( togrid( mapToScene( event->pos() ) ) );
+      line->setLastPoint( togrid( mapToScene( event->pos() ) ) );
 
       event->accept();
       return false;
@@ -278,9 +288,26 @@ bool SchemaView::mousePressRect( QMouseEvent *event )
           rectElement->setRect( rect );
 
           m_moving = true;
+          event->accept();
+          return false;
         }
-        event->accept();
-        return false;
+      else if( m_moving )
+        {
+          ElementRect *rectElement = static_cast<ElementRect *>(m_hintElement);
+          QRectF rect = rectElement->rect();
+
+          if( rect.topLeft() != rect.bottomRight() ) // accept this rectangle
+            {
+              m_hintElement->graphicsItem()->setVisible( true );
+              m_hintElement = 0l;
+            }
+
+          m_moving = false;
+
+          setMode( MODE_SELECTION );
+          event->accept();
+          return false;
+        }
     }
   else if( event->button() == Qt::RightButton )
     {
@@ -308,28 +335,6 @@ bool SchemaView::mouseMoveRect( QMouseEvent *event )
   return true;
 }
 
-bool SchemaView::mouseReleaseRect( QMouseEvent *event )
-{
-  if( m_moving )
-    {
-      ElementRect *rectElement = static_cast<ElementRect *>(m_hintElement);
-      QRectF rect = rectElement->rect();
-
-      if( rect.topLeft() != rect.bottomRight() ) // accept this rectangle
-        {
-          m_hintElement->graphicsItem()->setVisible( true );
-          m_hintElement = 0l;
-        }
-
-      m_moving = false;
-
-      setMode( MODE_SELECTION );
-      event->accept();
-      return false;
-    }
-  return true;
-}
-
 // ------------------------------------------------------------------ //
 // Mouse actions for ellipse mode
 // ------------------------------------------------------------------ //
@@ -349,9 +354,27 @@ bool SchemaView::mousePressEllipse( QMouseEvent *event )
           ellipseElement->setRect( rect );
 
           m_moving = true;
+          event->accept();
+          return false;
         }
-      event->accept();
-      return false;
+      else if( m_moving )
+        {
+          ElementEllipse *ellipseElement = static_cast<ElementEllipse *>(m_hintElement);
+          QRectF rect = ellipseElement->rect();
+
+          if( rect.topLeft() != rect.bottomRight() ) // accept this ellipse
+            {
+              ellipseElement->setVisible( true );
+              ellipseElement->setRect( rect );
+              m_hintElement = 0l;
+            }
+
+          m_moving = false;
+
+          setMode( MODE_SELECTION );
+          event->accept();
+          return false;
+        }
     }
   else if( event->button() == Qt::RightButton )
     {
@@ -379,29 +402,6 @@ bool SchemaView::mouseMoveEllipse( QMouseEvent *event )
   return true;
 }
 
-bool SchemaView::mouseReleaseEllipse( QMouseEvent *event )
-{
-  if( m_moving )
-    {
-      ElementEllipse *ellipseElement = static_cast<ElementEllipse *>(m_hintElement);
-      QRectF rect = ellipseElement->rect();
-
-      if( rect.topLeft() != rect.bottomRight() ) // accept this ellipse
-        {
-          ellipseElement->setVisible( true );
-          ellipseElement->setRect( rect );
-          m_hintElement = 0l;
-        }
-
-      m_moving = false;
-
-      setMode( MODE_SELECTION );
-      event->accept();
-      return false;
-    }
-  return true;
-}
-
 // ------------------------------------------------------------------ //
 // Mouse actions for dragging
 // ------------------------------------------------------------------ //
@@ -412,28 +412,37 @@ void SchemaView::dragEnterEvent( QDragEnterEvent *event )
 
   QString text = event->mimeData()->text();
   std::string symbol = text.toStdString();
-#if 0
-  IDevice *hintDevice = m_sheet->createDevice( symbol.c_str(), "", 1 );
-  if( hintDevice )
-    {
-      m_hintComponent = new ComponentGraphItem( m_id[stack].alloc(), true, hintDevice, m_schemaGraph );
-      m_hintComponent->setPos( mapToScene( event->pos() ) );
-      m_hintComponent->setLayout();
-      m_hintComponent->addToScene( m_schemaGraph );
+  QPointF cp = mapToScene( event->pos() );
 
-      m_mousePressEvent = &mousePressComponent;
-      m_mouseMoveEvent = &mouseMoveComponent;
-      m_mouseReleaseEvent = 0l;
-      m_keyPressEvent = &keyPressComponent;
+  ElementText *symbolText = static_cast<ElementText *>(createElement( "text", cp, /*edit*/true, /*deser*/false ));
+  ElementText *referenceText = static_cast<ElementText *>(createElement( "text", cp, /*edit*/true, /*deser*/false ));
+
+  m_hintComponent = static_cast<ComponentGraphItem *>(createElement( "component", cp, /*edit*/true, /*deser*/false ));
+  int rc = m_hintComponent->init( symbol.c_str(), symbolText, referenceText );
+  if( MainWindow::instance()->processRc( rc ) )
+    {
+      removeElement( m_hintComponent );
+      return;
     }
-#endif
+
+  m_hintComponent->setPos( cp );
+  m_hintComponent->setLayout();
+
+  m_mousePressEvent = 0l;
+  m_mouseMoveEvent = 0l;
+  m_mouseReleaseEvent = 0l;
+  m_keyPressEvent = &keyPressComponent;
 }
 
 void SchemaView::dragMoveEvent( QDragMoveEvent *event )
 {
   event->accept();
 
-  if( m_hintComponent ) m_hintComponent->setPos( togrid( mapToScene( event->pos() ) ) );
+  if( m_hintComponent )
+    {
+      m_hintComponent->setPos( togrid( mapToScene( event->pos() ) ) );
+      m_hintComponent->setLayout();
+    }
 }
 
 void SchemaView::dragLeaveEvent( QDragLeaveEvent *event )
@@ -490,7 +499,7 @@ void SchemaView::resetLine()
 
   if( lineElement )
     {
-      lineElement->removeLastPoint();
+      if( lineElement->pointCount() != m_hintCount ) lineElement->removeLastPoint();
 
       if( lineElement->pointCount() > 0 )
         {

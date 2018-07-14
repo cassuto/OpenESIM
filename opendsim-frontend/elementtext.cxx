@@ -26,6 +26,7 @@ namespace dsim
 
 ElementText::ElementText( ElemDirect direct, const QPointF &pos, int id, SchemaGraph *scene, bool edit, QGraphicsSimpleTextItem* parent )
           : ElementGraphItem<QGraphicsSimpleTextItem>( id, scene, edit, parent )
+          , m_textEditable( true )
 {
   setPos( pos );
   setDirect( direct );
@@ -58,6 +59,9 @@ void ElementText::setDirect( ElemDirect direct )
     default: return;
   }
 }
+
+void ElementText::setTextEditable( bool editable )
+{ m_textEditable = editable; }
 
 int ElementText::serialize( LispDataset *dataset )
 {
@@ -92,17 +96,20 @@ void ElementText::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
 {
   if( event->button() == Qt::LeftButton )
     {
-      TextSettingsDialog settings( text() );
-      if( settings.exec() == QDialog::Accepted )
+      if( m_textEditable )
         {
-          setText( settings.text() );
+          TextSettingsDialog settings( text() );
+          if( settings.exec() == QDialog::Accepted )
+            {
+              setText( settings.text() );
+            }
         }
     }
 }
 
 void ElementText::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
 {
-  Templatestyle::apply( static_cast<QGraphicsSimpleTextItem *>(this), style(), isSelected() );
+  Templatestyle::apply( static_cast<QGraphicsSimpleTextItem *>(this), customText(), style(), isSelected() );
 
   QGraphicsSimpleTextItem::paint( painter, option, widget );
 }

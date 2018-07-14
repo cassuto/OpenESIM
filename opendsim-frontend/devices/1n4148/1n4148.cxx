@@ -23,6 +23,7 @@ DeviceLibraryEntry *dev_1n4148::libraryEntry()
 {
   return new DeviceLibraryEntry(
       /* symbol_name */     "1n4148",
+      /* reference_name */  "D",
       /* category */        "Diodes",
       /* sub_category */    "Switching",
       /* description */     "1N4148 Diode",
@@ -64,9 +65,14 @@ int dev_1n4148::render_frame( IDeviceGraph *graph )
   graph->line( -8, -7, -8, 7 );
   graph->line( -8, 7, 7, 0 );
 
+  graph->line( -12, 0, 12, 0 );
+
   graph->setPenWidth( 3 );
 
   graph->line( 7, -6, 7, 6 );
+
+  IRECT rect = get_bound();
+  //graph->rect( rect.x, rect.y, rect.w, rect.h );
   return 0;
 }
 

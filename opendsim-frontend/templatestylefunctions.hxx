@@ -25,16 +25,19 @@
 #include <QFont>
 #include <QGraphicsSimpleTextItem>
 
+#include "templatecustom.h"
+
 namespace dsim
 {
 
 template <class T>
-  void Templatestyle::apply( T *painter, const char *style, bool selected )
+  void Templatestyle::apply( T *painter, TemplateCustom *customLine, TemplateCustom *customFill, const char *style, bool selected )
   {
     if( !Templatestyle::instance()->isStyle( style ) )
       return;
 
     StyleItem s = Templatestyle::instance()->fillStyle( style, selected );
+    if( customFill ) customFill->apply( &s );
 
     QBrush brush = painter->brush();
     if( s.usebkcolor )
@@ -43,40 +46,26 @@ template <class T>
       }
     else
       {
-        brush.setColor( QColor( s.color.r, s.color.g, s.color.b ) );
+        if( s.bkcolor.r >= 0 && s.bkcolor.g >= 0 && s.bkcolor.b >= 0 )
+          brush.setColor( QColor( s.bkcolor.r, s.bkcolor.g, s.bkcolor.b ) );
       }
 
     s = Templatestyle::instance()->lineStyle( style, selected );
+    if( customLine ) customLine->apply( &s );
 
     QPen pen = painter->pen();
     pen.setStyle( Templatestyle::toQtPenStyle( s.line ) );
     if( s.line != LINE_NONE)
       {
         pen.setWidthF( s.width );
-        pen.setColor( QColor( s.color.r, s.color.g, s.color.b ) );
+        if( s.color.r >= 0 && s.color.g >= 0 && s.color.b >= 0 )
+          {
+            pen.setColor( QColor( s.color.r, s.color.g, s.color.b ) );
+          }
       }
 
     painter->setBrush( brush );
     painter->setPen( pen );
-  }
-
-template <>
-  inline void Templatestyle::apply( QGraphicsSimpleTextItem *text, const char *style, bool selected )
-  {
-    if( !Templatestyle::instance()->isStyle( style ) )
-        return;
-
-    StyleItem s = Templatestyle::instance()->textStyle( style, selected );
-
-    QFont font = text->font();
-    font.setPointSize( s.size );
-    font.setBold( s.bold );
-    font.setItalic( s.italic );
-    text->setFont( font );
-
-    QBrush brush = text->brush();
-    brush.setColor( QColor( s.color.r, s.color.g, s.color.b ) );
-    text->setBrush( brush );
   }
 
 }

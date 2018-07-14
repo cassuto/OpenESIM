@@ -18,6 +18,7 @@
 
 #include <QList>
 #include <QtWidgets>
+#include <string>
 #include "componentgraph.h"
 
 #include "elementgraphitem.h"
@@ -29,20 +30,25 @@ class DeviceLibraryEntry;
 namespace dsim
 {
 
-class SchemaGraph;
+class ElementText;
 
 class ComponentGraphItem : public ElementGraphItem<QGraphicsItem>
 {
 public:
-  ComponentGraphItem( const DeviceLibraryEntry *deviceEntry, int id, SchemaGraph *scene, bool edit, QGraphicsItem *parent = 0 );
+  ComponentGraphItem( int id, SchemaGraph *scene, bool edit, QGraphicsItem *parent = 0 );
   ~ComponentGraphItem();
 
   const char *classname() { return "component"; }
   QRectF boundingRect() const { return m_bounding; }
   void setBoundingRect( const QRect &bounding );
 
+  int init( const char *deviceEntry, ElementText *symbolText, ElementText *referenceText, bool deser = false );
+  void setLayout();
+  std::string reference();
+
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
+  int resolveSubElements();
 
 public:
   inline IDevice *device() const { return m_device; }
@@ -52,10 +58,16 @@ protected:
   void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget );
 
 private:
+  void setSubs( ElementText *symbolText, ElementText *referenceText );
+
+private:
   QRectF                m_bounding;
   IDevice              *m_device;
-  const DeviceLibraryEntry *m_deviceEntry;
   ComponentGraph       *m_deviceGraph;
+  std::string           m_symbol;
+  std::string           m_reference; // fpr deserialize
+  ElementText          *m_symbolText;
+  ElementText          *m_referenceText;
 };
 
 }

@@ -45,7 +45,7 @@ IDevice *SchemaSheet::createDevice( const char *symbol, const char *reference, i
   return createDevice( device_lib_entry( symbol ), reference, id );
 }
 
-IDevice *SchemaSheet::createDevice( DeviceLibraryEntry *entry, const char *reference, int id )
+IDevice *SchemaSheet::createDevice( const DeviceLibraryEntry *entry, const char *reference, int id )
 {
   if( !entry ) return 0l;
 

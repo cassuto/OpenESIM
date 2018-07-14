@@ -37,6 +37,7 @@ SchemaView::SchemaView( SchemaSheet *sheet, QWidget *parent )
           : QGraphicsView( parent )
           , m_sheet( sheet )
           , stack( 0 )
+          , m_selectedElements( 0l )
 {
   m_schemaGraph = 0;
   m_scalefactor = 1;
@@ -47,8 +48,8 @@ SchemaView::SchemaView( SchemaSheet *sheet, QWidget *parent )
   setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
   setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
   setViewportUpdateMode( QGraphicsView::MinimalViewportUpdate );
+  setRenderHint( QPainter::HighQualityAntialiasing );
   setCacheMode( CacheBackground );
-  setRenderHint( QPainter::Antialiasing );
   setTransformationAnchor( AnchorUnderMouse );
   setResizeAnchor( AnchorUnderMouse );
   setDragMode( QGraphicsView::RubberBandDrag );
@@ -59,7 +60,12 @@ SchemaView::SchemaView( SchemaSheet *sheet, QWidget *parent )
   m_editable[1] = false;
 
   /*
-   * schemaviewactions.cxx related construction
+   * schemaviewmenus.cxx related construction
+   */
+  createContextMenus();
+
+  /*
+   * schemaviewfunctions.cxx related construction
    */
   m_hintElement = 0l;
   m_hintComponent = 0l;
@@ -99,9 +105,14 @@ ElementBase *SchemaView::createElement( const char *classname, const QPointF &po
 
   if( !deser ) id = m_id[stack].alloc();
 
+  if( 0==std::strcmp( classname, "component" ) )
+    {
+      ComponentGraphItem *component = new ComponentGraphItem( id, m_schemaGraph, editable );
+      element = component;
+    }
   if( 0==std::strcmp( classname, "pin" ) )
     {
-      ElementPin *pinElement = new ElementPin( (ElemDirect)m_hintDirect, pos, 0l, id, m_schemaGraph, editable );
+      ElementPin *pinElement = new ElementPin( (ElemDirect)m_hintDirect, pos, 0l, 0l, id, m_schemaGraph, editable );
       element = pinElement;
     }
   else if( 0==std::strcmp( classname, "line" ) )
@@ -253,7 +264,7 @@ ComponentGraphItem *SchemaView::loadSymbol( std::ifstream &instream )
    * Reset all the elements in stack 1
    */
   stack = 0;
-  ComponentGraphItem *component = new ComponentGraphItem( /*deviceEntry*/0l, m_id[stack].alloc(), this->m_schemaGraph, m_editable[stack] );
+  ComponentGraphItem *component = new ComponentGraphItem( m_id[stack].alloc(), m_schemaGraph, m_editable[stack] );
 
   foreach( ElementBase *element, m_elements[1] )
     {
@@ -282,7 +293,6 @@ void SchemaView::addId( int id )
 
 bool SchemaView::idUnused( int id )
 { return m_id[stack].unused( id ); }
-
 
 void SchemaView::mousePressEvent( QMouseEvent *event )
 {

@@ -23,6 +23,7 @@ DeviceLibraryEntry *dev_diode::libraryEntry()
 {
   return new DeviceLibraryEntry(
       /* symbol_name */     "DIODE",
+      /* reference_name */  "D",
       /* category */        "Diodes",
       /* sub_category */    "Generic",
       /* description */     "Generic Diode Device",

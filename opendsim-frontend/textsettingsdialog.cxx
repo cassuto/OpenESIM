@@ -22,8 +22,8 @@ TextSettingsDialog::TextSettingsDialog( const QString &text, QWidget *parent )
                       : QDialog( parent )
 {
   QHBoxLayout *centralLayout = new QHBoxLayout( this );
-  centralLayout->setMargin( 0 );
-  centralLayout->setSpacing( 0 );
+  centralLayout->setMargin( 2 );
+  centralLayout->setSpacing( 2 );
 
   QLabel *label = new QLabel( tr("Set Text:"), this );
   m_edit = new QLineEdit( text, this );

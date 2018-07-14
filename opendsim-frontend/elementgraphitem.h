@@ -22,6 +22,7 @@
 #include <string>
 
 #include "elementbase.h"
+#include "templatecustom.h"
 
 namespace dsim
 {
@@ -47,7 +48,14 @@ template <class T>
     void removeFromScene( QGraphicsScene *scene );
 
     inline const char *style() const { return m_style.c_str(); }
+    inline TemplateCustom *customLine() { return &m_customLine; }
+    inline TemplateCustom *customFill() { return &m_customFill; }
+    inline TemplateCustom *customText() { return &m_customText; }
     inline bool editable() const { return m_editable; }
+
+    inline void setCustomLine( const TemplateCustom &custom ) { m_customLine = custom; }
+    inline void setCustomFill( const TemplateCustom &custom ) { m_customFill = custom; }
+    inline void setCustomText( const TemplateCustom &custom ) { m_customText = custom; }
 
   protected:
     void mousePressEvent( QGraphicsSceneMouseEvent *event );
@@ -58,6 +66,9 @@ template <class T>
     bool                      m_editable;
     ElemDirect                m_direct;
     std::string               m_style;
+    TemplateCustom            m_customLine;
+    TemplateCustom            m_customFill;
+    TemplateCustom            m_customText;
   };
 
 static ElementBase *elementbase_cast( QGraphicsItem *graphicsItem )

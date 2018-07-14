@@ -30,9 +30,10 @@ typedef IDevice *(*pfn_device_construct)( const char *reference, int id, circuit
 class DeviceLibraryEntry
 {
 public:
-  DeviceLibraryEntry( const char *symbol_name_, const char *category_,const char *sub_category_, const char *description_, const char *manufacturer_, pfn_device_construct construct_, void *reserved_ )
+  DeviceLibraryEntry( const char *symbol_name_, const char *reference_name_, const char *category_,const char *sub_category_, const char *description_, const char *manufacturer_, pfn_device_construct construct_, void *reserved_ )
     : reserved( reserved_ ),
       symbol_name( symbol_name_ ),
+      reference_name( reference_name_ ),
       category( category_ ),
       sub_category( sub_category_ ),
       description( description_ ),
@@ -43,6 +44,7 @@ public:
 public:
   void       *reserved;
   const char *symbol_name;
+  const char *reference_name;
   const char *category;
   const char *sub_category;
   const char *description;

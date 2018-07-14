@@ -80,6 +80,10 @@
 #define DS_REREFERENCE (24)
 /** Not matched */
 #define DS_NOT_MATCHED (26)
+/** Failed to create device instance */
+#define DS_CREATE_IDEVICE (27)
+/** Target custom template is invalid */
+#define DS_INVALID_CUSTOM_TEMPLATE (28)
 
 /* }}gen */
 

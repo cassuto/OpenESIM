@@ -16,12 +16,13 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *  Lesser General Public License for more details.
  */
-#define TRACE_UNIT "init"
+#define TRACE_UNIT "main"
 
 #include <dsim/logtrace.h>
 #include <dsim/device-lib.h>
 #include <dsim/error.h>
 #include <dsim/misc.h>
+#include <dsim/version.h>
 
 #include <new>
 #include <QApplication>
@@ -48,12 +49,17 @@ static void new_handler()
 
 int main( int argc, char *argv[] )
 {
-  QApplication app( argc, argv );
+  int rc = 0;
 
   ds_log_init();
+  trace_info(("%s\n", appBanner));
+
+  QApplication app( argc, argv );
 
   reserved = new char[64 * 1024 * 1024];
   std::set_new_handler( new_handler );
+
+  trace_info(("loading device library...\n"));
 
   if( device_lib_init() )
     {
@@ -61,9 +67,13 @@ int main( int argc, char *argv[] )
       return 1;
     }
 
+  trace_info(("loading main window...\n"));
+
   MainWindow mainwnd;
 
   mainwnd.show();
 
-  return app.exec();
+  rc = app.exec();
+  trace_info(("terminated. rc = %d\n", rc));
+  return rc;
 }

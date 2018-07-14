@@ -28,7 +28,7 @@ class ElementText;
 class ElementPin : public ElementGraphItem<QGraphicsItem>
 {
 public:
-  ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symbol, int id, SchemaGraph *scene, bool editable, QGraphicsItem *parent = 0 );
+  ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symbol, ElementText *reference, int id, SchemaGraph *scene, bool editable, QGraphicsItem *parent = 0 );
   ~ElementPin();
 
   const char *classname() { return "pin"; }
@@ -37,7 +37,7 @@ public:
 
   void setDirect( ElemDirect direct );
   void setLength( int length );
-  void setSub( ElementText *symbol );
+  void setSub( ElementText *symbol, ElementText *reference );
   void setLayout();
 
   int serialize( LispDataset *dataset );
@@ -51,6 +51,7 @@ private:
   int                       m_length;
   QRectF                    m_bounding;
   ElementText              *m_symbolLabel;
+  ElementText              *m_referenceLabel;
 };
 
 

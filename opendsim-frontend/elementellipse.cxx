@@ -150,7 +150,7 @@ void ElementEllipse::staffMoveEvent( int index, QGraphicsSceneMouseEvent *event 
 void ElementEllipse::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
 {
 
-  Templatestyle::apply( this, style(), isSelected() );
+  Templatestyle::apply( this, customLine(), customFill(), style(), isSelected() );
 
   QGraphicsEllipseItem::paint( painter, option, widget );
   updatePads();
