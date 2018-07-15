@@ -32,7 +32,9 @@ public:
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
 
-  void apply( StyleItem *style );
+  void setCustomAll( bool custom );
+  bool custom() const;
+  void apply( StyleItem *style ) const;
 
 public:
   LineStyle     line;

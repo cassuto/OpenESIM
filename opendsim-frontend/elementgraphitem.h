@@ -52,6 +52,7 @@ template <class T>
     inline TemplateCustom *customFill() { return &m_customFill; }
     inline TemplateCustom *customText() { return &m_customText; }
     inline bool editable() const { return m_editable; }
+    inline void setFineturningEnabled( bool enable ) { m_fineturningEnabled = enable; }
 
     inline void setCustomLine( const TemplateCustom &custom ) { m_customLine = custom; }
     inline void setCustomFill( const TemplateCustom &custom ) { m_customFill = custom; }
@@ -64,6 +65,7 @@ template <class T>
 
   protected:
     bool                      m_editable;
+    bool                      m_fineturningEnabled;
     ElemDirect                m_direct;
     std::string               m_style;
     TemplateCustom            m_customLine;

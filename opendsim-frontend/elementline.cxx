@@ -32,6 +32,7 @@ ElementLine::ElementLine( const QPointF &p0, int id, SchemaGraph *scene, bool ed
 
   ElementGraphItem<QGraphicsItem>::setPos( p0 );
   m_lastpoint = p0 - pos();
+  setFineturningEnabled( true );
 }
 
 ElementLine::~ElementLine()
@@ -240,11 +241,11 @@ QPainterPath ElementLine::shape() const
   return pathsum;
 }
 
-void ElementLine::staffMoveEvent( int index, QGraphicsSceneMouseEvent *event )
+void ElementLine::staffMoveEvent( int index, bool fineturning, QGraphicsSceneMouseEvent *event )
 {
   float dW = .0f, dH = .0f;
 
-  QPointF cp = togrid(event->scenePos());   // Absolute position
+  QPointF cp = fineturning ? event->scenePos() : togrid(event->scenePos());   // Absolute position
   QPointF rp = cp - pos(); // Relevant position
   QLineF line;
   QGraphicsLineItem *l = 0l;

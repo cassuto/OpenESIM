@@ -17,6 +17,7 @@
 #define PROPERTIESCUSTOMDIALOG_H_
 
 #include <QtWidgets>
+#include <string>
 
 #include "templatecustom.h"
 
@@ -31,10 +32,11 @@ class PropertiesCustomDialog : public QDialog
   Q_OBJECT
 
 public:
-  PropertiesCustomDialog( QWidget *parent = 0l );
+  PropertiesCustomDialog( const TemplateCustom *lineCustom, const TemplateCustom *fillCustom, const TemplateCustom *textCustom, QWidget *parent = 0l );
 
-  void loadTemplate( const char *name, TemplateCustom *lineCustom, TemplateCustom *fillCustom, TemplateCustom *textCustom );
+  void loadTemplate( const char *name );
 
+  std::string styleName();
   TemplateCustom lineCustom();
   TemplateCustom fillCustom();
   TemplateCustom textCustom();
@@ -62,6 +64,9 @@ private:
   void updateEnableState();
 
 private:
+  TemplateCustom m_lineCustom, m_fillCustom, m_textCustom;
+  bool m_AllowLineCustom, m_AllowFillCustom, m_AllowTextCustom;
+  bool m_loadingStyle;
   QComboBox *m_style, *m_lineStyle, *m_fillStyle;
   PressComboBox *m_lineColor, *m_fillFgColor, *m_fillBkColor;
   QDoubleSpinBox *m_lineWidth;

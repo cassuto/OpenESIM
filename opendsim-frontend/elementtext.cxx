@@ -34,6 +34,7 @@ ElementText::ElementText( ElemDirect direct, const QPointF &pos, int id, SchemaG
   setStyle( "component" );
   setText("");
   setRotation( 0 );
+  setFineturningEnabled( true );
 }
 
 ElementText::~ElementText()

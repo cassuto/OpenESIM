@@ -39,6 +39,7 @@ ElementRect::ElementRect( const QRectF &rect, int id, SchemaGraph *scene, bool e
 
   setRect( rect );
   setStyle( "component" );
+  setFineturningEnabled( true );
 }
 
 ElementRect::~ElementRect()
@@ -112,9 +113,9 @@ void ElementRect::setSelected( bool selected )
   updatePads();
 }
 
-void ElementRect::staffMoveEvent( int index, QGraphicsSceneMouseEvent *event )
+void ElementRect::staffMoveEvent( int index, bool fineTurning, QGraphicsSceneMouseEvent *event )
 {
-  QPointF cp = togrid(event->scenePos());
+  QPointF cp = fineTurning ? event->scenePos() : togrid(event->scenePos());
   QRectF rect = QGraphicsRectItem::rect();
 
   switch( index )

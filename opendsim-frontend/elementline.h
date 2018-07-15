@@ -49,7 +49,7 @@ public:
   QPainterPath shape() const;
 
 protected:
-  void staffMoveEvent( int index, QGraphicsSceneMouseEvent *event );
+  void staffMoveEvent( int index, bool fineturning, QGraphicsSceneMouseEvent *event );
   void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0 );
 
 private:

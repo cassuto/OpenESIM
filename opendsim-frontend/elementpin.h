@@ -44,14 +44,32 @@ public:
   int deserialize( LispDataset *dataset );
   int resolveSubElements();
 
+  /*
+   * Configuration interface
+   */
+  QString symbol() const;
+  QString reference() const;
+  bool showSymbol() const { return m_showSymbol; }
+  bool showReference() const { return m_showReference; }
+  void setSymbol( const QString &symbol );
+  void setReference( const QString &reference );
+  void setShowSymbol( bool show ) { m_showSymbol = show; updateVisible(); }
+  void setShowReference( bool show ) { m_showReference = show; updateVisible(); }
+
 protected:
+  void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event );
   void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget );
+
+private:
+  void updateVisible();
 
 private:
   int                       m_length;
   QRectF                    m_bounding;
   ElementText              *m_symbolLabel;
   ElementText              *m_referenceLabel;
+  bool                      m_showSymbol;
+  bool                      m_showReference;
 };
 
 

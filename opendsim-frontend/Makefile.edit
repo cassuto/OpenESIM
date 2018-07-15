@@ -43,6 +43,7 @@ QT_SRCS += mainwindow.cxx \
           componentpicktree.cxx \
           componentlibrarydialog.cxx \
           textsettingsdialog.cxx \
+          pinsettingsdialog.cxx \
           propertiescustomdialog.cxx \
           presscombobox.cxx \
 

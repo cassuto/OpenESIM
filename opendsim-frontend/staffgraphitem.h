@@ -29,7 +29,7 @@ public:
   virtual ~StaffEvents() {}
 
 protected:
-  virtual void staffMoveEvent( int index, QGraphicsSceneMouseEvent *event )=0;
+  virtual void staffMoveEvent( int index, bool fineTurning, QGraphicsSceneMouseEvent *event )=0;
 
   friend class StaffGraphItem;
 };

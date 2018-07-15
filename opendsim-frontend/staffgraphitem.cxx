@@ -64,7 +64,8 @@ void StaffGraphItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
 void StaffGraphItem::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
 {
   event->accept();
-  if( m_events ) m_events->staffMoveEvent( m_index, event ); // notify the event receiver
+  bool fineTurning = ( QApplication::keyboardModifiers() == Qt::ControlModifier );
+  if( m_events ) m_events->staffMoveEvent( m_index, fineTurning, event ); // notify the event receiver
 }
 
 void StaffGraphItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
@@ -72,5 +73,6 @@ void StaffGraphItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
   event->accept();
   ungrabMouse();
 }
+
 
 }

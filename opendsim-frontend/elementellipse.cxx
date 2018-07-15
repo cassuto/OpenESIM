@@ -112,9 +112,9 @@ void ElementEllipse::setSelected( bool selected )
   updatePads();
 }
 
-void ElementEllipse::staffMoveEvent( int index, QGraphicsSceneMouseEvent *event )
+void ElementEllipse::staffMoveEvent( int index, bool fineturning, QGraphicsSceneMouseEvent *event )
 {
-  QPointF cp = togrid(event->scenePos());
+  QPointF cp = fineturning ? event->scenePos() : togrid(event->scenePos());
   QRectF rect = QGraphicsEllipseItem::rect();
 
   switch( index )

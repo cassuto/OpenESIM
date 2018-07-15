@@ -14,7 +14,7 @@
  */
 
 #include <string>
-
+#include <cstdio>
 #include "templatestyle.h"
 #include "templatecustom.h"
 #include "presscombobox.h"
@@ -25,8 +25,14 @@
 namespace dsim
 {
 
-PropertiesCustomDialog::PropertiesCustomDialog( QWidget *parent )
+PropertiesCustomDialog::PropertiesCustomDialog( const TemplateCustom *lineCustom, const TemplateCustom *fillCustom, const TemplateCustom *textCustom, QWidget *parent )
                        : QDialog( parent )
+                       , m_lineCustom( *lineCustom ) // copy backup version
+                       , m_fillCustom( *fillCustom )
+                       , m_textCustom( *textCustom )
+                       , m_AllowLineCustom( 0l!=lineCustom )
+                       , m_AllowFillCustom( 0l!=fillCustom )
+                       , m_AllowTextCustom( 0l!=textCustom )
 {
   QGridLayout *centralLayout = new QGridLayout( this );
 
@@ -35,6 +41,7 @@ PropertiesCustomDialog::PropertiesCustomDialog( QWidget *parent )
   centralLayout->addWidget( label, 0, 0, 1, 1 );
 
   m_style = new QComboBox( this );
+  m_loadingStyle = true;
 
   using namespace std;
   list<string> templates = Templatestyle::instance()->templates();
@@ -44,6 +51,7 @@ PropertiesCustomDialog::PropertiesCustomDialog( QWidget *parent )
       m_style->addItem( (*it).c_str() );
     }
 
+  m_loadingStyle = false;
   centralLayout->addWidget( m_style, 0, 1, 1, 4 );
 
   /*
@@ -189,18 +197,20 @@ PropertiesCustomDialog::PropertiesCustomDialog( QWidget *parent )
   update();
 
   std::string style = m_style->itemText(0).toStdString();
-  loadTemplate( style.c_str(), 0l, 0l, 0l );
+  loadTemplate( style.c_str() );
 }
 
-void PropertiesCustomDialog::loadTemplate( const char *name, TemplateCustom *lineCustom, TemplateCustom *fillCustom, TemplateCustom *textCustom )
+void PropertiesCustomDialog::loadTemplate( const char *name )
 {
   if( !Templatestyle::instance()->isStyle( name ) )
     return;
 
+  m_loadingStyle = true;
   m_style->setCurrentText( name );
+  m_loadingStyle = false;
 
   StyleItem s = Templatestyle::instance()->lineStyle( name, /*selected*/ false );
-  if( lineCustom ) lineCustom->apply( &s );
+  if( m_AllowLineCustom ) m_lineCustom.apply( &s );
 
   if( s.line >= LINE_NONE && s.line < LINE_RESERVED_MAX )
     {
@@ -219,7 +229,7 @@ void PropertiesCustomDialog::loadTemplate( const char *name, TemplateCustom *lin
     }
 
   s = Templatestyle::instance()->fillStyle( name, /*selected*/ false );
-  if( fillCustom ) fillCustom->apply( &s );
+  if( m_AllowFillCustom ) m_fillCustom.apply( &s );
 
   if( s.brush >= BRUSH_NONE && s.brush < BRUSH_RESERVED_MAX )
     {
@@ -258,48 +268,57 @@ void PropertiesCustomDialog::loadTemplate( const char *name, TemplateCustom *lin
     }
 
   s = Templatestyle::instance()->textStyle( name, /*selected*/ false );
+  if( m_AllowTextCustom ) m_textCustom.apply( &s );
 
-  m_textColor->setColor( QColor( s.color.r, s.color.g, s.color.b ) );
+  if( s.color.r >= 0 && s.color.g >= 0 && s.color.b >= 0 )
+    {
+      m_textColor->setColor( QColor( s.color.r, s.color.g, s.color.b ) );
+    }
+  else
+    {
+      m_textColor->setColor( QColor( 255, 255, 255 ) );
+      m_textColor->setEnabled( false );
+    }
   m_textHeight->setValue( s.size );
   m_textBold->setChecked( s.bold );
   m_textItalic->setChecked( s.italic );
 
-  if( lineCustom )
+  if( m_AllowLineCustom )
     {
-      m_customLineStyle->setChecked( lineCustom->lineCustom );
-      m_customLineWidth->setChecked( lineCustom->widthCustom );
-      m_customLineColor->setChecked( lineCustom->colorCustom );
+      m_customLineStyle->setChecked( m_lineCustom.lineCustom );
+      m_customLineWidth->setChecked( m_lineCustom.widthCustom );
+      m_customLineColor->setChecked( m_lineCustom.colorCustom );
     }
 
-  m_customLineStyle->setEnabled( 0l!=lineCustom );
-  m_customLineWidth->setEnabled( 0l!=lineCustom );
-  m_customLineColor->setEnabled( 0l!=lineCustom );
+  m_customLineStyle->setEnabled( m_AllowLineCustom );
+  m_customLineWidth->setEnabled( m_AllowLineCustom );
+  m_customLineColor->setEnabled( m_AllowLineCustom );
 
-  if( fillCustom )
+  if( m_AllowFillCustom )
     {
-      m_customFillStyle->setChecked( fillCustom->brushCustom );
-      m_customFillFgColor->setChecked( fillCustom->colorCustom );
-      m_customFillUseBkcolor->setChecked( fillCustom->usebkcolorCustom );
-      m_customFillBkColor->setChecked( fillCustom->bkcolorCustom );
+      m_customFillStyle->setChecked( m_fillCustom.brushCustom );
+      m_customFillFgColor->setChecked( m_fillCustom.colorCustom );
+      m_customFillUseBkcolor->setChecked( m_fillCustom.usebkcolorCustom );
+      m_customFillBkColor->setChecked( m_fillCustom.bkcolorCustom );
     }
 
-  m_customFillStyle->setEnabled( 0l!=fillCustom );
-  m_customFillFgColor->setEnabled( 0l!=fillCustom );
-  m_customFillUseBkcolor->setEnabled( 0l!=fillCustom );
-  m_customFillBkColor->setEnabled( 0l!=fillCustom );
+  m_customFillStyle->setEnabled( m_AllowFillCustom );
+  m_customFillFgColor->setEnabled( m_AllowFillCustom );
+  m_customFillUseBkcolor->setEnabled( m_AllowFillCustom );
+  m_customFillBkColor->setEnabled( m_AllowFillCustom );
 
-  if( textCustom )
+  if( m_AllowTextCustom )
     {
-      m_customTextColor->setChecked( textCustom->colorCustom );
-      m_customTextHeight->setChecked( textCustom->sizeCustom );
-      m_customTextBold->setChecked( textCustom->boldCustom );
-      m_customTextItalic->setChecked( textCustom->italicCustom );
+      m_customTextColor->setChecked( m_textCustom.colorCustom );
+      m_customTextHeight->setChecked( m_textCustom.sizeCustom );
+      m_customTextBold->setChecked( m_textCustom.boldCustom );
+      m_customTextItalic->setChecked( m_textCustom.italicCustom );
     }
 
-  m_customTextColor->setEnabled( 0l!=textCustom );
-  m_customTextHeight->setEnabled( 0l!=textCustom );
-  m_customTextBold->setEnabled( 0l!=textCustom );
-  m_customTextItalic->setEnabled( 0l!=textCustom );
+  m_customTextColor->setEnabled( m_AllowTextCustom );
+  m_customTextHeight->setEnabled( m_AllowTextCustom );
+  m_customTextBold->setEnabled( m_AllowTextCustom );
+  m_customTextItalic->setEnabled( m_AllowTextCustom );
 
   updateEnableState();
 }
@@ -307,7 +326,15 @@ void PropertiesCustomDialog::loadTemplate( const char *name, TemplateCustom *lin
 void PropertiesCustomDialog::onStyleChanged( int index )
 {
   std::string style = m_style->itemText( index ).toStdString();
-  loadTemplate( style.c_str(), 0l, 0l, 0l );
+
+  if( !m_loadingStyle )
+    {
+      m_lineCustom.setCustomAll( false );
+      m_fillCustom.setCustomAll( false );
+      m_textCustom.setCustomAll( false );
+
+      loadTemplate( style.c_str() );
+    }
 }
 
 
@@ -395,6 +422,9 @@ void PropertiesCustomDialog::updateEnableState()
     }
 }
 
+std::string PropertiesCustomDialog::styleName()
+{ return m_style->currentText().toStdString(); }
+
 TemplateCustom PropertiesCustomDialog::lineCustom()
 {
   TemplateCustom cust;
@@ -457,9 +487,9 @@ TemplateCustom PropertiesCustomDialog::textCustom()
   if( m_customTextColor->checkState() == Qt::Checked )
     {
       cust.colorCustom = true;
-      cust.color.r = m_fillFgColor->color().red();
-      cust.color.g = m_fillFgColor->color().blue();
-      cust.color.b = m_fillFgColor->color().green();
+      cust.color.r = m_textColor->color().red();
+      cust.color.g = m_textColor->color().blue();
+      cust.color.b = m_textColor->color().green();
     }
   if( m_customTextHeight->checkState() == Qt::Checked )
     {

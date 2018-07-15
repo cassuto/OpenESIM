@@ -74,7 +74,7 @@ void SchemaView::setMode( DrawMode mode )
         ((ElementText *)symbol)->setText( "PIN 1" );
 
         ElementBase *reference = createElement( "text", QPoint( 0, 0 ) );
-        ((ElementText *)reference)->setText( "1" );
+        ((ElementText *)reference)->setText( "1000" );
 
         m_hintElement = createElement( "pin", QPoint( 0, 0 ) );
         ((ElementPin *)m_hintElement)->setSub( (ElementText *)symbol, ((ElementText *)reference) );

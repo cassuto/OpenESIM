@@ -43,7 +43,7 @@ public:
   void setSelected( bool selected );
 
 protected:
-  void staffMoveEvent( int index, QGraphicsSceneMouseEvent *event );
+  void staffMoveEvent( int index, bool fineTurning, QGraphicsSceneMouseEvent *event );
   void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0 );
 
 private:

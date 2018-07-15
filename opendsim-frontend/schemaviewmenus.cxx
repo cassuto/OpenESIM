@@ -68,26 +68,34 @@ void SchemaView::contextMenuEvent( QContextMenuEvent* event )
 }
 
 template <typename base>
-  static void configLineFillText( PropertiesCustomDialog *customDialog, base *element )
+  static void configLineFillText( base *element )
   {
-    customDialog->loadTemplate( element->style(), element->customLine(), element->customFill(), element->customText() );
+    PropertiesCustomDialog customDialog( element->customLine(), element->customFill(), element->customText() );
 
-    if( customDialog->exec() == QDialog::Accepted )
+    customDialog.loadTemplate( element->style() );
+
+    if( customDialog.exec() == QDialog::Accepted )
       {
-        element->setCustomLine( customDialog->lineCustom() );
-        element->setCustomFill( customDialog->fillCustom() );
-        element->setCustomText( customDialog->textCustom() );
+        element->setStyle( customDialog.styleName().c_str() );
+        element->setCustomLine( customDialog.lineCustom() );
+        element->setCustomFill( customDialog.fillCustom() );
+        element->setCustomText( customDialog.textCustom() );
+        element->update();
       }
   }
 
 template <typename base>
-  static void configText( PropertiesCustomDialog *customDialog, base *element )
+  static void configText( base *element )
   {
-    customDialog->loadTemplate( element->style(), 0l, 0l, element->customText() );
+    PropertiesCustomDialog customDialog( 0l, 0l, element->customText() );
 
-    if( customDialog->exec() == QDialog::Accepted )
+    customDialog.loadTemplate( element->style() );
+
+    if( customDialog.exec() == QDialog::Accepted )
       {
-        element->setCustomText( customDialog->textCustom() );
+        element->setStyle( customDialog.styleName().c_str() );
+        element->setCustomText( customDialog.textCustom() );
+        element->update();
       }
   }
 
@@ -98,23 +106,22 @@ template <typename base>
 void SchemaView::onEditProperties( bool checked )
 {
   Q_UNUSED( checked );
-  PropertiesCustomDialog customDialog;
 
   if( 0==std::strcmp( m_selectedElements->classname(), "line" ) )
     {
-      configLineFillText( &customDialog, static_cast<ElementLine*>(m_selectedElements) );
+      configLineFillText( static_cast<ElementLine*>(m_selectedElements) );
     }
   else if( 0==std::strcmp( m_selectedElements->classname(), "rect" ) )
     {
-      configLineFillText( &customDialog, static_cast<ElementRect*>(m_selectedElements) );
+      configLineFillText( static_cast<ElementRect*>(m_selectedElements) );
     }
   else if( 0==std::strcmp( m_selectedElements->classname(), "ellipse" ) )
     {
-      configLineFillText( &customDialog, static_cast<ElementEllipse*>(m_selectedElements) );
+      configLineFillText( static_cast<ElementEllipse*>(m_selectedElements) );
     }
   else if( 0==std::strcmp( m_selectedElements->classname(), "text" ) )
     {
-      configText( &customDialog, static_cast<ElementText*>(m_selectedElements) );
+      configText( static_cast<ElementText*>(m_selectedElements) );
     }
 }
 

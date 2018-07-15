@@ -29,8 +29,7 @@ TemplateCustom::TemplateCustom()
   bkcolor.r = bkcolor.g = bkcolor.b = -1;
   usebkcolor = true;
 
-  lineCustom = brushCustom = widthCustom = colorCustom = usebkcolorCustom = bkcolorCustom =
-  sizeCustom = boldCustom = italicCustom = false;
+  setCustomAll( false );
 }
 
 int TemplateCustom::serialize( LispDataset *dataset )
@@ -179,7 +178,19 @@ int TemplateCustom::deserialize( LispDataset *dataset )
   return 0;
 }
 
-void TemplateCustom::apply( StyleItem *style )
+void TemplateCustom::setCustomAll( bool custom )
+{
+  lineCustom = brushCustom = widthCustom = colorCustom = usebkcolorCustom = bkcolorCustom =
+  sizeCustom = boldCustom = italicCustom = custom;
+}
+
+bool TemplateCustom::custom() const
+{
+  return lineCustom || brushCustom || widthCustom || colorCustom || usebkcolorCustom || bkcolorCustom ||
+      sizeCustom || boldCustom || italicCustom;
+}
+
+void TemplateCustom::apply( StyleItem *style ) const
 {
   if( lineCustom )
     {

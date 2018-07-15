@@ -34,6 +34,7 @@ template <class base>
                : ElementBase( id, scene )
                , base( parent )
                , m_editable( editable )
+               , m_fineturningEnabled( false )
                , m_direct( ELEM_LEFT )
   {
     setGraphicsItem( this );
@@ -172,8 +173,16 @@ template <class base>
         QList<QGraphicsItem*> itemlist = ElementBase::scene()->selectedItems();
         if ( !itemlist.isEmpty() )
           {
-            QPointF delta = togrid(event->scenePos()) - togrid(event->lastScenePos());
+            QPointF delta;
 
+            if( QApplication::keyboardModifiers() == Qt::ControlModifier && m_fineturningEnabled )
+              {
+                delta = event->scenePos() - event->lastScenePos(); // fine turning
+              }
+            else
+              {
+                delta = togrid(event->scenePos()) - togrid(event->lastScenePos());
+              }
             foreach( QGraphicsItem* item , itemlist )
               {
                 ElementGraphItem* element =  qgraphicsitem_cast<ElementGraphItem* >( item );
