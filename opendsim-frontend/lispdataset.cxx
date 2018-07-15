@@ -299,7 +299,7 @@ int LispDataset::ser( const std::string &val, bool symbol )
 
 int LispDataset::ser( const bool &val )
 {
-  return ser( val ? "#t" : "#f" );
+  return ser( val ? "#t" : "#f", /*symbol*/ true );
 }
 
 #define DES_TEMPLATE(_val, _schemetype, _schemeval, _ctype) \
