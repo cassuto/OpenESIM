@@ -24,8 +24,6 @@ PinSettingsDialog::PinSettingsDialog( const ElementPin *pin, QWidget *parent )
                   : QDialog( parent )
 {
   QGridLayout *centralLayout = new QGridLayout( this );
-  centralLayout->setMargin( 2 );
-  centralLayout->setSpacing( 2 );
 
   QLabel *label = new QLabel( tr("Set Symbol:"), this );
   centralLayout->addWidget( label, 0, 0, 1, 1 );
