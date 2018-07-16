@@ -14,7 +14,7 @@
  */
 
 #include <dsim/error.h>
-#include <cstdio>
+
 #include "lispdataset.h"
 #include "componentgraphitem.h"
 #include "elementtext.h"
@@ -91,51 +91,89 @@ void ElementPin::setLayout()
 {
   if( !m_symbolLabel || !m_referenceLabel ) return;
 
-  updateVisible();
+  updateReferenceLabel();
+
   QRectF symbolBound = m_symbolLabel->boundingRect();
 
   int xlabelpos = pos().x();
   int ylabelpos = pos().y();
-printf("%d\n", m_direct);
+
+  switch( m_direct )
+  {
+    case ELEM_RIGHT:
+      xlabelpos -= symbolBound.width()+m_length+4;
+      ylabelpos -= 5;
+      m_symbolLabel->setDirect( ELEM_LEFT );
+      break;
+
+    case ELEM_TOP:
+      xlabelpos += 5;
+      ylabelpos += m_length+4;
+      m_symbolLabel->setDirect( m_direct );
+      break;
+
+    case ELEM_LEFT:
+      xlabelpos += m_length+4;
+      ylabelpos -= 5;
+      m_symbolLabel->setDirect( ELEM_LEFT );
+      break;
+
+    case ELEM_BOTTOM:
+      xlabelpos -= 5;
+      ylabelpos -= m_length+4;
+      m_symbolLabel->setDirect( m_direct );
+      break;
+  }
+  m_symbolLabel->setPos( QPointF(xlabelpos, ylabelpos) );
+}
+
+void ElementPin::updateReferenceLabel()
+{
+  if( !m_symbolLabel || !m_referenceLabel ) return;
+
+  updateVisible();
+
+  QRectF symbolBound = m_symbolLabel->boundingRect();
+
+  int xlabelpos = pos().x();
+  int ylabelpos = pos().y();
+
   switch( m_direct )
   {
     case ELEM_RIGHT:
       xlabelpos -= symbolBound.width()+m_length+4;
       ylabelpos -= 5;
       m_referenceLabel->setDirect( ELEM_LEFT );
-      m_symbolLabel->setDirect( ELEM_LEFT );
-
-      m_referenceLabel->setPos( QPointF(xlabelpos + symbolBound.width() + 8, ylabelpos - m_referenceLabel->boundingRect().width()/2 - 4 ) );
+      m_referenceLabel->setPos( QPointF(xlabelpos + symbolBound.width() + 8, ylabelpos - m_referenceLabel->boundingRect().height()/2 ) );
       break;
 
     case ELEM_TOP:
       xlabelpos += 5;
       ylabelpos += m_length+4;
       m_referenceLabel->setDirect( m_direct );
-      m_symbolLabel->setDirect( m_direct );
-
-      m_referenceLabel->setPos( QPointF(xlabelpos - m_referenceLabel->boundingRect().height()/2 + 4, ylabelpos - m_referenceLabel->boundingRect().width() - 8 ) );
+      m_referenceLabel->setPos( QPointF(xlabelpos - m_referenceLabel->boundingRect().height()/2, ylabelpos - m_referenceLabel->boundingRect().width() - 8 ) );
       break;
 
     case ELEM_LEFT:
       xlabelpos += m_length+4;
       ylabelpos -= 5;
       m_referenceLabel->setDirect( ELEM_LEFT );
-      m_symbolLabel->setDirect( ELEM_LEFT );
-
-      m_referenceLabel->setPos( QPointF(xlabelpos - m_referenceLabel->boundingRect().width() - 8, ylabelpos - m_referenceLabel->boundingRect().width()/2  ) );
+      m_referenceLabel->setPos( QPointF(xlabelpos - m_referenceLabel->boundingRect().width() - 8, ylabelpos - m_referenceLabel->boundingRect().height()/2  ) );
       break;
 
     case ELEM_BOTTOM:
       xlabelpos -= 5;
       ylabelpos -= m_length+4;
       m_referenceLabel->setDirect( m_direct );
-      m_symbolLabel->setDirect( m_direct );
-
-      m_referenceLabel->setPos( QPointF(xlabelpos - m_referenceLabel->boundingRect().height()/2 + 4, ylabelpos + m_referenceLabel->boundingRect().height() - 8 ) );
+      m_referenceLabel->setPos( QPointF(xlabelpos - m_referenceLabel->boundingRect().height()/2, ylabelpos + symbolBound.width() + 8 ) );
       break;
   }
-  m_symbolLabel->setPos( QPointF(xlabelpos, ylabelpos) );
+}
+
+void ElementPin::updateVisible()
+{
+  m_symbolLabel->setVisible( m_showSymbol );
+  m_referenceLabel->setVisible( m_showReference );
 }
 
 int ElementPin::serialize( LispDataset *dataset )
@@ -190,13 +228,8 @@ void ElementPin::setSymbol( const QString &symbol )
 { m_symbolLabel->setText( symbol ); }
 
 void ElementPin::setReference( const QString &reference )
-{ m_referenceLabel->setText( reference ); }
+{ m_referenceLabel->setText( reference ); updateReferenceLabel(); }
 
-void ElementPin::updateVisible()
-{
-  m_symbolLabel->setVisible( m_showSymbol );
-  m_referenceLabel->setVisible( m_showReference );
-}
 
 void ElementPin::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
 {

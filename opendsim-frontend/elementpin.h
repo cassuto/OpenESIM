@@ -62,6 +62,7 @@ protected:
 
 private:
   void updateVisible();
+  void updateReferenceLabel();
 
 private:
   int                       m_length;

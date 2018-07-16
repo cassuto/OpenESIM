@@ -20,6 +20,7 @@ OBJS += opendsim-edit.cxx.o \
 		schemasheet.cxx.o \
 		templatestyle.cxx.o \
 		templatecustom.cxx.o \
+		rotationtransform.cxx.o \
 		elementbase.cxx.o \
 		componentgraphitem.cxx.o \
     	elementpin.cxx.o \
