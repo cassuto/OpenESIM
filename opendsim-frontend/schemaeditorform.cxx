@@ -172,13 +172,7 @@ void SchemaEditorForm::onFileSave()
   if( filename.length() )
     {
       std::string fn = filename.toStdString();
-      ofstream stream( fn.c_str() );
-      if( stream.good() )
-        {
-          MainWindow::instance()->processRc( save( fn.c_str() ) );
-        }
-      else
-        MainWindow::instance()->processRc( -DS_CREATE_FILE );
+      MainWindow::instance()->processRc( save( fn.c_str() ) );
     }
 }
 
@@ -197,6 +191,9 @@ void SchemaEditorForm::onModeText()
 void SchemaEditorForm::onModeScript()
 { schema->setMode( MODE_SCRIPT ); }
 
+void SchemaEditorForm::gotoCenter()
+{ schema->view()->gotoCenter(); }
+
 int SchemaEditorForm::open( const char *filename )
 { using namespace std;
 
@@ -204,7 +201,7 @@ int SchemaEditorForm::open( const char *filename )
 
   ifstream instream( filename );
 
-  if( instream.bad() ) return -DS_OPEN_FILE;
+  if( !instream.is_open() ) return -DS_OPEN_FILE;
 
   rc = dom->deserialize( instream );    UPDATE_RC(rc);
 
@@ -220,7 +217,7 @@ int SchemaEditorForm::save( const char *filename )
 
   ofstream outstream( filename );
 
-  if( outstream.bad() ) return -DS_CREATE_FILE;
+  if( !outstream.is_open() ) return -DS_CREATE_FILE;
 
   rc = dom->serialize( outstream );     UPDATE_RC(rc);
 

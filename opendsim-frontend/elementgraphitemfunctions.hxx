@@ -30,7 +30,7 @@ namespace dsim
 {
 
 template <class base>
-  ElementGraphItem<base>::ElementGraphItem( int id, SchemaGraph *scene, bool editable, base *parent )
+  ElementGraphItem<base>::ElementGraphItem( int id, SchemaGraph *scene, bool editable, QGraphicsItem *parent )
                : ElementBase( id, scene )
                , base( parent )
                , m_editable( editable )
@@ -38,7 +38,7 @@ template <class base>
                , m_direct( ELEM_LEFT )
   {
     setGraphicsItem( this );
-    base::setData( 0, QVariant::fromValue( static_cast<void *>(static_cast<ElementBase *>(this)) ) );
+    elementbase_register_cast( this );
 
     base::setFlag( QGraphicsItem::ItemStacksBehindParent, true );
     base::setFlag( QGraphicsItem::ItemIsSelectable, true );
@@ -69,11 +69,18 @@ template <class base>
   }
 
 template <class base>
+  QRectF ElementGraphItem<base>::boundingRect() const
+  { return base::boundingRect(); }
+
+template <>
+  QRectF ElementGraphItem<QGraphicsItem>::boundingRect() const;
+
+template <class base>
   void ElementGraphItem<base>::paintBound( QPainter *painter )
   {
     QPen pen = painter->pen();
     painter->setPen( QPen( Qt::red, 0.5 ) );
-    painter->drawRect( base()->boundingRect() );
+    painter->drawRect( boundingRect() );
     painter->setPen( pen );
   }
 
@@ -174,8 +181,8 @@ template <class base>
         if ( !itemlist.isEmpty() )
           {
             QPointF delta;
-
-            if( QApplication::keyboardModifiers() == Qt::ControlModifier && m_fineturningEnabled )
+            bool fine = QApplication::keyboardModifiers() == Qt::ControlModifier && m_fineturningEnabled;
+            if( fine )
               {
                 delta = event->scenePos() - event->lastScenePos(); // fine turning
               }
@@ -185,8 +192,11 @@ template <class base>
               }
             foreach( QGraphicsItem* item , itemlist )
               {
-                ElementGraphItem* element =  qgraphicsitem_cast<ElementGraphItem* >( item );
-                if( element ) element->move( delta );
+                ElementBase *element = elementbase_cast( item );
+                if( element )
+                  {
+                    element->graphicsItem()->moveBy( delta.x(), delta.y() );
+                  }
               }
           }
       }

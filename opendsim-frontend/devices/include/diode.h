@@ -26,7 +26,7 @@ public:
   static DeviceLibraryEntry *libraryEntry();
   static IDevice *construct( const char *reference, int id, circuit_t *circuit, void *reserved );
 
-  int create();
+  int create( ISchematic *schematic );
   int init();
   struct IRECT get_bound();
   int render_frame( IDeviceGraph *graph );

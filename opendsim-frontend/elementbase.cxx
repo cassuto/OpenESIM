@@ -13,6 +13,8 @@
  *  Lesser General Public License for more details.
  */
 
+#define TRACE_UNIT "elementbase"
+#include <dsim/logtrace.h>
 #include <dsim/error.h>
 
 #include "lispdataset.h"
@@ -36,10 +38,11 @@ bool ElementBase::ref()
 bool ElementBase::isRef()
 { return m_ref; }
 
-const QList<ElementBase*> &ElementBase::elements() const
-{
-  return m_elements;
-}
+QList<ElementBase*> &ElementBase::elements()
+{ return m_elements; }
+
+QRectF ElementBase::boundingRect() const
+{ trace_assert(0); return QRectF(0,0,0,0); }
 
 int ElementBase::serialize( LispDataset *dataset )
 {

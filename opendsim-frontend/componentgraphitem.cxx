@@ -13,28 +13,35 @@
  *  Lesser General Public License for more details.
  */
 
+#define TRACE_UNIT "componentgraphitem"
+
 #include <device/device.h>
 #include <device/graph.h>
+#include <dsim/logtrace.h>
 #include <dsim/device-lib.h>
 #include <dsim/error.h>
+#include <cstring>
 
 #include "schemagraph.h"
+#include "boundingtraits.h"
 #include "elementgraphitem.h"
 #include "elementtext.h"
-#include "componentgraph.h"
+#include "elementpin.h"
+#include "componentgraphimpl.h"
 #include "componentgraphitem.h"
 
 namespace dsim
 {
 
 ComponentGraphItem::ComponentGraphItem( int id, SchemaGraph *scene, bool edit, QGraphicsItem *parent )
-                  : ElementGraphItem<QGraphicsItem>( id, scene, edit, parent )
+                  : ElementGraphItem<QGraphicsItemGroup>( id, scene, edit, parent )
                   , m_device( 0l )
-                  , m_deviceGraph( new ComponentGraph() )
+                  , m_deviceGraph( new ComponentGraphImpl() )
                   , m_symbolText( 0l )
                   , m_referenceText( 0l )
 {
-  QGraphicsItem::setFlag( QGraphicsItem::ItemIsSelectable, true );
+  QGraphicsItemGroup::setFlag( QGraphicsItemGroup::ItemIsSelectable, true );
+  setFineturningEnabled(true);
 }
 
 ComponentGraphItem::~ComponentGraphItem()
@@ -42,47 +49,52 @@ ComponentGraphItem::~ComponentGraphItem()
   delete m_deviceGraph;
 }
 
-void ComponentGraphItem::setBoundingRect( const QRect &bounding )
-{ prepareGeometryChange(); m_bounding = bounding; }
-
 int ComponentGraphItem::init( const char *deviceEntry, ElementText *symbolText, ElementText *referenceText, bool deser )
 {
   m_symbolText = symbolText; addElement( m_symbolText );    // add sub element
   m_referenceText = referenceText; addElement( m_referenceText );
 
-  m_symbolText->setStyle( "component" );
-  m_referenceText->setStyle( "component" );
+  if( !deser )
+    {
+      m_symbolText->setStyle( "component" );
+      m_referenceText->setStyle( "component" );
+    }
 
   const DeviceLibraryEntry *entry = device_lib_entry( deviceEntry );
   if( entry )
     {
-      std::string ref;
-      if( deser )
+      if( !deser ) // to allocate a default reference
         {
-          ref = m_reference; // specified reference
+          m_symbol = deviceEntry;
+          m_reference = entry->reference_name;
+          m_reference += "?";
         }
-      else // to allocate a default reference
-        {
-          ref = entry->reference_name;
-          ref += "?";
-        }
-      m_device = view()->sheet()->createDevice( entry, ref.c_str(), id() );
+
+      int rc = view()->sheet()->createDevice( entry, m_reference.c_str(), id(), &m_device );
+
+      UPDATE_RC(rc);
 
       if( m_device )
         {
-          m_symbol = deviceEntry;
-
           /*
            * Set up sub elements
            */
           m_symbolText->setText( deviceEntry );
           m_symbolText->setTextEditable( false );
-          m_referenceText->setText( ref.c_str() );
+          m_referenceText->setText( m_reference.c_str() );
 
-          IRECT boundRect = m_device->get_bound();
-          setBoundingRect( QRect( boundRect.x, boundRect.y, boundRect.w, boundRect.h ) );
+          /*
+           * Load component symbol and layout
+           */
+          if( !deser )
+            {
+              QPointF oldpos = pos(); QGraphicsItemGroup::setPos( QPointF( 0, 0) ); // ensure right offset aligned to grid
 
-          if( !deser ) setLayout();
+              rc = view()->loadSymbol( this, entry->symbolfile ); UPDATE_RC(rc);
+
+              QGraphicsItemGroup::setPos( oldpos );
+              setLayout();
+            }
           return 0;
         }
     }
@@ -95,10 +107,39 @@ void ComponentGraphItem::setLayout()
   if( m_symbolText && m_referenceText )
     {
       m_symbolText->setPos( pos() + QPointF( boundingRect().left(),
-                               boundingRect().top() - m_symbolText->boundingRect().height() - 8 ) );
+                                boundingRect().top() - m_symbolText->boundingRect().height() - 8 ) );
       m_referenceText->setPos( pos() + QPointF( boundingRect().left(),
                                 boundingRect().top() - m_symbolText->boundingRect().height() - m_referenceText->boundingRect().height() - 8 ) );
     }
+}
+
+void ComponentGraphItem::setPos( const QPointF &pos )
+{
+  QGraphicsItemGroup::setPos( pos + QPointF( gridWh/2, gridHt/2 ) ); // force align to grid
+}
+
+int ComponentGraphItem::addComponentElement( ElementBase *element )
+{
+  addToGroup( element->graphicsItem() );
+  return ElementGraphItem::addElement( element );
+}
+
+ElementPin *ComponentGraphItem::atPin( const QPointF &pos )
+{
+  for( QList<ElementBase *>::iterator it = elements().begin()+2; it!=elements().end(); ++it )
+    {
+      if( 0==std::strcmp( (*it)->classname(), "pin" ) )
+        {
+          QRectF bounding = (*it)->boundingRect();
+          bounding = (*it)->graphicsItem()->sceneTransform().mapRect( bounding );
+
+          if( bounding.contains( pos ) )
+            {
+              return static_cast<ElementPin *>(*it);
+            }
+        }
+    }
+  return 0l;
 }
 
 std::string ComponentGraphItem::reference()
@@ -108,15 +149,24 @@ int ComponentGraphItem::resolveSubElements()
 {
   int rc = ElementGraphItem::resolveSubElements(); UPDATE_RC(rc);
 
-  m_symbolText = static_cast<ElementText *>(elements()[0]);
-  m_referenceText = static_cast<ElementText *>(elements()[1]);
+  QList<ElementBase *>::const_iterator it = elements().begin();
+
+  m_symbolText = static_cast<ElementText *>(*it++);
+  m_referenceText = static_cast<ElementText *>(*it++);
+
+  QPointF oldpos = pos(); QGraphicsItemGroup::setPos( QPointF( 0, 0) ); // ensure right offset aligned to grid
+  for( ; it!=elements().end(); ++it )
+    {
+      addToGroup( (*it)->graphicsItem() );
+    }
+  QGraphicsItemGroup::setPos( oldpos );
 
   return init( m_symbol.c_str(), m_symbolText, m_referenceText, /*deser*/true );
 }
 
 int ComponentGraphItem::serialize( LispDataset *dataset )
 {
-  int rc = ElementGraphItem<QGraphicsItem>::serialize( dataset ); UPDATE_RC(rc);
+  int rc = ElementGraphItem<QGraphicsItemGroup>::serialize( dataset ); UPDATE_RC(rc);
 
   rc = dataset->ser( double(pos().x()) );                   UPDATE_RC(rc);
   rc = dataset->ser( double(pos().y()) );                   UPDATE_RC(rc);
@@ -128,22 +178,19 @@ int ComponentGraphItem::serialize( LispDataset *dataset )
 
 int ComponentGraphItem::deserialize( LispDataset *dataset )
 {
-  int rc = ElementGraphItem<QGraphicsItem>::deserialize( dataset ); UPDATE_RC(rc);
+  int rc = ElementGraphItem<QGraphicsItemGroup>::deserialize( dataset ); UPDATE_RC(rc);
 
   double x, y;
+  std::string symbol;
   rc = dataset->des( x );                                   UPDATE_RC(rc);
   rc = dataset->des( y );                                   UPDATE_RC(rc);
   rc = dataset->des( m_symbol );                            UPDATE_RC(rc);
   rc = dataset->des( m_reference );                         UPDATE_RC(rc);
 
-  setPos( QPointF( x, y ) );
+  QGraphicsItemGroup::setPos( QPointF( x, y ) );
   return 0;
 }
 
-void ComponentGraphItem::setSubs( ElementText *symbolText, ElementText *referenceText )
-{
-
-}
 
 void ComponentGraphItem::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
 {
@@ -151,12 +198,19 @@ void ComponentGraphItem::paint( QPainter* painter, const QStyleOptionGraphicsIte
 
   QPen pen(QColor( 0, 0, 128 ), 1.0f, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-  if ( QGraphicsItem::isSelected() )
+  if ( QGraphicsItemGroup::isSelected() )
     {
       pen.setColor( Qt::red);
     }
 
   painter->setPen( pen );
+
+#if 0
+  painter->drawRect( boundingRect() );
+  pen.setWidth( 5 );
+  painter->setPen( pen );
+  painter->drawPoint( QPointF(0,0) );
+#endif
 
   /*
    * Render component graphics

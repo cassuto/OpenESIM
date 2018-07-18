@@ -94,7 +94,7 @@ int ElementRect::deserialize( LispDataset *dataset )
 
 void ElementRect::updatePads()
 {
-  if( !editable() ) return;
+  if( isRef() || !editable() ) return;
 
   m_pads[0]->setPos( QGraphicsRectItem::boundingRect().topLeft() - m_pads[0]->central() );
   m_pads[1]->setPos( QGraphicsRectItem::boundingRect().topRight() - m_pads[1]->central() );

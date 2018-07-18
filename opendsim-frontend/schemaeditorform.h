@@ -44,6 +44,7 @@ public:
 
   int open( const char *filename );
   int save( const char *filename );
+  void gotoCenter();
 
 private:
   void createActions();

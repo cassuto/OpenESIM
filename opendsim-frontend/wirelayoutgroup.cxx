@@ -13,35 +13,13 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef ROTATIONTRANSFORM_H_
-#define ROTATIONTRANSFORM_H_
-
-#include <QVector>
-#include <QPointF>
-
-#include <device/graph.h>
+#include "wirelayoutgroup.h"
 
 namespace dsim
 {
 
-class RotationTransform
+WireLayoutGroup::WireLayoutGroup()
 {
-public:
-  int rotationTransform( int angle, int x0, int y0 );
-  int rotationTransform( ElemDirect direction, int x0, int y0 );
-
-  void addPoint( const QPointF &point );
-  void removeOne( const QPointF &point );
-  void removeAll();
-  inline int count() const { return m_originPoints.count(); }
-
-  inline const QVector<QPointF> &transPoints() const { return m_transPoints; }
-
-private:
-  QVector<QPointF> m_originPoints;
-  QVector<QPointF> m_transPoints;
-};
-
 }
 
-#endif
+}

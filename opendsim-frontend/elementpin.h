@@ -49,6 +49,7 @@ public:
    */
   QString symbol() const;
   QString reference() const;
+  int length() const { return m_length; }
   bool showSymbol() const { return m_showSymbol; }
   bool showReference() const { return m_showReference; }
   void setSymbol( const QString &symbol );

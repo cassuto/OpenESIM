@@ -13,24 +13,14 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef DEVICE_1N4148_H_
-#define DEVICE_1N4148_H_
+#ifndef DEVICE_SCHEMATIC_H_
+#define DEVICE_SCHEMATIC_H_
 
-#include "device-lib-internal.h"
-
-class dev_1n4148 : public IDevice
+class ISchematic
 {
 public:
-  dev_1n4148( const char *reference, int id, circuit_t *circuit, void *reserved );
-
-  static DeviceLibraryEntry *libraryEntry();
-  static IDevice *construct( const char *reference, int id, circuit_t *circuit, void *reserved );
-
-  int create( ISchematic *schematic );
-  int init();
-  struct IRECT get_bound();
-  int render_frame( IDeviceGraph *graph );
-  int uninit();
+  ISchematic() {}
+  virtual ~ISchematic() {}
 };
 
-#endif //!defined(DEVICE_1N4148_H_)
+#endif

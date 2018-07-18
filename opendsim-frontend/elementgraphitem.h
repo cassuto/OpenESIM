@@ -31,7 +31,7 @@ template <class T>
   class ElementGraphItem : public ElementBase, public T
   {
   public:
-    ElementGraphItem( int id, SchemaGraph *scene, bool editable, T *parent );
+    ElementGraphItem( int id, SchemaGraph *scene, bool editable, QGraphicsItem *parent = 0l );
 
     virtual void move( QPointF delta );
     virtual void setVisible( bool visible );
@@ -39,6 +39,8 @@ template <class T>
     virtual void setStyle( const char *style );
     virtual void setDirect( ElemDirect direct );
     virtual void setLayout();
+
+    virtual QRectF boundingRect() const;
 
     virtual int serialize( LispDataset *dataset );
     virtual int deserialize( LispDataset *dataset );
@@ -72,11 +74,6 @@ template <class T>
     TemplateCustom            m_customFill;
     TemplateCustom            m_customText;
   };
-
-static ElementBase *elementbase_cast( QGraphicsItem *graphicsItem )
-{
-  return static_cast<ElementBase *>( (graphicsItem->data(0).value<void *>()) );
-}
 
 }
 

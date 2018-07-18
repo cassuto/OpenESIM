@@ -14,22 +14,21 @@
  */
 
 #include "schemaview.h"
-#include <cstdio>
 #include "schemagraph.h"
 
 namespace dsim
 {
 
 SchemaGraph::SchemaGraph( qreal x, qreal y, qreal width, qreal height, SchemaView*  parent)
-           : QGraphicsScene( x, y, width, height, (QObject*)parent )
-           , m_schemaView( parent )
+            : QGraphicsScene( x, y, width, height, (QObject*)parent )
+            , m_schemaView( parent )
+            , m_paintGrid( true )
+            , m_paintFrameAxes( false )
 {
   setObjectName( "Circuit" );
   setParent( (QObject*)parent );
   m_scenerect.setRect( x, y, width, height );
   setSceneRect( QRectF(x, y, width, height) );
-
-  m_paintGrid = true;
 }
 
 SchemaGraph::~SchemaGraph()
@@ -41,13 +40,16 @@ void SchemaGraph::remove()
 }
 
 bool SchemaGraph::paintGrid()
-{
-    return m_paintGrid;
-}
+{ return m_paintGrid; }
+
+bool SchemaGraph::paintFrameAxes()
+{ return m_paintFrameAxes; }
+
 void SchemaGraph::setPaintGrid( bool paint )
-{
-    m_paintGrid = paint;
-}
+{ m_paintGrid = paint; update(); }
+
+void SchemaGraph::setPaintFrameAxes( bool paint )
+{ m_paintFrameAxes = paint; update(); }
 
 void SchemaGraph::drawBackground ( QPainter*  painter, const QRectF & rect )
 {
@@ -55,7 +57,7 @@ void SchemaGraph::drawBackground ( QPainter*  painter, const QRectF & rect )
 
   painter->setBrush( QColor( 255, 255, 255 ) ); //QColor( 240, 240, 210 ) );
   painter->drawRect( m_scenerect );
-  painter->setPen( QColor( 210, 210, 210 ) );
+  painter->setPen( QColor( 0, 0, 0 ) ); //QColor( 210, 210, 210 ) );
 
   if( !m_paintGrid ) return;
 
@@ -93,6 +95,12 @@ void SchemaGraph::drawBackground ( QPainter*  painter, const QRectF & rect )
         }
     }
 #endif
+
+  if( m_paintFrameAxes )
+    {
+      painter->drawLine( startx, 0, endx, 0 );
+      painter->drawLine( 0, starty, 0, endy );
+    }
 }
 
 } // namespace dsim

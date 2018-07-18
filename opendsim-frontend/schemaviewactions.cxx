@@ -13,7 +13,8 @@
  *  Lesser General Public License for more details.
  */
 
-#include <string>
+#include <cstring>
+#include <cstdio>
 
 #include "schemagraph.h"
 #include "elementgraphitem.h"
@@ -38,6 +39,9 @@ void SchemaView::setMode( DrawMode mode )
   {
     case MODE_SELECTION:
       this->setCursor( QCursor( Qt::ArrowCursor ));
+      break;
+    case MODE_WIRE:
+      this->setCursor( QCursor( QPixmap(":/bitmaps/greenpen.cur")) );
       break;
     case MODE_PIN:
     case MODE_LINE:
@@ -68,13 +72,23 @@ void SchemaView::setMode( DrawMode mode )
       m_resetEvent = 0l;
       break;
 
+    case MODE_WIRE:
+      {
+        m_mousePressEvent = &mousePressWire;
+        m_mouseMoveEvent = &mouseMoveWire;
+        m_mouseReleaseEvent = 0l;
+        m_keyPressEvent = 0l;
+        m_resetEvent = 0l;
+        break;
+      }
+
     case MODE_PIN:
       {
         ElementBase *symbol = createElement( "text", QPoint( 0, 0 ) );
         ((ElementText *)symbol)->setText( "PIN 1" );
 
         ElementBase *reference = createElement( "text", QPoint( 0, 0 ) );
-        ((ElementText *)reference)->setText( "1000" );
+        ((ElementText *)reference)->setText( "1" );
 
         m_hintElement = createElement( "pin", QPoint( 0, 0 ) );
         ((ElementPin *)m_hintElement)->setSub( (ElementText *)symbol, ((ElementText *)reference) );
@@ -97,7 +111,7 @@ void SchemaView::setMode( DrawMode mode )
         m_resetEvent = &resetLine;
         break;
       }
-      break;
+
     case MODE_TEXT:
       {
         m_hintElement = createElement( "text", QPoint( 0, 0 ) );
@@ -142,10 +156,59 @@ bool SchemaView::mousePressSelect( QMouseEvent *event )
 { return true; }
 
 bool SchemaView::mouseMoveSelect( QMouseEvent *event )
-{ return true; }
+{
+  QGraphicsItem *current = itemAt( event->pos() );
+  if( current )
+    {
+      ElementBase *element = elementbase_cast( current );
+      if( element )
+        {
+          if( 0==std::strcmp( element->classname(), "component" ) )
+            {
+              ComponentGraphItem *component = static_cast<ComponentGraphItem *>( element );
+              if( component->atPin( mapToScene( event->pos() ) ) )
+                {
+                  setMode( MODE_WIRE );
+                }
+            }
+        }
+    }
+  return true;
+}
 
 bool SchemaView::mouseReleaseSelect( QMouseEvent *event )
 { return true; }
+
+// ------------------------------------------------------------------ //
+// Mouse actions for component mode
+// ------------------------------------------------------------------ //
+
+bool SchemaView::mousePressWire( QMouseEvent *event )
+{
+  return true;
+}
+
+bool SchemaView::mouseMoveWire( QMouseEvent *event )
+{
+  QGraphicsItem *current = itemAt( event->pos() );
+  if( current )
+    {
+      ElementBase *element = elementbase_cast( current );
+      if( element )
+        {
+          if( 0==std::strcmp( element->classname(), "component" ) )
+            {
+              ComponentGraphItem *component = static_cast<ComponentGraphItem *>( element );
+              if( component->atPin( mapToScene( event->pos() ) ) )
+                {
+                  return false;
+                }
+            }
+        }
+    }
+  setMode( MODE_SELECTION );
+  return true;
+}
 
 // ------------------------------------------------------------------ //
 // Mouse actions for component mode
@@ -412,7 +475,7 @@ void SchemaView::dragEnterEvent( QDragEnterEvent *event )
 
   QString text = event->mimeData()->text();
   std::string symbol = text.toStdString();
-  QPointF cp = mapToScene( event->pos() );
+  QPointF cp = togrid( mapToScene(event->pos()) );
 
   ElementText *symbolText = static_cast<ElementText *>(createElement( "text", cp, /*edit*/true, /*deser*/false ));
   ElementText *referenceText = static_cast<ElementText *>(createElement( "text", cp, /*edit*/true, /*deser*/false ));

@@ -13,8 +13,8 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef COMPONENTGRAPH_H_
-#define COMPONENTGRAPH_H_
+#ifndef COMPONENTGRAPHIMPL_H_
+#define COMPONENTGRAPHIMPL_H_
 
 #include <device/graph.h>
 
@@ -23,11 +23,11 @@ class QPainter;
 namespace dsim
 {
 
-class ComponentGraph : public IDeviceGraph
+class ComponentGraphImpl : public IDeviceGraph
 {
 public:
-  ComponentGraph();
-  ~ComponentGraph();
+  ComponentGraphImpl();
+  ~ComponentGraphImpl();
 
   void setPainter( QPainter *painter ) { m_painter = painter; }
   void setSelected( bool selected ) { m_selected = selected; }

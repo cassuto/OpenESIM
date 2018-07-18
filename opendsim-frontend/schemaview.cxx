@@ -35,14 +35,18 @@ namespace dsim
 
 SchemaView::SchemaView( SchemaSheet *sheet, QWidget *parent )
           : QGraphicsView( parent )
+          , m_paintGrid( true )
+          , m_paintFrameAxes( false )
           , m_sheet( sheet )
           , stack( 0 )
           , m_selectedElements( 0l )
 {
   m_schemaGraph = 0;
-  m_scalefactor = 1;
+  m_scalefactor = 1.0;
 
   clear();
+
+  sheet->setSchemaView( this );
 
   viewport()->setFixedSize( 1600, 1200 );
   setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
@@ -87,15 +91,31 @@ void SchemaView::clear()
     {
       m_schemaGraph->remove();
       m_schemaGraph->deleteLater();
+
+      m_hintElement = 0l;
+      m_hintComponent = 0l;
     }
 
   clearStack( 0 );
   clearStack( 1 );
 
   m_schemaGraph = new SchemaGraph( -1600, -1200, 3200, 2400, this );
+  m_schemaGraph->setPaintGrid( m_paintGrid );
+  m_schemaGraph->setPaintFrameAxes( m_paintFrameAxes );
+  m_schemaGraph->update();
+
   setScene( m_schemaGraph );
-  centerOn( 300, 200 );
+  gotoCenter();
 }
+
+void SchemaView::gotoCenter()
+{ centerOn( mapFromScene( -(this->width()/2), -(this->height()/2 )) ); }
+
+void SchemaView::setPaintGrid( bool paint )
+{ m_paintGrid = paint; m_schemaGraph->setPaintGrid( paint ); viewport()->update(); }
+
+void SchemaView::setPaintFrameAxes( bool paint )
+{ m_paintFrameAxes = paint; m_schemaGraph->setPaintFrameAxes( paint ); viewport()->update(); }
 
 
 ElementBase *SchemaView::createElement( const char *classname, const QPointF &pos, bool editable, bool deser )
@@ -144,7 +164,7 @@ ElementBase *SchemaView::createElement( const char *classname, const QPointF &po
 
 void SchemaView::removeElement( ElementBase *element )
 {
-  if( std::strcmp( element->classname(), "component") == 0 )
+  if( 0==std::strcmp( element->classname(), "component") )
     {
       ComponentGraphItem *component = static_cast<ComponentGraphItem *>(element);
       m_sheet->deleteDevice( component->device() );
@@ -168,7 +188,7 @@ int SchemaView::serialize( LispDataset *dom )
 
   dom->beginEntry( "elements" );
   {
-    foreach( ElementBase *element, m_elements[stack] )
+    foreach( ElementBase *element, m_elements[0] )
       {
         rc = dom->beginNode();                  UPDATE_RC(rc);
 
@@ -189,7 +209,7 @@ int SchemaView::deserialize( LispDataset *dom )
   int rc = 0;
   std::string symbol;
 
-  clear();
+  if( stack == 0 ) clear();
 
   /*
    * Deserialize Elements
@@ -241,9 +261,18 @@ int SchemaView::deserialize( LispDataset *dom )
   return rc;
 }
 
-ComponentGraphItem *SchemaView::loadSymbol( std::ifstream &instream )
+int SchemaView::loadSymbol( ComponentGraphItem *component, const char *filename )
 {
   int rc = 0;
+
+  using namespace std;
+
+  string fn( "library/" );
+  fn += filename;
+
+  ifstream instream( fn.c_str() );
+
+  if( !instream.is_open() ) return -DS_OPEN_FILE;
 
   clearStack( 1 );
 
@@ -251,11 +280,12 @@ ComponentGraphItem *SchemaView::loadSymbol( std::ifstream &instream )
    * Parse ssymbol file
    */
   stack = 1;
+
   LispDataset *dom = new LispDataset( DOM_SCHEMA_SYMBOL );
 
-  rc = dom->init();                     if( rc ) return 0l;
+  rc = dom->init();                     if( rc ) { stack = 0; return rc; }
        dom->addItem( this );
-  rc = dom->deserialize( instream );    if( rc ) return 0l;
+  rc = dom->deserialize( instream );    if( rc ) { stack = 0; return rc; }
        dom->uninit();
 
   delete dom;
@@ -264,18 +294,18 @@ ComponentGraphItem *SchemaView::loadSymbol( std::ifstream &instream )
    * Reset all the elements in stack 1
    */
   stack = 0;
-  ComponentGraphItem *component = new ComponentGraphItem( m_id[stack].alloc(), m_schemaGraph, m_editable[stack] );
 
   foreach( ElementBase *element, m_elements[1] )
     {
       element->resetId( m_id[stack].alloc() ); // Reallocate ID of all the new elements
       m_elements[stack].append( element );
-      component->addElement( element );
+      component->addComponentElement( element );
+      element->graphicsItem()->setVisible( true );
     }
 
   clearStack( 1 );
 
-  return component;
+  return rc;
 }
 
 ElementBase *SchemaView::element( int id )

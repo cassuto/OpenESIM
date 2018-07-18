@@ -47,7 +47,8 @@ MainWindow *MainWindow::m_pinstance = 0;
 MainWindow::MainWindow()
           : m_template( new Templatestyle )
 {
-  this->setWindowTitle( appBanner );
+  setWindowTitle( appBanner );
+  setWindowState( Qt::WindowMaximized );
 
   createActions();
   createMenuBar();
@@ -79,7 +80,7 @@ void MainWindow::writeSettings()
 
 void MainWindow::closeEvent( QCloseEvent *event )
 {
-  //writeSettings();
+  writeSettings();
 
   event->accept();
 }
@@ -243,7 +244,8 @@ SchemaEditorForm *MainWindow::newSchemaDocument( DomType type )
 
   connect( fileSave, SIGNAL(triggered()), schema, SLOT(onFileSave()) );
 
-  schema->showMaximized();
+  schema->show();
+  schema->gotoCenter();
   return schema;
 }
 

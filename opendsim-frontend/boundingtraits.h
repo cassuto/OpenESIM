@@ -13,24 +13,24 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef DEVICE_1N4148_H_
-#define DEVICE_1N4148_H_
+#ifndef BOUNDINGTRAITS_H_
+#define BOUNDINGTRAITS_H_
 
-#include "device-lib-internal.h"
+#include <QList>
+#include <QRectF>
 
-class dev_1n4148 : public IDevice
+namespace dsim
+{
+
+class ElementBase;
+
+class BoundingTraits
 {
 public:
-  dev_1n4148( const char *reference, int id, circuit_t *circuit, void *reserved );
-
-  static DeviceLibraryEntry *libraryEntry();
-  static IDevice *construct( const char *reference, int id, circuit_t *circuit, void *reserved );
-
-  int create( ISchematic *schematic );
-  int init();
-  struct IRECT get_bound();
-  int render_frame( IDeviceGraph *graph );
-  int uninit();
+  static QRectF traits( const QList<ElementBase *> &list, const QList<ElementBase *>::const_iterator &begin, const QList<ElementBase *>::const_iterator &end );
+  static QPointF traitsTopLeft( const QList<ElementBase *> &list );
 };
 
-#endif //!defined(DEVICE_1N4148_H_)
+}
+
+#endif

@@ -16,5 +16,6 @@
         <file>bitmaps/modetext.png</file>
         <file>bitmaps/moderect.png</file>
         <file>bitmaps/modeellipse.png</file>
+        <file>bitmaps/greenpen.cur</file>
     </qresource>
 </RCC>

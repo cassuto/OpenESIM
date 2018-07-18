@@ -30,6 +30,7 @@ namespace dsim
 enum DrawMode
 {
   MODE_SELECTION = 0,
+  MODE_WIRE,
   MODE_PIN,
   MODE_LINE,
   MODE_TEXT,
@@ -58,9 +59,12 @@ public:
   ~SchemaView();
 
   void clear();
+  void gotoCenter();
 
   qreal scaleFactor() { return m_scalefactor; }
 
+  void setPaintGrid( bool paint );
+  void setPaintFrameAxes( bool paint );
   void setMode( DrawMode mode );
 
   ElementBase *createElement( const char *classname, const QPointF &pos, bool editable = true, bool deser = false );
@@ -69,7 +73,7 @@ public:
   int serialize( LispDataset *dom );
   int deserialize( LispDataset *dom );
 
-  ComponentGraphItem *loadSymbol( std::ifstream &instream );
+  int loadSymbol( ComponentGraphItem *component, const char *filename );
 
   ElementBase * element( int id );
   void addId( int id );
@@ -77,7 +81,6 @@ public:
 
 public:
   inline SchemaSheet *sheet() const { return m_sheet; }
-
 
 protected:
   void dragMoveEvent( QDragMoveEvent *event );
@@ -100,6 +103,8 @@ private:
   void scaleView(qreal scaleFactor);
   void clearStack( int i );
 
+  bool          m_paintGrid;
+  bool          m_paintFrameAxes;
   qreal         m_scalefactor;
   QString       m_file;
   SchemaGraph  *m_schemaGraph;
@@ -125,6 +130,8 @@ private: // schemaviewactions.cxx
   bool mousePressSelect( QMouseEvent *event );
   bool mouseMoveSelect( QMouseEvent *event );
   bool mouseReleaseSelect( QMouseEvent *event );
+  bool mousePressWire( QMouseEvent *event );
+  bool mouseMoveWire( QMouseEvent *event );
   bool mousePressComponent( QMouseEvent *event );
   bool mouseMoveComponent( QMouseEvent *event );
   bool mousePressPin( QMouseEvent *event );

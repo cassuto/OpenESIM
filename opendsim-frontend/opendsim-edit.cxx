@@ -26,6 +26,7 @@
 
 #include <new>
 #include <QApplication>
+#include <QStyleFactory>
 
 #include "mainwindow.h"
 
@@ -55,6 +56,8 @@ int main( int argc, char *argv[] )
   trace_info(("%s\n", appBanner));
 
   QApplication app( argc, argv );
+  QApplication::setOrganizationName( appNameShort );
+  QApplication::setApplicationName( appNameShort );
 
   reserved = new char[64 * 1024 * 1024];
   std::set_new_handler( new_handler );

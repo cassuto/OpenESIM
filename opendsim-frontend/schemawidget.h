@@ -43,8 +43,6 @@ public:
 public:
   inline SchemaView *view() const { return m_view; }
 
-public slots:
-
 private:
   QVBoxLayout  *m_verticalLayout;
   SchemaView  *m_view;

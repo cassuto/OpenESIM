@@ -35,18 +35,24 @@ PinSettingsDialog::PinSettingsDialog( const ElementPin *pin, QWidget *parent )
   m_referenceEdit = new QLineEdit( pin->reference(), this );
   m_referenceEdit->selectAll();
   centralLayout->addWidget( m_referenceEdit, 1, 1, 1, 1 );
+  label = new QLabel( tr("Set Length:"), this );
+  centralLayout->addWidget( label, 2, 0, 1, 1 );
+  m_lengthSpin = new QSpinBox( this );
+  m_lengthSpin->setRange( 1, 60 );
+  m_lengthSpin->setValue( pin->length() );
+  centralLayout->addWidget( m_lengthSpin, 2, 1, 1, 1 );
   m_showSymbol = new QCheckBox( tr("Show Symbol?"), this );
   m_showSymbol->setChecked( pin->showSymbol() );
-  centralLayout->addWidget( m_showSymbol, 2, 0, 1, 1 );
+  centralLayout->addWidget( m_showSymbol, 3, 0, 1, 1 );
   m_showReference = new QCheckBox( tr("Show Reference?"), this );
   m_showReference->setChecked( pin->showReference() );
-  centralLayout->addWidget( m_showReference, 3, 0, 1, 1 );
+  centralLayout->addWidget( m_showReference, 4, 0, 1, 1 );
 
   QPushButton *ok = new QPushButton( tr("OK"), this );
   QPushButton *cancel = new QPushButton( tr("Cancel"), this );
 
-  centralLayout->addWidget( ok, 4, 2, 1, 1 );
-  centralLayout->addWidget( cancel, 4, 3, 1, 1 );
+  centralLayout->addWidget( ok, 5, 2, 1, 1 );
+  centralLayout->addWidget( cancel, 5, 3, 1, 1 );
 
   this->setWindowTitle( tr("Settings for text") );
   this->update();
@@ -60,6 +66,7 @@ void PinSettingsDialog::apply( ElementPin *pin )
 {
   pin->setSymbol( m_symbolEdit->text() );
   pin->setReference( m_referenceEdit->text() );
+  pin->setLength( m_lengthSpin->value() );
   pin->setShowSymbol( m_showSymbol->checkState() == Qt::Checked );
   pin->setShowReference( m_showReference->checkState() == Qt::Checked );
 }

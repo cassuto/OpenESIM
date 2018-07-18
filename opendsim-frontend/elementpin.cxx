@@ -14,7 +14,7 @@
  */
 
 #include <dsim/error.h>
-
+#include <cstdio>
 #include "lispdataset.h"
 #include "componentgraphitem.h"
 #include "elementtext.h"
@@ -37,7 +37,7 @@ ElementPin::ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symb
 
   setPos( pos );
   setDirect( direct );
-  setLength( 32 );
+  setLength( 20 );
 
   if( !editable ) setCursor( Qt::CrossCursor );
 
@@ -91,8 +91,6 @@ void ElementPin::setLayout()
 {
   if( !m_symbolLabel || !m_referenceLabel ) return;
 
-  updateReferenceLabel();
-
   QRectF symbolBound = m_symbolLabel->boundingRect();
 
   int xlabelpos = pos().x();
@@ -125,6 +123,8 @@ void ElementPin::setLayout()
       break;
   }
   m_symbolLabel->setPos( QPointF(xlabelpos, ylabelpos) );
+
+  updateReferenceLabel();
 }
 
 void ElementPin::updateReferenceLabel()
@@ -165,7 +165,7 @@ void ElementPin::updateReferenceLabel()
       xlabelpos -= 5;
       ylabelpos -= m_length+4;
       m_referenceLabel->setDirect( m_direct );
-      m_referenceLabel->setPos( QPointF(xlabelpos - m_referenceLabel->boundingRect().height()/2, ylabelpos + symbolBound.width() + 8 ) );
+      m_referenceLabel->setPos( QPointF(xlabelpos - m_referenceLabel->boundingRect().height()/2, ylabelpos + 16 ) );
       break;
   }
 }
@@ -230,14 +230,16 @@ void ElementPin::setSymbol( const QString &symbol )
 void ElementPin::setReference( const QString &reference )
 { m_referenceLabel->setText( reference ); updateReferenceLabel(); }
 
-
 void ElementPin::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
 {
-  PinSettingsDialog pinSettings( this );
-
-  if( pinSettings.exec() == QDialog::Accepted )
+  if( editable() )
     {
-      pinSettings.apply( this );
+      PinSettingsDialog pinSettings( this );
+
+      if( pinSettings.exec() == QDialog::Accepted )
+        {
+          pinSettings.apply( this );
+        }
     }
 }
 

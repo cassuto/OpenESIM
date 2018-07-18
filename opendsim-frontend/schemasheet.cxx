@@ -19,10 +19,12 @@
 #include <dsim/device-lib.h>
 #include <dsim/circmatrix.h>
 #include <dsim/circuit.h>
+#include <dsim/error.h>
 
 #include <algorithm>
 #include <functional>
 
+#include "schematicimpl.h"
 #include "schemasheet.h"
 
 namespace dsim
@@ -30,6 +32,8 @@ namespace dsim
 
 SchemaSheet::SchemaSheet()
 {
+  m_schematic = new SchematicImpl;
+
   m_matrix = matrix_create();
   m_circuit = circuit_create( m_matrix );
 }
@@ -40,16 +44,29 @@ SchemaSheet::~SchemaSheet()
   matrix_free( m_matrix );
 }
 
-IDevice *SchemaSheet::createDevice( const char *symbol, const char *reference, int id )
+int SchemaSheet::createDevice( const char *symbol, const char *reference, int id, DS_OUT IDevice **ppdevice )
 {
-  return createDevice( device_lib_entry( symbol ), reference, id );
+  return createDevice( device_lib_entry( symbol ), reference, id, ppdevice );
 }
 
-IDevice *SchemaSheet::createDevice( const DeviceLibraryEntry *entry, const char *reference, int id )
+int SchemaSheet::createDevice( const DeviceLibraryEntry *entry, const char *reference, int id, DS_OUT IDevice **ppdevice )
 {
-  if( !entry ) return 0l;
+  *ppdevice = 0l;
+  if( !entry ) return -DS_FAULT;
 
-  return entry->construct( reference, id, m_circuit, 0l );
+  IDevice *device = entry->construct( reference, id, m_circuit, 0l );
+  if( device )
+    {
+      int rc = device->create( schematic() );
+      if( rc )  // failed to create the device
+        {
+          delete device;
+          return rc;
+        }
+      *ppdevice = device;
+      return rc;
+    }
+  return -DS_NO_MEMORY;
 }
 
 void SchemaSheet::deleteDevice( IDevice *device )
@@ -65,5 +82,8 @@ void SchemaSheet::removeDevice( IDevice *device )
 {
 
 }
+
+void SchemaSheet::setSchemaView( SchemaView *schemaView )
+{ m_schematic->setSchemaView( schemaView ); }
 
 }

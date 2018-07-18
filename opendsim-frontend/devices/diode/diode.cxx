@@ -28,6 +28,7 @@ DeviceLibraryEntry *dev_diode::libraryEntry()
       /* sub_category */    "Generic",
       /* description */     "Generic Diode Device",
       /* manufacturer */    "Diodes",
+      /* symbolfile */      "diode.ssym",
       dev_diode::construct,
       0l);
 }
@@ -42,13 +43,14 @@ dev_diode::dev_diode( const char *reference, int id, circuit_t *circuit, void *r
 {
 }
 
-int dev_diode::create()
+int dev_diode::create( ISchematic *schematic )
 {
-  return IDevice::baseinit( "diode" );
+  return 0;
 }
 
 int dev_diode::init()
 {
+  int rc = IDevice::baseinit( "diode" ); UPDATE_RC(rc);
   return circ_element_config( (m_mdel, ELM_CONFIG_SET, /*vz*/2, 0));
 }
 

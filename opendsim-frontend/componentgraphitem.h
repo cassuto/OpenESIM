@@ -19,7 +19,8 @@
 #include <QList>
 #include <QtWidgets>
 #include <string>
-#include "componentgraph.h"
+#include "componentgraphimpl.h"
+#include "transformations.h"
 
 #include "elementgraphitem.h"
 
@@ -31,20 +32,22 @@ namespace dsim
 {
 
 class ElementText;
+class ElementPin;
 
-class ComponentGraphItem : public ElementGraphItem<QGraphicsItem>
+class ComponentGraphItem : public ElementGraphItem<QGraphicsItemGroup>
 {
 public:
-  ComponentGraphItem( int id, SchemaGraph *scene, bool edit, QGraphicsItem *parent = 0 );
+  ComponentGraphItem( int id, SchemaGraph *scene, bool edit, QGraphicsItem *parent = 0l );
   ~ComponentGraphItem();
 
   const char *classname() { return "component"; }
-  QRectF boundingRect() const { return m_bounding; }
-  void setBoundingRect( const QRect &bounding );
 
   int init( const char *deviceEntry, ElementText *symbolText, ElementText *referenceText, bool deser = false );
   void setLayout();
   std::string reference();
+  void setPos( const QPointF &pos );
+  int addComponentElement( ElementBase *element );
+  ElementPin *atPin( const QPointF &pos );
 
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
@@ -58,14 +61,10 @@ protected:
   void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget );
 
 private:
-  void setSubs( ElementText *symbolText, ElementText *referenceText );
-
-private:
-  QRectF                m_bounding;
   IDevice              *m_device;
-  ComponentGraph       *m_deviceGraph;
-  std::string           m_symbol;
-  std::string           m_reference; // fpr deserialize
+  ComponentGraphImpl   *m_deviceGraph;
+  std::string           m_symbol; // ! for deserialize() and resolveSubElements() only
+  std::string           m_reference; // ! for deserialize() and resolveSubElements() only
   ElementText          *m_symbolText;
   ElementText          *m_referenceText;
 };

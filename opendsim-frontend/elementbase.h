@@ -42,7 +42,9 @@ public:
   virtual void  addToScene( QGraphicsScene *scene )=0;
   virtual void  removeFromScene( QGraphicsScene *scene )=0;
   virtual void  setLayout() {}
-  const QList<ElementBase*> &elements() const;
+  QList<ElementBase*> &elements();
+
+  virtual QRectF boundingRect() const;
 
   virtual int serialize( LispDataset *dataset );
   virtual int deserialize( LispDataset *dataset );
@@ -67,5 +69,7 @@ private:
 };
 
 }
+
+#include "elementbasecast.hxx"
 
 #endif

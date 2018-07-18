@@ -28,6 +28,7 @@ typedef struct circuit_s circuit_t;
 typedef struct circ_pin_s circ_pin_t;
 
 class IDeviceGraph;
+class ISchematic;
 
 enum device_type
 {
@@ -56,7 +57,7 @@ public:
   //
   // Component Interface
   //
-  virtual int           create() {return 0;}
+  virtual int           create( ISchematic *schematic ) {return 0;}
   virtual int           init() {return 0;}
   virtual int           pin_count();
   virtual circ_pin_t *  pin( int index );

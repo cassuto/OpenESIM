@@ -30,6 +30,11 @@ SchemaWidget::SchemaWidget( QWidget *parent, SchemaSheet *sheet, LispDataset *do
 {
   m_view = new SchemaView( m_sheet, this );
 
+  if( m_dom->type() == DOM_SCHEMA_SYMBOL )
+    {
+      m_view->setPaintFrameAxes( true );
+    }
+
   m_verticalLayout = new QVBoxLayout( this );
   m_verticalLayout->setObjectName(tr("verticalLayout"));
   m_verticalLayout->setContentsMargins(0, 0, 0, 0);

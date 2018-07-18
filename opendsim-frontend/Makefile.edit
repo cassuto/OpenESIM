@@ -13,16 +13,20 @@ TARGET = opendsim-edit.$(.EXEC)
 LIBS += dsimdevice opendsim dsimmodel 
 
 OBJS += opendsim-edit.cxx.o \
-		componentgraph.cxx.o \
+		componentgraphimpl.cxx.o \
+		schematicimpl.cxx.o \
 		lispdataset.cxx.o \
 		domitem.cxx.o \
 		idallocator.cxx.o \
 		schemasheet.cxx.o \
 		templatestyle.cxx.o \
 		templatecustom.cxx.o \
-		rotationtransform.cxx.o \
+		transformations.cxx.o \
+		boundingtraits.cxx.o \
 		elementbase.cxx.o \
 		componentgraphitem.cxx.o \
+		elementgraphitem.cxx.o \
+		elementwire.cxx.o \
     	elementpin.cxx.o \
       	elementtext.cxx.o \
       	elementrect.cxx.o \
@@ -30,6 +34,7 @@ OBJS += opendsim-edit.cxx.o \
 		elementellipse.cxx.o \
       	staffgraphitem.cxx.o \
       	staffpad.cxx.o \
+      	wirelayoutgroup.cxx.o \
       	schemaviewactions.cxx.o \
       	schemaviewmenus.cxx.o \
 

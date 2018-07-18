@@ -13,31 +13,38 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef PINSETTINGSDIALOG_H_
-#define PINSETTINGSDIALOG_H_
+#ifndef TRANSFORMATIONS_H_
+#define TRANSFORMATIONS_H_
 
-#include <QtWidgets>
+#include <QVector>
+#include <QPointF>
+
+#include <device/graph.h>
 
 namespace dsim
 {
 
-class ElementPin;
-
-class PinSettingsDialog : public QDialog
+class Transformations
 {
-  Q_OBJECT
+public:
+  void rotation( int angle, int x0, int y0 );
+  void rotation( ElemDirect direction, int x0, int y0 );
+  void move( const QPointF &pos );
+
+  void addPoint( const QPointF &point );
+  void removeOne( const QPointF &point );
+  void removeAll();
+  inline int count() const { return m_originPoints.count(); }
+
+  inline const QVector<QPointF> &transPoints() const { return m_transPoints; }
 
 public:
-  PinSettingsDialog( const ElementPin *pin, QWidget *parent = 0l );
-
-  void apply( ElementPin *pin );
+  int serialize( LispDataset *dataset );
+  int deserialize( LispDataset *dataset );
 
 private:
-  QLineEdit *m_symbolEdit;
-  QLineEdit *m_referenceEdit;
-  QSpinBox *m_lengthSpin;
-  QCheckBox *m_showSymbol;
-  QCheckBox *m_showReference;
+  QVector<QPointF> m_originPoints;
+  QVector<QPointF> m_transPoints;
 };
 
 }

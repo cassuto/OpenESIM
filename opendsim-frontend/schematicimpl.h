@@ -13,24 +13,27 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef DEVICE_1N4148_H_
-#define DEVICE_1N4148_H_
+#ifndef SCHEMATICIMPL_H_
+#define SCHEMATICIMPL_H_
 
-#include "device-lib-internal.h"
+#include <device/schematic.h>
 
-class dev_1n4148 : public IDevice
+namespace dsim
+{
+
+class SchemaView;
+
+class SchematicImpl : public ISchematic
 {
 public:
-  dev_1n4148( const char *reference, int id, circuit_t *circuit, void *reserved );
+  SchematicImpl();
 
-  static DeviceLibraryEntry *libraryEntry();
-  static IDevice *construct( const char *reference, int id, circuit_t *circuit, void *reserved );
+  void setSchemaView( SchemaView *schemaView );
 
-  int create( ISchematic *schematic );
-  int init();
-  struct IRECT get_bound();
-  int render_frame( IDeviceGraph *graph );
-  int uninit();
+private:
+  SchemaView *m_schemaView;
 };
 
-#endif //!defined(DEVICE_1N4148_H_)
+}
+
+#endif

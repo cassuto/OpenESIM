@@ -28,6 +28,7 @@ DeviceLibraryEntry *dev_res::libraryEntry()
       /* sub_category */    "Generic",
       /* description */     "Generic Register Device",
       /* manufacturer */    "Registers",
+      /* symbolfile */      "res.ssym",
       dev_res::construct,
       0l);
 }
@@ -44,12 +45,12 @@ dev_res::dev_res( const char *reference, int id, circuit_t *circuit, void *reser
 
 int dev_res::create()
 {
-  return IDevice::baseinit( "register" );
+  return 0;
 }
 
 int dev_res::init()
 {
-  return 0;
+  return IDevice::baseinit( "register" );
 }
 
 int dev_res::render_frame( IDeviceGraph *graph )

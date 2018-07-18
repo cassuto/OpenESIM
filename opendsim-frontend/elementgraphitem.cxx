@@ -13,24 +13,19 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef DEVICE_1N4148_H_
-#define DEVICE_1N4148_H_
+#define TRACE_UNIT "elementgraphitem"
+#include <dsim/logtrace.h>
 
-#include "device-lib-internal.h"
+#include "elementgraphitem.h"
 
-class dev_1n4148 : public IDevice
+namespace dsim
 {
-public:
-  dev_1n4148( const char *reference, int id, circuit_t *circuit, void *reserved );
 
-  static DeviceLibraryEntry *libraryEntry();
-  static IDevice *construct( const char *reference, int id, circuit_t *circuit, void *reserved );
+template <>
+  QRectF ElementGraphItem<QGraphicsItem>::boundingRect() const
+    {
+      trace_assert(0);
+      return QRect(0,0,0,0);
+    }
 
-  int create( ISchematic *schematic );
-  int init();
-  struct IRECT get_bound();
-  int render_frame( IDeviceGraph *graph );
-  int uninit();
-};
-
-#endif //!defined(DEVICE_1N4148_H_)
+}

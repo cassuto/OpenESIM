@@ -26,6 +26,7 @@
 #include <model/model.h>
 #include <device/device.h>
 #include <device/graph.h>
+#include <device/schematic.h>
 #include <device/libentry.h>
 
 #endif //!defined(DEVICE_LIB_INTERNAL_H_)

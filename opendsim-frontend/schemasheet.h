@@ -19,11 +19,16 @@
 #include <dsim/circmatrix.h>
 #include <dsim/circuit.h>
 
+#include "schematicimpl.h"
+
 class IDevice;
+class ISchematic;
 class DeviceLibraryEntry;
 
 namespace dsim
 {
+
+class SchemaView;
 
 class SchemaSheet
 {
@@ -31,16 +36,20 @@ public:
   SchemaSheet();
   ~SchemaSheet();
 
-  IDevice *createDevice( const char *symbol, const char *reference, int id );
-  IDevice *createDevice( const DeviceLibraryEntry *entry, const char *reference, int id );
+  int createDevice( const char *symbol, const char *reference, int id, DS_OUT IDevice **ppdevice );
+  int createDevice( const DeviceLibraryEntry *entry, const char *reference, int id, DS_OUT IDevice **ppdevice );
   void deleteDevice( IDevice *device );
 
   void addDevice( IDevice *device );
   void removeDevice( IDevice *device );
 
+  void setSchemaView( SchemaView *schemaView );
+  inline ISchematic *schematic() { return m_schematic; }
+
 private:
-  circ_matrix_t *m_matrix;
-  circuit_t *m_circuit;
+  SchematicImpl     *m_schematic;
+  circ_matrix_t     *m_matrix;
+  circuit_t         *m_circuit;
 };
 
 }

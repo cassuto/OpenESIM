@@ -18,34 +18,34 @@
 #include "templatestyle.h"
 #include "mainwindow.h"
 #include "elementgraphitem.h"
-#include "componentgraph.h"
+#include "componentgraphimpl.h"
 
 namespace dsim
 {
 
-ComponentGraph::ComponentGraph()
+ComponentGraphImpl::ComponentGraphImpl()
               : m_painter( 0l )
               , m_selected( false )
 {
 }
 
-ComponentGraph::~ComponentGraph()
+ComponentGraphImpl::~ComponentGraphImpl()
 {
 }
 
-void ComponentGraph::setStyle( const char *style )
+void ComponentGraphImpl::setStyle( const char *style )
 {
   Templatestyle::apply( m_painter, /*customLine*/0l, /*customFill*/0l, style, m_selected );
 }
 
-void ComponentGraph::setBrushColor( int r, int g, int b )
+void ComponentGraphImpl::setBrushColor( int r, int g, int b )
 {
   QBrush brush = m_painter->brush();
   brush.setColor( QColor(r, g, b) );
   m_painter->setBrush( brush );
 }
 
-void ComponentGraph::setBrushStyle( BrushStyle style )
+void ComponentGraphImpl::setBrushStyle( BrushStyle style )
 {
   QBrush brush = m_painter->brush();
 
@@ -53,7 +53,7 @@ void ComponentGraph::setBrushStyle( BrushStyle style )
   m_painter->setBrush( brush );
 }
 
-void ComponentGraph::setPenColor( int r, int g, int b )
+void ComponentGraphImpl::setPenColor( int r, int g, int b )
 {
   QPen pen = m_painter->pen();
   if( r<0 || g<0 || b<0 ) return;
@@ -61,7 +61,7 @@ void ComponentGraph::setPenColor( int r, int g, int b )
   m_painter->setPen( pen );
 }
 
-void ComponentGraph::setPenWidth( float w )
+void ComponentGraphImpl::setPenWidth( float w )
 {
   QPen pen = m_painter->pen();
   if( w<0 ) return;
@@ -69,7 +69,7 @@ void ComponentGraph::setPenWidth( float w )
   m_painter->setPen( pen );
 }
 
-void ComponentGraph::setPenStyle( LineStyle style )
+void ComponentGraphImpl::setPenStyle( LineStyle style )
 {
   QPen pen = m_painter->pen();
 
@@ -87,32 +87,32 @@ void ComponentGraph::setPenStyle( LineStyle style )
   m_painter->setPen( pen );
 }
 
-void ComponentGraph::point( int x, int y )
+void ComponentGraphImpl::point( int x, int y )
 {
   m_painter->drawPoint( x, y );
 }
 
-void ComponentGraph::line( int x1, int y1, int x2, int y2 )
+void ComponentGraphImpl::line( int x1, int y1, int x2, int y2 )
 {
   m_painter->drawLine( x1, y1, x2, y2 );
 }
 
-void ComponentGraph::rect( int x, int y, int w, int h )
+void ComponentGraphImpl::rect( int x, int y, int w, int h )
 {
   m_painter->drawRect( x, y, w, h );
 }
 
-void ComponentGraph::roundRect( int x, int y, int w, int h, int xRnd, int yRnd )
+void ComponentGraphImpl::roundRect( int x, int y, int w, int h, int xRnd, int yRnd )
 {
   m_painter->drawRoundRect( x, y, w, h, xRnd, yRnd );
 }
 
-void ComponentGraph::ellipse( int x, int y, int w, int h )
+void ComponentGraphImpl::ellipse( int x, int y, int w, int h )
 {
   m_painter->drawEllipse( x, y, w, h );
 }
 
-void ComponentGraph::arc( int x, int y, int w, int h, int a, int alen )
+void ComponentGraphImpl::arc( int x, int y, int w, int h, int a, int alen )
 {
   m_painter->drawArc( x, y, w, h, a, alen );
 }

@@ -34,7 +34,9 @@ public:
 
   void remove();
   bool paintGrid();
+  bool paintFrameAxes();
   void setPaintGrid( bool paint );
+  void setPaintFrameAxes( bool paint );
 
   inline SchemaView *view() const { return m_schemaView; }
 
@@ -45,6 +47,7 @@ private:
   QRect                 m_scenerect;
   SchemaView*           m_schemaView;
   bool                  m_paintGrid;
+  bool                  m_paintFrameAxes;
 };
 
 inline int roundDown( int x, int roundness )
