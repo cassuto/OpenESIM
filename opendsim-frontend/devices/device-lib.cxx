@@ -30,7 +30,6 @@
 
 #include "1n4148.h"
 #include "diode.h"
-#include "res.h"
 
 #include <dsim/device-lib.h>
 
@@ -121,7 +120,6 @@ int device_lib_init()
 
   rc = Entry( dev_1n4148::libraryEntry() );     UPDATE_RC(rc);
   rc = Entry( dev_diode::libraryEntry() );      UPDATE_RC(rc);
-  rc = Entry( dev_res::libraryEntry() );        UPDATE_RC(rc);
 
   return 0;
 }
@@ -137,7 +135,7 @@ rb_tree_t *device_lib_get_tree()
 
 DeviceLibraryEntry *device_lib_entry( const char *symbol )
 {
-  device_entry_search_node_t value = {0};
+  device_entry_search_node_t value;
   value.symbol_name = symbol;
 
   rb_node_t *find = rb_find( &device_tree, rb_node(&value), device_cmp );

@@ -22,7 +22,6 @@ LIB_FUNC(adc_vchanged)( circ_element_t *element )
 
   double volt;
   bool  state;
-  int index;
 
   for( int i=0; i < param->inputs_count; i++)
     {

@@ -101,7 +101,7 @@ int ComponentPickWidget::serialize( LispDataset *dom )
 {
   int rc;
 
-  rc = dom->beginEntry( "picked-devices" );             UPDATE_RC(rc);
+  rc = dom->beginEntry( "picked-devices" );                 UPDATE_RC(rc);
   {
     QTreeWidgetItemIterator it( componentPickTree->treeEntry("Components") );
     while( *it )
@@ -120,7 +120,7 @@ int ComponentPickWidget::serialize( LispDataset *dom )
         it++;
       }
   }
-  rc = dom->endEntry();                                 UPDATE_RC(rc);
+  rc = dom->endEntry();                                     UPDATE_RC(rc);
 
   return rc;
 }
@@ -138,9 +138,9 @@ int ComponentPickWidget::deserialize( LispDataset *dom )
         {
           LispDataset::AutoPop autoPop( dom );
 
-          rc = dom->des( category );        UPDATE_RC(rc);
+          rc = dom->des( category );                        UPDATE_RC(rc);
 
-          rc = dom->des( symbol );          UPDATE_RC(rc);
+          rc = dom->des( symbol );                          UPDATE_RC(rc);
 
           const DeviceLibraryEntry *entry = device_lib_entry( symbol.c_str() );
           if( entry )
@@ -159,3 +159,5 @@ int ComponentPickWidget::deserialize( LispDataset *dom )
 }
 
 }
+
+#include "componentpickwidget.moc"

@@ -22,7 +22,7 @@
 
 #include "schemaview.h"
 #include "schemasheet.h"
-#include "schemagraph.h"
+#include "schemascene.h"
 #include "templatestyle.h"
 #include "templatecustom.h"
 
@@ -30,7 +30,7 @@ namespace dsim
 {
 
 template <class base>
-  ElementGraphItem<base>::ElementGraphItem( int id, SchemaGraph *scene, bool editable, QGraphicsItem *parent )
+  ElementGraphItem<base>::ElementGraphItem( int id, SchemaScene *scene, bool editable, QGraphicsItem *parent )
                : ElementBase( id, scene )
                , base( parent )
                , m_editable( editable )
@@ -150,7 +150,7 @@ template <class base>
 template <class base>
   void ElementGraphItem<base>::mousePressEvent( QGraphicsSceneMouseEvent *event )
   {
-    if( m_editable )
+    if( m_editable && view()->mode() == MODE_SELECTION )
       {
         if( event->button() == Qt::LeftButton )
           {
@@ -165,6 +165,7 @@ template <class base>
                 this->setSelected( true );
               }
 
+            view()->setMode( MODE_MOVING );
             base::grabMouse();
           }
       }
@@ -173,7 +174,7 @@ template <class base>
 template <class base>
   void ElementGraphItem<base>::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
   {
-    if( m_editable )
+    if( m_editable && view()->mode() == MODE_MOVING )
       {
         event->accept();
 
@@ -195,7 +196,7 @@ template <class base>
                 ElementBase *element = elementbase_cast( item );
                 if( element )
                   {
-                    element->graphicsItem()->moveBy( delta.x(), delta.y() );
+                    element->move( delta );
                   }
               }
           }
@@ -205,8 +206,9 @@ template <class base>
 template <class base>
   void ElementGraphItem<base>::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
   {
-    if( m_editable )
+    if( m_editable && view()->mode() == MODE_MOVING )
       {
+        view()->setMode( MODE_SELECTION );
         event->accept();
         base::ungrabMouse();
       }

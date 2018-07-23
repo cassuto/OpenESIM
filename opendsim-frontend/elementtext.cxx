@@ -13,7 +13,9 @@
  *  Lesser General Public License for more details.
  */
 
+#define TRACE_UNIT "elementtext"
 #include <dsim/error.h>
+#include <dsim/logtrace.h>
 
 #include "templatestyle.h"
 #include "lispdataset.h"
@@ -24,7 +26,7 @@
 namespace dsim
 {
 
-ElementText::ElementText( ElemDirect direct, const QPointF &pos, int id, SchemaGraph *scene, bool edit, QGraphicsSimpleTextItem* parent )
+ElementText::ElementText( ElemDirect direct, const QPointF &pos, int id, SchemaScene *scene, bool edit, QGraphicsSimpleTextItem* parent )
           : ElementGraphItem<QGraphicsSimpleTextItem>( id, scene, edit, parent )
           , m_textEditable( true )
 {

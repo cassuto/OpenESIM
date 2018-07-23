@@ -44,12 +44,11 @@ class MainWindow : public QMainWindow {
 public:
   MainWindow();
   ~MainWindow();
-
-  int processRc( int rc );
-  void noMemory();
+  static MainWindow* instance() { return m_pinstance; }
 
 public:
-  static MainWindow* instance() { return m_pinstance; }
+  int processRc( int rc );
+  void noMemory();
 
   inline QSettings *settings() { return &m_settings; }
   inline Templatestyle *templatestyle() { return m_template; }

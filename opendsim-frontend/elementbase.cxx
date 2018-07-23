@@ -24,7 +24,7 @@
 namespace dsim
 {
 
-ElementBase::ElementBase( int id, SchemaGraph *scene )
+ElementBase::ElementBase( int id, SchemaScene *scene )
             : m_id( id )
             , m_ref( false )
             , m_schemaGraph( scene )
@@ -65,6 +65,8 @@ int ElementBase::deserialize( LispDataset *dataset )
   return rc;
 }
 
+void ElementBase::move( QPointF delta ) {}
+
 int ElementBase::addElement( ElementBase *element )
 {
   if( element->ref() )
@@ -74,6 +76,7 @@ int ElementBase::addElement( ElementBase *element )
     }
   else
     {
+      trace_debug(("referenced element: %p %s\n", element, element->classname() ));
       return -DS_REREFERENCE;
     }
 }
@@ -105,6 +108,14 @@ int ElementBase::resolveSubElements()
   m_elementIds.clear();
   setLayout();
   return 0;
+}
+
+void ElementBase::deleteSubElements()
+{
+  foreach( ElementBase *element, elements() )
+    {
+      view()->deleteElement( element );
+    }
 }
 
 }

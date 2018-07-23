@@ -328,15 +328,6 @@ circuit_attach_element( circuit_t *circuit, circ_element_t *element )
 }
 
 void
-circuit_attach_digital_element( circuit_t *circuit, circ_element_t *element )
-{
-  if( !list_contains( &circuit->digital_element_list, list_node(element) ) )
-    {
-      list_insert( &circuit->digital_element_list, list_node(element) );
-    }
-}
-
-void
 circuit_attach_node( circuit_t *circuit, circ_node_t *node )
 {
   list_t *node_list = node->analog ? &circuit->analog_node_list : &circuit->digital_node_list;

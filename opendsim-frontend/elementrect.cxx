@@ -25,7 +25,7 @@
 namespace dsim
 {
 
-ElementRect::ElementRect( const QRectF &rect, int id, SchemaGraph *scene, bool edit, QGraphicsRectItem* parent )
+ElementRect::ElementRect( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsRectItem* parent )
           : ElementGraphItem<QGraphicsRectItem>( id, scene, edit, parent )
 {
   if( edit )

@@ -31,7 +31,7 @@ C_DECLS
 #if !(OS(LINUX) && defined(__KERNEL__))  \
   && !(OS(FREEBSD) && defined(_KERNEL)) \
   && !COMPILER(MSC) \
-  && !defined(NO_STDINT_H) \
+  && HAVE(STDINT_H) \
   && !defined(DOXYGEN_RUNNING)
 
 # ifndef __STDC_CONSTANT_MACROS

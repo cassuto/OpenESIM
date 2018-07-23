@@ -133,3 +133,5 @@ void ComponentPickTree::onRemoveComponent()
 }
 
 } // namespace dsim
+
+#include "componentpicktree.moc"

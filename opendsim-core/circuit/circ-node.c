@@ -135,7 +135,6 @@ circ_node_stamp_matrix( circ_node_t * node )
       double adm;
       int    enode;
       hashmap_key_t pin;
-      hashmap_int_node_t *tab_node;
 
       foreach_hashmap( hashmap_double_node_t, i, &node->admit )
         {
@@ -178,7 +177,6 @@ circ_node_stamp_matrix( circ_node_t * node )
 
       if( node->single )              /* single element in matrix */
         {
-          double volt = 0;
           if( node->total_admit > 0 ) node->volt = totalCurr/node->total_admit;
           circ_node_set_volt( node, node->volt );
         }

@@ -151,7 +151,7 @@ int ds_atof( const char *src, int len, float DS_OUT *val )
  * @parma bl            Where to store the result.
  */
 int ds_atob(const char *src, int len, bool DS_OUT *bl)
-{
+{ UNUSED(len);
   int istrue = 0 == ds_strcasecmp( src, "true" );
   int isfalse = 0 == ds_strcasecmp( src, "false" );
 

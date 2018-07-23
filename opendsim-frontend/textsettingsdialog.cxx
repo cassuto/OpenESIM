@@ -54,3 +54,5 @@ QString TextSettingsDialog::text() const
 }
 
 }
+
+#include "textsettingsdialog.moc"

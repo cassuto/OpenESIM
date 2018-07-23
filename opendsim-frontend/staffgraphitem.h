@@ -18,7 +18,7 @@
 
 #include <QtWidgets>
 
-#include "schemagraph.h"
+#include "schemascene.h"
 
 namespace dsim
 {
@@ -37,7 +37,7 @@ protected:
 class StaffGraphItem : public QGraphicsItem
 {
 public:
-  StaffGraphItem( int index, SchemaGraph *schgraph, QGraphicsItem *parent = 0, StaffEvents *event = 0 );
+  StaffGraphItem( int index, SchemaScene *schgraph, QGraphicsItem *parent = 0, StaffEvents *event = 0 );
   ~StaffGraphItem();
 
   virtual const char *classname() { return "none"; }
@@ -59,7 +59,7 @@ protected:
 
 protected:
   int                       m_index;
-  SchemaGraph              *m_schgraph;
+  SchemaScene              *m_schgraph;
   QRectF                    m_area;
   StaffEvents              *m_events;
 };

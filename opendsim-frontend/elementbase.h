@@ -18,7 +18,7 @@
 
 #include <QList>
 #include <device/graph.h>
-#include "schemagraph.h"
+#include "schemascene.h"
 #include "domitem.h"
 
 class QGraphicsItem;
@@ -31,14 +31,16 @@ class SchemaView;
 class ElementBase: public DomItem
 {
 public:
-  ElementBase( int id, SchemaGraph *scene );
+  ElementBase( int id, SchemaScene *scene );
   virtual ~ElementBase() {}
   virtual const char *classname() { return "none"; }
 
   bool          ref();
   bool          isRef();
+  virtual void  move( QPointF delta );
   virtual int   addElement( ElementBase *element );
   virtual int   resolveSubElements();
+  virtual void  deleteSubElements();
   virtual void  addToScene( QGraphicsScene *scene )=0;
   virtual void  removeFromScene( QGraphicsScene *scene )=0;
   virtual void  setLayout() {}
@@ -53,7 +55,7 @@ public:
   inline int    id() const { return m_id; }
   inline void   resetId( int id ) { m_id = id; }
   inline SchemaView *view() const { return m_schemaGraph->view(); }
-  inline SchemaGraph *scene() const { return m_schemaGraph; }
+  inline SchemaScene *scene() const { return m_schemaGraph; }
   inline QGraphicsItem *graphicsItem() const { return m_graphicsItem; }
 
 protected:
@@ -64,7 +66,7 @@ private:
   QList<ElementBase*>       m_elements;
   QList<int>                m_elementIds;
   bool                      m_ref;
-  SchemaGraph              *m_schemaGraph;
+  SchemaScene              *m_schemaGraph;
   QGraphicsItem            *m_graphicsItem;
 };
 

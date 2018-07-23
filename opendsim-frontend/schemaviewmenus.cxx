@@ -15,7 +15,7 @@
 
 #include <cstring>
 
-#include "schemagraph.h"
+#include "schemascene.h"
 #include "elementgraphitem.h"
 #include "componentgraphitem.h"
 #include "elementline.h"

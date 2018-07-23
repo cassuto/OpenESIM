@@ -83,7 +83,7 @@ hashmap_contain_key( hashmap_t *hashmap, hashmap_key_t key )
   return( NULL!=hashmap_at( hashmap, key ) );
 }
 
-static bool inline
+static inline bool
 hashmap_empty( hashmap_t *hashmap )
 {
   return hashmap->element_count ? false : true;

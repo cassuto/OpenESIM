@@ -13,21 +13,23 @@
  *  Lesser General Public License for more details.
  */
 
+#define TRACE_UNIT "schemaview"
 #include <QtGui>
 #include <cstring>
-#include <cstdio>
+#include <dsim/logtrace.h>
 #include <dsim/error.h>
 #include "schemasheet.h"
-#include "schemagraph.h"
+#include "schemascene.h"
 #include "lispdataset.h"
 #include "elementgraphitem.h"
 #include "componentgraphitem.h"
+#include "elementwire.h"
 #include "elementline.h"
 #include "elementtext.h"
 #include "elementpin.h"
 #include "elementrect.h"
 #include "elementellipse.h"
-
+#include "elementjoint.h"
 #include "schemaview.h"
 
 namespace dsim
@@ -99,7 +101,7 @@ void SchemaView::clear()
   clearStack( 0 );
   clearStack( 1 );
 
-  m_schemaGraph = new SchemaGraph( -1600, -1200, 3200, 2400, this );
+  m_schemaGraph = new SchemaScene( -1600, -1200, 3200, 2400, this );
   m_schemaGraph->setPaintGrid( m_paintGrid );
   m_schemaGraph->setPaintFrameAxes( m_paintFrameAxes );
   m_schemaGraph->update();
@@ -135,6 +137,21 @@ ElementBase *SchemaView::createElement( const char *classname, const QPointF &po
       ElementPin *pinElement = new ElementPin( (ElemDirect)m_hintDirect, pos, 0l, 0l, id, m_schemaGraph, editable );
       element = pinElement;
     }
+  if( 0==std::strcmp( classname, "wire" ) )
+    {
+      ElementWire *wireElement = new ElementWire( id, m_schemaGraph );
+      element = wireElement;
+    }
+  if( 0==std::strcmp( classname, "joint" ) )
+    {
+      ElementJoint *jointElement = new ElementJoint( pos, id, m_schemaGraph );
+      element = jointElement;
+    }
+  if( 0==std::strcmp( classname, "jointport" ) )
+    {
+      ElementJointPort *jointportElement = new ElementJointPort( id, m_schemaGraph );
+      element = jointportElement;
+    }
   else if( 0==std::strcmp( classname, "line" ) )
     {
       ElementLine *lineElement = new ElementLine( pos, id, m_schemaGraph, editable );
@@ -162,7 +179,7 @@ ElementBase *SchemaView::createElement( const char *classname, const QPointF &po
   return element;
 }
 
-void SchemaView::removeElement( ElementBase *element )
+void SchemaView::deleteElement( ElementBase *element )
 {
   if( 0==std::strcmp( element->classname(), "component") )
     {
@@ -170,16 +187,12 @@ void SchemaView::removeElement( ElementBase *element )
       m_sheet->deleteDevice( component->device() );
     }
 
-  foreach( ElementBase *subelm, element->elements() )
-    {
-      m_elements[stack].removeOne( subelm );
-      m_id[stack].release( subelm->id() );
-      subelm->removeFromScene( m_schemaGraph );
-    }
+  element->deleteSubElements();
 
   m_elements[stack].removeOne( element );
   m_id[stack].release( element->id() );
   element->removeFromScene( m_schemaGraph );
+  delete element;
 }
 
 int SchemaView::serialize( LispDataset *dom )
@@ -234,7 +247,7 @@ int SchemaView::deserialize( LispDataset *dom )
 
                 if( (rc = elem->deserialize( dom )) )
                   {
-                    removeElement( elem ); // fault
+                    deleteElement( elem ); // fault
                   }
               } // auto pop
             }
@@ -300,7 +313,6 @@ int SchemaView::loadSymbol( ComponentGraphItem *component, const char *filename 
       element->resetId( m_id[stack].alloc() ); // Reallocate ID of all the new elements
       m_elements[stack].append( element );
       component->addComponentElement( element );
-      element->graphicsItem()->setVisible( true );
     }
 
   clearStack( 1 );
@@ -358,25 +370,18 @@ void SchemaView::keyPressEvent( QKeyEvent *event )
     setMode( MODE_SELECTION );
   if( event->key() == Qt::Key_Delete )
     {
+      QList<ElementBase *> targetList;
+
       foreach( QGraphicsItem *item, m_schemaGraph->selectedItems() )
         {
           ElementBase *element = elementbase_cast(item);
 
-          if( element->isRef() )
-            {
-              element->graphicsItem()->setSelected( false );
-            }
-          foreach( ElementBase *subelm, element->elements() )
-            {
-              subelm->graphicsItem()->setSelected( false );
-            }
+          if( !element->isRef() ) targetList.append( element ); // pick out the standalone element
         }
 
-      QList<QGraphicsItem *> selected( m_schemaGraph->selectedItems() );
-      foreach( QGraphicsItem *item, selected )
+      foreach( ElementBase *element, targetList )
         {
-          ElementBase *element = elementbase_cast(item);
-          removeElement( element );
+          deleteElement( element );
         }
     }
 }
@@ -417,3 +422,5 @@ void SchemaView::clearStack( int i )
 
 
 } // namespace dsim
+
+#include "schemaview.moc"

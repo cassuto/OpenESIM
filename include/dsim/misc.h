@@ -21,7 +21,7 @@
 #ifndef DS_MISC_H_
 #define DS_MISC_H_
 
-#include "autoconf.h"
+#include "config.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -160,7 +160,7 @@
 /** @def UNUSED
  * Avoid the 'unused parameter' warning.
  */
-#define UNUSED(var) (void)var
+#define UNUSED(var) ((void)var)
 
 /** @def DS_CURRENT_FUNCTION
  * Default compiler macros to figure out the name of current function.

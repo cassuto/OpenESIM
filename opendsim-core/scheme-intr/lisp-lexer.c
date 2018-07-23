@@ -152,9 +152,8 @@ parse_time( ds_scheme_t *sc, DS_OUT ds_scheme_synlist_t **synlist )
   int rc = 0;
   double val = 0;
   register char ch;
-  char time = SCHEME_UNIT_NONE;
   char unit[2];
-  char unt;
+  char unt = SCHEME_UNIT_NONE;
   ds_scheme_synlist_t *num = NULL;
 
   *synlist = NULL;
@@ -273,7 +272,7 @@ parse_symbol( ds_scheme_t *sc, char c, DS_OUT ds_scheme_synlist_t **synlist )
     {
       if ( isspace( ch ) || ch == '(' || ch == ')' || ch == '\"' )
         break;
-      if ( sc->string_pool_pos + 2 < sizeof(sc->string_pool) )
+      if ( sc->string_pool_pos + 2 < (int)sizeof(sc->string_pool) )
         sc->string_pool[sc->string_pool_pos++] = ch;
       else
         {

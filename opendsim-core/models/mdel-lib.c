@@ -71,7 +71,7 @@ model_lib_init( void )
 
       if( (rc = hashmap_init( &element_hashmap, HASHMAP_KEY_CHR, 0 )) )
         return rc;
-      for( int i=0; i<GET_ELEMENTS(element_descriptors); i++)
+      for( unsigned i=0; i<GET_ELEMENTS(element_descriptors); i++)
         {
           const char *symbol = element_descriptors[i]->symbol_name;
           if( !hashmap_contain_key( &element_hashmap, (hashmap_key_t)(symbol) ) )

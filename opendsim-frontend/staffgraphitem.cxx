@@ -18,7 +18,7 @@
 namespace dsim
 {
 
-StaffGraphItem::StaffGraphItem( int index, SchemaGraph *schgraph, QGraphicsItem *parent, StaffEvents *events )
+StaffGraphItem::StaffGraphItem( int index, SchemaScene *schgraph, QGraphicsItem *parent, StaffEvents *events )
                : QGraphicsItem( parent )
                , m_index( index )
                , m_schgraph( schgraph )

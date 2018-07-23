@@ -24,7 +24,7 @@
 namespace dsim
 {
 
-class SchemaGraph;
+class SchemaScene;
 class SchemaSheet;
 class LispDataset;
 class DomItem;

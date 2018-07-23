@@ -79,7 +79,7 @@ lisp_parse( ds_scheme_t *sc, const ds_scheme_synlist_t *synlist, DS_OUT ds_schem
 
 int
 lisp_get_param_count( ds_scheme_t *sc, const ds_scheme_synlist_t *synlist )
-{
+{ UNUSED(sc);
   register int count = 0;
   const ds_scheme_synlist_t *syn = synlist;
   while ( syn )

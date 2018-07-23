@@ -26,7 +26,7 @@ namespace dsim
 class StaffPad : public StaffGraphItem
 {
 public:
-  StaffPad( int index, const QPointF &pos, SchemaGraph *schgraph, QGraphicsItem *parent = 0, StaffEvents* events = 0 );
+  StaffPad( int index, const QPointF &pos, SchemaScene *schgraph, QGraphicsItem *parent = 0, StaffEvents* events = 0 );
   ~StaffPad();
 
   const char *classname() { return "pad"; }

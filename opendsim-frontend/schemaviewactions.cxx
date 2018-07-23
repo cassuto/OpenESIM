@@ -13,23 +13,43 @@
  *  Lesser General Public License for more details.
  */
 
+#define TRACE_UNIT "schemaviewactions"
 #include <cstring>
 #include <cstdio>
+#include <dsim/logtrace.h>
 
-#include "schemagraph.h"
+#include "schemascene.h"
 #include "elementgraphitem.h"
 #include "componentgraphitem.h"
+#include "elementwire.h"
 #include "elementline.h"
 #include "elementtext.h"
 #include "elementpin.h"
 #include "elementrect.h"
 #include "elementellipse.h"
+#include "elementjoint.h"
 
 #include "mainwindow.h"
 #include "schemaview.h"
 
 namespace dsim
 {
+
+DECLARE_ELEMENT_CAST(ComponentGraphItem, "component")
+DECLARE_ELEMENT_CAST(ElementWire, "wire")
+
+void SchemaView::switchEventHandlers( pfnMouseEvent mousePressEvent,
+                                      pfnMouseEvent mouseMoveEvent,
+                                      pfnMouseEvent mouseReleaseEvent,
+                                      pfnKeyEvent   keyPressEvent,
+                                      pfnResetEvent resetEvent )
+{
+  m_mousePressEvent     = mousePressEvent;
+  m_mouseMoveEvent      = mouseMoveEvent;
+  m_mouseReleaseEvent   = mouseReleaseEvent;
+  m_keyPressEvent       = keyPressEvent;
+  m_resetEvent          = resetEvent;
+}
 
 void SchemaView::setMode( DrawMode mode )
 {
@@ -39,6 +59,8 @@ void SchemaView::setMode( DrawMode mode )
   {
     case MODE_SELECTION:
       this->setCursor( QCursor( Qt::ArrowCursor ));
+      break;
+    case MODE_MOVING:
       break;
     case MODE_WIRE:
       this->setCursor( QCursor( QPixmap(":/bitmaps/greenpen.cur")) );
@@ -60,25 +82,33 @@ void SchemaView::setMode( DrawMode mode )
       if( m_resetEvent ) (this->*m_resetEvent)();
       if ( m_hintElement )
         {
-          removeElement( m_hintElement );
+          deleteElement( m_hintElement );
           m_hintElement = 0l;
         }
       m_moving = false;
 
-      m_mousePressEvent = &mousePressSelect;
-      m_mouseMoveEvent = &mouseMoveSelect;
-      m_mouseReleaseEvent = &mouseReleaseSelect;
-      m_keyPressEvent = 0l;
-      m_resetEvent = 0l;
+      switchEventHandlers( &SchemaView::mousePressSelect,
+                           &SchemaView::mouseMoveSelect,
+                           &SchemaView::mouseReleaseSelect,
+                           0l,
+                           0l );
+      break;
+
+    case MODE_MOVING:
+      switchEventHandlers( 0l,
+                           0l,
+                           0l,
+                           0l,
+                           0l );
       break;
 
     case MODE_WIRE:
       {
-        m_mousePressEvent = &mousePressWire;
-        m_mouseMoveEvent = &mouseMoveWire;
-        m_mouseReleaseEvent = 0l;
-        m_keyPressEvent = 0l;
-        m_resetEvent = 0l;
+        switchEventHandlers ( &SchemaView::mousePressWire,
+                              &SchemaView::mouseMoveWire,
+                              0l,
+                              0l,
+                              0l );
         break;
       }
 
@@ -94,21 +124,21 @@ void SchemaView::setMode( DrawMode mode )
         ((ElementPin *)m_hintElement)->setSub( (ElementText *)symbol, ((ElementText *)reference) );
         ((ElementPin *)m_hintElement)->setVisible( false );
 
-        m_mousePressEvent = &mousePressPin;
-        m_mouseMoveEvent = &mouseMovePin;
-        m_mouseReleaseEvent = 0l;
-        m_keyPressEvent = &keyPressPin;
-        m_resetEvent = 0l;
+        switchEventHandlers( &SchemaView::mousePressPin,
+                             &SchemaView::mouseMovePin,
+                             0l,
+                             &SchemaView::keyPressPin,
+                             0l );
         break;
       }
 
     case MODE_LINE:
       {
-        m_mousePressEvent = &mousePressLine;
-        m_mouseMoveEvent = &mouseMoveLine;
-        m_mouseReleaseEvent = 0l;
-        m_keyPressEvent = 0l;
-        m_resetEvent = &resetLine;
+        switchEventHandlers( &SchemaView::mousePressLine,
+                             &SchemaView::mouseMoveLine,
+                             0l,
+                             0l,
+                             &SchemaView::resetLine );
         break;
       }
 
@@ -117,29 +147,29 @@ void SchemaView::setMode( DrawMode mode )
         m_hintElement = createElement( "text", QPoint( 0, 0 ) );
         ((ElementText *)m_hintElement)->setVisible( false );
 
-        m_mousePressEvent = &mousePressText;
-        m_mouseMoveEvent = &mouseMoveText;
-        m_mouseReleaseEvent = 0l;
-        m_keyPressEvent = &keyPressText;
-        m_resetEvent = 0l;
+        switchEventHandlers( &SchemaView::mousePressText,
+                             &SchemaView::mouseMoveText,
+                             0l,
+                             &SchemaView::keyPressText,
+                             0l );
         break;
       }
     case MODE_RECT:
       {
-        m_mousePressEvent = &mousePressRect;
-        m_mouseMoveEvent = &mouseMoveRect;
-        m_mouseReleaseEvent = 0l;
-        m_keyPressEvent = 0l;
-        m_resetEvent = 0l;
+        switchEventHandlers( &SchemaView::mousePressRect,
+                             &SchemaView::mouseMoveRect,
+                             0l,
+                             0l,
+                             0l );
         break;
       }
     case MODE_ELLIPSE:
       {
-        m_mousePressEvent = &mousePressEllipse;
-        m_mouseMoveEvent = &mouseMoveEllipse;
-        m_mouseReleaseEvent = 0l;
-        m_keyPressEvent = 0l;
-        m_resetEvent = 0l;
+        switchEventHandlers( &SchemaView::mousePressEllipse,
+                             &SchemaView::mouseMoveEllipse,
+                             0l,
+                             0l,
+                             0l );
         break;
       }
     case MODE_SCRIPT:
@@ -148,36 +178,43 @@ void SchemaView::setMode( DrawMode mode )
   }
 }
 
+static ElementPin *componentPinAt( SchemaView *schematic, const QPointF &pos ) // pos is in view coordinates
+{
+  QList<QGraphicsItem *> list = schematic->items( pos.toPoint() );
+  foreach( QGraphicsItem *current, list )
+    {
+      ElementBase *element = elementbase_cast( current );
+      if( element )
+        {
+          ComponentGraphItem *component = element_cast<ComponentGraphItem *>( element );
+          if( component )
+            {
+              return component->atPin( schematic->mapToScene( pos.toPoint() ) );
+            }
+        }
+    }
+  return 0l;
+}
+
 // ------------------------------------------------------------------ //
 // Mouse actions for selection mode
 // ------------------------------------------------------------------ //
 
 bool SchemaView::mousePressSelect( QMouseEvent *event )
-{ return true; }
+{ UNUSED(event); return true; }
 
 bool SchemaView::mouseMoveSelect( QMouseEvent *event )
 {
-  QGraphicsItem *current = itemAt( event->pos() );
-  if( current )
+  if( componentPinAt( this, event->pos() ) )
     {
-      ElementBase *element = elementbase_cast( current );
-      if( element )
-        {
-          if( 0==std::strcmp( element->classname(), "component" ) )
-            {
-              ComponentGraphItem *component = static_cast<ComponentGraphItem *>( element );
-              if( component->atPin( mapToScene( event->pos() ) ) )
-                {
-                  setMode( MODE_WIRE );
-                }
-            }
-        }
+      setMode( MODE_WIRE ); // switch the mode automatically when the mouse is floating on a pin
+      return true;
     }
   return true;
 }
 
 bool SchemaView::mouseReleaseSelect( QMouseEvent *event )
-{ return true; }
+{ UNUSED(event); return true; }
 
 // ------------------------------------------------------------------ //
 // Mouse actions for component mode
@@ -185,28 +222,99 @@ bool SchemaView::mouseReleaseSelect( QMouseEvent *event )
 
 bool SchemaView::mousePressWire( QMouseEvent *event )
 {
+  if( event->button() == Qt::LeftButton )
+    {
+      ElementPin *pin = componentPinAt( this, event->pos() );
+      if( pin && 0l == pin->connectedWire() )
+        {
+          /*
+           * Start a connecting wire from the pin
+           */
+          m_hintElement = createElement( "wire", QPoint( 0, 0 ) );
+          ElementWire *wire = static_cast<ElementWire *>(m_hintElement);
+
+          wire->connectStartPort( pin );
+
+          QPointF port = pin->portScenePos();
+          wire->addWire( QLineF( port, port) , 0 );
+
+          m_mousePressEvent = &mousePressWire2; // switch callback
+          m_mouseMoveEvent = &mouseMoveWire2;
+          return true;
+        }
+    }
+  setMode( MODE_SELECTION );
   return true;
 }
 
 bool SchemaView::mouseMoveWire( QMouseEvent *event )
 {
-  QGraphicsItem *current = itemAt( event->pos() );
-  if( current )
+  if( 0l==componentPinAt( this, event->pos() ) )
     {
-      ElementBase *element = elementbase_cast( current );
-      if( element )
+      setMode( MODE_SELECTION );
+    }
+  return true;
+}
+
+bool SchemaView::mousePressWire2( QMouseEvent *event )
+{
+  if( event->button() == Qt::LeftButton )
+    {
+      /*
+       * Tell the target port we will connect to
+       */
+      ElementAbstractPort *port = 0l;
+      ElementWire *currentWire = static_cast<ElementWire *>(m_hintElement);
+      ElementPin *pin = componentPinAt( this, event->pos() );
+      if( pin && 0l == pin->connectedWire() )
         {
-          if( 0==std::strcmp( element->classname(), "component" ) )
+          port = pin; // find a target pin
+        }
+      else // find if there was a wire where we could put a joint
+        {
+          QPointF scenePos = mapToScene( event->pos() );
+
+          QList<QGraphicsItem *> list = items( event->pos() );
+          foreach( QGraphicsItem *current, list )
             {
-              ComponentGraphItem *component = static_cast<ComponentGraphItem *>( element );
-              if( component->atPin( mapToScene( event->pos() ) ) )
+              ElementBase *element = elementbase_cast( current );
+              if( element )
                 {
-                  return false;
+                  ElementWire *wire = element_cast<ElementWire *>( element );
+                  if( wire )
+                    {
+                      port = wire->addJoint( scenePos );
+                    }
                 }
             }
         }
+      if( port )
+        {
+          /*
+           * Close the connecting wire if conditions are meet
+           */
+          if( port != currentWire->startPort() )
+            {
+              currentWire->connectEndPort( port );
+
+              m_hintElement = 0l; // accept this wire
+              setMode( MODE_SELECTION );
+              return true;
+            }
+        }
+      else
+        {
+          currentWire->addActiveWire(); // create an active wire for corner
+          return true;
+        }
     }
   setMode( MODE_SELECTION );
+  return true;
+}
+
+bool SchemaView::mouseMoveWire2( QMouseEvent *event )
+{
+  ((ElementWire *)m_hintElement)->layoutWires( 0l, mapToScene( event->pos() ) );
   return true;
 }
 
@@ -484,7 +592,7 @@ void SchemaView::dragEnterEvent( QDragEnterEvent *event )
   int rc = m_hintComponent->init( symbol.c_str(), symbolText, referenceText );
   if( MainWindow::instance()->processRc( rc ) )
     {
-      removeElement( m_hintComponent );
+      deleteElement( m_hintComponent );
       return;
     }
 
@@ -515,7 +623,7 @@ void SchemaView::dragLeaveEvent( QDragLeaveEvent *event )
   setMode( MODE_SELECTION );
 }
 
-void SchemaView::dropEvent( QGraphicsSceneDragDropEvent *event )
+void SchemaView::dropEvent( QDropEvent *event )
 {
   event->accept();
 

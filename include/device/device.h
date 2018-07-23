@@ -57,12 +57,12 @@ public:
   //
   // Component Interface
   //
-  virtual int           create( ISchematic *schematic ) {return 0;}
+  virtual int           create( ISchematic *schematic ) { UNUSED(schematic); return 0;}
   virtual int           init() {return 0;}
   virtual int           pin_count();
   virtual circ_pin_t *  pin( int index );
   virtual struct IRECT  get_bound();
-  virtual int           render_frame( IDeviceGraph *graph ) {return 0;}
+  virtual int           render_frame( IDeviceGraph *graph ) { UNUSED(graph); return 0;}
   virtual int           uninit() { return 0; }
 
   //

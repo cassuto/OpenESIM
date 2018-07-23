@@ -18,5 +18,6 @@
 int
 LIB_FUNC(adev_create)( circ_element_t *element )
 {
+  UNUSED(element);
   return 0;
 }

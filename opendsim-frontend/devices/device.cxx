@@ -33,6 +33,7 @@ IDevice::IDevice( const char *reference_, int id_, circuit_t *circuit_, void *re
     m_mdel( 0 ),
     m_circuit( 0 )
 {
+  UNUSED(reserved_);
 }
 
 IDevice::~IDevice()

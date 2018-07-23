@@ -228,3 +228,5 @@ int SchemaEditorForm::save( const char *filename )
 
 
 } // namespace dsim
+
+#include "schemaeditorform.moc"

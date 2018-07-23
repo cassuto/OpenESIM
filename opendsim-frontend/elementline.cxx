@@ -25,7 +25,7 @@
 namespace dsim
 {
 
-ElementLine::ElementLine( const QPointF &p0, int id, SchemaGraph *scene, bool edit, QGraphicsItem* parent )
+ElementLine::ElementLine( const QPointF &p0, int id, SchemaScene *scene, bool edit, QGraphicsItem* parent )
           : ElementGraphItem<QGraphicsItem>( id, scene, edit, parent )
 {
   setStyle( "component" );
@@ -112,6 +112,7 @@ void ElementLine::removeLastPoint()
         m_lastpoint = line->line().p1();
         ElementBase::scene()->removeItem( line );
         m_lines.removeOne( line );
+        delete line;
 
         StaffPad *pad = m_pads.last();
         delete pad;
@@ -185,7 +186,7 @@ int ElementLine::deserialize( LispDataset *dataset )
           rc = dataset->des( x1 );                          UPDATE_RC(rc);
           rc = dataset->des( y1 );                          UPDATE_RC(rc);
 
-          if( x0 ) // set origin ( start point )
+          if( UNLIKELY(x0) ) // set origin ( start point )
             {
               m_lastpoint = QPointF( x1, y1 ) - pos();
               x0 = false;
@@ -234,8 +235,7 @@ QPainterPath ElementLine::shape() const
 
   foreach( QGraphicsLineItem *line, m_lines )
     {
-      QPainterPath path = line->shape();
-      pathsum += path;
+      pathsum += line->shape();
     }
 
   return pathsum;
@@ -243,8 +243,6 @@ QPainterPath ElementLine::shape() const
 
 void ElementLine::staffMoveEvent( int index, bool fineturning, QGraphicsSceneMouseEvent *event )
 {
-  float dW = .0f, dH = .0f;
-
   QPointF cp = fineturning ? event->scenePos() : togrid(event->scenePos());   // Absolute position
   QPointF rp = cp - pos(); // Relevant position
   QLineF line;

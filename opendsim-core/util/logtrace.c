@@ -86,6 +86,7 @@ ds_log_trace( const char *format, ... )
 void
 ds_panic( int rc )
 {
+  UNUSED(rc);
 #if 1
   DebugBreakPoint();
 #endif

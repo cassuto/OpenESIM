@@ -30,6 +30,7 @@ namespace dsim
 enum DrawMode
 {
   MODE_SELECTION = 0,
+  MODE_MOVING,
   MODE_WIRE,
   MODE_PIN,
   MODE_LINE,
@@ -40,7 +41,7 @@ enum DrawMode
   MODE_COMPONENT
 };
 
-class SchemaGraph;
+class SchemaScene;
 class SchemaSheet;
 class ElementBase;
 class ComponentGraphItem;
@@ -58,40 +59,35 @@ public:
   SchemaView( SchemaSheet *sheet, QWidget *parent );
   ~SchemaView();
 
-  void clear();
-  void gotoCenter();
-
+  void  clear();
+  void  gotoCenter();
   qreal scaleFactor() { return m_scalefactor; }
-
-  void setPaintGrid( bool paint );
-  void setPaintFrameAxes( bool paint );
-  void setMode( DrawMode mode );
-
+  void  setPaintGrid( bool paint );
+  void  setPaintFrameAxes( bool paint );
+  void  setMode( DrawMode mode );
   ElementBase *createElement( const char *classname, const QPointF &pos, bool editable = true, bool deser = false );
-  void removeElement( ElementBase *element );
+  void  deleteElement( ElementBase *element );
+  int   loadSymbol( ComponentGraphItem *component, const char *filename );
+  ElementBase *element( int id );
+  void  addId( int id );
+  bool  idUnused( int id );
 
-  int serialize( LispDataset *dom );
-  int deserialize( LispDataset *dom );
-
-  int loadSymbol( ComponentGraphItem *component, const char *filename );
-
-  ElementBase * element( int id );
-  void addId( int id );
-  bool idUnused( int id );
+  int   serialize( LispDataset *dom );
+  int   deserialize( LispDataset *dom );
 
 public:
   inline SchemaSheet *sheet() const { return m_sheet; }
+  inline DrawMode mode() const { return m_mode; }
 
 protected:
   void dragMoveEvent( QDragMoveEvent *event );
   void dragEnterEvent( QDragEnterEvent *event );
   void dragLeaveEvent( QDragLeaveEvent *event );
-  void dropEvent( QGraphicsSceneDragDropEvent *event );
+  void dropEvent( QDropEvent *event );
 
   void mousePressEvent( QMouseEvent *event );
   void mouseMoveEvent( QMouseEvent *event );
   void mouseReleaseEvent( QMouseEvent *event );
-
   void wheelEvent( QWheelEvent *event );
 
   void keyPressEvent( QKeyEvent *event );
@@ -107,7 +103,7 @@ private:
   bool          m_paintFrameAxes;
   qreal         m_scalefactor;
   QString       m_file;
-  SchemaGraph  *m_schemaGraph;
+  SchemaScene  *m_schemaGraph;
   SchemaSheet  *m_sheet;
   int           stack;
   QList<ElementBase *>m_elements[2];
@@ -132,6 +128,8 @@ private: // schemaviewactions.cxx
   bool mouseReleaseSelect( QMouseEvent *event );
   bool mousePressWire( QMouseEvent *event );
   bool mouseMoveWire( QMouseEvent *event );
+  bool mousePressWire2( QMouseEvent *event );
+  bool mouseMoveWire2( QMouseEvent *event );
   bool mousePressComponent( QMouseEvent *event );
   bool mouseMoveComponent( QMouseEvent *event );
   bool mousePressPin( QMouseEvent *event );
@@ -149,9 +147,13 @@ private: // schemaviewactions.cxx
   bool keyPressText( QKeyEvent *event );
   void resetLine();
 
-  // T must be a subclass of ElementGraphItem<>
-  template <typename T>
-    bool keyPressRotate( QKeyEvent *event, T *element );
+  void switchEventHandlers( pfnMouseEvent mousePressEvent,
+                            pfnMouseEvent mouseMoveEvent,
+                            pfnMouseEvent mouseReleaseEvent,
+                            pfnKeyEvent   keyPressEvent,
+                            pfnResetEvent resetEvent );
+
+  template <typename T> bool keyPressRotate( QKeyEvent *event, T *element );
 
   DrawMode      m_mode;
   ElementBase  *m_hintElement;

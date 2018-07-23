@@ -18,5 +18,6 @@
 int
 LIB_FUNC(buff_create)( circ_element_t *element )
 {
+  UNUSED(element);
   return 0;
 }

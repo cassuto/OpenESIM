@@ -20,7 +20,6 @@ LIB_FUNC(opamp_vchanged)( circ_element_t *element )
 {
   DEFINE_PARAM(param, element, opamp_param_t);
 
-  int rc;
   double vd = GET_VOLT( element->pin_vector[0] ) - GET_VOLT( element->pin_vector[1] );
 
   double out = vd * param->gain;

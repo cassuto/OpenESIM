@@ -29,7 +29,7 @@ C_DECLS
 #else
 # include <stddef.h>
 # include <sys/types.h>
-# if HAVE(INTTYPES)
+# if HAVE(INTTYPES_H)
 #   define __STDC_FORMAT_MACROS
 #   include <inttypes.h>
 # else

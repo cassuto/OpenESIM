@@ -16,8 +16,6 @@
 #ifndef ELEMENTLINE_H_
 #define ELEMENTLINE_H_
 
-#include <QtWidgets>
-
 #include "elementgraphitem.h"
 #include "staffgraphitem.h"
 
@@ -29,7 +27,7 @@ class StaffPad;
 class ElementLine : public ElementGraphItem<QGraphicsItem>, public StaffEvents
 {
 public:
-  ElementLine( const QPointF &p0, int id, SchemaGraph *scene, bool edit, QGraphicsItem* parent = 0 );
+  ElementLine( const QPointF &p0, int id, SchemaScene *scene, bool edit, QGraphicsItem* parent = 0 );
   ~ElementLine();
 
   const char *classname() { return "line"; }

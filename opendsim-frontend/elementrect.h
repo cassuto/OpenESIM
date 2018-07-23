@@ -16,8 +16,6 @@
 #ifndef ELEMENTRECT_H_
 #define ELEMENTRECT_H_
 
-#include <QtWidgets>
-
 #include "elementgraphitem.h"
 #include "staffgraphitem.h"
 
@@ -29,7 +27,7 @@ class StaffPad;
 class ElementRect : public ElementGraphItem<QGraphicsRectItem>, public StaffEvents
 {
 public:
-  ElementRect( const QRectF &rect, int id, SchemaGraph *scene, bool edit, QGraphicsRectItem* parent = 0 );
+  ElementRect( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsRectItem* parent = 0 );
   ~ElementRect();
 
   const char *classname() { return "rect"; }

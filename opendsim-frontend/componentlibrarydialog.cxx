@@ -275,3 +275,5 @@ void ComponentLibraryDialog::onSearchListDoubleClick( const QModelIndex &index )
 }
 
 }
+
+#include "componentlibrarydialog.moc"

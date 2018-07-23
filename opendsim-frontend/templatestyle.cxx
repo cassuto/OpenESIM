@@ -37,20 +37,17 @@ Templatestyle::~Templatestyle()
 
 bool Templatestyle::isStyle( const char *style )
 {
-  if( 0 == strcmp( style, "component" ) )
-    return true;
-  else if( 0 == strcmp( style, "pin" ) )
-    return true;
-  else if( 0 == strcmp( style, "wire" ) )
-    return true;
-  return false;
+  return( 0 == std::strcmp( style, "component" )
+   || 0 == std::strcmp( style, "pin" )
+   || 0 == std::strcmp( style, "wire" )
+   || 0 == std::strcmp( style, "joint" ) );
 }
 
 StyleItem Templatestyle::lineStyle( const char *styleName, bool selected )
 {
   StyleItem style;
 
-  if( 0 == strcmp( styleName, "component" ) )
+  if( 0 == std::strcmp( styleName, "component" ) )
     {
       style.line = LINE_SOLID;
       style.width = 1.0f;
@@ -59,7 +56,7 @@ StyleItem Templatestyle::lineStyle( const char *styleName, bool selected )
       else
         { style.color.r = 0; style.color.g = 0; style.color.b = 128; }
     }
-  else if( 0 == strcmp( styleName, "pin" ) )
+  else if( 0 == std::strcmp( styleName, "pin" ) )
     {
       style.line = LINE_SOLID;
       style.width = 1.0f;
@@ -68,14 +65,24 @@ StyleItem Templatestyle::lineStyle( const char *styleName, bool selected )
       else
         { style.color.r = 0; style.color.g = 128; style.color.b = 255; }
     }
-  else if( 0 == strcmp( styleName, "wire" ) )
+  else if( 0 == std::strcmp( styleName, "wire" ) )
     {
-      style.line = LINE_SOLID;
       style.width = 1.0f;
+
       if( selected )
-        { style.color.r = 128; style.color.g = 0; style.color.b = 0; }
+        {
+          style.color.r = 128; style.color.g = 0; style.color.b = 0;
+          style.line = LINE_DASH;
+        }
       else
-        { style.color.r = 128; style.color.g = 0; style.color.b = 128; }
+        {
+          style.color.r = 128; style.color.g = 0; style.color.b = 128;
+          style.line = LINE_SOLID;
+        }
+    }
+  else if( 0 == std::strcmp( styleName, "joint" ) )
+    {
+      style.line = LINE_NONE;
     }
   return style;
 }
@@ -84,10 +91,18 @@ StyleItem Templatestyle::fillStyle( const char *styleName, bool selected )
 {
   StyleItem style;
 
-  if( 0 == strcmp( styleName, "component" ) )
+  if( 0 == std::strcmp( styleName, "component" ) )
     {
-      style.line = LINE_SOLID;
+      style.brush = BRUSH_NONE;
       style.usebkcolor = true;
+    }
+  else if( 0 == std::strcmp( styleName, "joint" ) )
+    {
+      style.brush = BRUSH_NONE;
+      if( selected )
+        { style.bkcolor.r = 128; style.bkcolor.g = 0; style.bkcolor.b = 0; }
+      else
+        { style.bkcolor.r = 128; style.bkcolor.g = 0; style.bkcolor.b = 128; }
     }
   return style;
 }
@@ -96,7 +111,7 @@ StyleItem Templatestyle::textStyle( const char *styleName, bool selected )
 {
   StyleItem style;
 
-  if( 0 == strcmp( styleName, "component" ) )
+  if( 0 == std::strcmp( styleName, "component" ) )
     {
       if( selected )
         { style.color.r = 128; style.color.g = 0; style.color.b = 0; }
@@ -104,7 +119,7 @@ StyleItem Templatestyle::textStyle( const char *styleName, bool selected )
         { style.color.r = 128; style.color.g = 0; style.color.b = 128; }
       style.size = 8;
     }
-  else if( 0 == strcmp( styleName, "pin" ) )
+  else if( 0 == std::strcmp( styleName, "pin" ) )
     {
       if( selected )
         { style.color.r = 128; style.color.g = 0; style.color.b = 0; }

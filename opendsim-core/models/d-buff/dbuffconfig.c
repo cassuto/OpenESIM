@@ -23,6 +23,8 @@ LIB_FUNC(buff_config)( circ_element_t *element, int op, ... )
   va_list vlist;
   va_start( vlist, op );
 
+  UNUSED(param);
+
   switch( op )
   {
     case ELM_CONFIG_LIST_COUNT: /* Query the number of parameters */

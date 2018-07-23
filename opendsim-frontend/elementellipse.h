@@ -16,8 +16,6 @@
 #ifndef ELEMENTROUND_H_
 #define ELEMENTROUND_H_
 
-#include <QtWidgets>
-
 #include "elementgraphitem.h"
 #include "staffgraphitem.h"
 
@@ -29,7 +27,7 @@ class StaffPad;
 class ElementEllipse : public ElementGraphItem<QGraphicsEllipseItem>, public StaffEvents
 {
 public:
-  ElementEllipse( const QRectF &rect, int id, SchemaGraph *scene, bool edit, QGraphicsEllipseItem* parent = 0 );
+  ElementEllipse( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsEllipseItem* parent = 0 );
   ~ElementEllipse();
 
   const char *classname() { return "ellipse"; }

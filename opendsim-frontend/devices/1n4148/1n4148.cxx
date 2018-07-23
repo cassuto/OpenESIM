@@ -45,6 +45,7 @@ dev_1n4148::dev_1n4148( const char *reference, int id, circuit_t *circuit, void 
 
 int dev_1n4148::create( ISchematic *schematic )
 {
+  UNUSED(schematic);
   return 0;
 }
 
@@ -61,21 +62,9 @@ struct IRECT dev_1n4148::get_bound()
 
 int dev_1n4148::render_frame( IDeviceGraph *graph )
 {
-#if 0
-  graph->setStyle("component");
-
-  graph->line( 7, 0, -8, -7 );
-  graph->line( -8, -7, -8, 7 );
-  graph->line( -8, 7, 7, 0 );
-
-  graph->line( -12, 0, 12, 0 );
-
-  graph->setPenWidth( 3 );
-
-  graph->line( 7, -6, 7, 6 );
-#endif
-  IRECT rect = get_bound();
+  //IRECT rect = get_bound();
   //graph->rect( rect.x, rect.y, rect.w, rect.h );
+  UNUSED(graph);
   return 0;
 }
 

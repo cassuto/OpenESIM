@@ -25,6 +25,7 @@
 #include <dsim/error.h>
 #include <dsim/memory.h>
 #include <dsim/circuit.h>
+#include <dsim/misc.h>
 #include <model/circ-pin.h>
 #include <model/circ-node.h>
 #include <model/circ-element.h>

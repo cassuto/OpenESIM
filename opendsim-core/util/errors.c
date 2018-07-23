@@ -16,7 +16,7 @@
 #include <dsim/error.h>
 
 static const ds_error_info_t g_errorsDescriptors[] = {
-#   include <errors-generated.h>
+#   include "errors-generated.h"
     {"Unknown", "Unknown status", "UNKNOWN", 0}
 };
 

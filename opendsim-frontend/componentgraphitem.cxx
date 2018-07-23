@@ -22,10 +22,11 @@
 #include <dsim/error.h>
 #include <cstring>
 
-#include "schemagraph.h"
+#include "schemascene.h"
 #include "boundingtraits.h"
 #include "elementgraphitem.h"
 #include "elementtext.h"
+#include "elementwire.h"
 #include "elementpin.h"
 #include "componentgraphimpl.h"
 #include "componentgraphitem.h"
@@ -33,15 +34,18 @@
 namespace dsim
 {
 
-ComponentGraphItem::ComponentGraphItem( int id, SchemaGraph *scene, bool edit, QGraphicsItem *parent )
+DECLARE_ELEMENT_CAST(ElementText, "text")
+DECLARE_ELEMENT_CAST(ElementPin, "pin")
+
+ComponentGraphItem::ComponentGraphItem( int id, SchemaScene *scene, bool edit, QGraphicsItem *parent )
                   : ElementGraphItem<QGraphicsItemGroup>( id, scene, edit, parent )
                   , m_device( 0l )
                   , m_deviceGraph( new ComponentGraphImpl() )
                   , m_symbolText( 0l )
                   , m_referenceText( 0l )
 {
-  QGraphicsItemGroup::setFlag( QGraphicsItemGroup::ItemIsSelectable, true );
-  setFineturningEnabled(true);
+  setFlags( QGraphicsItemGroup::ItemIsSelectable | QGraphicsItemGroup::ItemSendsGeometryChanges );
+  setFineturningEnabled(false);
 }
 
 ComponentGraphItem::~ComponentGraphItem()
@@ -51,11 +55,14 @@ ComponentGraphItem::~ComponentGraphItem()
 
 int ComponentGraphItem::init( const char *deviceEntry, ElementText *symbolText, ElementText *referenceText, bool deser )
 {
-  m_symbolText = symbolText; addElement( m_symbolText );    // add sub element
-  m_referenceText = referenceText; addElement( m_referenceText );
+  m_symbolText = symbolText;
+  m_referenceText = referenceText;
 
   if( !deser )
     {
+      addElement( m_symbolText ); // add sub element
+      addElement( m_referenceText );
+
       m_symbolText->setStyle( "component" );
       m_referenceText->setStyle( "component" );
     }
@@ -95,6 +102,7 @@ int ComponentGraphItem::init( const char *deviceEntry, ElementText *symbolText, 
               QGraphicsItemGroup::setPos( oldpos );
               setLayout();
             }
+
           return 0;
         }
     }
@@ -151,17 +159,49 @@ int ComponentGraphItem::resolveSubElements()
 
   QList<ElementBase *>::const_iterator it = elements().begin();
 
-  m_symbolText = static_cast<ElementText *>(*it++);
-  m_referenceText = static_cast<ElementText *>(*it++);
+  m_symbolText = element_cast<ElementText *>(*it++);
+  m_referenceText = element_cast<ElementText *>(*it++);
+
+  if( 0l==m_symbolText || 0l==m_referenceText )
+    return -DS_INVALID_ELEMENT_ID;
 
   QPointF oldpos = pos(); QGraphicsItemGroup::setPos( QPointF( 0, 0) ); // ensure right offset aligned to grid
   for( ; it!=elements().end(); ++it )
     {
-      addToGroup( (*it)->graphicsItem() );
+      addToGroup( (*it)->graphicsItem() ); // 'the item and child items will be reparented to this group' (Qt Documents)
     }
   QGraphicsItemGroup::setPos( oldpos );
 
   return init( m_symbol.c_str(), m_symbolText, m_referenceText, /*deser*/true );
+}
+
+void ComponentGraphItem::deleteSubElements()
+{
+  if( !elements().empty() )
+    {
+      if( elements().count() > 2 )
+        {
+          QList<ElementBase *>::const_iterator it;
+          for( it = elements().begin()+2; it!=elements().end(); ++it )
+            {
+              (*it)->graphicsItem()->setParentItem( 0l );
+            }
+        }
+
+      foreach( ElementBase *element, elements() )
+        {
+          if( 0==std::strcmp( element->classname(), "pin" ) )
+            {
+              ElementPin *pin = static_cast<ElementPin *>(element);
+              ElementWire *wire = pin->connectedWire();
+              if( wire )
+                {
+                  view()->deleteElement( wire );
+                }
+            }
+        }
+    }
+  ElementGraphItem::deleteSubElements();
 }
 
 int ComponentGraphItem::serialize( LispDataset *dataset )
@@ -191,6 +231,43 @@ int ComponentGraphItem::deserialize( LispDataset *dataset )
   return 0;
 }
 
+QVariant ComponentGraphItem::itemChange( GraphicsItemChange change, const QVariant &value )
+{
+  if( change == ItemPositionHasChanged )
+    {
+      foreach( ElementBase *element, elements() )
+        {
+          if( 0==std::strcmp( element->classname(), "pin" ) )
+            {
+              ElementPin *pin = static_cast<ElementPin *>(element);
+              ElementWire *wire = pin->connectedWire();
+              if( wire )
+                {
+                  wire->layoutWires( pin, pin->portScenePos() );
+                }
+            }
+        }
+    }
+  return value;
+}
+
+void ComponentGraphItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
+{
+  ElementGraphItem::mouseReleaseEvent( event );
+
+  foreach( ElementBase *element, elements() )
+    {
+      if( 0==std::strcmp( element->classname(), "pin" ) )
+        {
+          ElementPin *pin = static_cast<ElementPin *>(element);
+          ElementWire *wire = pin->connectedWire();
+          if( wire )
+            {
+              wire->removeNullWires();
+            }
+        }
+    }
+}
 
 void ComponentGraphItem::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
 {

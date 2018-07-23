@@ -53,3 +53,5 @@ void SchemaWidget::setMode( DrawMode mode )
 { m_view->setMode( mode ); }
 
 } // namespace dsim
+
+#include "schemawidget.moc"

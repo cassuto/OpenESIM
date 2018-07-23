@@ -13,11 +13,14 @@
  *  Lesser General Public License for more details.
  */
 
+#define TRACE_UNIT "elementpin"
 #include <dsim/error.h>
-#include <cstdio>
+#include <dsim/logtrace.h>
+
 #include "lispdataset.h"
 #include "componentgraphitem.h"
 #include "elementtext.h"
+#include "elementwire.h"
 #include "pinsettingsdialog.h"
 
 #include "elementpin.h"
@@ -25,7 +28,9 @@
 namespace dsim
 {
 
-ElementPin::ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symbol, ElementText *reference, int id, SchemaGraph *scene, bool editable, QGraphicsItem *parent )
+DECLARE_ELEMENT_CAST(ElementText, "text")
+
+ElementPin::ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symbol, ElementText *reference, int id, SchemaScene *scene, bool editable, QGraphicsItem *parent )
           : ElementGraphItem<QGraphicsItem>( id, scene, editable, parent )
           , m_symbolLabel( 0l )
           , m_referenceLabel( 0l )
@@ -38,8 +43,6 @@ ElementPin::ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symb
   setPos( pos );
   setDirect( direct );
   setLength( 20 );
-
-  if( !editable ) setCursor( Qt::CrossCursor );
 
   setSub( symbol, reference );
 }
@@ -176,6 +179,10 @@ void ElementPin::updateVisible()
   m_referenceLabel->setVisible( m_showReference );
 }
 
+QPointF ElementPin::portScenePos() const
+{ return sceneTransform().map( QPointF(0, 0) ); }
+
+
 int ElementPin::serialize( LispDataset *dataset )
 {
   int rc = ElementGraphItem::serialize( dataset );  UPDATE_RC(rc);
@@ -211,12 +218,20 @@ int ElementPin::resolveSubElements()
 {
   int rc = ElementGraphItem::resolveSubElements(); UPDATE_RC(rc);
 
-  m_symbolLabel = static_cast<ElementText *>(elements()[0]);
-  m_referenceLabel = static_cast<ElementText *>(elements()[1]);
+  m_symbolLabel = element_cast<ElementText *>(elements()[0]);
+  m_referenceLabel = element_cast<ElementText *>(elements()[1]);
+
+  if( 0l==m_symbolLabel || 0l==m_referenceLabel )
+    return -DS_INVALID_ELEMENT_ID;
 
   updateVisible();
   return 0;
 }
+
+void ElementPin::connectWire( ElementWire *wire )
+{ ElementAbstractPort::connectWire( wire ); update(); }
+void ElementPin::disconnectWire( ElementWire *wire )
+{ ElementAbstractPort::disconnectWire( wire ); update(); }
 
 QString ElementPin::symbol() const
 { return m_symbolLabel->text(); }
@@ -232,6 +247,7 @@ void ElementPin::setReference( const QString &reference )
 
 void ElementPin::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
 {
+  event->accept();
   if( editable() )
     {
       PinSettingsDialog pinSettings( this );
@@ -256,12 +272,14 @@ void ElementPin::paint( QPainter* painter, const QStyleOptionGraphicsItem* optio
 
   if( m_length < 1 ) m_length = 1;
   painter->drawLine( 0, 0, m_length-1, 0);
-/*
-  pen.setColor( Qt::red );
-  pen.setWidthF( 0.7 );
-  painter->setPen( pen );
-  painter->drawEllipse( -4, -4, 8, 8 );
-  */
+
+  if( 0l==connectedWire() ) // draw the mark when the pin is unconnected
+    {
+      pen.setColor( Qt::red );
+      pen.setWidthF( 0.7 );
+      painter->setPen( pen );
+      painter->drawEllipse( -4, -4, 8, 8 );
+    }
 }
 
 }

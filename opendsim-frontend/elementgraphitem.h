@@ -31,7 +31,7 @@ template <class T>
   class ElementGraphItem : public ElementBase, public T
   {
   public:
-    ElementGraphItem( int id, SchemaGraph *scene, bool editable, QGraphicsItem *parent = 0l );
+    ElementGraphItem( int id, SchemaScene *scene, bool editable, QGraphicsItem *parent = 0l );
 
     virtual void move( QPointF delta );
     virtual void setVisible( bool visible );

@@ -16,19 +16,19 @@
 #ifndef ELEMENTPIN_H_
 #define ELEMENTPIN_H_
 
-#include <QtWidgets>
-
 #include "elementgraphitem.h"
+#include "elementabstractport.h"
 
 namespace dsim
 {
 
 class ElementText;
+class ElementWire;
 
-class ElementPin : public ElementGraphItem<QGraphicsItem>
+class ElementPin : public ElementGraphItem<QGraphicsItem>, public ElementAbstractPort
 {
 public:
-  ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symbol, ElementText *reference, int id, SchemaGraph *scene, bool editable, QGraphicsItem *parent = 0 );
+  ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symbol, ElementText *reference, int id, SchemaScene *scene, bool editable, QGraphicsItem *parent = 0 );
   ~ElementPin();
 
   const char *classname() { return "pin"; }
@@ -39,6 +39,8 @@ public:
   void setLength( int length );
   void setSub( ElementText *symbol, ElementText *reference );
   void setLayout();
+  QPointF portScenePos() const;
+  int parentId() const { return id(); }
 
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
@@ -56,6 +58,10 @@ public:
   void setReference( const QString &reference );
   void setShowSymbol( bool show ) { m_showSymbol = show; updateVisible(); }
   void setShowReference( bool show ) { m_showReference = show; updateVisible(); }
+
+protected: // for ElementWire only
+  void connectWire( ElementWire *wire );
+  void disconnectWire( ElementWire *wire );
 
 protected:
   void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event );

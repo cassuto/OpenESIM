@@ -194,7 +194,7 @@ lisp_lex_all( ds_scheme_t *sc, DS_OUT ds_scheme_synlist_t **synout )
 {
   int rc = 0, eof = 0;
   ds_scheme_synlist_t *synlist = NULL;
-  ds_scheme_synlist_t *synroot = NULL, *syntail = NULL;
+  ds_scheme_synlist_t *syntail = NULL;
 
   *synout = NULL;
 
@@ -216,8 +216,6 @@ lisp_lex_all( ds_scheme_t *sc, DS_OUT ds_scheme_synlist_t **synout )
 
       if ( LIKELY( syntail ) )
         syntail->next = synlist;
-      else
-        synroot = synlist;
       syntail = synlist;
 
       if ( eof ) break;

@@ -37,7 +37,7 @@ class ElementPin;
 class ComponentGraphItem : public ElementGraphItem<QGraphicsItemGroup>
 {
 public:
-  ComponentGraphItem( int id, SchemaGraph *scene, bool edit, QGraphicsItem *parent = 0l );
+  ComponentGraphItem( int id, SchemaScene *scene, bool edit, QGraphicsItem *parent = 0l );
   ~ComponentGraphItem();
 
   const char *classname() { return "component"; }
@@ -52,12 +52,15 @@ public:
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
   int resolveSubElements();
+  void deleteSubElements();
 
 public:
   inline IDevice *device() const { return m_device; }
   inline IDeviceGraph *deviceGraph() const { return m_deviceGraph; }
 
 protected:
+  QVariant itemChange( GraphicsItemChange change, const QVariant &value );
+  void mouseReleaseEvent( QGraphicsSceneMouseEvent *event );
   void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget );
 
 private:

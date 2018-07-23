@@ -22,7 +22,7 @@
 namespace dsim
 {
 
-StaffPad::StaffPad( int index, const QPointF &pos, SchemaGraph *schgraph, QGraphicsItem *parent, StaffEvents* events )
+StaffPad::StaffPad( int index, const QPointF &pos, SchemaScene *schgraph, QGraphicsItem *parent, StaffEvents* events )
           : StaffGraphItem( index, schgraph, parent, events )
 {
   setPos( pos );
@@ -42,6 +42,8 @@ void StaffPad::paint( QPainter *painter, const QStyleOptionGraphicsItem *option,
   painter->setPen( Qt::red );
 
   painter->drawRect( boundingRect() );
+
+  UNUSED(option); UNUSED(widget);
 }
 
 }

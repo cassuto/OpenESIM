@@ -72,3 +72,5 @@ void PinSettingsDialog::apply( ElementPin *pin )
 }
 
 }
+
+#include "pinsettingsdialog.moc"

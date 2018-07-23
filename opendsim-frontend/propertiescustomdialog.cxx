@@ -510,3 +510,5 @@ TemplateCustom PropertiesCustomDialog::textCustom()
 }
 
 }
+
+#include "propertiescustomdialog.moc"

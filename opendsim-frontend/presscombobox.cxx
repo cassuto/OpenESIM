@@ -45,3 +45,5 @@ void PressComboBox::setEnabled( bool enabled )
 }
 
 }
+
+#include "presscombobox.moc"

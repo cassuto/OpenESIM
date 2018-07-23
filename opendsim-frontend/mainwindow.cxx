@@ -58,6 +58,7 @@ MainWindow::MainWindow()
 
   readSettings();
 
+  trace_assert( 0l==m_pinstance );
   m_pinstance = this;
 }
 
@@ -278,3 +279,5 @@ void MainWindow::noMemory()
 }
 
 } // namespace dsim
+
+#include "mainwindow.moc"

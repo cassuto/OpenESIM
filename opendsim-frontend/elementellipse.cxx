@@ -25,7 +25,7 @@
 namespace dsim
 {
 
-ElementEllipse::ElementEllipse( const QRectF &rect, int id, SchemaGraph *scene, bool edit, QGraphicsEllipseItem* parent )
+ElementEllipse::ElementEllipse( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsEllipseItem* parent )
           : ElementGraphItem<QGraphicsEllipseItem>( id, scene, edit, parent )
 {
   if( edit )

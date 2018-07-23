@@ -16,8 +16,6 @@
 #ifndef ELEMENTTEXT_H_
 #define ELEMENTTEXT_H_
 
-#include <QtWidgets>
-
 #include "elementgraphitem.h"
 
 namespace dsim
@@ -26,7 +24,7 @@ namespace dsim
 class ElementText : public ElementGraphItem<QGraphicsSimpleTextItem>
 {
 public:
-  ElementText( ElemDirect direct, const QPointF &pos, int id, SchemaGraph *scene, bool edit, QGraphicsSimpleTextItem* parent = 0 );
+  ElementText( ElemDirect direct, const QPointF &pos, int id, SchemaScene *scene, bool edit, QGraphicsSimpleTextItem* parent = 0 );
   ~ElementText();
 
   const char *classname() { return "text"; }
