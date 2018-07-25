@@ -105,7 +105,6 @@ int TemplateCustom::deserialize( LispDataset *dataset )
 {
   std::string symbol;
   int i;
-  ds_color_t c;
   DomEntry entry;
 
   int rc = dataset->des( entry, "cust" );                   UPDATE_RC(rc);

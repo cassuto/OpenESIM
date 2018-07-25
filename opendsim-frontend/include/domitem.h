@@ -29,14 +29,9 @@ public:
   DomItem();
   virtual ~DomItem();
 
-  inline void ref() { refcount++; }
-  int release();
-
   virtual int serialize( LispDataset *dataset )=0;
   virtual int deserialize( LispDataset *dataset )=0;
 
-private:
-  int refcount;
 };
 
 }

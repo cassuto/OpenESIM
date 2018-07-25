@@ -175,8 +175,12 @@ int ComponentGraphItem::resolveSubElements()
   return init( m_symbol.c_str(), m_symbolText, m_referenceText, /*deser*/true );
 }
 
-void ComponentGraphItem::deleteSubElements()
+void ComponentGraphItem::releaseSubElements()
 {
+  if( device() )
+    {
+      view()->sheet()->deleteDevice( device() );
+    }
   if( !elements().empty() )
     {
       if( elements().count() > 2 )
@@ -190,18 +194,20 @@ void ComponentGraphItem::deleteSubElements()
 
       foreach( ElementBase *element, elements() )
         {
+          // we assume that this operation( removing connected wires ) will not affect the list elements(),
+          // however not the global element list.
           if( 0==std::strcmp( element->classname(), "pin" ) )
             {
               ElementPin *pin = static_cast<ElementPin *>(element);
               ElementWire *wire = pin->connectedWire();
               if( wire )
                 {
-                  view()->deleteElement( wire );
+                  view()->releaseElement( wire );
                 }
             }
         }
     }
-  ElementGraphItem::deleteSubElements();
+  ElementGraphItem::releaseSubElements();
 }
 
 int ComponentGraphItem::serialize( LispDataset *dataset )

@@ -66,11 +66,13 @@ public:
   void  setPaintFrameAxes( bool paint );
   void  setMode( DrawMode mode );
   ElementBase *createElement( const char *classname, const QPointF &pos, bool editable = true, bool deser = false );
-  void  deleteElement( ElementBase *element );
+  void  releaseElement( ElementBase *element );
+  void  releaseAllElements();
   int   loadSymbol( ComponentGraphItem *component, const char *filename );
   ElementBase *element( int id );
   void  addId( int id );
   bool  idUnused( int id );
+  inline QList<ElementBase *> & elements() { return m_elements[stack]; }
 
   int   serialize( LispDataset *dom );
   int   deserialize( LispDataset *dom );

@@ -208,8 +208,9 @@ template <class base>
   {
     if( m_editable && view()->mode() == MODE_MOVING )
       {
-        view()->setMode( MODE_SELECTION );
         event->accept();
+
+        view()->setMode( MODE_SELECTION );
         base::ungrabMouse();
       }
   }

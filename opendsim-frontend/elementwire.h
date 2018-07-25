@@ -17,6 +17,8 @@
 #define ELEMENTWIRE_H_
 
 #include "elementbase.h"
+#include <QObject>
+#include <QGraphicsItem>
 
 namespace dsim
 {
@@ -24,23 +26,16 @@ namespace dsim
 class ElementWire;
 class ElementAbstractPort;
 
-class WireSegment : public QGraphicsLineItem
+class WireSegment : public QObject, public QGraphicsLineItem
 {
+  Q_OBJECT
 public:
   WireSegment( const QLineF &line, ElementWire *wire, QGraphicsItem* parent = 0 );
   ~WireSegment();
 
-  void ref();
-  void release();
-  void connectP1( WireSegment *wire );
-  void connectP2( WireSegment *wire );
-  void disconnectP1( WireSegment *wire );
-  void disconnectP2( WireSegment *wire );
   void setLine( const QLineF &line );
   void setP1( const QPointF &point );
   void setP2( const QPointF &point );
-  void setPlainP1( const QPointF &point );
-  void setPlainP2( const QPointF &point );
   void moveWire( const QPointF &delta );
   void move( QPointF delta );
   void setElementWire( ElementWire *wire ) { m_elementWire = wire; }
@@ -59,25 +54,28 @@ protected:
   void hoverLeaveEvent( QGraphicsSceneHoverEvent *event );
   void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0 );
 
-private:
-  void setConnectedP1( const QPointF &p1 );
-  void setConnectedP2( const QPointF &p2 );
+signals:
+  void sigSetPlainP1( const QPointF &point );
+  void sigSetPlainP2( const QPointF &point );
+
+private slots:
+  void setPlainP1( const QPointF &point );
+  void setPlainP2( const QPointF &point );
 
 private:
-  int                  m_refcount;
-  QList<WireSegment *> m_connectedWiresP1;
-  QList<WireSegment *> m_connectedWiresP2;
   ElementWire         *m_elementWire;
   bool                 m_selected;
 
 public:
   enum { Type = UserType + 3868 /*magic*/ };
   int type() const { return Type; }
+
+  friend class ElementWire;
 };
 
 class ElementPin;
 
-class ElementWire : public ElementBase, public QGraphicsItem
+class ElementWire : public ElementBase
 {
 public:
   ElementWire( int id, SchemaScene *scene, QGraphicsItem *parent = 0l );
@@ -94,7 +92,7 @@ public:
   WireSegment* addWire( const QLineF &line, int index );
   void addActiveWire();
   ElementAbstractPort *addJoint( const QPointF &scenePos );
-  void removeNullWires();
+  void removeNullWires( WireSegment *exp = 0l );
   void removeWire( WireSegment *wire );
   void deleteAll();
   void connectWires( int dst, int src );
@@ -103,20 +101,24 @@ public:
   void move( QPointF delta );
   void layoutWires( ElementAbstractPort *port, const QPointF &pos );
   WireSegment *wireAt( const QPointF &scenePos );
+  QList<qreal> pointList();
   inline QList<WireSegment *> *wireSegments() { return &m_wires; }
   inline QGraphicsItem *parentItem() const { return m_parent; }
 
   QRectF boundingRect() const;
   QPainterPath shape() const;
-  void addToScene( QGraphicsScene *scene );
-  void removeFromScene( QGraphicsScene *scene );
+  void addToScene( QGraphicsScene *scene ) { UNUSED(scene); }
+  void removeFromScene( QGraphicsScene *scene ) { UNUSED(scene); }
 
   int resolveSubElements();
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
 
-protected:
-  void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0 );
+protected: // for ElementJoint only
+  inline void setStartPort( ElementAbstractPort *port ) { m_startPort = port; }
+  inline void setEndPort( ElementAbstractPort *port ) { m_endPort = port; }
+
+  friend class ElementJoint;
 
 private:
   QGraphicsItem       *m_parent;

@@ -82,7 +82,7 @@ void SchemaView::setMode( DrawMode mode )
       if( m_resetEvent ) (this->*m_resetEvent)();
       if ( m_hintElement )
         {
-          deleteElement( m_hintElement );
+          releaseElement( m_hintElement );
           m_hintElement = 0l;
         }
       m_moving = false;
@@ -280,9 +280,11 @@ bool SchemaView::mousePressWire2( QMouseEvent *event )
               ElementBase *element = elementbase_cast( current );
               if( element )
                 {
+                  trace_info(("element %p\n", element));
                   ElementWire *wire = element_cast<ElementWire *>( element );
                   if( wire )
                     {
+
                       port = wire->addJoint( scenePos );
                     }
                 }
@@ -592,7 +594,7 @@ void SchemaView::dragEnterEvent( QDragEnterEvent *event )
   int rc = m_hintComponent->init( symbol.c_str(), symbolText, referenceText );
   if( MainWindow::instance()->processRc( rc ) )
     {
-      deleteElement( m_hintComponent );
+      releaseElement( m_hintComponent );
       return;
     }
 

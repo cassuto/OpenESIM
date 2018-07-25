@@ -218,8 +218,11 @@ int ElementPin::resolveSubElements()
 {
   int rc = ElementGraphItem::resolveSubElements(); UPDATE_RC(rc);
 
-  m_symbolLabel = element_cast<ElementText *>(elements()[0]);
-  m_referenceLabel = element_cast<ElementText *>(elements()[1]);
+  if( elements().count() != 2 )
+    return -DS_INVALID_ELEMENT_ID;
+
+  m_symbolLabel = element_cast<ElementText *>(elements().at(0));
+  m_referenceLabel = element_cast<ElementText *>(elements().at(1));
 
   if( 0l==m_symbolLabel || 0l==m_referenceLabel )
     return -DS_INVALID_ELEMENT_ID;

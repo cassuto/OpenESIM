@@ -30,7 +30,6 @@ namespace dsim
 
 WireSegment::WireSegment( const QLineF &line, ElementWire *wire, QGraphicsItem* parent )
           : QGraphicsLineItem( line, parent )
-          , m_refcount( 0 )
           , m_elementWire( wire )
           , m_selected( false )
 {
@@ -41,51 +40,6 @@ WireSegment::WireSegment( const QLineF &line, ElementWire *wire, QGraphicsItem* 
 
 WireSegment::~WireSegment()
 {
-  trace_assert( m_refcount == 0 );
-}
-
-void WireSegment::ref() { ++m_refcount; }
-
-void WireSegment::release()
-{ trace_assert( m_refcount > 0 ); if( --m_refcount==0 ) delete this; }
-
-void WireSegment::connectP1( WireSegment *wire )
-{ wire->ref(); m_connectedWiresP1.append( wire ); }
-void WireSegment::connectP2( WireSegment *wire )
-{ wire->ref(); m_connectedWiresP2.append( wire ); }
-
-void WireSegment::disconnectP1( WireSegment *wire )
-{
-  if( m_connectedWiresP1.contains( wire ) )
-    {
-      m_connectedWiresP1.removeOne( wire );
-      wire->release();
-    }
-}
-
-void WireSegment::disconnectP2( WireSegment *wire )
-{
-  if( m_connectedWiresP2.contains( wire ) )
-    {
-      m_connectedWiresP2.removeOne( wire );
-      wire->release();
-    }
-}
-
-void WireSegment::setConnectedP1( const QPointF &p1 )
-{
-  foreach( WireSegment *wire, m_connectedWiresP1 )
-    {
-      wire->setPlainP1( p1 );
-    }
-}
-
-void WireSegment::setConnectedP2( const QPointF &p2 )
-{
-  foreach( WireSegment *wire, m_connectedWiresP2 )
-    {
-      wire->setPlainP2( p2 );
-    }
 }
 
 void WireSegment::setLine( const QLineF &line )
@@ -95,13 +49,13 @@ void WireSegment::setLine( const QLineF &line )
 
 void WireSegment::setP1( const QPointF &point )
 {
-  setConnectedP2( point );
+  emit sigSetPlainP2( point );
   setPlainP1( point );
 }
 
 void WireSegment::setP2( const QPointF &point )
 {
-  setConnectedP1( point );
+  emit sigSetPlainP1( point );
   setPlainP2( point );
 }
 
@@ -137,8 +91,9 @@ void WireSegment::moveWire( const QPointF &delta )
   else return;
 
   setLine( QLineF( x1, y1, x2, y2 ) );
-  setConnectedP1( line().p2() );
-  setConnectedP2( line().p1() );
+
+  emit sigSetPlainP1( line().p2() );
+  emit sigSetPlainP2( line().p1() );
 }
 
 void WireSegment::move( QPointF delta )
@@ -180,8 +135,12 @@ void WireSegment::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
   if( event->button() == Qt::LeftButton )
     {
+      event->accept();
       grabMouse();
+      return;
     }
+
+  event->ignore();
 }
 
 void WireSegment::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
@@ -204,7 +163,7 @@ void WireSegment::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
   event->accept();
 
-  m_elementWire->removeNullWires();
+  //m_elementWire->removeNullWires( this );
 
   if( event->button() == Qt::LeftButton )
     {
@@ -229,7 +188,6 @@ void WireSegment::paint( QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 ElementWire::ElementWire( int id, SchemaScene *scene, QGraphicsItem *parent )
             : ElementBase( id, scene )
-            , QGraphicsItem( parent )
             , m_parent( parent )
             , m_startPort( 0l )
             , m_endPort( 0l )
@@ -238,7 +196,6 @@ ElementWire::ElementWire( int id, SchemaScene *scene, QGraphicsItem *parent )
             , m_startPortId( -1 )
             , m_endPortId( -1 )
 {
-  setFlag( QGraphicsItemGroup::ItemIsSelectable, false );
 }
 
 ElementWire::~ElementWire()
@@ -249,30 +206,38 @@ ElementWire::~ElementWire()
 }
 
 void ElementWire::connectStartPort( ElementAbstractPort *port )
-{ port->connectWire( this ); m_startPort = port; }
+{
+  port->connectWire( this );
+  port->setOppositePort( 0l );
+  m_startPort = port;
+}
 
 void ElementWire::connectEndPort( ElementAbstractPort *port )
 {
   port->connectWire( this ); m_endPort = port;
   layoutWires( port, port->portScenePos() );
   removeNullWires();
+
+  m_startPort->setOppositePort( m_endPort );
+  m_endPort->setOppositePort( m_startPort );
 }
 
 void ElementWire::disconnectPort( ElementAbstractPort *port )
 {
   if( port == m_startPort )
     {
+      m_startPort->setOppositePort( 0l );
       m_startPort = 0l;
     }
   else if( port == m_endPort )
     {
+      m_endPort->setOppositePort( 0l );
       m_endPort = 0l;
     }
 }
 
 void ElementWire::addWire( WireSegment* wire, int index )
 {
-  wire->ref();
   if( index > 0  && index < m_wires.size() ) disconnectWires( index-1, index );
 
   m_wires.insert( index, wire );
@@ -352,22 +317,18 @@ ElementAbstractPort *ElementWire::addJoint( const QPointF &scenePos )
     }
 
   ElementJoint *joint = static_cast<ElementJoint *>(view()->createElement( "joint", point1 ));
-  ElementJointPort *ports[4];
-  for( int i=0; i<4; i++ )
+  ElementJointPort *ports[3];
+  for( int i=0; i<3; i++ )
     {
       ports[i] = static_cast<ElementJointPort *>(view()->createElement( "jointport", point1 ));
     }
   joint->setPorts( ports );
 
   split( index, joint->port(0), joint->port(2) );
-#if 0
-  eNode* enode = m_pConnector->enode();    // get the eNode from my connector
-  joint->getPort(1)->setEnode( enode );
-#endif
   return joint->port(1);
 }
 
-void ElementWire::removeNullWires()
+void ElementWire::removeNullWires( WireSegment *exp )
 {
   if( m_wires.length() < 2 ) return;
 
@@ -381,6 +342,7 @@ void ElementWire::removeNullWires()
           if( wire->dx() == wire2->dx() || wire->dy() == wire2->dy() )
             {
               wire2->setPlainP1( wire->p1() );
+              trace_assert( wire != exp );
               removeWire( wire );
             }
         }
@@ -404,8 +366,7 @@ void ElementWire::removeWire( WireSegment *wire )
   connectWires( index-1, index+1 );
 
   m_wires.removeOne( wire );
-  ElementBase::scene()->removeItem( wire );
-  wire->release();
+  delete wire;
 }
 
 void ElementWire::deleteAll()
@@ -414,7 +375,7 @@ void ElementWire::deleteAll()
     {
       WireSegment* wire = m_wires.takeLast();
       ElementBase::scene()->removeItem( wire );
-      wire->release();
+      delete wire;
     }
 }
 
@@ -426,8 +387,8 @@ void ElementWire::connectWires( int dst, int src )
   WireSegment* wire1 = m_wires.at( dst );
   WireSegment* wire2 = m_wires.at( src );
 
-  wire1->connectP1( wire2 );
-  wire2->connectP2( wire1 );
+  QObject::connect( wire1, SIGNAL( sigSetPlainP1( const QPointF& ) ), wire2, SLOT( setPlainP1( const QPointF& ) ) );
+  QObject::connect( wire2, SIGNAL( sigSetPlainP2( const QPointF& ) ), wire1, SLOT( setPlainP2( const QPointF& ) ) );
 }
 
 void ElementWire::disconnectWires( int dst, int src )
@@ -438,8 +399,8 @@ void ElementWire::disconnectWires( int dst, int src )
   WireSegment* wire1 = m_wires.at( dst );
   WireSegment* wire2 = m_wires.at( src );
 
-  wire1->disconnectP1( wire2 );
-  wire2->disconnectP2( wire1 );
+  QObject::disconnect( wire1, SIGNAL( sigSetPlainP1( const QPointF& ) ), wire2, SLOT( setPlainP1( const QPointF& ) ) );
+  QObject::disconnect( wire2, SIGNAL( sigSetPlainP2( const QPointF& ) ), wire1, SLOT( setPlainP2( const QPointF& ) ) );
 }
 
 void ElementWire::split( int index, ElementAbstractPort* port1, ElementAbstractPort* port2 )
@@ -514,7 +475,7 @@ void ElementWire::layoutWires( ElementAbstractPort *port, const QPointF &pos )
 
   if( wire->dx() == 0 && wire->dy() == 0 && length > 1 )
     {
-      removeWire( wire ); // fixme?
+      removeWire( wire );
 
       if( m_activeLine > 0 )  m_activeLine -= 1;
     }
@@ -588,6 +549,24 @@ WireSegment *ElementWire::wireAt( const QPointF &scenePos )
   return 0l;
 }
 
+QList<qreal> ElementWire::pointList()
+{
+  QList<qreal> list;
+  if ( m_wires.isEmpty() ) return list;
+
+  QString data;
+
+  list.append( m_wires.at(0)->p1().x() );
+  list.append( m_wires.at(0)->p1().y() );
+  int count = m_wires.size();
+  for( int i=0; i<count; i++ )
+    {
+      list.append( m_wires.at(i)->p2().x() );
+      list.append( m_wires.at(i)->p2().y() );
+    }
+  return list;
+}
+
 QRectF ElementWire::boundingRect() const
 {
   return shape().controlPointRect();
@@ -603,12 +582,6 @@ QPainterPath ElementWire::shape() const
 
   return pathsum;
 }
-
-void ElementWire::addToScene( QGraphicsScene *scene )
-{ scene->addItem( this ); }
-
-void ElementWire::removeFromScene( QGraphicsScene *scene )
-{ scene->removeItem( this ); }
 
 int ElementWire::resolveSubElements()
 {
@@ -710,9 +683,6 @@ int ElementWire::deserialize( LispDataset *dataset )
   return rc;
 }
 
-void ElementWire::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
-{
-  Q_UNUSED( painter ); Q_UNUSED( option ); Q_UNUSED( widget );
 }
 
-}
+#include "elementwire.moc"

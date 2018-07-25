@@ -85,13 +85,13 @@ SchemaView::SchemaView( SchemaSheet *sheet, QWidget *parent )
   setMode( MODE_SELECTION );
 }
 
-SchemaView::~SchemaView() { }
+SchemaView::~SchemaView() { releaseAllElements(); }
 
 void SchemaView::clear()
 {
   if( m_schemaGraph )
     {
-      m_schemaGraph->remove();
+      releaseAllElements();
       m_schemaGraph->deleteLater();
 
       m_hintElement = 0l;
@@ -179,20 +179,60 @@ ElementBase *SchemaView::createElement( const char *classname, const QPointF &po
   return element;
 }
 
-void SchemaView::deleteElement( ElementBase *element )
+void SchemaView::releaseElement( ElementBase *element )
 {
-  if( 0==std::strcmp( element->classname(), "component") )
+  element->releaseSubElements(); // recursively calls releaseElement()
+
+  if( element->refcount() == 0 )
     {
-      ComponentGraphItem *component = static_cast<ComponentGraphItem *>(element);
-      m_sheet->deleteDevice( component->device() );
+      element->removeFromScene( m_schemaGraph );
+      m_elements[stack].removeOne( element );
+      m_id[stack].release( element->id() );
+      delete element;
+    }
+  else if( element->refcount()-1 == 0  )
+    {
+      element->removeFromScene( m_schemaGraph );
+      m_elements[stack].removeOne( element );
+      m_id[stack].release( element->id() );
+      element->release();
+    }
+  else
+    {
+      element->release();
+    }
+}
+
+void SchemaView::releaseAllElements()
+{
+  trace_assert( stack == 0 );
+
+  // As releaseSubElements() may delete some elements and affect the element list, we have to maintain a list storing
+  // current root targets to release here. It only makes sense when we are processing root elements.
+  QList<ElementBase *>releases;
+  foreach( ElementBase *element, m_elements[stack] )
+    {
+      if( !element->isRef() ) releases.append( element ); // find out the root element
     }
 
-  element->deleteSubElements();
+  foreach( ElementBase *element, releases )
+    {
+      if( m_elements[stack].contains( element ) ) //fixme! expensive enough... :(
+        {
+          releaseElement( element );
+        }
+    }
 
-  m_elements[stack].removeOne( element );
-  m_id[stack].release( element->id() );
-  element->removeFromScene( m_schemaGraph );
-  delete element;
+  trace_assert( m_elements[stack].count() == 0 ); // ensure that we have released all
+#ifndef NDEBUG
+  if( m_elements[stack].count() )
+    {
+      foreach( ElementBase *element, m_elements[stack] )
+        {
+          trace_debug(("memmory leaked %p\n", element/*, element->classname()*/));
+        }
+    }
+#endif
 }
 
 int SchemaView::serialize( LispDataset *dom )
@@ -247,7 +287,7 @@ int SchemaView::deserialize( LispDataset *dom )
 
                 if( (rc = elem->deserialize( dom )) )
                   {
-                    deleteElement( elem ); // fault
+                    releaseElement( elem ); // fault
                   }
               } // auto pop
             }
@@ -381,7 +421,7 @@ void SchemaView::keyPressEvent( QKeyEvent *event )
 
       foreach( ElementBase *element, targetList )
         {
-          deleteElement( element );
+          releaseElement( element );
         }
     }
 }

@@ -52,7 +52,7 @@ public:
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
   int resolveSubElements();
-  void deleteSubElements();
+  void releaseSubElements();
 
 public:
   inline IDevice *device() const { return m_device; }

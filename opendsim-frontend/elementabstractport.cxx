@@ -25,6 +25,7 @@ namespace dsim
 
 ElementAbstractPort::ElementAbstractPort()
                    : m_connectedWire( 0l )
+                   , m_oppositePort( 0l )
 {
 }
 
@@ -44,7 +45,7 @@ void ElementAbstractPort::connectWire( ElementWire *wire )
 
 void ElementAbstractPort::disconnectWire( ElementWire *wire )
 {
-  trace_assert( m_connectedWire );
+  trace_assert( m_connectedWire && m_connectedWire == wire );
   m_connectedWire = 0l;
 
   UNUSED(wire);

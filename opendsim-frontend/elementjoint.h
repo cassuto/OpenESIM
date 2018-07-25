@@ -45,9 +45,10 @@ public:
   ElementJoint( const QPointF &pos, int id, SchemaScene *scene, QGraphicsItem* parent = 0 );
   const char *classname() { return "joint"; }
 
-  void setPorts( ElementJointPort **ports );
+  int setPorts( ElementJointPort **ports );
   void moveJoint( const QPointF &pos );
-  inline ElementJointPort *port( int index ) { return m_ports[index]; }
+  ElementJointPort *port( int index );
+  void release();
 
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
@@ -57,8 +58,8 @@ protected:
   void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0 );
 
 private:
-  ElementJointPort *m_ports[4];
-  int               m_portIds[4];
+  void joinWires( ElementAbstractPort* port0, ElementAbstractPort* port1 );
+
 };
 
 }

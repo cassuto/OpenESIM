@@ -26,25 +26,34 @@ class QGraphicsItem;
 namespace dsim
 {
 
+#ifdef NDEBUG
+# undef CHECK_ELEMENTBASE_MAGIC
+#else
+# define CHECK_ELEMENTBASE_MAGIC 1
+# define ELEMENTBASE_MAGIC (0x23892749)
+#endif
+
 class SchemaView;
 
 class ElementBase: public DomItem
 {
 public:
   ElementBase( int id, SchemaScene *scene );
-  virtual ~ElementBase() {}
+  virtual ~ElementBase();
   virtual const char *classname() { return "none"; }
 
   bool          ref();
   bool          isRef();
+  inline int    refcount() { return m_refcount; }
+  void          release();
   virtual void  move( QPointF delta );
   virtual int   addElement( ElementBase *element );
   virtual int   resolveSubElements();
-  virtual void  deleteSubElements();
+  virtual void  releaseSubElements();
   virtual void  addToScene( QGraphicsScene *scene )=0;
   virtual void  removeFromScene( QGraphicsScene *scene )=0;
   virtual void  setLayout() {}
-  QList<ElementBase*> &elements();
+  QList<ElementBase*> & elements() { return m_elements; }
 
   virtual QRectF boundingRect() const;
 
@@ -62,12 +71,15 @@ protected:
   void setGraphicsItem( QGraphicsItem *item ) { m_graphicsItem = item; }
 
 private:
+  int                       m_refcount;
   int                       m_id;
   QList<ElementBase*>       m_elements;
   QList<int>                m_elementIds;
-  bool                      m_ref;
   SchemaScene              *m_schemaGraph;
   QGraphicsItem            *m_graphicsItem;
+#ifdef CHECK_ELEMENTBASE_MAGIC
+  int                       m_magic;
+#endif
 };
 
 }

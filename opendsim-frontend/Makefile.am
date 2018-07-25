@@ -70,6 +70,7 @@ MOCHEADERS = \
   schemawidget.h \
   schemaview.h \
   schemascene.h \
+  elementwire.h \
   schemaeditorform.h \
   componentpickwidget.h \
   componentpicktree.h \

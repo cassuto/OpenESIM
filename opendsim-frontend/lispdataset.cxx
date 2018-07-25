@@ -146,7 +146,7 @@ ds_scheme_synlist_t *DomEntry::leaf()
 { return m_syn_current; }
 
 void LispDataset::addItem( DomItem *item )
-{ item->ref(); m_items.push_front( item ); }
+{ m_items.push_front( item ); }
 
 void LispDataset::removeItem( DomItem *item )
 {
@@ -154,7 +154,6 @@ void LispDataset::removeItem( DomItem *item )
   list<DomItem *>::iterator it = find( m_items.begin(), m_items.end(), item );
   trace_assert( it != m_items.end() );
 
-  item->release();
   m_items.erase( it );
 }
 

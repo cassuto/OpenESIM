@@ -22,22 +22,8 @@
 namespace dsim
 {
 
-DomItem::DomItem()
-        : refcount( 0 )
-{
-}
+DomItem::DomItem() {}
 
-DomItem::~DomItem()
-{
-  //trace_assert( refcount == 0 );
-}
-
-int DomItem::release()
-{
-  trace_assert( refcount > 0); refcount--;
-
-  if( refcount == 0 ) delete this;
-  return refcount;
-}
+DomItem::~DomItem() {}
 
 }

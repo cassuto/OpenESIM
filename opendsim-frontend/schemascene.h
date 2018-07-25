@@ -32,7 +32,6 @@ public:
   SchemaScene( qreal x, qreal y, qreal width, qreal height, SchemaView* parent );
   ~SchemaScene();
 
-  void remove();
   bool paintGrid();
   bool paintFrameAxes();
   void setPaintGrid( bool paint );

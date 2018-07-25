@@ -31,6 +31,8 @@ public:
   virtual QPointF portScenePos() const = 0;
   virtual int parentId() const = 0;
   inline ElementWire *connectedWire() const { return m_connectedWire; }
+  inline ElementAbstractPort *oppositePort() const { return m_oppositePort; }
+  inline void setOppositePort( ElementAbstractPort *port ) { m_oppositePort = port; }
 
 protected: // for ElementWire only
   void connectWire( ElementWire *wire );
@@ -40,6 +42,7 @@ protected: // for ElementWire only
 
 private:
   ElementWire              *m_connectedWire;
+  ElementAbstractPort      *m_oppositePort;
 };
 
 ElementAbstractPort *elementabstractport_cast( ElementBase *base );

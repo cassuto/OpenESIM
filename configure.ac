@@ -202,6 +202,13 @@ case $host_os in
 
 esac
 
+case $host_os in
+  *cygwin* | *mingw* | *msys* )
+  
+    LDFLAGS="$LDFLAGS -Wl,-subsystem,console"
+  ;;
+esac
+
 AC_SUBST(QT_LDFLAGS)
 AC_SUBST(QT_LIBS)
 AC_SUBST(QT_INCLUDES)

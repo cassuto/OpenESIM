@@ -17,6 +17,7 @@
 #define DSIM_LOGTRACE_H_
 
 #include <dsim/cdecl.h>
+#include <dsim/misc.h>
 
 C_DECLS
 
@@ -50,6 +51,7 @@ void ds_panic( int rc );
     ds_log_set_level (LOG_PANIC); \
     ds_log_trace msg ; \
     ds_log_unlock(); \
+    DebugBreakPoint(); \
     ds_panic(1); \
   } while(0)
 
@@ -80,8 +82,12 @@ void ds_panic( int rc );
     ds_log_unlock(); \
   } while(0)
 
-#if DEBUG_TARCE
-# define trace_debug(msg) \
+#ifdef NDEBUG
+# define trace_debug(msg) ((void)0)
+# define trace_assert(msg) ((void)0)
+#else
+
+#define trace_debug(msg) \
     do { \
       ds_log_lock(); \
       ds_log_set_unit (TRACE_UNIT, __FILE__, __LINE__); \
@@ -89,9 +95,6 @@ void ds_panic( int rc );
       ds_log_trace msg ; \
       ds_log_unlock(); \
     } while(0)
-#else
-# define trace_debug(msg) ((void)0)
-#endif
 
 #define trace_assert(expr) \
   do { \
@@ -100,6 +103,8 @@ void ds_panic( int rc );
         trace_panic(("assert failure. expt = %s\n", #expr)); \
       } \
   } while(0)
+
+#endif
 
 void ds_putc (char c);
 void ds_puts (const char* str);

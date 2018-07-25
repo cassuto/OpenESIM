@@ -72,7 +72,7 @@ static QRectF combineRect( const QRectF &s, const QRectF &r )
   return QRectF( left, top, right - left, bottom - top );
 }
 
-QRectF BoundingTraits::traits( const QList<ElementBase *> &list, const QList<ElementBase *>::const_iterator &begin, const QList<ElementBase *>::const_iterator &end )
+QRectF BoundingTraits::traits( const QList<ElementBase *>::const_iterator &begin, const QList<ElementBase *>::const_iterator &end )
 {
   QPointF pos;
   QRectF bounding;

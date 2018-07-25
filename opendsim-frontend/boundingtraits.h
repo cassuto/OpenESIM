@@ -27,7 +27,7 @@ class ElementBase;
 class BoundingTraits
 {
 public:
-  static QRectF traits( const QList<ElementBase *> &list, const QList<ElementBase *>::const_iterator &begin, const QList<ElementBase *>::const_iterator &end );
+  static QRectF traits( const QList<ElementBase *>::const_iterator &begin, const QList<ElementBase *>::const_iterator &end );
   static QPointF traitsTopLeft( const QList<ElementBase *> &list );
 };
 

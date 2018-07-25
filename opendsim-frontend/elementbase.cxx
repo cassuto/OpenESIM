@@ -25,21 +25,42 @@ namespace dsim
 {
 
 ElementBase::ElementBase( int id, SchemaScene *scene )
-            : m_id( id )
-            , m_ref( false )
+            : m_refcount( 0 )
+            , m_id( id )
             , m_schemaGraph( scene )
             , m_graphicsItem( 0l )
+#ifdef CHECK_ELEMENTBASE_MAGIC
+            , m_magic( ELEMENTBASE_MAGIC )
+#endif
 {
 }
 
+ElementBase::~ElementBase()
+{
+  trace_assert( m_refcount == 0 );
+
+#ifdef CHECK_ELEMENTBASE_MAGIC
+  m_magic = 0xbadbeeef; // destroy the magic number
+#endif
+}
+
+/*
+ * The scope of reference counter is merely among schematic elements, in other words, even SchemaScene that is
+ * not a schematic element can't make it sense.
+ */
 bool ElementBase::ref()
-{ if( m_ref) return false; m_ref = true; return true; }
+{ return( m_refcount++ == 0 ); }
+
+void ElementBase::release()
+{
+#ifdef CHECK_ELEMENTBASE_MAGIC
+  trace_assert( m_magic == ELEMENTBASE_MAGIC );
+#endif
+  trace_assert( m_refcount > 0 ); if( --m_refcount==0 ) delete this;
+}
 
 bool ElementBase::isRef()
-{ return m_ref; }
-
-QList<ElementBase*> &ElementBase::elements()
-{ return m_elements; }
+{ return m_refcount > 0; }
 
 QRectF ElementBase::boundingRect() const
 { trace_assert(0); return QRectF(0,0,0,0); }
@@ -65,20 +86,16 @@ int ElementBase::deserialize( LispDataset *dataset )
   return rc;
 }
 
-void ElementBase::move( QPointF delta ) {}
+void ElementBase::move( QPointF delta ) { UNUSED(delta); }
 
 int ElementBase::addElement( ElementBase *element )
 {
-  if( element->ref() )
-    {
-      m_elements.append( element );
-      return 0;
-    }
-  else
+  if( !element->ref() )
     {
       trace_debug(("referenced element: %p %s\n", element, element->classname() ));
-      return -DS_REREFERENCE;
     }
+  m_elements.append( element );
+  return 0;
 }
 
 int ElementBase::resolveSubElements()
@@ -90,14 +107,7 @@ int ElementBase::resolveSubElements()
       ElementBase *element = view()->element( id );
       if( element )
         {
-          if( element->ref() )
-            {
-              m_elements.append( element );
-            }
-          else
-            {
-              return -DS_REREFERENCE;
-            }
+          int rc = addElement( element ); UPDATE_RC(rc);
         }
       else
         {
@@ -110,11 +120,11 @@ int ElementBase::resolveSubElements()
   return 0;
 }
 
-void ElementBase::deleteSubElements()
+void ElementBase::releaseSubElements()
 {
   foreach( ElementBase *element, elements() )
     {
-      view()->deleteElement( element );
+      view()->releaseElement( element );
     }
 }
 

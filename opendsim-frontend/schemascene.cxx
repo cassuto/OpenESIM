@@ -31,13 +31,7 @@ SchemaScene::SchemaScene( qreal x, qreal y, qreal width, qreal height, SchemaVie
   setSceneRect( QRectF(x, y, width, height) );
 }
 
-SchemaScene::~SchemaScene()
-{
-}
-
-void SchemaScene::remove()
-{
-}
+SchemaScene::~SchemaScene() {}
 
 bool SchemaScene::paintGrid()
 { return m_paintGrid; }
