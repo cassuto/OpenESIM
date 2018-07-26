@@ -31,22 +31,30 @@ ElementAbstractPort::ElementAbstractPort()
 
 ElementAbstractPort::~ElementAbstractPort()
 {
-  if( connectedWire() ) connectedWire()->disconnectPort( this );
+  if( connectedWire() )
+    {
+      trace_info(("leaked %p", connectedWire() ));
+      trace_info((" %s\n", connectedWire()->classname() ));
+      connectedWire()->disconnectPort( this, /*boardcast*/ false );
+    }
 }
 
 void ElementAbstractPort::connectWire( ElementWire *wire )
 {
-  trace_assert( 0l==m_connectedWire );
+  trace_assert( connectedWire()==0l ); // avoid overriding
+
   if( wire )
     {
       m_connectedWire = wire;
     }
 }
 
-void ElementAbstractPort::disconnectWire( ElementWire *wire )
+void ElementAbstractPort::disconnectWire( ElementWire *wire, bool boardcast )
 {
   trace_assert( m_connectedWire && m_connectedWire == wire );
   m_connectedWire = 0l;
+
+  if( boardcast ) disconnectedEvent();
 
   UNUSED(wire);
 }

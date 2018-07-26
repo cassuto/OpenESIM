@@ -205,7 +205,7 @@ int ElementLine::deserialize( LispDataset *dataset )
 
 void ElementLine::updatePads()
 {
-  if( isRef() || !editable() || m_lines.empty() ) return;
+  if( !isRoot() || !editable() || m_lines.empty() ) return;
 
   m_pads[0]->setPos( m_lines[0]->line().p1() - m_pads[0]->central() );
   m_pads[0]->setVisible( isSelected() );

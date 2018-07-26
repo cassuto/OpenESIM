@@ -29,7 +29,7 @@ public:
   StaffPad( int index, const QPointF &pos, SchemaScene *schgraph, QGraphicsItem *parent = 0, StaffEvents* events = 0 );
   ~StaffPad();
 
-  const char *classname() { return "pad"; }
+  const char *classname() const { return "pad"; }
 
   void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0 );
 };

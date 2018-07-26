@@ -29,6 +29,7 @@ ElementBase::ElementBase( int id, SchemaScene *scene )
             , m_id( id )
             , m_schemaGraph( scene )
             , m_graphicsItem( 0l )
+            , m_root( true )
 #ifdef CHECK_ELEMENTBASE_MAGIC
             , m_magic( ELEMENTBASE_MAGIC )
 #endif
@@ -59,8 +60,19 @@ void ElementBase::release()
   trace_assert( m_refcount > 0 ); if( --m_refcount==0 ) delete this;
 }
 
-bool ElementBase::isRef()
-{ return m_refcount > 0; }
+/*
+ * To make things clearly, a root element must meet the following two conditions:
+ * 1) Not any element has ever referenced this element before.
+ * 2) The element shouldn't be set non-root mark.
+ *
+ * There is an example shows what kind of element mustn't be a root.
+ *   Wires, Joints, etc. ( connected around the root )
+ *
+ * When you want to delete a branch of elements, consider the root element first please because the root has responsibility to delete its
+ * children element. Never delete a non-root element directly as it may destroys the relationship among non-roots and root.
+ */
+bool ElementBase::isRoot()
+{ return m_refcount == 0 && m_root; }
 
 QRectF ElementBase::boundingRect() const
 { trace_assert(0); return QRectF(0,0,0,0); }

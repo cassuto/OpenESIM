@@ -28,7 +28,9 @@ DECLARE_ELEMENT_CAST(ElementJointPort, "jointport")
 
 ElementJointPort::ElementJointPort( int id, SchemaScene *scene )
                  : ElementBase( id, scene )
+                 , m_elementJoint( 0l )
 {
+  setNonRoot( true );
 }
 
 ElementJointPort::~ElementJointPort()
@@ -41,30 +43,50 @@ void ElementJointPort::setScenePos( const QPointF &pos )
 QPointF ElementJointPort::portScenePos() const
 { return m_scenePos; }
 
+void ElementJointPort::setElementJoint( ElementJoint *joint )
+{ m_elementJoint = joint; }
+
+void ElementJointPort::disconnectedEvent()
+{ if( m_elementJoint ) m_elementJoint->remove(); }
+
 ElementJoint::ElementJoint( const QPointF &pos, int id, SchemaScene *scene, QGraphicsItem* parent )
              : ElementGraphItem( id, scene, /*editable*/ false, parent )
 {
+  setNonRoot( true );
+  setFlag( QGraphicsItemGroup::ItemIsSelectable, false );
   moveJoint( pos );
 }
 
 int ElementJoint::setPorts( ElementJointPort **ports )
 {
   trace_assert( elements().count() == 0 );
-  int rc;
-  for( int i=0; i<3; i++ )
+  int rc, i;
+  for( i=0; i<3; i++ )
     {
       rc = addElement( ports[i] ); UPDATE_RC(rc);
+      ports[i]->setElementJoint( this ); // render equal ownership
     }
   return rc;
 }
 
 void ElementJoint::moveJoint( const QPointF &pos )
-{ setRect( QRect( -2 + pos.x(), -2 + pos.y(), 4, 4 ) ); }
+{
+  setRect( QRect( -2 + pos.x(), -2 + pos.y(), 4, 4 ) );
+
+  if( elements().size() )
+    {
+      foreach( ElementBase *element, elements() )
+        {
+          ElementJointPort *port = static_cast<ElementJointPort *>(element);
+          port->setScenePos( pos );
+        }
+    }
+}
 
 ElementJointPort *ElementJoint::port( int index )
 { trace_assert( elements().count() == 3 ); return static_cast<ElementJointPort *>(elements().at( index )); }
 
-void ElementJoint::release()
+void ElementJoint::remove()
 {
   ElementJointPort *port[2] = { 0l, 0l };
   int nwires = 0;
@@ -79,6 +101,7 @@ void ElementJoint::release()
           else port[1] = current;
           nwires++;
         }
+      current->setElementJoint( 0l ); // deprive ownership
     }
 
   if( nwires == 2 )
@@ -95,15 +118,30 @@ void ElementJoint::joinWires( ElementAbstractPort* port0, ElementAbstractPort* p
   wire0->removeNullWires();
   wire1->removeNullWires();
 
-  int con0Id = wire0->id();
+  ElementAbstractPort *wire0_startPort = wire0->startPort();
+  ElementAbstractPort *wire1_endPort = wire1->endPort();
+
+  ElementAbstractPort *startPort = port0->oppositePort();
+  ElementAbstractPort *endPort = port1->oppositePort();
+
+  wire0->disconnectPort( wire0->startPort(), /*boardcast*/ false );
+  wire0->disconnectPort( wire0->endPort(), /*boardcast*/ false );
+  wire1->disconnectPort( wire1->startPort(), /*boardcast*/ false );
+  wire1->disconnectPort( wire1->endPort(), /*boardcast*/ false );
+
+  /*
+   * The Id of new wire will be totally different from the old one. Luckily we only make use of element Id when serializing and deserializing.
+   */
   ElementWire* wire = static_cast<ElementWire *>(view()->createElement( "wire", QPoint( 0, 0 ) ));
-  wire->connectStartPort( port0->oppositePort() );
+
+  trace_assert( startPort->connectedWire() == 0l );
+  wire->connectStartPort( startPort );
 
   QList<qreal> list0 = wire0->pointList();
   QList<qreal> list1 = wire1->pointList();
   QList<qreal> plist;
 
-  if( port0 == wire0->startPort() )
+  if( port0 == wire0_startPort )
     while( !list0.isEmpty() )
       {
         qreal p2 = list0.takeLast();
@@ -112,7 +150,7 @@ void ElementJoint::joinWires( ElementAbstractPort* port0, ElementAbstractPort* p
       }
   else while( !list0.isEmpty() ) plist.append(list0.takeFirst());
 
-  if( port1 == wire1->endPort() )
+  if( port1 == wire1_endPort )
     while( !list1.isEmpty() )
       {
         qreal p2 = list1.takeLast();
@@ -126,8 +164,8 @@ void ElementJoint::joinWires( ElementAbstractPort* port0, ElementAbstractPort* p
   qreal p2x = plist.at(plist.size()-2);
   qreal p2y = plist.last();
 
-  qreal p0x = wire->startPort()->portScenePos().x();
-  qreal p0y = wire->startPort()->portScenePos().y();
+  qreal p0x = startPort->portScenePos().x(); // scene position of start port
+  qreal p0y = startPort->portScenePos().y();
 
   wire->addWire( QLine( p0x, p0y, p1x, p1y ), 0 );
 
@@ -141,27 +179,23 @@ void ElementJoint::joinWires( ElementAbstractPort* port0, ElementAbstractPort* p
       p1y = p2y;
     }
 
-  wire0->setStartPort( 0l );
-  wire0->setEndPort( 0l );
-  view()->releaseElement( wire0 );
-  wire->resetId( con0Id ); // Replace the original ID position of wire0
-
-  wire1->setStartPort( 0l );
-  wire1->setEndPort( 0l );
-  view()->releaseElement( wire1 );
-
-  wire->connectEndPort( port1->oppositePort() );
+  trace_assert( endPort->connectedWire() == 0l );
+  wire->connectEndPort( endPort );
   wire->removeNullWires();
+
+  trace_assert( wire0->startPort() == 0l && wire0->endPort() == 0l );
+  view()->releaseElement( wire0 );
+
+  trace_assert( wire1->startPort() == 0l && wire1->endPort() == 0l );
+  view()->releaseElement( wire1 );
 }
 
 int ElementJoint::serialize( LispDataset *dataset )
 {
   int rc = ElementGraphItem::serialize( dataset );          UPDATE_RC(rc);
 
-  rc = dataset->ser( double(rect().x()) );                  UPDATE_RC(rc);
-  rc = dataset->ser( double(rect().y()) );                  UPDATE_RC(rc);
-  rc = dataset->ser( double(rect().width()) );              UPDATE_RC(rc);
-  rc = dataset->ser( double(rect().height()) );             UPDATE_RC(rc);
+  rc = dataset->ser( double(rect().x()+2) );                UPDATE_RC(rc);
+  rc = dataset->ser( double(rect().y()+2) );                UPDATE_RC(rc);
 
   return rc;
 }
@@ -170,18 +204,18 @@ int ElementJoint::deserialize( LispDataset *dataset )
 {
   int rc = ElementGraphItem::deserialize( dataset );        UPDATE_RC(rc);
 
-  double x, y, width, height;
+  double x, y;
 
   rc = dataset->des( x );                                   UPDATE_RC(rc);
   rc = dataset->des( y );                                   UPDATE_RC(rc);
-  rc = dataset->des( width );                               UPDATE_RC(rc);
-  rc = dataset->des( height );                              UPDATE_RC(rc);
 
+  moveJoint( QPointF( x, y ) );
   return rc;
 }
 
 int ElementJoint::resolveSubElements()
 {
+  int rc = ElementGraphItem::resolveSubElements(); UPDATE_RC(rc);
   if( elements().count() != 3 ) return -DS_INVALID_ELEMENT_ID;
 
   for( int i=0; i<3; i++ )
@@ -189,8 +223,11 @@ int ElementJoint::resolveSubElements()
       ElementJointPort *port = element_cast<ElementJointPort *>(elements().at(i));
       if( 0l==port )
         return -DS_INVALID_ELEMENT_ID;
+
+      port->setScenePos( QPointF( rect().x()+2, rect().y()+2 ) );
+      port->setElementJoint( this ); // render equal ownership
     }
-  return 0;
+  return rc;
 }
 
 void ElementJoint::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )

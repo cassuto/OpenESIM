@@ -133,11 +133,32 @@ int WireSegment::deserialize( LispDataset *dataset )
 
 void WireSegment::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
+  SchemaView *schemaView = m_elementWire->view();
   if( event->button() == Qt::LeftButton )
     {
       event->accept();
-      grabMouse();
-      return;
+
+      switch( m_elementWire->view()->mode() )
+      {
+        case MODE_SELECTION:
+          grabMouse();
+          return;
+
+        case MODE_WIRE:
+          {
+            ElementWire *currentWire = static_cast<ElementWire *>(schemaView->m_hintElement);
+
+            if( currentWire != m_elementWire ) // avoid connecting a wire to itself
+              {
+                ElementAbstractPort *port = m_elementWire->addJoint( this, event->scenePos() );
+                schemaView->connectEndWire( port );
+              }
+            return;
+          }
+
+        default:
+          return;
+      }
     }
 
   event->ignore();
@@ -196,13 +217,14 @@ ElementWire::ElementWire( int id, SchemaScene *scene, QGraphicsItem *parent )
             , m_startPortId( -1 )
             , m_endPortId( -1 )
 {
+  setNonRoot( true );
 }
 
 ElementWire::~ElementWire()
 {
   deleteAll();
-  if( m_startPort ) m_startPort->disconnectWire( this );
-  if( m_endPort )   m_endPort->disconnectWire( this );
+  if( m_startPort ) m_startPort->disconnectWire( this, /*boardcast*/ true );
+  if( m_endPort )   m_endPort->disconnectWire( this, /*boardcast*/ true );
 }
 
 void ElementWire::connectStartPort( ElementAbstractPort *port )
@@ -212,27 +234,35 @@ void ElementWire::connectStartPort( ElementAbstractPort *port )
   m_startPort = port;
 }
 
-void ElementWire::connectEndPort( ElementAbstractPort *port )
+void ElementWire::connectEndPort( ElementAbstractPort *port, bool deser )
 {
   port->connectWire( this ); m_endPort = port;
-  layoutWires( port, port->portScenePos() );
-  removeNullWires();
-
+  if( !deser )
+    {
+      layoutWires( port, port->portScenePos() );
+      removeNullWires();
+    }
   m_startPort->setOppositePort( m_endPort );
   m_endPort->setOppositePort( m_startPort );
 }
 
-void ElementWire::disconnectPort( ElementAbstractPort *port )
+void ElementWire::disconnectPort( ElementAbstractPort *port, bool boardcast )
 {
   if( port == m_startPort )
     {
+      m_startPort->disconnectWire( this, boardcast );
       m_startPort->setOppositePort( 0l );
       m_startPort = 0l;
     }
   else if( port == m_endPort )
     {
+      m_endPort->disconnectWire( this, boardcast );
       m_endPort->setOppositePort( 0l );
       m_endPort = 0l;
+    }
+  else
+    {
+      trace_assert(0); // port is an random pointer!!!
     }
 }
 
@@ -270,13 +300,11 @@ WireSegment* ElementWire::addWire( const QLineF &line, int index )
 void ElementWire::addActiveWire()
 { if( m_activeLine < m_wires.size()-1 ) ++m_activeLine; }
 
-ElementAbstractPort *ElementWire::addJoint( const QPointF &scenePos )
+ElementAbstractPort *ElementWire::addJoint( WireSegment *dst, const QPointF &scenePos )
 {
-  WireSegment *dst = wireAt( scenePos );
-  if( 0l==dst ) return 0l;
   int index;
   int myindex = m_wires.indexOf( dst );
-  QPointF point1 = togrid( scenePos ).toPoint();
+  QPointF point1 = togrid( scenePos );
 
   WireSegment* wire;
 
@@ -297,13 +325,13 @@ ElementAbstractPort *ElementWire::addJoint( const QPointF &scenePos )
         ||( (dst->dx() == 0) && ( std::fabs( point1.y()-dst->p1().y() ) < gridHt ) ) )
         &&( myindex != 0 ) )
     {
-     if ( myindex == 0 )
+      if ( myindex == 0 )
        {
          return 0l; // ignore
        }
-     point1 = dst->p1();
-     wire = dst;
-     index = myindex;
+      point1 = dst->p1();
+      wire = dst;
+      index = myindex;
     }
   else                                // split this line in two
     {
@@ -323,6 +351,7 @@ ElementAbstractPort *ElementWire::addJoint( const QPointF &scenePos )
       ports[i] = static_cast<ElementJointPort *>(view()->createElement( "jointport", point1 ));
     }
   joint->setPorts( ports );
+  joint->moveJoint( point1 );
 
   split( index, joint->port(0), joint->port(2) );
   return joint->port(1);
@@ -429,6 +458,7 @@ void ElementWire::split( int index, ElementAbstractPort* port1, ElementAbstractP
   if( index > 1 )  m_activeLine = index-2;
   else             m_activeLine = 0;
 
+  m_endPort->disconnectWire( this, /*boardcast*/ false );
   new_wire->connectEndPort( m_endPort );  // Close new_wire first please
   connectEndPort( port1 );                // Close this
 }
@@ -495,7 +525,6 @@ void ElementWire::layoutWires( ElementAbstractPort *port, const QPointF &pos )
           if( wire->isSelected() ) newire->setSelected( true );
 
           wire->setP2( point );
-          //remNullLines();
         }
       else if( m_lastindex < m_activeLine )      // Update the first corner
         {
@@ -600,7 +629,7 @@ int ElementWire::resolveSubElements()
       if( startPort && endPort )
         {
           connectStartPort( startPort );
-          connectEndPort( endPort );
+          connectEndPort( endPort, /*deser*/ true );
         }
       else
         return -DS_INVALID_ELEMENT_ID;

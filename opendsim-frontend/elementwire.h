@@ -80,18 +80,18 @@ class ElementWire : public ElementBase
 public:
   ElementWire( int id, SchemaScene *scene, QGraphicsItem *parent = 0l );
   ~ElementWire();
-  const char *classname() { return "wire"; }
+  const char *classname() const { return "wire"; }
 
   void connectStartPort( ElementAbstractPort *port );
-  void connectEndPort( ElementAbstractPort *port );
-  void disconnectPort( ElementAbstractPort *port );
+  void connectEndPort( ElementAbstractPort *port, bool deser = false );
+  void disconnectPort( ElementAbstractPort *port, bool boardcast = true );
   inline ElementAbstractPort *startPort() { return m_startPort; }
   inline ElementAbstractPort *endPort() { return m_endPort; }
 
   void addWire( WireSegment* wire, int index );
   WireSegment* addWire( const QLineF &line, int index );
   void addActiveWire();
-  ElementAbstractPort *addJoint( const QPointF &scenePos );
+  ElementAbstractPort *addJoint( WireSegment *dst, const QPointF &scenePos );
   void removeNullWires( WireSegment *exp = 0l );
   void removeWire( WireSegment *wire );
   void deleteAll();

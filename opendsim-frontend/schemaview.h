@@ -44,6 +44,7 @@ enum DrawMode
 class SchemaScene;
 class SchemaSheet;
 class ElementBase;
+class ElementAbstractPort;
 class ComponentGraphItem;
 class SchemaView;
 
@@ -132,6 +133,7 @@ private: // schemaviewactions.cxx
   bool mouseMoveWire( QMouseEvent *event );
   bool mousePressWire2( QMouseEvent *event );
   bool mouseMoveWire2( QMouseEvent *event );
+  bool connectEndWire( ElementAbstractPort *port );
   bool mousePressComponent( QMouseEvent *event );
   bool mouseMoveComponent( QMouseEvent *event );
   bool mousePressPin( QMouseEvent *event );
@@ -168,6 +170,8 @@ private: // schemaviewactions.cxx
   pfnMouseEvent m_mouseReleaseEvent;
   pfnKeyEvent   m_keyPressEvent;
   pfnResetEvent m_resetEvent;
+
+  friend class WireSegment;
 };
 
 }

@@ -98,7 +98,8 @@ StyleItem Templatestyle::fillStyle( const char *styleName, bool selected )
     }
   else if( 0 == std::strcmp( styleName, "joint" ) )
     {
-      style.brush = BRUSH_NONE;
+      style.brush = BRUSH_SOLID;
+      style.usebkcolor = false;
       if( selected )
         { style.bkcolor.r = 128; style.bkcolor.g = 0; style.bkcolor.b = 0; }
       else

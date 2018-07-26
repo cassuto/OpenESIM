@@ -46,6 +46,7 @@ template <class T>
       }
     else
       {
+        brush.setStyle( Templatestyle::toQtBrushStyle( s.brush ) );
         if( s.bkcolor.r >= 0 && s.bkcolor.g >= 0 && s.bkcolor.b >= 0 )
           brush.setColor( QColor( s.bkcolor.r, s.bkcolor.g, s.bkcolor.b ) );
       }

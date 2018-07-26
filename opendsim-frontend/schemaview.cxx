@@ -132,22 +132,22 @@ ElementBase *SchemaView::createElement( const char *classname, const QPointF &po
       ComponentGraphItem *component = new ComponentGraphItem( id, m_schemaGraph, editable );
       element = component;
     }
-  if( 0==std::strcmp( classname, "pin" ) )
+  else if( 0==std::strcmp( classname, "pin" ) )
     {
       ElementPin *pinElement = new ElementPin( (ElemDirect)m_hintDirect, pos, 0l, 0l, id, m_schemaGraph, editable );
       element = pinElement;
     }
-  if( 0==std::strcmp( classname, "wire" ) )
+  else if( 0==std::strcmp( classname, "wire" ) )
     {
       ElementWire *wireElement = new ElementWire( id, m_schemaGraph );
       element = wireElement;
     }
-  if( 0==std::strcmp( classname, "joint" ) )
+  else if( 0==std::strcmp( classname, "joint" ) )
     {
       ElementJoint *jointElement = new ElementJoint( pos, id, m_schemaGraph );
       element = jointElement;
     }
-  if( 0==std::strcmp( classname, "jointport" ) )
+  else if( 0==std::strcmp( classname, "jointport" ) )
     {
       ElementJointPort *jointportElement = new ElementJointPort( id, m_schemaGraph );
       element = jointportElement;
@@ -173,7 +173,10 @@ ElementBase *SchemaView::createElement( const char *classname, const QPointF &po
       ElementEllipse *ellipseElement = new ElementEllipse( QRectF( pos, pos ), id, m_schemaGraph, editable );
       element = ellipseElement;
     }
-
+  else
+    {
+      return 0l;
+    }
   element->addToScene( m_schemaGraph );
   m_elements[stack].append( element );
   return element;
@@ -183,21 +186,24 @@ void SchemaView::releaseElement( ElementBase *element )
 {
   element->releaseSubElements(); // recursively calls releaseElement()
 
-  if( element->refcount() == 0 )
+#define removeElement(_element) \
+  { \
+    _element->removeFromScene( m_schemaGraph );                 \
+    m_elements[stack].removeOne( _element );                    \
+    m_id[stack].release( _element->id() );                      \
+  }
+
+  if( element->refcount() == 0 ) // target is not referenced by any elements But the SchemaScene wants to delete it
     {
-      element->removeFromScene( m_schemaGraph );
-      m_elements[stack].removeOne( element );
-      m_id[stack].release( element->id() );
+      removeElement( element )
       delete element;
     }
-  else if( element->refcount()-1 == 0  )
+  else if( element->refcount()-1 == 0  ) // target is to be no longer referenced
     {
-      element->removeFromScene( m_schemaGraph );
-      m_elements[stack].removeOne( element );
-      m_id[stack].release( element->id() );
-      element->release();
+      removeElement( element )
+      element->release(); // delete
     }
-  else
+  else                          // just decrease the counter
     {
       element->release();
     }
@@ -207,17 +213,23 @@ void SchemaView::releaseAllElements()
 {
   trace_assert( stack == 0 );
 
-  // As releaseSubElements() may delete some elements and affect the element list, we have to maintain a list storing
-  // current root targets to release here. It only makes sense when we are processing root elements.
+  /*
+   * As releaseSubElements() may delete some elements and affect the element list, we have to maintain a list storing
+   * current root targets to release here. It only makes sense when we are processing root elements.
+   */
   QList<ElementBase *>releases;
   foreach( ElementBase *element, m_elements[stack] )
     {
-      if( !element->isRef() ) releases.append( element ); // find out the root element
+      if( element->isRoot() )
+        {
+          releases.append( element ); // pick out root elements
+        }
     }
 
   foreach( ElementBase *element, releases )
     {
-      if( m_elements[stack].contains( element ) ) //fixme! expensive enough... :(
+      trace_assert( m_elements[stack].contains( element ) );
+      if( element->isRoot() )
         {
           releaseElement( element );
         }
@@ -229,7 +241,7 @@ void SchemaView::releaseAllElements()
     {
       foreach( ElementBase *element, m_elements[stack] )
         {
-          trace_debug(("memmory leaked %p\n", element/*, element->classname()*/));
+          trace_debug(("memmory leaked %p %s\n", element, element->classname() ));
         }
     }
 #endif
@@ -416,7 +428,7 @@ void SchemaView::keyPressEvent( QKeyEvent *event )
         {
           ElementBase *element = elementbase_cast(item);
 
-          if( !element->isRef() ) targetList.append( element ); // pick out the standalone element
+          if( element && element->isRoot() ) targetList.append( element ); // pick out the standalone element
         }
 
       foreach( ElementBase *element, targetList )

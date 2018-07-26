@@ -40,10 +40,11 @@ class ElementBase: public DomItem
 public:
   ElementBase( int id, SchemaScene *scene );
   virtual ~ElementBase();
-  virtual const char *classname() { return "none"; }
+  virtual const char *classname() const = 0;
 
   bool          ref();
-  bool          isRef();
+  bool          isRoot();
+  inline void   setNonRoot( bool nonRoot ) { m_root = !nonRoot; }
   inline int    refcount() { return m_refcount; }
   void          release();
   virtual void  move( QPointF delta );
@@ -77,6 +78,7 @@ private:
   QList<int>                m_elementIds;
   SchemaScene              *m_schemaGraph;
   QGraphicsItem            *m_graphicsItem;
+  bool                      m_root;
 #ifdef CHECK_ELEMENTBASE_MAGIC
   int                       m_magic;
 #endif

@@ -31,7 +31,7 @@ public:
   ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symbol, ElementText *reference, int id, SchemaScene *scene, bool editable, QGraphicsItem *parent = 0 );
   ~ElementPin();
 
-  const char *classname() { return "pin"; }
+  const char *classname() const { return "pin"; }
   QRectF boundingRect() const { return m_bounding; }
   void setBoundingRect( const QRect &bounding );
 
@@ -61,7 +61,7 @@ public:
 
 protected: // for ElementWire only
   void connectWire( ElementWire *wire );
-  void disconnectWire( ElementWire *wire );
+  void disconnectWire( ElementWire *wire, bool );
 
 protected:
   void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event );

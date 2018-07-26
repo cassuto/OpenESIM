@@ -33,12 +33,14 @@ public:
   inline ElementWire *connectedWire() const { return m_connectedWire; }
   inline ElementAbstractPort *oppositePort() const { return m_oppositePort; }
   inline void setOppositePort( ElementAbstractPort *port ) { m_oppositePort = port; }
+  virtual void disconnectedEvent() {}
 
-protected: // for ElementWire only
-  void connectWire( ElementWire *wire );
-  void disconnectWire( ElementWire *wire );
+protected: // for ElementWire and ElementJoint only
+  virtual void connectWire( ElementWire *wire );
+  virtual void disconnectWire( ElementWire *wire, bool boardcast = false );
 
   friend class ElementWire;
+  friend class ElementJoint;
 
 private:
   ElementWire              *m_connectedWire;

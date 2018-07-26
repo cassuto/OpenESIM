@@ -233,8 +233,8 @@ int ElementPin::resolveSubElements()
 
 void ElementPin::connectWire( ElementWire *wire )
 { ElementAbstractPort::connectWire( wire ); update(); }
-void ElementPin::disconnectWire( ElementWire *wire )
-{ ElementAbstractPort::disconnectWire( wire ); update(); }
+void ElementPin::disconnectWire( ElementWire *wire, bool )
+{ ElementAbstractPort::disconnectWire( wire, /*boardcast*/ true ); update(); }
 
 QString ElementPin::symbol() const
 { return m_symbolLabel->text(); }

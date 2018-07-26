@@ -261,48 +261,15 @@ bool SchemaView::mousePressWire2( QMouseEvent *event )
   if( event->button() == Qt::LeftButton )
     {
       /*
-       * Tell the target port we will connect to
+       * Tell the target port we will connect to, we will only process target pin here,
+       * see ElementWire::mousePressEvent as well for target wire.
        */
-      ElementAbstractPort *port = 0l;
       ElementWire *currentWire = static_cast<ElementWire *>(m_hintElement);
-      ElementPin *pin = componentPinAt( this, event->pos() );
+      ElementPin *pin = componentPinAt( this, event->pos() ); // find the target pin
       if( pin && 0l == pin->connectedWire() )
         {
-          port = pin; // find a target pin
-        }
-      else // find if there was a wire where we could put a joint
-        {
-          QPointF scenePos = mapToScene( event->pos() );
-
-          QList<QGraphicsItem *> list = items( event->pos() );
-          foreach( QGraphicsItem *current, list )
-            {
-              ElementBase *element = elementbase_cast( current );
-              if( element )
-                {
-                  trace_info(("element %p\n", element));
-                  ElementWire *wire = element_cast<ElementWire *>( element );
-                  if( wire )
-                    {
-
-                      port = wire->addJoint( scenePos );
-                    }
-                }
-            }
-        }
-      if( port )
-        {
-          /*
-           * Close the connecting wire if conditions are meet
-           */
-          if( port != currentWire->startPort() )
-            {
-              currentWire->connectEndPort( port );
-
-              m_hintElement = 0l; // accept this wire
-              setMode( MODE_SELECTION );
-              return true;
-            }
+          if( connectEndWire( pin ) )
+            return true;
         }
       else
         {
@@ -318,6 +285,21 @@ bool SchemaView::mouseMoveWire2( QMouseEvent *event )
 {
   ((ElementWire *)m_hintElement)->layoutWires( 0l, mapToScene( event->pos() ) );
   return true;
+}
+
+bool SchemaView::connectEndWire( ElementAbstractPort *port )
+{
+  ElementWire *currentWire = static_cast<ElementWire *>(m_hintElement);
+
+  if( port && port != currentWire->startPort() )
+    {
+      currentWire->connectEndPort( port );
+
+      m_hintElement = 0l; // accept this wire
+      setMode( MODE_SELECTION );
+      return true;
+    }
+  return false;
 }
 
 // ------------------------------------------------------------------ //

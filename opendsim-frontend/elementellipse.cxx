@@ -93,7 +93,7 @@ int ElementEllipse::deserialize( LispDataset *dataset )
 
 void ElementEllipse::updatePads()
 {
-  if( isRef() || !editable() ) return;
+  if( !isRoot() || !editable() ) return;
 
   m_pads[0]->setPos( QGraphicsEllipseItem::boundingRect().topLeft() - m_pads[0]->central() );
   m_pads[1]->setPos( QGraphicsEllipseItem::boundingRect().topRight() - m_pads[1]->central() );

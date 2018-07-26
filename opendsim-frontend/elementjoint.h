@@ -22,6 +22,7 @@
 namespace dsim
 {
 
+class ElementJoint;
 class ElementJointPort : public ElementAbstractPort, public ElementBase
 {
 public:
@@ -33,22 +34,29 @@ public:
 
   QPointF portScenePos() const;
   int parentId() const { return id(); }
+  void disconnectedEvent();
+
+protected:
   void setScenePos( const QPointF &pos );
+  void setElementJoint( ElementJoint *joint );
 
 private:
   QPointF m_scenePos;
+  ElementJoint *m_elementJoint;
+
+  friend class ElementJoint;
 };
 
 class ElementJoint : public ElementGraphItem<QGraphicsEllipseItem>
 {
 public:
   ElementJoint( const QPointF &pos, int id, SchemaScene *scene, QGraphicsItem* parent = 0 );
-  const char *classname() { return "joint"; }
+  const char *classname() const { return "joint"; }
 
   int setPorts( ElementJointPort **ports );
   void moveJoint( const QPointF &pos );
   ElementJointPort *port( int index );
-  void release();
+  void remove();
 
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );

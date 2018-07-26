@@ -40,7 +40,7 @@ public:
   StaffGraphItem( int index, SchemaScene *schgraph, QGraphicsItem *parent = 0, StaffEvents *event = 0 );
   ~StaffGraphItem();
 
-  virtual const char *classname() { return "none"; }
+  virtual const char *classname() const { return "none"; }
 
   virtual QRectF boundingRect() const { return m_area; }
   virtual void setBoundingRect( const QRect &area );

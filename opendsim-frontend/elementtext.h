@@ -27,7 +27,7 @@ public:
   ElementText( ElemDirect direct, const QPointF &pos, int id, SchemaScene *scene, bool edit, QGraphicsSimpleTextItem* parent = 0 );
   ~ElementText();
 
-  const char *classname() { return "text"; }
+  const char *classname() const { return "text"; }
 
   void setStyle( const char *style );
   void setDirect( ElemDirect direct );

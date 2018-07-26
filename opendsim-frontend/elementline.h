@@ -30,7 +30,7 @@ public:
   ElementLine( const QPointF &p0, int id, SchemaScene *scene, bool edit, QGraphicsItem* parent = 0 );
   ~ElementLine();
 
-  const char *classname() { return "line"; }
+  const char *classname() const { return "line"; }
 
   void setStyle( const char *style );
   void addPoint( const QPointF &point );

@@ -30,7 +30,7 @@ public:
   ElementRect( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsRectItem* parent = 0 );
   ~ElementRect();
 
-  const char *classname() { return "rect"; }
+  const char *classname() const { return "rect"; }
 
   void setStyle( const char *style );
   void setRect( const QRectF &rect );

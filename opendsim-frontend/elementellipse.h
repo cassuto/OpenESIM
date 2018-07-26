@@ -30,7 +30,7 @@ public:
   ElementEllipse( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsEllipseItem* parent = 0 );
   ~ElementEllipse();
 
-  const char *classname() { return "ellipse"; }
+  const char *classname() const { return "ellipse"; }
 
   void setStyle( const char *style );
   void setRect( const QRectF &rect );

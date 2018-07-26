@@ -40,7 +40,7 @@ public:
   ComponentGraphItem( int id, SchemaScene *scene, bool edit, QGraphicsItem *parent = 0l );
   ~ComponentGraphItem();
 
-  const char *classname() { return "component"; }
+  const char *classname() const { return "component"; }
 
   int init( const char *deviceEntry, ElementText *symbolText, ElementText *referenceText, bool deser = false );
   void setLayout();
