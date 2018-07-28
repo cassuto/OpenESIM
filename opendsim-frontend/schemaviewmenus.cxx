@@ -27,15 +27,29 @@
 
 #include "schemaview.h"
 
-
 namespace dsim
 {
+
+DECLARE_ELEMENT_CAST(ElementLine, "line");
+DECLARE_ELEMENT_CAST(ElementText, "text");
+DECLARE_ELEMENT_CAST(ElementPin, "pin");
+DECLARE_ELEMENT_CAST(ComponentGraphItem, "component");
+DECLARE_ELEMENT_CAST(ElementRect, "rect");
+DECLARE_ELEMENT_CAST(ElementEllipse, "ellipse");
 
 void SchemaView::createContextMenus()
 {
   m_actionEditProperties = new QAction( tr("Edit properties..."), this );
+  m_actionRotateLeft = new QAction( tr("Rotate left"), this );
+  m_actionRotateLeft->setIcon( QIcon(":/bitmaps/rotateleft.png") );
+  m_actionRotateRight = new QAction( tr("Rotate right"), this );
+  m_actionRotateRight->setIcon( QIcon(":/bitmaps/rotateright.png") );
 
   connect( m_actionEditProperties, SIGNAL(triggered(bool)), this, SLOT(onEditProperties(bool)) );
+
+  connect( m_actionRotateLeft, SIGNAL(triggered(bool)), this, SLOT(onRotateLeft(bool)) );
+
+  connect( m_actionRotateRight, SIGNAL(triggered(bool)), this, SLOT(onRotateRight(bool)) );
 }
 
 void SchemaView::contextMenuEvent( QContextMenuEvent* event )
@@ -46,21 +60,38 @@ void SchemaView::contextMenuEvent( QContextMenuEvent* event )
   if( m_selectedElements )
     {
       QMenu *contextMenu = new QMenu( this );
-      if( 0==std::strcmp( m_selectedElements->classname(), "line" ) )
-        {
-        }
-      else if( 0==std::strcmp( m_selectedElements->classname(), "rect" ) )
-        {
-        }
-      if( 0==std::strcmp( m_selectedElements->classname(), "ellipse" ) )
-        {
-        }
-      else if( 0==std::strcmp( m_selectedElements->classname(), "text" ) )
-        {
-        }
-      contextMenu->addAction( m_actionEditProperties ); // general menu part
-      contextMenu->exec( event->globalPos() );
 
+      if( 0==std::strcmp( m_selectedElements->classname(), "line" ) ||
+          0==std::strcmp( m_selectedElements->classname(), "rect" ) ||
+          0==std::strcmp( m_selectedElements->classname(), "ellipse" ) ||
+          0==std::strcmp( m_selectedElements->classname(), "text" ) )
+        {
+          contextMenu->addAction( m_actionEditProperties );
+        }
+      if( 0==std::strcmp( m_selectedElements->classname(), "pin" ) )
+        {
+          QAction *editPinPropertiesAct = new QAction( tr("Edit properties of pin..."), this );
+          connect( editPinPropertiesAct, SIGNAL(triggered(bool)), this, SLOT(onEditPinProperties(bool)) );
+
+          contextMenu->addAction( editPinPropertiesAct );
+        }
+
+      if( 0==std::strcmp( m_selectedElements->classname(), "text" ) ||
+          0==std::strcmp( m_selectedElements->classname(), "pin" ) ||
+          0==std::strcmp( m_selectedElements->classname(), "component" ) )
+        {
+          contextMenu->addAction( m_actionRotateLeft );
+          contextMenu->addAction( m_actionRotateRight );
+        }
+
+      if( 0==std::strcmp( m_selectedElements->classname(), "wire" ) )
+        {
+          QAction *removeWireAct = new QAction( tr("Remove this wire"), this );
+          connect( removeWireAct, SIGNAL(triggered(bool)), this, SLOT(onRemoveSelected(bool)) );
+
+          contextMenu->addAction( removeWireAct );
+        }
+      contextMenu->exec( event->globalPos() );
       contextMenu->deleteLater();
     }
 
@@ -103,25 +134,100 @@ template <typename base>
 // General actions for property edition
 // ------------------------------------------------------------------ //
 
-void SchemaView::onEditProperties( bool checked )
+void SchemaView::onEditProperties( bool )
 {
-  Q_UNUSED( checked );
+  if( ElementLine *line = element_cast<ElementLine *>(m_selectedElements) )
+    {
+      configLineFillText( line );
+    }
+  else if( ElementRect *rect = element_cast<ElementRect *>(m_selectedElements) )
+    {
+      configLineFillText( rect );
+    }
+  else if( ElementEllipse *ellipse = element_cast<ElementEllipse *>(m_selectedElements) )
+    {
+      configLineFillText( ellipse );
+    }
+  else if( ElementText *text = element_cast<ElementText *>(m_selectedElements) )
+    {
+      configText( text );
+    }
+}
 
-  if( 0==std::strcmp( m_selectedElements->classname(), "line" ) )
+void SchemaView::onRemoveSelected( bool )
+{
+  if( m_selectedElements ) releaseElement( m_selectedElements );
+}
+
+void SchemaView::onEditPinProperties( bool )
+{
+  if( m_selectedElements )
     {
-      configLineFillText( static_cast<ElementLine*>(m_selectedElements) );
+      ElementPin *pin = element_cast<ElementPin *>( m_selectedElements );
+      if( pin )
+        {
+          pin->execPropertiesDialog();
+        }
     }
-  else if( 0==std::strcmp( m_selectedElements->classname(), "rect" ) )
+}
+
+template <typename base>
+  static void rotateLeft( base *element )
     {
-      configLineFillText( static_cast<ElementRect*>(m_selectedElements) );
+      int direction = int( element->direct() );
+      if( direction > ELEM_LEFT )
+        --direction;
+      else
+        direction = ELEM_BOTTOM;
+      element->setDirect( (ElemDirect)direction );
     }
-  else if( 0==std::strcmp( m_selectedElements->classname(), "ellipse" ) )
+
+template <typename base>
+  static void rotateRight( base *element )
     {
-      configLineFillText( static_cast<ElementEllipse*>(m_selectedElements) );
+      int direction = int( element->direct() );
+      if( direction < ELEM_BOTTOM )
+        ++direction;
+      else
+        direction = ELEM_LEFT;
+      element->setDirect( (ElemDirect)direction );
     }
-  else if( 0==std::strcmp( m_selectedElements->classname(), "text" ) )
+
+void SchemaView::onRotateLeft( bool )
+{
+  if( m_selectedElements )
     {
-      configText( static_cast<ElementText*>(m_selectedElements) );
+      if( ElementText *text = element_cast<ElementText *>(m_selectedElements) )
+        {
+          rotateLeft( text );
+        }
+      else if( ElementPin *pin = element_cast<ElementPin *>(m_selectedElements) )
+        {
+          rotateLeft( pin );
+        }
+      else if ( ComponentGraphItem *component = element_cast<ComponentGraphItem *>(m_selectedElements) )
+        {
+          rotateLeft( component );
+        }
+    }
+}
+
+void SchemaView::onRotateRight( bool )
+{
+  if( m_selectedElements )
+    {
+      if( ElementText *text = element_cast<ElementText *>(m_selectedElements) )
+        {
+          rotateRight( text );
+        }
+      else if( ElementPin *pin = element_cast<ElementPin *>(m_selectedElements) )
+        {
+          rotateRight( pin );
+        }
+      else if ( ComponentGraphItem *component = element_cast<ComponentGraphItem *>(m_selectedElements) )
+        {
+          rotateRight( component );
+        }
     }
 }
 

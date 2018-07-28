@@ -84,7 +84,7 @@ am_opendsim_OBJECTS = opendsim-edit.$(OBJEXT) \
 	componentpicktree.$(OBJEXT) componentlibrarydialog.$(OBJEXT) \
 	textsettingsdialog.$(OBJEXT) pinsettingsdialog.$(OBJEXT) \
 	propertiescustomdialog.$(OBJEXT) presscombobox.$(OBJEXT) \
-	resources.$(OBJEXT)
+	netlistexplorerdialog.$(OBJEXT) resources.$(OBJEXT)
 opendsim_OBJECTS = $(am_opendsim_OBJECTS)
 am__DEPENDENCIES_1 =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -278,6 +278,7 @@ opendsim_SOURCES = \
   pinsettingsdialog.cxx \
   propertiescustomdialog.cxx \
   presscombobox.cxx \
+  netlistexplorerdialog.cxx \
   resources.cpp
 
 MOCHEADERS = \
@@ -293,7 +294,8 @@ MOCHEADERS = \
   textsettingsdialog.h \
   pinsettingsdialog.h \
   propertiescustomdialog.h \
-  presscombobox.h
+  presscombobox.h \
+  netlistexplorerdialog.h
 
 MOCFILES = $(MOCHEADERS:.h=.moc)
 opendsim_LDFLAGS = $(QT_LDFLAGS)
@@ -393,6 +395,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/idallocator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lispdataset.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mainwindow.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/netlistexplorerdialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/opendsim-edit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pinsettingsdialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/presscombobox.Po@am__quote@

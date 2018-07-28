@@ -40,6 +40,9 @@ ElementJointPort::~ElementJointPort()
 void ElementJointPort::setScenePos( const QPointF &pos )
 { m_scenePos = pos; }
 
+QString ElementJointPort::reference() const
+{ return "jointport"; }
+
 QPointF ElementJointPort::portScenePos() const
 { return m_scenePos; }
 

@@ -44,7 +44,10 @@ public:
 
   int open( const char *filename );
   int save( const char *filename );
+  int compileNetlist();
   void gotoCenter();
+  inline LispDataset *dataset() const { return dom; }
+  inline SchemaSheet *schemaSheet() const { return schsheet; }
 
 private:
   void createActions();
@@ -52,7 +55,6 @@ private:
   void createWidgets();
 
 private slots:
-  void onFileSave();
   void onModeSelection();
   void onModePin();
   void onModeLine();

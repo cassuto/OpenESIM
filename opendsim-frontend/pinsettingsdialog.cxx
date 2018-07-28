@@ -23,6 +23,8 @@ namespace dsim
 PinSettingsDialog::PinSettingsDialog( const ElementPin *pin, QWidget *parent )
                   : QDialog( parent )
 {
+  this->setWindowTitle( tr("Settings for text") );
+
   QGridLayout *centralLayout = new QGridLayout( this );
 
   QLabel *label = new QLabel( tr("Set Symbol:"), this );
@@ -47,19 +49,86 @@ PinSettingsDialog::PinSettingsDialog( const ElementPin *pin, QWidget *parent )
   m_showReference = new QCheckBox( tr("Show Reference?"), this );
   m_showReference->setChecked( pin->showReference() );
   centralLayout->addWidget( m_showReference, 4, 0, 1, 1 );
+  label = new QLabel( tr("Set IO type:"), this );
+  centralLayout->addWidget( label, 5, 0, 1, 1 );
+  m_ioType = new QComboBox( this );
 
+  /*
+   * keep the order of IOTYPE enum definition
+   */
+  m_ioType->addItem( "passive", int(IOTYPE_PASSIVE) );
+  m_ioType->addItem( "input", int(IOTYPE_INPUT) );
+  m_ioType->addItem( "output", int(IOTYPE_OUTPUT) );
+  m_ioType->addItem( "io", int(IOTYPE_IO) );
+  m_ioType->addItem( "power", int(IOTYPE_POWER) );
+  m_ioType->addItem( "pullup", int(IOTYPE_PULLUP) );
+  m_ioType->addItem( "pulldown", int(IOTYPE_PULLDOWN) );
+
+  int idx = int(pin->ioType());
+  if( idx >=0 && idx < m_ioType->count() )
+    {
+      m_ioType->setCurrentIndex( idx );
+    }
+  centralLayout->addWidget( m_ioType, 5, 1, 1, 1 );
   QPushButton *ok = new QPushButton( tr("OK"), this );
   QPushButton *cancel = new QPushButton( tr("Cancel"), this );
 
   centralLayout->addWidget( ok, 5, 2, 1, 1 );
   centralLayout->addWidget( cancel, 5, 3, 1, 1 );
 
-  this->setWindowTitle( tr("Settings for text") );
   this->update();
 
   connect( ok, SIGNAL(pressed()), this, SLOT(accept()) );
 
   connect( cancel, SIGNAL(pressed()), this, SLOT(reject()) );
+}
+
+const char *PinSettingsDialog::ioType2String( io_type_t io )
+{
+  switch( io )
+  {
+    case IOTYPE_PASSIVE:    return "passive";
+    case IOTYPE_INPUT:      return "input";
+    case IOTYPE_OUTPUT:     return "output";
+    case IOTYPE_IO:         return "io";
+    case IOTYPE_POWER:      return "power";
+    case IOTYPE_PULLUP:     return "pullup";
+    case IOTYPE_PULLDOWN:   return "pulldown";
+  }
+  return "unknown";
+}
+
+io_type_t string2IoType( const char *string )
+{
+  if( 0==std::strcmp( string, "passive" ) )
+    {
+      return IOTYPE_PASSIVE;
+    }
+  else if( 0==std::strcmp( string, "input" ) )
+    {
+      return IOTYPE_INPUT;
+    }
+  else if( 0==std::strcmp( string, "output" ) )
+    {
+      return IOTYPE_OUTPUT;
+    }
+  else if( 0==std::strcmp( string, "io" ) )
+    {
+      return IOTYPE_IO;
+    }
+  else if( 0==std::strcmp( string, "power" ) )
+    {
+      return IOTYPE_POWER;
+    }
+  else if( 0==std::strcmp( string, "pullup" ) )
+    {
+      return IOTYPE_PULLUP;
+    }
+  else if( 0==std::strcmp( string, "pulldown" ) )
+    {
+      return IOTYPE_PULLDOWN;
+    }
+  return IOTYPE_PASSIVE;
 }
 
 void PinSettingsDialog::apply( ElementPin *pin )
@@ -69,6 +138,7 @@ void PinSettingsDialog::apply( ElementPin *pin )
   pin->setLength( m_lengthSpin->value() );
   pin->setShowSymbol( m_showSymbol->checkState() == Qt::Checked );
   pin->setShowReference( m_showReference->checkState() == Qt::Checked );
+  pin->setIOType( (io_type_t ) m_ioType->currentIndex() );
 }
 
 }

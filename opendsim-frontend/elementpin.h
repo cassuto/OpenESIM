@@ -18,12 +18,14 @@
 
 #include "elementgraphitem.h"
 #include "elementabstractport.h"
+#include <device/device.h> // for io_type_t
 
 namespace dsim
 {
 
 class ElementText;
 class ElementWire;
+class ComponentGraphItem;
 
 class ElementPin : public ElementGraphItem<QGraphicsItem>, public ElementAbstractPort
 {
@@ -34,13 +36,14 @@ public:
   const char *classname() const { return "pin"; }
   QRectF boundingRect() const { return m_bounding; }
   void setBoundingRect( const QRect &bounding );
-
   void setDirect( ElemDirect direct );
   void setLength( int length );
   void setSub( ElementText *symbol, ElementText *reference );
   void setLayout();
   QPointF portScenePos() const;
   int parentId() const { return id(); }
+  ComponentGraphItem *component() const { return m_component; }
+  inline void setComponent( ComponentGraphItem *component ) { m_component = component; }
 
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
@@ -51,13 +54,16 @@ public:
    */
   QString symbol() const;
   QString reference() const;
-  int length() const { return m_length; }
-  bool showSymbol() const { return m_showSymbol; }
-  bool showReference() const { return m_showReference; }
+  inline int length() const { return m_length; }
+  inline bool showSymbol() const { return m_showSymbol; }
+  inline bool showReference() const { return m_showReference; }
+  inline io_type_t ioType() const { return m_iotype; }
   void setSymbol( const QString &symbol );
   void setReference( const QString &reference );
   void setShowSymbol( bool show ) { m_showSymbol = show; updateVisible(); }
   void setShowReference( bool show ) { m_showReference = show; updateVisible(); }
+  void setIOType( io_type_t type ) { m_iotype = type; }
+  void execPropertiesDialog();
 
 protected: // for ElementWire only
   void connectWire( ElementWire *wire );
@@ -78,6 +84,8 @@ private:
   ElementText              *m_referenceLabel;
   bool                      m_showSymbol;
   bool                      m_showReference;
+  io_type_t                 m_iotype;
+  ComponentGraphItem       *m_component;
 };
 
 

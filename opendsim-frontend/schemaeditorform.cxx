@@ -155,27 +155,6 @@ void SchemaEditorForm::createWidgets()
   dom->addItem( schema->view() );
 }
 
-void SchemaEditorForm::onFileSave()
-{
-  using namespace std;
-
-  QString filename;
-
-  if( dom->type() == DOM_SCHEMA )
-    {
-      filename = QFileDialog::getSaveFileName( this, tr("Save schema..."), QString(), tr("Schema file(*.sch)") );
-    }
-  else if( dom->type() == DOM_SCHEMA_SYMBOL )
-    {
-      filename = QFileDialog::getSaveFileName( this, tr("Save symbol..."), QString(), tr("Schema Symbol file(*.ssym)") );
-    }
-  if( filename.length() )
-    {
-      std::string fn = filename.toStdString();
-      MainWindow::instance()->processRc( save( fn.c_str() ) );
-    }
-}
-
 void SchemaEditorForm::onModeSelection()
 { schema->setMode( MODE_SELECTION ); }
 void SchemaEditorForm::onModePin()
@@ -226,6 +205,10 @@ int SchemaEditorForm::save( const char *filename )
   return 0;
 }
 
+int SchemaEditorForm::compileNetlist()
+{
+  return schsheet->generateNetlist();
+}
 
 } // namespace dsim
 

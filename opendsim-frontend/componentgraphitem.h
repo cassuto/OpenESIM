@@ -45,9 +45,13 @@ public:
   int init( const char *deviceEntry, ElementText *symbolText, ElementText *referenceText, bool deser = false );
   void setLayout();
   std::string reference();
+  std::string symbol();
   void setPos( const QPointF &pos );
+  void setDirect( ElemDirect direct );
   int addComponentElement( ElementBase *element );
   ElementPin *atPin( const QPointF &pos );
+  QList<ElementBase *>::iterator pinsBegin();
+  QList<ElementBase *>::iterator pinsEnd();
 
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
@@ -62,6 +66,9 @@ protected:
   QVariant itemChange( GraphicsItemChange change, const QVariant &value );
   void mouseReleaseEvent( QGraphicsSceneMouseEvent *event );
   void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget );
+
+private:
+  void addComponentElementInner( ElementBase *element );
 
 private:
   IDevice              *m_device;

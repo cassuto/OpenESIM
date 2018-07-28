@@ -56,7 +56,7 @@
 /* #undef ENDIAN_BIG */
 
 /* Git short revision hash. */
-#define GIT "583e170"
+#define GIT "fac9bf2"
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 /* #undef HAVE_DLFCN_H */

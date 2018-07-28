@@ -13,40 +13,33 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef TRANSFORMATIONS_H_
-#define TRANSFORMATIONS_H_
+#ifndef NETLISTEXPLORERDIALOG_H_
+#define NETLISTEXPLORERDIALOG_H_
 
-#include <QVector>
-#include <QPointF>
-
-#include <device/graph.h>
+#include <QtWidgets>
+#include "schemasheet.h"
 
 namespace dsim
 {
 
-class LispDataset;
-
-class Transformations
+class NetlistExplorerDialog : public QDialog
 {
+  Q_OBJECT
 public:
-  void rotation( int angle, int x0, int y0 );
-  void rotation( ElemDirect direction, int x0, int y0 );
-  void move( const QPointF &pos );
+  NetlistExplorerDialog( const QList<SchemaSheet::SchemaNode *> *nodes, QWidget *parent = 0 );
 
-  void addPoint( const QPointF &point );
-  void removeOne( const QPointF &point );
-  void removeAll();
-  inline int count() const { return m_originPoints.count(); }
+  void createDataModels();
+  void createWidgets();
+  void loadNodes( const QList<SchemaSheet::SchemaNode *> *nodes );
 
-  inline const QVector<QPointF> &transPoints() const { return m_transPoints; }
-
-public:
-  int serialize( LispDataset *dataset );
-  int deserialize( LispDataset *dataset );
+private slots:
+  void onNodesListClicked( QTreeWidgetItem *item, int column );
+  void onPortsListClicked( QTreeWidgetItem *item, int column );
 
 private:
-  QVector<QPointF> m_originPoints;
-  QVector<QPointF> m_transPoints;
+  QTreeWidget *nodesList;
+  QTreeWidgetItem *nodesRoot;
+  QTreeWidget *portsList;
 };
 
 }

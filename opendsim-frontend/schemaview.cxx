@@ -68,6 +68,7 @@ SchemaView::SchemaView( SchemaSheet *sheet, QWidget *parent )
   /*
    * schemaviewmenus.cxx related construction
    */
+  m_currentDirection = 0;
   createContextMenus();
 
   /*

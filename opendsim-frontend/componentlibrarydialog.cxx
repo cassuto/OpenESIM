@@ -25,6 +25,8 @@
 namespace dsim
 {
 
+enum { NODE_ROLE = Qt::UserRole + 100 };
+
 ComponentLibraryDialog::ComponentLibraryDialog( QWidget *parent )
                       : QDialog( parent )
                       , m_devices( device_lib_get_categories() )
@@ -130,7 +132,7 @@ void ComponentLibraryDialog::loadCategories()
     {
       const char *category_name = node->name;
       QStandardItem* item = new QStandardItem( QString(category_name) );
-      item->setData( QVariant::fromValue((void *)node), Qt::UserRole + 100 );
+      item->setData( QVariant::fromValue((void *)node), NODE_ROLE );
       category->appendRow( item );
       lastNode = node;
     }
@@ -152,7 +154,7 @@ void ComponentLibraryDialog::loadSubCategory( const category_node_t *node )
     {
       const char *subname = sub_node->name;
       QStandardItem* item = new QStandardItem( QString(subname) );
-      item->setData( QVariant::fromValue((void *)sub_node), Qt::UserRole + 100 );
+      item->setData( QVariant::fromValue((void *)sub_node), NODE_ROLE );
       subCategory->appendRow( item );
     }
 
@@ -170,7 +172,7 @@ void ComponentLibraryDialog::clearSearchResults()
 void ComponentLibraryDialog::insertEntryItem( const DeviceLibraryEntry *entry )
 {
   QStandardItem* item = new QStandardItem( QString(entry->symbol_name) );
-  item->setData( QVariant::fromValue((void *)entry), Qt::UserRole + 100 );
+  item->setData( QVariant::fromValue((void *)entry), NODE_ROLE );
   searchResults->appendRow( item );
   int row = searchResults->indexFromItem(item).row();
   searchResults->setItem(row, 1, new QStandardItem( QString(entry->sub_category) ) );
@@ -200,7 +202,7 @@ void ComponentLibraryDialog::loadAllEntries()
   int count = subCategory->rowCount();
   for( int i=1; i < count; i++ )
     {
-      loadEntries( (sub_category_node_t *)(subCategory->item( i, 0 )->data(Qt::UserRole + 100).value<void*>()), false );
+      loadEntries( (sub_category_node_t *)(subCategory->item( i, 0 )->data(NODE_ROLE).value<void*>()), false );
     }
 }
 
@@ -250,7 +252,7 @@ void ComponentLibraryDialog::onCategoryClicked( const QModelIndex &index )
 {
   QStandardItem *currentItem = category->itemFromIndex(index);
   if( currentItem )
-    loadSubCategory( (category_node_t *)(index.data(Qt::UserRole + 100).value<void*>()) );
+    loadSubCategory( (category_node_t *)(index.data(NODE_ROLE).value<void*>()) );
 }
 
 void ComponentLibraryDialog::onSubCategoryClicked( const QModelIndex &index )
@@ -263,13 +265,13 @@ void ComponentLibraryDialog::onSubCategoryClicked( const QModelIndex &index )
     }
   if( currentItem )
     {
-      loadEntries( (sub_category_node_t *)(index.data(Qt::UserRole + 100).value<void*>()) );
+      loadEntries( (sub_category_node_t *)(index.data(NODE_ROLE).value<void*>()) );
     }
 }
 
 void ComponentLibraryDialog::onSearchListDoubleClick( const QModelIndex &index )
 {
-  DeviceLibraryEntry *entry = ( DeviceLibraryEntry * )(index.data(Qt::UserRole + 100).value<void*>());
+  DeviceLibraryEntry *entry = ( DeviceLibraryEntry * )(index.data(NODE_ROLE).value<void*>());
 
   if ( entry ) emit insertDevice( entry );
 }

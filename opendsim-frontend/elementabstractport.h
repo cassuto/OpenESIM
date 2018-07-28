@@ -16,11 +16,15 @@
 #ifndef ELEMENTABSRTACTPORT_H_
 #define ELEMENTABSRTACTPORT_H_
 
+#include <QPointF>
+#include <QString>
+
 namespace dsim
 {
 
-class ElementWire;
 class ElementBase;
+class ElementWire;
+class ComponentGraphItem;
 
 class ElementAbstractPort
 {
@@ -28,6 +32,8 @@ public:
   ElementAbstractPort();
   virtual ~ElementAbstractPort();
 
+  virtual QString reference() const = 0;
+  virtual ComponentGraphItem *component() const { return 0l; }
   virtual QPointF portScenePos() const = 0;
   virtual int parentId() const = 0;
   inline ElementWire *connectedWire() const { return m_connectedWire; }

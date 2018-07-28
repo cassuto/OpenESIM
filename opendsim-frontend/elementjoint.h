@@ -32,6 +32,7 @@ public:
   void addToScene( QGraphicsScene *scene ) { UNUSED(scene); }
   void removeFromScene( QGraphicsScene *scene ) { UNUSED(scene); }
 
+  QString reference() const;
   QPointF portScenePos() const;
   int parentId() const { return id(); }
   void disconnectedEvent();

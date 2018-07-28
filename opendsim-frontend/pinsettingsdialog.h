@@ -17,6 +17,7 @@
 #define PINSETTINGSDIALOG_H_
 
 #include <QtWidgets>
+#include <device/device.h> // for io_type_t
 
 namespace dsim
 {
@@ -31,6 +32,9 @@ public:
   PinSettingsDialog( const ElementPin *pin, QWidget *parent = 0l );
 
   void apply( ElementPin *pin );
+private:
+  const char *ioType2String( io_type_t io );
+  io_type_t string2IoType( const char *string );
 
 private:
   QLineEdit *m_symbolEdit;
@@ -38,6 +42,7 @@ private:
   QSpinBox *m_lengthSpin;
   QCheckBox *m_showSymbol;
   QCheckBox *m_showReference;
+  QComboBox *m_ioType;
 };
 
 }

@@ -63,6 +63,7 @@ opendsim_SOURCES = \
   pinsettingsdialog.cxx \
   propertiescustomdialog.cxx \
   presscombobox.cxx \
+  netlistexplorerdialog.cxx \
   resources.cpp
   
 MOCHEADERS = \
@@ -78,7 +79,8 @@ MOCHEADERS = \
   textsettingsdialog.h \
   pinsettingsdialog.h \
   propertiescustomdialog.h \
-  presscombobox.h
+  presscombobox.h \
+  netlistexplorerdialog.h
 
 MOCFILES = $(MOCHEADERS:.h=.moc)
 

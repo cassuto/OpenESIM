@@ -126,10 +126,48 @@ void ComponentGraphItem::setPos( const QPointF &pos )
   QGraphicsItemGroup::setPos( pos + QPointF( gridWh/2, gridHt/2 ) ); // force align to grid
 }
 
+void ComponentGraphItem::setDirect( ElemDirect direct )
+{
+  ElementGraphItem::setDirect( direct );
+  if( elements().size() > 2 )
+    {
+      switch( direct )
+      {
+        case ELEM_RIGHT: setRotation( 180 ); break;
+        case ELEM_TOP: setRotation( 90 ); break;
+        case ELEM_LEFT: setRotation( 0 ); break;
+        case ELEM_BOTTOM: setRotation( -90 ); break;
+        default: return;
+      }
+
+      foreach( ElementBase *element, elements() )
+        {
+          if( 0==std::strcmp( element->classname(), "pin" ) )
+            {
+              ElementPin *pin = static_cast<ElementPin *>(element);
+              if( ElementWire *wire = pin->connectedWire() )
+                {
+                  wire->layoutWires( pin, pin->portScenePos() );
+                }
+            }
+        }
+    }
+}
+
 int ComponentGraphItem::addComponentElement( ElementBase *element )
 {
-  addToGroup( element->graphicsItem() );
+  addComponentElementInner( element );
   return ElementGraphItem::addElement( element );
+}
+
+void ComponentGraphItem::addComponentElementInner( ElementBase *element )
+{
+  if( 0==std::strcmp( element->classname(), "pin" ) )
+    {
+      ElementPin *pin = static_cast<ElementPin *>(element);
+      pin->setComponent( this );
+    }
+  addToGroup( element->graphicsItem() );  // 'the item and child items will be reparented to this group' (Qt Documents)
 }
 
 ElementPin *ComponentGraphItem::atPin( const QPointF &pos )
@@ -150,8 +188,21 @@ ElementPin *ComponentGraphItem::atPin( const QPointF &pos )
   return 0l;
 }
 
+QList<ElementBase *>::iterator ComponentGraphItem::pinsBegin()
+{
+  if( elements().size() == 0 )
+    return elements().end();
+  return elements().begin()+2;
+}
+
+QList<ElementBase *>::iterator ComponentGraphItem::pinsEnd()
+{ return elements().end(); }
+
 std::string ComponentGraphItem::reference()
 { return m_referenceText->text().toStdString(); }
+
+std::string ComponentGraphItem::symbol()
+{ return m_symbol; }
 
 int ComponentGraphItem::resolveSubElements()
 {
@@ -168,10 +219,11 @@ int ComponentGraphItem::resolveSubElements()
   QPointF oldpos = pos(); QGraphicsItemGroup::setPos( QPointF( 0, 0) ); // ensure right offset aligned to grid
   for( ; it!=elements().end(); ++it )
     {
-      addToGroup( (*it)->graphicsItem() ); // 'the item and child items will be reparented to this group' (Qt Documents)
+      addComponentElementInner( *it );
     }
   QGraphicsItemGroup::setPos( oldpos );
 
+  setDirect( direct() );
   return init( m_symbol.c_str(), m_symbolText, m_referenceText, /*deser*/true );
 }
 

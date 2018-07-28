@@ -19,7 +19,7 @@
 
 #define TRACE_UNIT "mainwnd"
 #include <dsim/logtrace.h>
-
+#include <dsim/error.h>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -35,6 +35,7 @@
 #include "lispdataset.h"
 #include "schemawidget.h"
 #include "schemaeditorform.h"
+#include "netlistexplorerdialog.h"
 #include "templatestyle.h"
 
 #include "mainwindow.h"
@@ -124,12 +125,19 @@ void MainWindow::createActions()
   fileQuit = new QAction(tr("&Quit"), this);
   fileQuit->setStatusTip(tr("Quit the dsim."));
   connect(fileQuit, SIGNAL(triggered()), SLOT(onFileQuit()));
+
+  /*
+   * Design actions
+   */
+  designViewNetlist = new QAction(tr("&View netlist..."), this);
+  designViewNetlist->setStatusTip( tr("View schematic netlist...") );
+  connect(designViewNetlist, SIGNAL(triggered()), SLOT(onDesignViewNetlist()));
 }
 
 void MainWindow::createMenuBar()
 {
   /*
-   * Menu entry file.
+   * Menu entry 'file'.
    */
   fileMenu = new QMenu( tr("&File") );
   fileMenu->addAction(fileNewProject);
@@ -144,6 +152,14 @@ void MainWindow::createMenuBar()
   fileMenu->addAction(fileQuit);
 
   menuBar()->addMenu(fileMenu);
+
+  /*
+   * Menu entry 'design'
+   */
+  designMenu = new QMenu( tr("&Design") );
+  designMenu->addAction( designViewNetlist );
+
+  menuBar()->addMenu(designMenu);
 }
 
 void MainWindow::createToolBars()
@@ -166,6 +182,9 @@ void MainWindow::createWorkspace()
    */
   workspace = new QMdiArea(this);
   this->setCentralWidget(workspace);
+
+  connect( workspace, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(onUpdateMenus()) );
+  onUpdateMenus();
 }
 
 void MainWindow::createStatusBar()
@@ -175,6 +194,13 @@ void MainWindow::createStatusBar()
    */
   statusLabel = new QLabel(tr("Ready..."));
   statusBar()->addWidget(statusLabel);
+}
+
+SchemaEditorForm *MainWindow::activeSchemaEditor()
+{
+  if( QMdiSubWindow *activeSubWindow = workspace->activeSubWindow() )
+    return qobject_cast<SchemaEditorForm *>( activeSubWindow->widget() );
+  return 0l;
 }
 
 /***************************************************
@@ -225,11 +251,54 @@ void MainWindow::onFileOpen()
 
 void MainWindow::onFileSave()
 {
+  using namespace std;
 
+  SchemaEditorForm *schemaForm = activeSchemaEditor();
+
+  if( schemaForm )
+    {
+      QString filename;
+
+      if( schemaForm->dataset()->type() == DOM_SCHEMA )
+        {
+          filename = QFileDialog::getSaveFileName( this, tr("Save schema..."), QString(), tr("Schema file(*.sch)") );
+        }
+      else if( schemaForm->dataset()->type() == DOM_SCHEMA_SYMBOL )
+        {
+          filename = QFileDialog::getSaveFileName( this, tr("Save symbol..."), QString(), tr("Schema Symbol file(*.ssym)") );
+        }
+      if( filename.length() )
+        {
+          std::string fn = filename.toStdString();
+          MainWindow::instance()->processRc( schemaForm->save( fn.c_str() ) );
+        }
+    }
 }
 
 void MainWindow::onFileQuit()
 {
+}
+
+void MainWindow::onDesignViewNetlist()
+{
+  SchemaEditorForm *schema = activeSchemaEditor();
+  if( schema )
+    {
+      if( processRc( activeSchemaEditor()->compileNetlist() ) )
+        return;
+      if( (schema = activeSchemaEditor()) )
+        {
+          NetlistExplorerDialog exp( schema->schemaSheet()->nodes(), this );
+          exp.exec();
+        }
+    }
+}
+
+void MainWindow::onUpdateMenus()
+{
+  bool hasActiveSchame = ( 0l != activeSchemaEditor() );
+  fileSave->setEnabled( hasActiveSchame );
+  designViewNetlist->setEnabled( hasActiveSchame );
 }
 
 
@@ -242,8 +311,6 @@ SchemaEditorForm *MainWindow::newSchemaDocument( DomType type )
   SchemaEditorForm *schema = new SchemaEditorForm( type, 0l );
 
   this->workspace->addSubWindow( schema );
-
-  connect( fileSave, SIGNAL(triggered()), schema, SLOT(onFileSave()) );
 
   schema->show();
   schema->gotoCenter();

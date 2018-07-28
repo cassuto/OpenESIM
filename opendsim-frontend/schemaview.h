@@ -115,12 +115,18 @@ private:
   ElementBase  *m_selectedElements;
 
 private: // schemaviewmenus.cxx
+  int           m_currentDirection;
   QAction      *m_actionEditProperties;
-
+  QAction      *m_actionRotateLeft;
+  QAction      *m_actionRotateRight;
   void createContextMenus();
 
 private slots:
   void onEditProperties( bool checked = false );
+  void onRemoveSelected( bool checked = false );
+  void onEditPinProperties( bool checked = false );
+  void onRotateLeft( bool checked = false );
+  void onRotateRight( bool checked = false );
 
 protected:
   void contextMenuEvent( QContextMenuEvent* event );

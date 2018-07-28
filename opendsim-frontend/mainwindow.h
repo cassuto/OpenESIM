@@ -68,6 +68,8 @@ private:
           *fileOpen,
           *fileSave,
           *fileQuit;
+  QAction *designViewNetlist;
+  QMenu *designMenu;
   QMenu *fileMenu;
   QToolBar *fileToolBar;
   QMdiArea *workspace;
@@ -83,6 +85,7 @@ private:
   void createWorkspace();
   void createStatusBar();
 
+  SchemaEditorForm *activeSchemaEditor();
   SchemaEditorForm *newSchemaDocument( DomType type );
 
 private slots:
@@ -92,6 +95,8 @@ private slots:
   void onFileOpen();
   void onFileSave();
   void onFileQuit();
+  void onDesignViewNetlist();
+  void onUpdateMenus();
 
 signals:
   void saveDocument( const QString &filename );

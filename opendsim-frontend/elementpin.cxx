@@ -36,6 +36,8 @@ ElementPin::ElementPin( ElemDirect direct, const QPointF &pos, ElementText *symb
           , m_referenceLabel( 0l )
           , m_showSymbol( true )
           , m_showReference( true )
+          , m_iotype( IOTYPE_PASSIVE )
+          , m_component( 0l )
 {
   setStyle( "pin" );
   setBoundingRect( QRect(-4, -4, 12, 8) );
@@ -57,7 +59,6 @@ void ElementPin::setBoundingRect( const QRect &bounding )
 void ElementPin::setDirect( ElemDirect direct )
 {
   ElementGraphItem::setDirect( direct );
-
   switch( direct )
   {
     case ELEM_RIGHT: setRotation( 180 ); break;
@@ -66,7 +67,6 @@ void ElementPin::setDirect( ElemDirect direct )
     case ELEM_BOTTOM: setRotation( -90 ); break;
     default: return;
   }
-
   setLayout();
 }
 
@@ -192,6 +192,7 @@ int ElementPin::serialize( LispDataset *dataset )
   rc = dataset->ser( int(m_length) );               UPDATE_RC(rc);
   rc = dataset->ser( m_showSymbol );                UPDATE_RC(rc);
   rc = dataset->ser( m_showReference );             UPDATE_RC(rc);
+  rc = dataset->ser( int(m_iotype) );               UPDATE_RC(rc);
 
   return rc;
 }
@@ -201,16 +202,18 @@ int ElementPin::deserialize( LispDataset *dataset )
   int rc = ElementGraphItem::deserialize( dataset ); UPDATE_RC(rc);
 
   double x, y;
-  int length;
+  int length, iotype;
 
   rc = dataset->des( x );                           UPDATE_RC(rc);
   rc = dataset->des( y );                           UPDATE_RC(rc);
   rc = dataset->des( length );                      UPDATE_RC(rc);
   rc = dataset->des( m_showSymbol );                UPDATE_RC(rc);
   rc = dataset->des( m_showReference );             UPDATE_RC(rc);
+  rc = dataset->des( iotype );                      UPDATE_RC(rc);
 
   setPos( QPointF( x, y ) );
   setLength( length );
+  setIOType( (io_type_t)iotype );
   return rc;
 }
 
@@ -248,18 +251,20 @@ void ElementPin::setSymbol( const QString &symbol )
 void ElementPin::setReference( const QString &reference )
 { m_referenceLabel->setText( reference ); updateReferenceLabel(); }
 
+void ElementPin::execPropertiesDialog()
+{
+  PinSettingsDialog pinSettings( this );
+
+  if( pinSettings.exec() == QDialog::Accepted )
+    {
+      pinSettings.apply( this );
+    }
+}
+
 void ElementPin::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
 {
   event->accept();
-  if( editable() )
-    {
-      PinSettingsDialog pinSettings( this );
-
-      if( pinSettings.exec() == QDialog::Accepted )
-        {
-          pinSettings.apply( this );
-        }
-    }
+  if( editable() ) execPropertiesDialog();
 }
 
 void ElementPin::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )

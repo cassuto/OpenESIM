@@ -16,6 +16,7 @@
 #ifndef SCHEMASHEET_H_
 #define SCHEMASHEET_H_
 
+#include <QList>
 #include <dsim/circmatrix.h>
 #include <dsim/circuit.h>
 
@@ -29,12 +30,22 @@ namespace dsim
 {
 
 class SchemaView;
+class ElementAbstractPort;
 
 class SchemaSheet
 {
 public:
   SchemaSheet();
   ~SchemaSheet();
+
+  class SchemaNode
+  {
+  public:
+    void addPort( ElementAbstractPort *port ) { m_ports.append( port ); }
+    inline const QList<ElementAbstractPort *> *ports() const { return &m_ports; }
+  public:
+    QList<ElementAbstractPort *> m_ports;
+  };
 
   int createDevice( const char *symbol, const char *reference, int id, DS_OUT IDevice **ppdevice );
   int createDevice( const DeviceLibraryEntry *entry, const char *reference, int id, DS_OUT IDevice **ppdevice );
@@ -43,13 +54,19 @@ public:
   void addDevice( IDevice *device );
   void removeDevice( IDevice *device );
 
+  int generateNetlist();
+  inline const QList<SchemaNode *> *nodes() const { return &m_nodes; }
+
   void setSchemaView( SchemaView *schemaView );
-  inline ISchematic *schematic() { return m_schematic; }
+  inline ISchematic *schematic() const { return m_schematic; }
+  inline SchemaView *schemaView() const { return m_schemaView; }
 
 private:
   SchematicImpl     *m_schematic;
+  SchemaView        *m_schemaView;
   circ_matrix_t     *m_matrix;
   circuit_t         *m_circuit;
+  QList<SchemaNode *> m_nodes;
 };
 
 }

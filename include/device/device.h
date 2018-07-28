@@ -36,6 +36,17 @@ enum device_type
   DEV_DIGITAL
 };
 
+typedef enum io_type
+{
+  IOTYPE_PASSIVE = 0,
+  IOTYPE_INPUT,
+  IOTYPE_OUTPUT,
+  IOTYPE_IO,
+  IOTYPE_POWER,
+  IOTYPE_PULLUP,
+  IOTYPE_PULLDOWN
+} io_type_t;
+
 struct IRECT
 {
 public:
