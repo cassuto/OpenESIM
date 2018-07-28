@@ -1,7 +1,7 @@
 (format ssymbol 1 )
 (elements
-  (pin 9 (7 8 ) 2 "pin" (cust ) (cust ) (cust ) 36 12 16 #f #f )
-  (pin 6 (4 5 ) 0 "pin" (cust ) (cust ) (cust ) -12 12 16 #f #f )
+  (pin 9 (7 8 ) 2 "pin" (cust ) (cust ) (cust ) 36 12 16 #f #f 0 )
+  (pin 6 (4 5 ) 0 "pin" (cust ) (cust ) (cust ) -12 12 16 #f #f 0 )
   (line 1 () 0 "component" (cust ) (cust ) (cust ) 4 4 (points (4 4 ) (4 20 ) ) )
   (line 2 () 0 "component" (cust ) (cust ) (cust ) 4 4 (points (4 4 ) (20 12 ) (4 20 ) ) )
   (line 3 () 0 "component" (cust (wh 3 ) ) (cust ) (cust ) 20 4 (points (21 6 ) (21 18 ) ) )

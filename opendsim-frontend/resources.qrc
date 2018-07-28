@@ -17,5 +17,11 @@
         <file>bitmaps/moderect.png</file>
         <file>bitmaps/modeellipse.png</file>
         <file>bitmaps/greenpen.cur</file>
+        <file>bitmaps/whitepen.cur</file>
+        <file>bitmaps/circuitnode.png</file>
+        <file>bitmaps/circuitnoderoot.png</file>
+        <file>bitmaps/circuitport.png</file>
+        <file>bitmaps/rotateleft.png</file>
+        <file>bitmaps/rotateright.png</file>
     </qresource>
 </RCC>
