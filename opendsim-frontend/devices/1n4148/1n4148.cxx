@@ -33,42 +33,26 @@ DeviceLibraryEntry *dev_1n4148::libraryEntry()
       0l);
 }
 
-IDevice *dev_1n4148::construct( const char *reference, int id, circuit_t *circuit, void *reserved )
+IDevice *dev_1n4148::construct( const char *reference, int id, void *reserved )
 {
-  return new dev_1n4148( reference, id, circuit, reserved );
+  return new dev_1n4148( reference, id, reserved );
 }
 
-dev_1n4148::dev_1n4148( const char *reference, int id, circuit_t *circuit, void *reserved )
-  : IDevice( reference, id, circuit, reserved )
-{
-}
+dev_1n4148::dev_1n4148( const char *reference, int id, void *reserved )
+  : IDevice( reference, id, reserved )
+{}
 
-int dev_1n4148::create( ISchematic *schematic )
+int dev_1n4148::create( ISchematic *schematic, IPropertyContainer *properties )
 {
+  int rc = IDevice::baseinit( "D", m_circuit );             UPDATE_RC(rc);
+  rc = properties->readModel( m_mdel );                         UPDATE_RC(rc);
+  rc = properties->readDevice( this );                          UPDATE_RC(rc);
+
   UNUSED(schematic);
-  return 0;
+  return rc;
 }
 
-int dev_1n4148::init()
+int dev_1n4148::init( IPropertyContainer *properties )
 {
-  int rc = IDevice::baseinit( "diode" ); UPDATE_RC(rc);
-  return circ_element_config( (m_mdel, ELM_CONFIG_SET, /*vz*/2, 0));
-}
-
-struct IRECT dev_1n4148::get_bound()
-{
-  return IRECT( -12, -8, 24, 16 );
-}
-
-int dev_1n4148::render_frame( IDeviceGraph *graph )
-{
-  //IRECT rect = get_bound();
-  //graph->rect( rect.x, rect.y, rect.w, rect.h );
-  UNUSED(graph);
-  return 0;
-}
-
-int dev_1n4148::uninit()
-{
-  return 0;
+  return properties->configModel( m_mdel );
 }

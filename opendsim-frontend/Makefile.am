@@ -59,12 +59,20 @@ opendsim_SOURCES = \
   componentpickwidget.cxx \
   componentpicktree.cxx \
   componentlibrarydialog.cxx \
-  textsettingsdialog.cxx \
-  pinsettingsdialog.cxx \
-  propertiescustomdialog.cxx \
-  presscombobox.cxx \
+  propertydialog.cxx \
+  propertywidget.cxx \
+  propertywidgettext.cxx \
+  propertywidgetpin.cxx \
+  propertywidgetcustom.cxx \
+  propertywidgetconfig.cxx \
+  propertycontainerimpl.cxx \
+  propertyeditorwidget.cxx \
+  propertymodel.cxx \
+  propertyvariantdelegate.cxx \
+  propertybase.cxx \
+  presscolorbox.cxx \
   netlistexplorerdialog.cxx \
-  resources.cpp
+  resources.cxx
   
 MOCHEADERS = \
   mainwindow.h \
@@ -76,15 +84,17 @@ MOCHEADERS = \
   componentpickwidget.h \
   componentpicktree.h \
   componentlibrarydialog.h \
-  textsettingsdialog.h \
-  pinsettingsdialog.h \
-  propertiescustomdialog.h \
-  presscombobox.h \
-  netlistexplorerdialog.h
+  propertywidgettext.h \
+  propertywidgetpin.h \
+  propertywidgetcustom.h \
+  propertydialog.h \
+  presscolorbox.h \
+  netlistexplorerdialog.h \
+  propertybase.h
 
 MOCFILES = $(MOCHEADERS:.h=.moc)
 
-resources.cpp: resources.qrc
+resources.cxx: resources.qrc
 	$(RCC) -o $@ $<
 
 %.moc: %.h
@@ -94,5 +104,5 @@ opendsim_LDFLAGS = $(QT_LDFLAGS)
 opendsim_LDADD = devices/libdsimdevices.la $(top_srcdir)/opendsim-core/libdsim.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la $(QT_LIBS)
 opendsim_DEPENDENCIES = devices/libdsimdevices.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la
 
-BUILT_SOURCES = $(MOCFILES)
-CLEANFILES = $(MOCFILES)
+BUILT_SOURCES = resources.cxx $(MOCFILES)
+CLEANFILES = resources.cxx $(MOCFILES)

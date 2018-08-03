@@ -839,7 +839,8 @@ uninstall-info: uninstall-info-recursive
 #
 errors-generated.h: \
 		util/errors.sed \
-		$(top_builddir)/include/dsim/error.h    
+		$(top_builddir)/include/dsim/error.h \
+        $(top_builddir)/include/frontend/error.h  
 	$(SED) -f $< $(filter %.h,$^) > $@
 
 version-generated.h:

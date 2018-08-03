@@ -13,38 +13,13 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef PINSETTINGSDIALOG_H_
-#define PINSETTINGSDIALOG_H_
-
-#include <QtWidgets>
-#include <device/device.h> // for io_type_t
+#include "propertywidget.h"
 
 namespace dsim
 {
 
-class ElementPin;
-
-class PinSettingsDialog : public QDialog
-{
-  Q_OBJECT
-
-public:
-  PinSettingsDialog( const ElementPin *pin, QWidget *parent = 0l );
-
-  void apply( ElementPin *pin );
-private:
-  const char *ioType2String( io_type_t io );
-  io_type_t string2IoType( const char *string );
-
-private:
-  QLineEdit *m_symbolEdit;
-  QLineEdit *m_referenceEdit;
-  QSpinBox *m_lengthSpin;
-  QCheckBox *m_showSymbol;
-  QCheckBox *m_showReference;
-  QComboBox *m_ioType;
-};
+PropertyWidget::PropertyWidget( void *opaque, QWidget *parent /*= 0l*/ ) : QWidget( parent )
+               , m_opaque( opaque )
+{}
 
 }
-
-#endif

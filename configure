@@ -16764,6 +16764,9 @@ if test "$python" = ":"; then
   as_fn_error $? "The $PACKAGE package needs the 'python' to compile properly." "$LINENO" 5
 fi
 
+# C Compiler standard
+CFLAGS="-std=c99 -g"
+
 # Checks for debug options
 # Check whether --enable-debug was given.
 if test "${enable_debug+set}" = set; then :
@@ -16795,9 +16798,6 @@ $as_echo "#define NDEBUG 1" >>confdefs.h
     CXXFLAGS="`echo $CXXFLAGS | sed -e 's/\-g //g'`"
   fi
 fi
-
-# C Compiler standard
-CFLAGS="$CFLAGS -std=c99"
 
 # Platform specific, find libraries, setup compiler flags
 case $host_os in
@@ -17688,9 +17688,9 @@ GIT="unknown"
 if test -d ".git"; then
 
 
-$as_echo "#define GIT \"fac9bf2\"" >>confdefs.h
+$as_echo "#define GIT \"7f69426\"" >>confdefs.h
 
-  GIT=fac9bf2
+  GIT=7f69426
   echo "Found Git clone... $GIT"
 fi
 

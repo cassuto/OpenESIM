@@ -97,6 +97,7 @@ QTreeWidgetItem* ComponentPickTree::treeEntry( const QString &category )
 
 void ComponentPickTree::mouseReleaseEvent( QMouseEvent* event )
 {
+  event->ignore();
 }
 
 void ComponentPickTree::onItemClicked( QTreeWidgetItem* item, int column)

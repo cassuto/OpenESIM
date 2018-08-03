@@ -14,12 +14,11 @@
  */
 
 #define TRACE_UNIT "elementtext"
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include <dsim/logtrace.h>
 
 #include "templatestyle.h"
 #include "lispdataset.h"
-#include "textsettingsdialog.h"
 
 #include "elementtext.h"
 
@@ -93,21 +92,6 @@ int ElementText::deserialize( LispDataset *dataset )
   setPos( QPointF( x, y ) );
   setText( symbol.c_str() );
   return rc;
-}
-
-void ElementText::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
-{
-  if( event->button() == Qt::LeftButton )
-    {
-      if( m_textEditable )
-        {
-          TextSettingsDialog settings( text() );
-          if( settings.exec() == QDialog::Accepted )
-            {
-              setText( settings.text() );
-            }
-        }
-    }
 }
 
 void ElementText::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )

@@ -63,14 +63,12 @@ public:
   void setShowSymbol( bool show ) { m_showSymbol = show; updateVisible(); }
   void setShowReference( bool show ) { m_showReference = show; updateVisible(); }
   void setIOType( io_type_t type ) { m_iotype = type; }
-  void execPropertiesDialog();
 
 protected: // for ElementWire only
   void connectWire( ElementWire *wire );
   void disconnectWire( ElementWire *wire, bool );
 
 protected:
-  void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event );
   void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget );
 
 private:

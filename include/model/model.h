@@ -120,12 +120,12 @@ enum
 
 typedef enum
 {
-  MDEL_VAT_UNKNOWN = 0,
+  MDEL_VAR_UNKNOWN = 0,
   MDEL_VAR_DOUBLE,     /* double */
   MDEL_VAR_FLOAT,      /* float */
   MDEL_VAR_INTEGER,    /* int */
   MDEL_VAR_BOOL,       /* int (NOT bool type variable) */
-  MDEL_VAR_STRPTR,     /* const char * */
+  MDEL_VAR_STRPTR,     /* char * */
   MDEL_VAR_VOIDPTR,    /* void * */
   MDEL_VAR_CONST_VOIDPTR /* const void * */
 } model_variable_type_t;

@@ -73,7 +73,8 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 libdsimdevices_la_LIBADD =
 am_libdsimdevices_la_OBJECTS = libdsimdevices_la-1n4148.lo \
 	libdsimdevices_la-diode.lo libdsimdevices_la-device.lo \
-	libdsimdevices_la-device-lib.lo
+	libdsimdevices_la-device-lib.lo \
+	libdsimdevices_la-propertyvalue.lo
 libdsimdevices_la_OBJECTS = $(am_libdsimdevices_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -102,7 +103,7 @@ AUTOMAKE = ${SHELL} D:\OpenDSIM-0.1/missing --run automake-1.9
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -I/usr/local/include/harfbuzz -std=c99 -pipe -W -Wall -Wmissing-prototypes
+CFLAGS = -std=c99 -g -pipe -W -Wall -Wmissing-prototypes
 CPP = gcc -E
 CPPFLAGS = 
 CXX = g++
@@ -221,7 +222,7 @@ INCLUDES = -I$(top_builddir)/include      \
 #########################################################################
 # Targets.
 libdsimdevices_la_SOURCES = 1n4148/1n4148.cxx diode/diode.cxx \
-	device.cxx device-lib.cxx
+	device.cxx device-lib.cxx propertyvalue.cxx
 libdsimdevices_la_CFLAGS = -Wno-unused-function
 libdsimdevices_la_CPPFLAGS = -Wno-unused-function
 all: all-am
@@ -297,6 +298,7 @@ include ./$(DEPDIR)/libdsimdevices_la-1n4148.Plo
 include ./$(DEPDIR)/libdsimdevices_la-device-lib.Plo
 include ./$(DEPDIR)/libdsimdevices_la-device.Plo
 include ./$(DEPDIR)/libdsimdevices_la-diode.Plo
+include ./$(DEPDIR)/libdsimdevices_la-propertyvalue.Plo
 
 .cxx.o:
 	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -346,6 +348,13 @@ libdsimdevices_la-device-lib.lo: device-lib.cxx
 #	source='device-lib.cxx' object='libdsimdevices_la-device-lib.lo' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-device-lib.lo `test -f 'device-lib.cxx' || echo '$(srcdir)/'`device-lib.cxx
+
+libdsimdevices_la-propertyvalue.lo: propertyvalue.cxx
+	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-propertyvalue.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-propertyvalue.Tpo" -c -o libdsimdevices_la-propertyvalue.lo `test -f 'propertyvalue.cxx' || echo '$(srcdir)/'`propertyvalue.cxx; \
+	then mv -f "$(DEPDIR)/libdsimdevices_la-propertyvalue.Tpo" "$(DEPDIR)/libdsimdevices_la-propertyvalue.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-propertyvalue.Tpo"; exit 1; fi
+#	source='propertyvalue.cxx' object='libdsimdevices_la-propertyvalue.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-propertyvalue.lo `test -f 'propertyvalue.cxx' || echo '$(srcdir)/'`propertyvalue.cxx
 
 mostlyclean-libtool:
 	-rm -f *.lo

@@ -14,7 +14,7 @@
  */
 
 #include <QtWidgets>
-#include <dsim/error.h>
+#include <frontend/error.h>
 
 #include "lispdataset.h"
 #include "componentlibrarydialog.h"

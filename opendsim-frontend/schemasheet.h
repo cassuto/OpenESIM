@@ -17,6 +17,7 @@
 #define SCHEMASHEET_H_
 
 #include <QList>
+#include <QHash>
 #include <dsim/circmatrix.h>
 #include <dsim/circuit.h>
 
@@ -30,7 +31,9 @@ namespace dsim
 {
 
 class SchemaView;
+class ComponentGraphItem;
 class ElementAbstractPort;
+class PropertyContainerImpl;
 
 class SchemaSheet
 {
@@ -47,15 +50,18 @@ public:
     QList<ElementAbstractPort *> m_ports;
   };
 
-  int createDevice( const char *symbol, const char *reference, int id, DS_OUT IDevice **ppdevice );
-  int createDevice( const DeviceLibraryEntry *entry, const char *reference, int id, DS_OUT IDevice **ppdevice );
+  int init();
+  void uninit();
+  int reinit();
+  int createDevice( const char *symbol, const char *reference, int id, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice );
+  int createDevice( const DeviceLibraryEntry *entry, const char *reference, int id, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice );
   void deleteDevice( IDevice *device );
-
-  void addDevice( IDevice *device );
-  void removeDevice( IDevice *device );
 
   int generateNetlist();
   inline const QList<SchemaNode *> *nodes() const { return &m_nodes; }
+  int compile();
+  int runStep();
+  void end();
 
   void setSchemaView( SchemaView *schemaView );
   inline ISchematic *schematic() const { return m_schematic; }
@@ -67,6 +73,7 @@ private:
   circ_matrix_t     *m_matrix;
   circuit_t         *m_circuit;
   QList<SchemaNode *> m_nodes;
+  QHash<ComponentGraphItem *, char> m_components;
 };
 
 }

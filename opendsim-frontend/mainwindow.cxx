@@ -19,7 +19,7 @@
 
 #define TRACE_UNIT "mainwnd"
 #include <dsim/logtrace.h>
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -29,7 +29,7 @@
 #include <QtGui>
 #include <QApplication>
 #include <QtWidgets>
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include <dsim/version.h>
 
 #include "lispdataset.h"
@@ -245,7 +245,8 @@ void MainWindow::onFileOpen()
           MainWindow::instance()->processRc( -DS_INVALID_FILE_TYPE );
         }
 
-      MainWindow::instance()->processRc( schema->open( fn.c_str() ) );
+      if( schema )
+        MainWindow::instance()->processRc( schema->open( fn.c_str() ) );
     }
 }
 
@@ -310,11 +311,16 @@ SchemaEditorForm *MainWindow::newSchemaDocument( DomType type )
 {
   SchemaEditorForm *schema = new SchemaEditorForm( type, 0l );
 
-  this->workspace->addSubWindow( schema );
+  if( !processRc( schema->init() ) )
+    {
+      this->workspace->addSubWindow( schema );
 
-  schema->show();
-  schema->gotoCenter();
-  return schema;
+      schema->show();
+      schema->gotoCenter();
+      return schema;
+    }
+  schema->deleteLater();
+  return 0l;
 }
 
 /**
@@ -325,12 +331,10 @@ int MainWindow::processRc( int rc )
 {
   if( !rc ) return rc;
 
-  if( rc == -DS_NO_MEMORY ) noMemory();
-
-  //const ds_error_info_t *error = ds_get_error( rc );
+  const ds_error_info_t *error = ds_get_error( rc );
 
   std::stringstream ss;
-  ss << "An error has occurred.\n" << "rc = " << rc /*<< "(" << error->msgDefine << ") :" << error->msgFull*/;
+  ss << "An error has occurred.\n" << "rc = " << rc << " (" << error->msgDefine << ")\nDetails: " << error->msgFull;
   std::string s = ss.str();
 
   QMessageBox::critical( this, tr("Fault"), s.c_str(), QMessageBox::Abort | QMessageBox::Cancel );

@@ -54,7 +54,8 @@ SUBDIRS = models
 #
 errors-generated.h: \
 		util/errors.sed \
-		$(top_builddir)/include/dsim/error.h    
+		$(top_builddir)/include/dsim/error.h \
+        $(top_builddir)/include/frontend/error.h  
 	$(SED) -f $< $(filter %.h,$^) > $@
 
 #

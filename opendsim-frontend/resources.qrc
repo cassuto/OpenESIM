@@ -23,5 +23,7 @@
         <file>bitmaps/circuitport.png</file>
         <file>bitmaps/rotateleft.png</file>
         <file>bitmaps/rotateright.png</file>
+        <file>bitmaps/xmirror.png</file>
+        <file>bitmaps/ymirror.png</file>
     </qresource>
 </RCC>

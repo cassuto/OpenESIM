@@ -27,6 +27,7 @@
 class IDevice;
 class IDeviceGraph;
 class DeviceLibraryEntry;
+class PropertyContainer;
 
 namespace dsim
 {
@@ -42,7 +43,10 @@ public:
 
   const char *classname() const { return "component"; }
 
-  int init( const char *deviceEntry, ElementText *symbolText, ElementText *referenceText, bool deser = false );
+  int init( const char *deviceEntry, ElementText *symbolText, ElementText *referenceText );
+  int createDevice();
+  int initDevice();
+
   void setLayout();
   std::string reference();
   std::string symbol();
@@ -61,6 +65,7 @@ public:
 public:
   inline IDevice *device() const { return m_device; }
   inline IDeviceGraph *deviceGraph() const { return m_deviceGraph; }
+  inline PropertyContainerImpl *properties() const { return m_properties; }
 
 protected:
   QVariant itemChange( GraphicsItemChange change, const QVariant &value );
@@ -68,15 +73,18 @@ protected:
   void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget );
 
 private:
+  int findEntry( const char *symbol );
   void addComponentElementInner( ElementBase *element );
 
 private:
+  const DeviceLibraryEntry *m_deviceEntry;
   IDevice              *m_device;
   ComponentGraphImpl   *m_deviceGraph;
-  std::string           m_symbol; // ! for deserialize() and resolveSubElements() only
-  std::string           m_reference; // ! for deserialize() and resolveSubElements() only
+  std::string           m_symbol;
+  std::string           m_reference;
   ElementText          *m_symbolText;
   ElementText          *m_referenceText;
+  PropertyContainerImpl *m_properties;
 };
 
 }

@@ -14,7 +14,7 @@
  */
 
 #include <cmath>
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include "lispdataset.h"
 
 #include "transformations.h"
@@ -44,8 +44,6 @@ void Transformations::rotation( int angle, int x0, int y0 )
 
 void Transformations::rotation( ElemDirect direction, int x0, int y0 )
 {
-  double xFactor, yFactor;
-
   switch( direction )
   {
     case ELEM_RIGHT:    rotation( 180, x0, y0 );    break;

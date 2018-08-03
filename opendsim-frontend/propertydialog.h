@@ -13,26 +13,34 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef TEXTSETTINGSDIALOG_H_
-#define TEXTSETTINGSDIALOG_H_
+#ifndef PROPERTYDIALOG_H_
+#define PROPERTYDIALOG_H_
 
-#include <QtWidgets>
+#include <QDialog>
+#include <QList>
+class QTabWidget;
 
 namespace dsim
 {
 
-class TextSettingsDialog : public QDialog
+class PropertyWidget;
+
+class PropertyDialog : public QDialog
 {
   Q_OBJECT
-
 public:
-  TextSettingsDialog( const QString &text, QWidget *parent = 0l );
-  ~TextSettingsDialog();
+  PropertyDialog( QWidget *parent = 0l );
 
-  QString text() const;
+  void addPropertyWidget( PropertyWidget *widget );
+  int exec();
+
+private slots:
+  void onAccept();
+  void onReject();
 
 private:
-  QLineEdit *m_edit;
+  QTabWidget               *m_tabWidget;
+  QList<PropertyWidget *>   m_properties;
 };
 
 }

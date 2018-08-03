@@ -13,26 +13,29 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef PROPERTIESCUSTOMDIALOG_H_
-#define PROPERTIESCUSTOMDIALOG_H_
+#ifndef PROPERTYWIDGETCUSTOM_H_
+#define PROPERTYWIDGETCUSTOM_H_
 
-#include <QtWidgets>
 #include <string>
 
+#include "propertywidget.h"
 #include "templatecustom.h"
 
 namespace dsim
 {
 
-class PressComboBox;
+class PressColorBox;
 class TemplatestylePreview;
 
-class PropertiesCustomDialog : public QDialog
+class PropertyWidgetCustom : public PropertyWidget
 {
   Q_OBJECT
 
 public:
-  PropertiesCustomDialog( const TemplateCustom *lineCustom, const TemplateCustom *fillCustom, const TemplateCustom *textCustom, QWidget *parent = 0l );
+  PropertyWidgetCustom( const TemplateCustom *lineCustom, const TemplateCustom *fillCustom, const TemplateCustom *textCustom, QWidget *parent = 0l );
+  ~PropertyWidgetCustom();
+
+  const char *name() const { return "Style template"; }
 
   void loadTemplate( const char *name );
 
@@ -43,18 +46,15 @@ public:
 
 private slots:
   void onStyleChanged( int index );
-  void onLineColorClicked();
-  void onFillFgColorClicked();
-  void onFillBkColorClicked();
+  void onLineStyleChanged( int index );
+  void onFillStyleChanged( int index );
   void onUseBkcolorChanged( int state );
   void onCustomLineStyleChanged( int state );
   void onCustomLineWidthChanged( int state );
   void onCustomLineColorChanged( int state );
   void onCustomFillStyleChanged( int state );
-  void onCustomFillFgColorChanged( int state );
   void onCustomFillUseBkcolorChanged( int state );
   void onCustomFillBkColorChanged( int state );
-  void onTextColorClicked();
   void onCustomTextColorChanged( int state );
   void onCustomTextHeightChanged( int state );
   void onCustomTextBoldChanged( int state );
@@ -68,13 +68,13 @@ private:
   bool m_AllowLineCustom, m_AllowFillCustom, m_AllowTextCustom;
   bool m_loadingStyle;
   QComboBox *m_style, *m_lineStyle, *m_fillStyle;
-  PressComboBox *m_lineColor, *m_fillFgColor, *m_fillBkColor;
+  PressColorBox *m_lineColor, *m_fillBkColor;
   QDoubleSpinBox *m_lineWidth;
   QCheckBox *m_customLineStyle, *m_customLineWidth, *m_customLineColor;
-  QCheckBox *m_customFillStyle, *m_customFillFgColor, *m_customFillUseBkcolor, *m_customFillBkColor;
+  QCheckBox *m_customFillStyle, *m_customFillUseBkcolor, *m_customFillBkColor;
   QCheckBox *m_fillUseBkcolor;
   TemplatestylePreview *m_rectPreview;
-  PressComboBox *m_textColor;
+  PressColorBox *m_textColor;
   QSpinBox *m_textHeight;
   QCheckBox *m_textBold, *m_textItalic;
   QCheckBox *m_customTextColor, *m_customTextHeight, *m_customTextBold, *m_customTextItalic;

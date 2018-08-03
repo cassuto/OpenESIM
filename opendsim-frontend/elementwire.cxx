@@ -15,7 +15,7 @@
 
 #define TRACE_UNIT "elementwire"
 #include <cmath>
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include <dsim/logtrace.h>
 
 #include "templatestyle.h"
@@ -23,6 +23,7 @@
 #include "schemaview.h"
 #include "staffpad.h"
 #include "elementjoint.h"
+
 #include "elementwire.h"
 
 namespace dsim
@@ -136,16 +137,16 @@ void WireSegment::mousePressEvent( QGraphicsSceneMouseEvent *event )
   SchemaView *schemaView = m_elementWire->view();
   if( event->button() == Qt::LeftButton )
     {
-      event->accept();
-
       switch( m_elementWire->view()->mode() )
       {
         case MODE_SELECTION:
+          event->ignore();
           grabMouse();
           return;
 
         case MODE_WIRE:
           {
+            event->accept();
             ElementWire *currentWire = static_cast<ElementWire *>(schemaView->m_hintElement);
 
             if( currentWire != m_elementWire ) // avoid connecting a wire to itself
@@ -157,7 +158,7 @@ void WireSegment::mousePressEvent( QGraphicsSceneMouseEvent *event )
           }
 
         default:
-          return;
+          break;
       }
     }
 

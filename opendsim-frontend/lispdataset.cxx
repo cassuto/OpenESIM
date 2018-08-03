@@ -19,7 +19,7 @@
 #include <device/libentry.h>
 #include <dsim/device-lib.h>
 #include <dsim/scheme-intr.h>
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include <dsim/misc.h>
 #include <cstring>
 #include <sstream>

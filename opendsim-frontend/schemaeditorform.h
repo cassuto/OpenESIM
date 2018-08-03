@@ -42,6 +42,7 @@ public:
   SchemaEditorForm( DomType type, QWidget *parent );
   ~SchemaEditorForm();
 
+  int init();
   int open( const char *filename );
   int save( const char *filename );
   int compileNetlist();

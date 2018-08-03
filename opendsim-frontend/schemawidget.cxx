@@ -13,7 +13,7 @@
  *  Lesser General Public License for more details.
  */
 
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include "schemasheet.h"
 #include "schemaview.h"
 #include "lispdataset.h"

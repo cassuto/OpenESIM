@@ -25,7 +25,7 @@
 
 class IDevice;
 
-typedef IDevice *(*pfn_device_construct)( const char *reference, int id, circuit_t *circuit, void *reserved );
+typedef IDevice *(*pfn_device_construct)( const char *reference, int id, void *reserved );
 
 class DeviceLibraryEntry
 {

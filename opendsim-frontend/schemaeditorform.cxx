@@ -18,7 +18,7 @@
 #include <QFileDialog>
 
 #include <fstream>
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include <device/libentry.h>
 
 #include "lispdataset.h"
@@ -172,6 +172,9 @@ void SchemaEditorForm::onModeScript()
 
 void SchemaEditorForm::gotoCenter()
 { schema->view()->gotoCenter(); }
+
+int SchemaEditorForm::init()
+{ return schsheet->init(); }
 
 int SchemaEditorForm::open( const char *filename )
 { using namespace std;

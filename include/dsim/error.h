@@ -16,9 +16,9 @@
 #ifndef DSIM_ERROR_H_
 #define DSIM_ERROR_H_
 
-#include <dsim/misc.h>
+#include <dsim/cdecl.h>
 
-//C_DECLS
+C_DECLS
 
 /*
  * The following Macro definitions participate in automatic generation of error
@@ -68,24 +68,13 @@
 #define DS_INVALID_FILE_TYPE (18)
 /** (scheme-lisp) Type mismatch */
 #define DS_TYPE_MISMATCH (19)
-/** Target element ID is invalid */
-#define DS_INVALID_ELEMENT_ID (20)
-/** Target element symbol is invalid */
-#define DS_INVALID_ELEMENT_SYMBOL (21)
-/** Target device symbol is invalid */
-#define DS_INVALID_DEVICE_SYMBOL (22)
-/** Can't resolve sub elements */
-#define DS_SOLVE_SUBELEMENTS (23)
-/** Target element has been referenced before */
-#define DS_REREFERENCE (24)
 /** Not matched */
 #define DS_NOT_MATCHED (26)
-/** Failed to create device instance */
-#define DS_CREATE_IDEVICE (27)
-/** Target custom template is invalid */
-#define DS_INVALID_CUSTOM_TEMPLATE (28)
 
 /* }}gen */
+
+#define DS_FRONTEND (65535)
+
 
 #define UPDATE_RC(_rc_) do { if( _rc_ ) return _rc_; } while(0)
 
@@ -103,6 +92,6 @@ typedef struct ds_error_info_s
 
 const ds_error_info_t *ds_get_error( int rc );
 
-//END_C_DECLS
+END_C_DECLS
 
 #endif //!defined(DSIM_ERROR_H_)

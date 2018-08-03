@@ -20,36 +20,37 @@
 #define TRACE_UNIT "dev-lib"
 
 #include <dsim/logtrace.h>
-#include <device/device.h>
-
 #include <dsim/error.h>
+#include <dsim/memory.h>
 #include <dsim/circuit.h>
+#include <device/device.h>
 #include <model/circ-element.h>
 
-IDevice::IDevice( const char *reference_, int id_, circuit_t *circuit_, void *reserved_ )
+#include <cstdarg>
+
+IDevice::IDevice( const char *reference_, int id_, void *reserved_ )
   : reserved( 0 ),
     m_reference( reference_ ),
     m_id( id_ ),
     m_mdel( 0 ),
-    m_circuit( circuit_ )
+    m_circuit( 0l )
 {
   UNUSED(reserved_);
 }
 
-IDevice::~IDevice()
-{}
+IDevice::~IDevice() {}
 
 /* set up main mdel */
-int IDevice::baseinit( const char *mdel_symbol )
+int IDevice::baseinit( const char *mdel_symbol, circuit_t *circuit )
 {
   trace_assert( NULL==m_mdel );
 
   if( mdel_symbol )
     {
-      m_mdel = circ_element_create( m_circuit, mdel_symbol, m_id );
+      m_mdel = circ_element_create( circuit, mdel_symbol, m_id );
       if( m_mdel )
         {
-          circuit_attach_element( m_circuit, m_mdel );
+          circuit_attach_element( circuit, m_mdel );
           return 0;
         }
       return -DS_NO_MEMORY;
@@ -58,7 +59,7 @@ int IDevice::baseinit( const char *mdel_symbol )
 }
 
 /* set up inline mdel */
-int IDevice::baseinit( device_type type )
+int IDevice::baseinit( device_type type, circuit_t *circuit )
 {
   int rc;
 
@@ -67,11 +68,11 @@ int IDevice::baseinit( device_type type )
   switch( type )
   {
     case DEV_ANALOG:
-      m_mdel = circ_element_create( m_circuit, "_ADEV_", 1 );
+      m_mdel = circ_element_create( circuit, "_ADEV_", 1 );
       break;
 
     case DEV_DIGITAL:
-      m_mdel = circ_element_create( m_circuit, "_DDEV_", 1 );
+      m_mdel = circ_element_create( circuit, "_DDEV_", 1 );
       break;
   }
 
@@ -80,12 +81,15 @@ int IDevice::baseinit( device_type type )
       if( (rc = circ_element_config(( m_mdel, /*pIDevice*/0, (void*)this ))) )
         return rc;
 
-      circuit_attach_element( m_circuit, m_mdel );
+      circuit_attach_element( circuit, m_mdel );
       return 0;
     }
 
   return -DS_NO_MEMORY;
 }
+
+void IDevice::baseuninit()
+{ m_mdel = 0l; }
 
 int IDevice::pin_count()
 {
@@ -97,10 +101,30 @@ circ_pin_t * IDevice::pin( int index )
   return m_mdel->pin_vector[index];
 }
 
-struct IRECT IDevice::get_bound()
+int IDevice::config( int op, ... )
 {
-  return IRECT( 0, 0, 0, 0 );
+  int rc = 0;
+  va_list vlist;
+  va_start( vlist, op );
+
+  switch( op )
+  {
+    case ELM_CONFIG_LIST_COUNT: /* Query the number of parameters */
+      {
+        *(va_arg( vlist, int* )) = 0;
+      }
+      break;
+
+    default:
+      rc = -DS_UNIMPLEMENTED;
+  }
+
+  va_end( vlist );
+  return rc;
 }
+
+void IDevice::setCircuit( circuit_t *circuit ) { m_circuit = circuit; }
+
 
 int IDevice::mdel_init()
   { return 0; }

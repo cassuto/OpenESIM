@@ -558,13 +558,36 @@ bool SchemaView::mouseMoveEllipse( QMouseEvent *event )
 }
 
 // ------------------------------------------------------------------ //
+// Mouse actions of double click
+// ------------------------------------------------------------------ //
+
+void SchemaView::mouseDoubleClickEvent( QMouseEvent *event )
+{
+  QList<QGraphicsItem *> list = items( event->pos() );
+  foreach( QGraphicsItem *current, list )
+    {
+      m_selectedElements = elementbase_cast( current );
+      if( m_selectedElements )
+        {
+          if( event->button() == Qt::RightButton )
+            {
+              onRemoveSelected();
+            }
+          else if( event->button() == Qt::LeftButton )
+            {
+              onEditProperties();
+            }
+          return;
+        }
+    }
+}
+
+// ------------------------------------------------------------------ //
 // Mouse actions for dragging
 // ------------------------------------------------------------------ //
 
 void SchemaView::dragEnterEvent( QDragEnterEvent *event )
 {
-  event->accept();
-
   QString text = event->mimeData()->text();
   std::string symbol = text.toStdString();
   QPointF cp = togrid( mapToScene(event->pos()) );
@@ -576,9 +599,12 @@ void SchemaView::dragEnterEvent( QDragEnterEvent *event )
   int rc = m_hintComponent->init( symbol.c_str(), symbolText, referenceText );
   if( MainWindow::instance()->processRc( rc ) )
     {
+      event->ignore();
       releaseElement( m_hintComponent );
       return;
     }
+
+  event->accept();
 
   m_hintComponent->setPos( cp );
   m_hintComponent->setLayout();

@@ -106,10 +106,12 @@ model_create_instance( circ_element_t *element, const char *symbol, const circ_e
     return rc;
 
   const circ_element_descriptor_t *desc;
-  desc = hashmap_cast_at( &element_hashmap, (hashmap_key_t)symbol, hashmap_const_voidptr_node_t )->val;
+  hashmap_const_voidptr_node_t *node = hashmap_cast_at( &element_hashmap, (hashmap_key_t)symbol, hashmap_const_voidptr_node_t );
 
-  if( desc )
+  if( node && node->val )
     {
+      desc = node->val;
+
       /* allocate parameter memory for the model */
       if( desc->param_size )
         {

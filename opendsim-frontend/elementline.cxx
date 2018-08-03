@@ -13,7 +13,7 @@
  *  Lesser General Public License for more details.
  */
 
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include <cstdio>
 #include "templatestyle.h"
 #include "lispdataset.h"

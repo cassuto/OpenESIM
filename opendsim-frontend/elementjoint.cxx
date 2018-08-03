@@ -19,6 +19,7 @@
 #include "templatestyle.h"
 #include "elementpin.h"
 #include "elementwire.h"
+
 #include "elementjoint.h"
 
 namespace dsim

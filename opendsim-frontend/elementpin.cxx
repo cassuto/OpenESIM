@@ -14,14 +14,13 @@
  */
 
 #define TRACE_UNIT "elementpin"
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include <dsim/logtrace.h>
 
 #include "lispdataset.h"
 #include "componentgraphitem.h"
 #include "elementtext.h"
 #include "elementwire.h"
-#include "pinsettingsdialog.h"
 
 #include "elementpin.h"
 
@@ -250,22 +249,6 @@ void ElementPin::setSymbol( const QString &symbol )
 
 void ElementPin::setReference( const QString &reference )
 { m_referenceLabel->setText( reference ); updateReferenceLabel(); }
-
-void ElementPin::execPropertiesDialog()
-{
-  PinSettingsDialog pinSettings( this );
-
-  if( pinSettings.exec() == QDialog::Accepted )
-    {
-      pinSettings.apply( this );
-    }
-}
-
-void ElementPin::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
-{
-  event->accept();
-  if( editable() ) execPropertiesDialog();
-}
 
 void ElementPin::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
 {

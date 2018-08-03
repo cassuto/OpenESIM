@@ -14,17 +14,17 @@
 
  */
 
+#include <cstring>
+
 #include "elementpin.h"
-#include "pinsettingsdialog.h"
+#include "propertywidgetpin.h"
 
 namespace dsim
 {
 
-PinSettingsDialog::PinSettingsDialog( const ElementPin *pin, QWidget *parent )
-                  : QDialog( parent )
+PropertyWidgetPin::PropertyWidgetPin( ElementPin *pin, QWidget *parent )
+                  : PropertyWidget( pin, parent )
 {
-  this->setWindowTitle( tr("Settings for text") );
-
   QGridLayout *centralLayout = new QGridLayout( this );
 
   QLabel *label = new QLabel( tr("Set Symbol:"), this );
@@ -70,20 +70,9 @@ PinSettingsDialog::PinSettingsDialog( const ElementPin *pin, QWidget *parent )
       m_ioType->setCurrentIndex( idx );
     }
   centralLayout->addWidget( m_ioType, 5, 1, 1, 1 );
-  QPushButton *ok = new QPushButton( tr("OK"), this );
-  QPushButton *cancel = new QPushButton( tr("Cancel"), this );
-
-  centralLayout->addWidget( ok, 5, 2, 1, 1 );
-  centralLayout->addWidget( cancel, 5, 3, 1, 1 );
-
-  this->update();
-
-  connect( ok, SIGNAL(pressed()), this, SLOT(accept()) );
-
-  connect( cancel, SIGNAL(pressed()), this, SLOT(reject()) );
 }
 
-const char *PinSettingsDialog::ioType2String( io_type_t io )
+const char *PropertyWidgetPin::ioType2String( io_type_t io )
 {
   switch( io )
   {
@@ -131,8 +120,10 @@ io_type_t string2IoType( const char *string )
   return IOTYPE_PASSIVE;
 }
 
-void PinSettingsDialog::apply( ElementPin *pin )
+void PropertyWidgetPin::accept()
 {
+  ElementPin *pin = opaque<ElementPin *>();
+
   pin->setSymbol( m_symbolEdit->text() );
   pin->setReference( m_referenceEdit->text() );
   pin->setLength( m_lengthSpin->value() );
@@ -143,4 +134,4 @@ void PinSettingsDialog::apply( ElementPin *pin )
 
 }
 
-#include "pinsettingsdialog.moc"
+#include "propertywidgetpin.moc"

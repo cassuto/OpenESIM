@@ -16,6 +16,8 @@
 #ifndef DEVICE_LIB_INTERNAL_H_
 #define DEVICE_LIB_INTERNAL_H_
 
+#include <cstdarg>
+
 #include <dsim/types.h>
 #include <dsim/error.h>
 #include <dsim/memory.h>

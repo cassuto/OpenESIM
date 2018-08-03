@@ -13,37 +13,23 @@
  *  Lesser General Public License for more details.
  */
 
-#include "presscombobox.h"
+#include "propertymodel.h"
+#include "propertyvariantdelegate.h"
+#include "propertybase.h"
+
+#include "propertyeditorwidget.h"
 
 namespace dsim
 {
 
-PressComboBox::PressComboBox( QWidget *parent )
-              : QComboBox( parent )
-              , m_color( palette().color( QPalette::Base ) )
+PropertyEditorWidget::PropertyEditorWidget(QWidget* parent /*= 0*/) : QTableView(parent)
 {
+  m_model = new PropertyModel( this );
+  setModel( m_model );
+  setItemDelegate( new PropertyVariantDelegate(this) );
+  setAlternatingRowColors( true );
 }
 
-void PressComboBox::mousePressEvent( QMouseEvent *event )
-{
-  emit clicked();
-}
-
-void PressComboBox::setColor( const QColor &color )
-{
-  m_color = color;
-  QPalette p = palette();
-  p.setColor( QPalette::Base, color );
-  p.setColor( QPalette::Highlight, color );
-  setPalette( p );
-}
-
-void PressComboBox::setEnabled( bool enabled )
-{
-  QComboBox::setEnabled( enabled );
-  setColor( m_color );
-}
+PropertyEditorWidget::~PropertyEditorWidget(){}
 
 }
-
-#include "presscombobox.moc"

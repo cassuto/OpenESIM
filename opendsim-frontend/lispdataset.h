@@ -23,7 +23,7 @@
 #include <stack>
 
 #include <QList>
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include <dsim/scheme-intr.h>
 
 namespace dsim

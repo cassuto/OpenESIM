@@ -23,8 +23,12 @@
 #include "elementpin.h"
 #include "elementrect.h"
 #include "elementellipse.h"
-#include "propertiescustomdialog.h"
-
+#include "propertydialog.h"
+#include "propertywidgetcustom.h"
+#include "propertywidgettext.h"
+#include "propertywidgetpin.h"
+#include "propertywidgetconfig.h"
+#include "mainwindow.h"
 #include "schemaview.h"
 
 namespace dsim
@@ -44,12 +48,20 @@ void SchemaView::createContextMenus()
   m_actionRotateLeft->setIcon( QIcon(":/bitmaps/rotateleft.png") );
   m_actionRotateRight = new QAction( tr("Rotate right"), this );
   m_actionRotateRight->setIcon( QIcon(":/bitmaps/rotateright.png") );
+  m_actionXmirror = new QAction( tr("X-axis mirror"), this );
+  m_actionXmirror->setIcon( QIcon(":/bitmaps/xmirror.png") );
+  m_actionYmirror = new QAction( tr("Y-axis mirror"), this );
+  m_actionYmirror->setIcon( QIcon(":/bitmaps/ymirror.png") );
 
   connect( m_actionEditProperties, SIGNAL(triggered(bool)), this, SLOT(onEditProperties(bool)) );
 
   connect( m_actionRotateLeft, SIGNAL(triggered(bool)), this, SLOT(onRotateLeft(bool)) );
 
   connect( m_actionRotateRight, SIGNAL(triggered(bool)), this, SLOT(onRotateRight(bool)) );
+
+  connect( m_actionXmirror, SIGNAL(triggered(bool)), this, SLOT(onXmirror(bool)) );
+
+  connect( m_actionYmirror, SIGNAL(triggered(bool)), this, SLOT(onYmirror(bool)) );
 }
 
 void SchemaView::contextMenuEvent( QContextMenuEvent* event )
@@ -61,30 +73,27 @@ void SchemaView::contextMenuEvent( QContextMenuEvent* event )
     {
       QMenu *contextMenu = new QMenu( this );
 
-      if( 0==std::strcmp( m_selectedElements->classname(), "line" ) ||
-          0==std::strcmp( m_selectedElements->classname(), "rect" ) ||
-          0==std::strcmp( m_selectedElements->classname(), "ellipse" ) ||
-          0==std::strcmp( m_selectedElements->classname(), "text" ) )
+      bool isWire       = ( 0==std::strcmp( m_selectedElements->classname(), "wire" ) );
+      bool isLine       = ( 0==std::strcmp( m_selectedElements->classname(), "line" ) );
+      bool isRect       = ( 0==std::strcmp( m_selectedElements->classname(), "rect" ) );
+      bool isEllipse    = ( 0==std::strcmp( m_selectedElements->classname(), "ellipse" ) );
+      bool isText       = ( 0==std::strcmp( m_selectedElements->classname(), "text" ) );
+      bool isPin        = ( 0==std::strcmp( m_selectedElements->classname(), "pin" ) );
+      bool isComponent  = ( 0==std::strcmp( m_selectedElements->classname(), "component") );
+
+      if( isLine || isRect || isEllipse || isText || isPin || isComponent )
         {
           contextMenu->addAction( m_actionEditProperties );
         }
-      if( 0==std::strcmp( m_selectedElements->classname(), "pin" ) )
-        {
-          QAction *editPinPropertiesAct = new QAction( tr("Edit properties of pin..."), this );
-          connect( editPinPropertiesAct, SIGNAL(triggered(bool)), this, SLOT(onEditPinProperties(bool)) );
-
-          contextMenu->addAction( editPinPropertiesAct );
-        }
-
-      if( 0==std::strcmp( m_selectedElements->classname(), "text" ) ||
-          0==std::strcmp( m_selectedElements->classname(), "pin" ) ||
-          0==std::strcmp( m_selectedElements->classname(), "component" ) )
+      if( isText || isPin || isComponent )
         {
           contextMenu->addAction( m_actionRotateLeft );
           contextMenu->addAction( m_actionRotateRight );
+          contextMenu->addAction( m_actionXmirror );
+          contextMenu->addAction( m_actionYmirror );
         }
 
-      if( 0==std::strcmp( m_selectedElements->classname(), "wire" ) )
+      if( isWire )
         {
           QAction *removeWireAct = new QAction( tr("Remove this wire"), this );
           connect( removeWireAct, SIGNAL(triggered(bool)), this, SLOT(onRemoveSelected(bool)) );
@@ -99,35 +108,39 @@ void SchemaView::contextMenuEvent( QContextMenuEvent* event )
 }
 
 template <typename base>
-  static void configLineFillText( base *element )
+  static void configLineFillText( PropertyDialog &settings, base *element )
   {
-    PropertiesCustomDialog customDialog( element->customLine(), element->customFill(), element->customText() );
+    PropertyWidgetCustom *customWidget = new PropertyWidgetCustom( element->customLine(), element->customFill(), element->customText() );
+    settings.addPropertyWidget( customWidget );
 
-    customDialog.loadTemplate( element->style() );
+    customWidget->loadTemplate( element->style() );
 
-    if( customDialog.exec() == QDialog::Accepted )
+    if( settings.exec() == QDialog::Accepted )
       {
-        element->setStyle( customDialog.styleName().c_str() );
-        element->setCustomLine( customDialog.lineCustom() );
-        element->setCustomFill( customDialog.fillCustom() );
-        element->setCustomText( customDialog.textCustom() );
+        element->setStyle( customWidget->styleName().c_str() );
+        element->setCustomLine( customWidget->lineCustom() );
+        element->setCustomFill( customWidget->fillCustom() );
+        element->setCustomText( customWidget->textCustom() );
         element->update();
       }
+    customWidget->deleteLater();
   }
 
 template <typename base>
-  static void configText( base *element )
+  static void configText( PropertyDialog &settings, base *element )
   {
-    PropertiesCustomDialog customDialog( 0l, 0l, element->customText() );
+    PropertyWidgetCustom *customWidget = new PropertyWidgetCustom( 0l, 0l, element->customText() );
+    settings.addPropertyWidget( customWidget );
 
-    customDialog.loadTemplate( element->style() );
+    customWidget->loadTemplate( element->style() );
 
-    if( customDialog.exec() == QDialog::Accepted )
+    if( settings.exec() == QDialog::Accepted )
       {
-        element->setStyle( customDialog.styleName().c_str() );
-        element->setCustomText( customDialog.textCustom() );
+        element->setStyle( customWidget->styleName().c_str() );
+        element->setCustomText( customWidget->textCustom() );
         element->update();
       }
+    customWidget->deleteLater();
   }
 
 // ------------------------------------------------------------------ //
@@ -136,39 +149,43 @@ template <typename base>
 
 void SchemaView::onEditProperties( bool )
 {
-  if( ElementLine *line = element_cast<ElementLine *>(m_selectedElements) )
+  if( m_selectedElements )
     {
-      configLineFillText( line );
-    }
-  else if( ElementRect *rect = element_cast<ElementRect *>(m_selectedElements) )
-    {
-      configLineFillText( rect );
-    }
-  else if( ElementEllipse *ellipse = element_cast<ElementEllipse *>(m_selectedElements) )
-    {
-      configLineFillText( ellipse );
-    }
-  else if( ElementText *text = element_cast<ElementText *>(m_selectedElements) )
-    {
-      configText( text );
+      PropertyDialog settings( MainWindow::instance() );
+
+      if( ElementLine *line = element_cast<ElementLine *>(m_selectedElements) )
+        {
+          configLineFillText( settings, line );
+        }
+      else if( ElementRect *rect = element_cast<ElementRect *>(m_selectedElements) )
+        {
+          configLineFillText( settings, rect );
+        }
+      else if( ElementEllipse *ellipse = element_cast<ElementEllipse *>(m_selectedElements) )
+        {
+          configLineFillText( settings, ellipse );
+        }
+      else if( ElementText *text = element_cast<ElementText *>(m_selectedElements) )
+        {
+          settings.addPropertyWidget( new PropertyWidgetText( text, &settings ) );
+          configText( settings, text );
+        }
+      else if( ElementPin *pin = element_cast<ElementPin *>( m_selectedElements ) )
+        {
+          settings.addPropertyWidget( new PropertyWidgetPin( pin, &settings ) );
+          settings.exec();
+        }
+      else if( ComponentGraphItem *component = element_cast<ComponentGraphItem *>( m_selectedElements ) )
+        {
+          settings.addPropertyWidget( new PropertyWidgetConfig( component->properties(), &settings ) );
+          settings.exec();
+        }
     }
 }
 
 void SchemaView::onRemoveSelected( bool )
 {
   if( m_selectedElements ) releaseElement( m_selectedElements );
-}
-
-void SchemaView::onEditPinProperties( bool )
-{
-  if( m_selectedElements )
-    {
-      ElementPin *pin = element_cast<ElementPin *>( m_selectedElements );
-      if( pin )
-        {
-          pin->execPropertiesDialog();
-        }
-    }
 }
 
 template <typename base>
@@ -193,42 +210,60 @@ template <typename base>
       element->setDirect( (ElemDirect)direction );
     }
 
-void SchemaView::onRotateLeft( bool )
-{
-  if( m_selectedElements )
+template <typename base>
+  static void Xmirror( base *element )
     {
-      if( ElementText *text = element_cast<ElementText *>(m_selectedElements) )
+      int direction = int( element->direct() );
+      if( direction == ELEM_LEFT || direction == ELEM_RIGHT )
         {
-          rotateLeft( text );
-        }
-      else if( ElementPin *pin = element_cast<ElementPin *>(m_selectedElements) )
-        {
-          rotateLeft( pin );
-        }
-      else if ( ComponentGraphItem *component = element_cast<ComponentGraphItem *>(m_selectedElements) )
-        {
-          rotateLeft( component );
+          element->setDirect( (ElemDirect)( (direction + 2) % 4 ) );
         }
     }
+
+template <typename base>
+  static void Ymirror( base *element )
+    {
+      int direction = int( element->direct() );
+      if( direction == ELEM_TOP || direction == ELEM_BOTTOM )
+        {
+          element->setDirect( (ElemDirect)( (direction + 2) % 4 ) );
+        }
+    }
+
+#define TEMPLATE_TRANSFORMATION(_comp, _op) \
+  {                                                                                         \
+    if( ElementText *text = element_cast<ElementText *>(_comp) )                            \
+      {                                                                                     \
+        _op( text );                                                                        \
+      }                                                                                     \
+    else if( ElementPin *pin = element_cast<ElementPin *>(_comp) )                          \
+      {                                                                                     \
+        _op( pin );                                                                         \
+      }                                                                                     \
+    else if ( ComponentGraphItem *component = element_cast<ComponentGraphItem *>(_comp) )   \
+      {                                                                                     \
+        _op( component );                                                                   \
+      }                                                                                     \
+  }
+
+void SchemaView::onRotateLeft( bool )
+{
+  if( m_selectedElements ) TEMPLATE_TRANSFORMATION( m_selectedElements, rotateLeft )
 }
 
 void SchemaView::onRotateRight( bool )
 {
-  if( m_selectedElements )
-    {
-      if( ElementText *text = element_cast<ElementText *>(m_selectedElements) )
-        {
-          rotateRight( text );
-        }
-      else if( ElementPin *pin = element_cast<ElementPin *>(m_selectedElements) )
-        {
-          rotateRight( pin );
-        }
-      else if ( ComponentGraphItem *component = element_cast<ComponentGraphItem *>(m_selectedElements) )
-        {
-          rotateRight( component );
-        }
-    }
+  if( m_selectedElements ) TEMPLATE_TRANSFORMATION( m_selectedElements, rotateRight )
+}
+
+void SchemaView::onXmirror( bool )
+{
+  if( m_selectedElements ) TEMPLATE_TRANSFORMATION( m_selectedElements, Xmirror )
+}
+
+void SchemaView::onYmirror( bool )
+{
+  if( m_selectedElements ) TEMPLATE_TRANSFORMATION( m_selectedElements, Ymirror )
 }
 
 }

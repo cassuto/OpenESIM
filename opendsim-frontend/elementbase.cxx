@@ -15,7 +15,7 @@
 
 #define TRACE_UNIT "elementbase"
 #include <dsim/logtrace.h>
-#include <dsim/error.h>
+#include <frontend/error.h>
 
 #include "lispdataset.h"
 #include "schemaview.h"

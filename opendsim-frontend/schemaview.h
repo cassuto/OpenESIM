@@ -119,17 +119,21 @@ private: // schemaviewmenus.cxx
   QAction      *m_actionEditProperties;
   QAction      *m_actionRotateLeft;
   QAction      *m_actionRotateRight;
+  QAction      *m_actionXmirror;
+  QAction      *m_actionYmirror;
   void createContextMenus();
 
 private slots:
   void onEditProperties( bool checked = false );
   void onRemoveSelected( bool checked = false );
-  void onEditPinProperties( bool checked = false );
   void onRotateLeft( bool checked = false );
   void onRotateRight( bool checked = false );
+  void onXmirror( bool checked = false );
+  void onYmirror( bool checked = false );
 
 protected:
   void contextMenuEvent( QContextMenuEvent* event );
+  void mouseDoubleClickEvent( QMouseEvent *event );
 
 private: // schemaviewactions.cxx
   bool mousePressSelect( QMouseEvent *event );

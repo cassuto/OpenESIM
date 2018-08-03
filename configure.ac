@@ -28,6 +28,9 @@ if test "$python" = ":"; then
   AC_MSG_ERROR([The $PACKAGE package needs the 'python' to compile properly.])
 fi
 
+# C Compiler standard
+CFLAGS="-std=c99 -g"
+
 # Checks for debug options
 AC_ARG_ENABLE([debug],
   AC_HELP_STRING([--enable-debug],
@@ -53,9 +56,6 @@ else
     CXXFLAGS="`echo $CXXFLAGS | sed -e 's/\-g //g'`"
   fi
 fi
-
-# C Compiler standard
-CFLAGS="$CFLAGS -std=c99"
 
 # Platform specific, find libraries, setup compiler flags
 case $host_os in

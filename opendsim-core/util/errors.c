@@ -13,7 +13,9 @@
  *  Lesser General Public License for more details.
  */
 
+#include <dsim/misc.h>
 #include <dsim/error.h>
+#include <frontend/error.h>
 
 static const ds_error_info_t g_errorsDescriptors[] = {
 #   include "errors-generated.h"
@@ -30,10 +32,11 @@ static const ds_error_info_t g_errorsDescriptors[] = {
 const ds_error_info_t *
 ds_get_error( int rc )
 {
-  for( unsigned i=0; i<GET_ELEMENTS(g_errorsDescriptors)-1; i++ )
+  if( rc < 0 ) rc = -rc;
+  for( unsigned i=0; i<GET_ELEMENTS(g_errorsDescriptors); i++ )
     {
       if( g_errorsDescriptors[i].code == rc )
         return &g_errorsDescriptors[i];
     }
-  return &g_errorsDescriptors[GET_ELEMENTS(g_errorsDescriptors)-2];
+  return &g_errorsDescriptors[GET_ELEMENTS(g_errorsDescriptors)-1];
 }

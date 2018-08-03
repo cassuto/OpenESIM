@@ -20,7 +20,7 @@
 
 #include <dsim/logtrace.h>
 #include <dsim/device-lib.h>
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include <dsim/misc.h>
 #include <dsim/version.h>
 

@@ -19,7 +19,7 @@
 #include <device/graph.h>
 #include <dsim/logtrace.h>
 #include <dsim/device-lib.h>
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include <cstring>
 
 #include "schemascene.h"
@@ -28,6 +28,7 @@
 #include "elementtext.h"
 #include "elementwire.h"
 #include "elementpin.h"
+#include "propertycontainerimpl.h"
 #include "componentgraphimpl.h"
 #include "componentgraphitem.h"
 
@@ -39,10 +40,12 @@ DECLARE_ELEMENT_CAST(ElementPin, "pin")
 
 ComponentGraphItem::ComponentGraphItem( int id, SchemaScene *scene, bool edit, QGraphicsItem *parent )
                   : ElementGraphItem<QGraphicsItemGroup>( id, scene, edit, parent )
+                  , m_deviceEntry( 0l )
                   , m_device( 0l )
                   , m_deviceGraph( new ComponentGraphImpl() )
                   , m_symbolText( 0l )
                   , m_referenceText( 0l )
+                  , m_properties( new PropertyContainerImpl )
 {
   setFlags( QGraphicsItemGroup::ItemIsSelectable | QGraphicsItemGroup::ItemSendsGeometryChanges );
   setFineturningEnabled(false);
@@ -53,8 +56,10 @@ ComponentGraphItem::~ComponentGraphItem()
   delete m_deviceGraph;
 }
 
-int ComponentGraphItem::init( const char *deviceEntry, ElementText *symbolText, ElementText *referenceText, bool deser )
+int ComponentGraphItem::init( const char *deviceEntry, ElementText *symbolText, ElementText *referenceText )
 {
+  int rc;
+  bool deser = ( 0l != m_device );
   m_symbolText = symbolText;
   m_referenceText = referenceText;
 
@@ -65,49 +70,55 @@ int ComponentGraphItem::init( const char *deviceEntry, ElementText *symbolText, 
 
       m_symbolText->setStyle( "component" );
       m_referenceText->setStyle( "component" );
+
+      rc = findEntry( deviceEntry );    UPDATE_RC(rc);
+
+      m_symbol = deviceEntry;
+      m_reference = m_deviceEntry->reference_name; // to allocate a default reference
+      m_reference += "?";
+
+      rc = createDevice();              UPDATE_RC(rc);
     }
 
-  const DeviceLibraryEntry *entry = device_lib_entry( deviceEntry );
-  if( entry )
+  /*
+   * Set up sub elements
+   */
+  m_symbolText->setText( deviceEntry );
+  m_symbolText->setTextEditable( false );
+  m_referenceText->setText( m_reference.c_str() );
+
+  /*
+   * Load component symbol and layout
+   */
+  if( !deser )
     {
-      if( !deser ) // to allocate a default reference
-        {
-          m_symbol = deviceEntry;
-          m_reference = entry->reference_name;
-          m_reference += "?";
-        }
+      QPointF oldpos = pos(); QGraphicsItemGroup::setPos( QPointF( 0, 0) ); // ensure right offset aligned to grid
 
-      int rc = view()->sheet()->createDevice( entry, m_reference.c_str(), id(), &m_device );
+      rc = view()->loadSymbol( this, m_deviceEntry->symbolfile ); UPDATE_RC(rc);
 
-      UPDATE_RC(rc);
-
-      if( m_device )
-        {
-          /*
-           * Set up sub elements
-           */
-          m_symbolText->setText( deviceEntry );
-          m_symbolText->setTextEditable( false );
-          m_referenceText->setText( m_reference.c_str() );
-
-          /*
-           * Load component symbol and layout
-           */
-          if( !deser )
-            {
-              QPointF oldpos = pos(); QGraphicsItemGroup::setPos( QPointF( 0, 0) ); // ensure right offset aligned to grid
-
-              rc = view()->loadSymbol( this, entry->symbolfile ); UPDATE_RC(rc);
-
-              QGraphicsItemGroup::setPos( oldpos );
-              setLayout();
-            }
-
-          return 0;
-        }
+      QGraphicsItemGroup::setPos( oldpos );
+      setLayout();
     }
+  return 0;
+}
 
-  return -DS_CREATE_IDEVICE; // the element has become invalid, and you should remove it later
+int ComponentGraphItem::createDevice()
+{
+  trace_assert( m_deviceEntry );
+
+  int rc = view()->sheet()->createDevice( m_deviceEntry, m_reference.c_str(), id(), m_properties, &m_device );  UPDATE_RC(rc);
+
+  return m_device ? 0 : -DS_CREATE_IDEVICE;
+}
+
+int ComponentGraphItem::initDevice()
+{ return device()->init( m_properties ); }
+
+int ComponentGraphItem::findEntry( const char *symbol )
+{
+  if( !(m_deviceEntry = device_lib_entry( symbol )) )
+    return -DS_FIND_DEVICE;
+  return 0;
 }
 
 void ComponentGraphItem::setLayout()
@@ -224,7 +235,7 @@ int ComponentGraphItem::resolveSubElements()
   QGraphicsItemGroup::setPos( oldpos );
 
   setDirect( direct() );
-  return init( m_symbol.c_str(), m_symbolText, m_referenceText, /*deser*/true );
+  return init( m_symbol.c_str(), m_symbolText, m_referenceText );
 }
 
 void ComponentGraphItem::releaseSubElements()
@@ -270,6 +281,7 @@ int ComponentGraphItem::serialize( LispDataset *dataset )
   rc = dataset->ser( double(pos().y()) );                   UPDATE_RC(rc);
   rc = dataset->ser( m_symbol );                            UPDATE_RC(rc);
   rc = dataset->ser( reference() );                         UPDATE_RC(rc);
+  rc = m_properties->serialize( dataset );                  UPDATE_RC(rc);
 
   return rc;
 }
@@ -284,6 +296,10 @@ int ComponentGraphItem::deserialize( LispDataset *dataset )
   rc = dataset->des( y );                                   UPDATE_RC(rc);
   rc = dataset->des( m_symbol );                            UPDATE_RC(rc);
   rc = dataset->des( m_reference );                         UPDATE_RC(rc);
+
+  rc = findEntry( m_symbol.c_str() );                       UPDATE_RC(rc);
+  rc = createDevice();                                      UPDATE_RC(rc);
+  rc = m_properties->deserialize( dataset );                UPDATE_RC(rc);
 
   QGraphicsItemGroup::setPos( QPointF( x, y ) );
   return 0;

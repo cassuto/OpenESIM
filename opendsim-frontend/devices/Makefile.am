@@ -25,10 +25,11 @@ INCLUDES = -I$(top_builddir)/include      \
 libdsimdevices_la_SOURCES = \
   1n4148/1n4148.cxx \
   diode/diode.cxx
-  
+
 libdsimdevices_la_SOURCES += \
   device.cxx \
-  device-lib.cxx
-		
+  device-lib.cxx \
+  propertyvalue.cxx
+
 libdsimdevices_la_CFLAGS = -Wno-unused-function
 libdsimdevices_la_CPPFLAGS = -Wno-unused-function

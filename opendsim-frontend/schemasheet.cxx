@@ -19,7 +19,10 @@
 #include <dsim/device-lib.h>
 #include <dsim/circmatrix.h>
 #include <dsim/circuit.h>
-#include <dsim/error.h>
+#include <model/circ-node.h>
+#include <model/circ-pin.h>
+#include <model/circ-element.h>
+#include <frontend/error.h>
 
 #include <algorithm>
 #include <functional>
@@ -31,47 +34,72 @@
 #include "elementwire.h"
 #include "elementjoint.h"
 #include "elementpin.h"
+#include "elementabstractport.h"
 #include "componentgraphitem.h"
 #include "schematicimpl.h"
+#include "propertycontainerimpl.h"
+
 #include "schemasheet.h"
 
 namespace dsim
 {
 
 SchemaSheet::SchemaSheet()
-            : m_schemaView( 0l )
-{
-  m_schematic = new SchematicImpl;
+            : m_schematic( new SchematicImpl )
+            , m_schemaView( 0l )
+            , m_matrix( 0l )
+            , m_circuit( 0l )
 
+{}
+
+SchemaSheet::~SchemaSheet() { uninit(); }
+
+int SchemaSheet::init()
+{
   m_matrix = matrix_create();
-  m_circuit = circuit_create( m_matrix );
+  if( m_matrix )
+    {
+      m_circuit = circuit_create( m_matrix );
+      return m_circuit ? 0 : -DS_CREATE_CIRCUIT_SIMULATOR;
+    }
+  return -DS_CREATE_CIRCUIT_MATRIX;
 }
 
-SchemaSheet::~SchemaSheet()
+void SchemaSheet::uninit()
 {
-  circuit_free( m_circuit );
-  matrix_free( m_matrix );
+  if( m_circuit )
+    { circuit_free( m_circuit ); m_circuit = 0l; } // will free attached elements as well
+  if( m_matrix )
+    { matrix_free( m_matrix ); m_matrix = 0l; }
 }
 
-int SchemaSheet::createDevice( const char *symbol, const char *reference, int id, DS_OUT IDevice **ppdevice )
+int SchemaSheet::reinit()
 {
-  return createDevice( device_lib_entry( symbol ), reference, id, ppdevice );
+  uninit();
+  return init();
 }
 
-int SchemaSheet::createDevice( const DeviceLibraryEntry *entry, const char *reference, int id, DS_OUT IDevice **ppdevice )
+int SchemaSheet::createDevice( const char *symbol, const char *reference, int id, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice )
+{
+  return createDevice( device_lib_entry( symbol ), reference, id, property, ppdevice );
+}
+
+int SchemaSheet::createDevice( const DeviceLibraryEntry *entry, const char *reference, int id, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice )
 {
   *ppdevice = 0l;
   if( !entry ) return -DS_FAULT;
 
-  IDevice *device = entry->construct( reference, id, m_circuit, 0l );
+  int rc;
+  IDevice *device = entry->construct( reference, id, 0l );
   if( device )
     {
-      int rc = device->create( schematic() );
-      if( rc )  // failed to create the device
+      device->setCircuit( m_circuit );
+      if( (rc = device->create( schematic(), property )) )
         {
           delete device;
           return rc;
         }
+
       *ppdevice = device;
       return rc;
     }
@@ -82,15 +110,6 @@ void SchemaSheet::deleteDevice( IDevice *device )
 {
   delete device;
 }
-
-void SchemaSheet::addDevice( IDevice *device )
-{
-}
-
-void SchemaSheet::removeDevice( IDevice *device )
-{
-}
-
 
 static inline int setsFind( int *sets, int x )
 {
@@ -208,6 +227,77 @@ int SchemaSheet::generateNetlist() // m_nodes is valid while schemaView() keepin
     }
 
   return 0;
+}
+
+int SchemaSheet::compile()
+{
+  int rc = generateNetlist(); UPDATE_RC(rc);
+  bool needReinit = false;
+
+  if( !m_matrix || !m_circuit )
+    {
+      needReinit = true;
+      rc = reinit(); UPDATE_RC(rc);
+    }
+
+  m_components.clear();
+
+  /*
+   * Initializing device models
+   */
+  foreach( SchemaNode *node, *(nodes()) )
+    {
+      foreach( ElementAbstractPort *port, *(node->ports()) )
+        {
+          ComponentGraphItem *component = port->component();
+          if( 0== m_components[component] )
+            {
+              m_components[component] = 1;
+              if( needReinit )
+                { rc = component->createDevice(); UPDATE_RC(rc); }
+              rc = component->initDevice(); UPDATE_RC(rc);
+            }
+        }
+    }
+
+  /*
+   * Connect physical nodes
+   */
+  circ_node_t *circNode;
+  IDevice *device;
+  int pinIndex; bool isInt = false;
+  foreach( SchemaNode *node, *(nodes()) )
+    {
+      circNode = circ_node_create( m_circuit, true );
+      if( circNode )
+        {
+          circuit_attach_node( m_circuit, circNode );
+          foreach( ElementAbstractPort *port, *(node->ports()) )
+            {
+              device = port->component()->device();
+              pinIndex = port->reference().toInt( &isInt );     // parse target pin
+              if( isInt && pinIndex >= 0 && pinIndex < device->pin_count() )
+                {
+                  rc = circ_pin_set_node( device->pin( pinIndex ), circNode ); UPDATE_RC(rc);
+                }
+              else
+                return -DS_INVALID_PIN_REFERENCE;
+            }
+        }
+      else
+        return -DS_CREATE_CIRCUIT_NODE;
+    }
+  return circuit_init( m_circuit );
+}
+
+int SchemaSheet::runStep()
+{ return circuit_run_step( m_circuit ); }
+
+void SchemaSheet::end()
+{
+  uninit();
+  m_components.clear();
+  m_components.squeeze();
 }
 
 void SchemaSheet::setSchemaView( SchemaView *schemaView )

@@ -51,6 +51,18 @@ enum ElemDirect
   ELEM_BOTTOM
 };
 
+struct IRECT
+{
+public:
+  int x, y, w, h;
+
+public:
+  IRECT(int left, int top, int width, int height)
+    : x(left), y(top), w(width), h(height)
+  {}
+
+};
+
 class IDeviceGraph
 {
 public:

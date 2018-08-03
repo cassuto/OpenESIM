@@ -82,8 +82,12 @@ am_opendsim_OBJECTS = opendsim-edit.$(OBJEXT) \
 	schemaview.$(OBJEXT) schemascene.$(OBJEXT) \
 	schemaeditorform.$(OBJEXT) componentpickwidget.$(OBJEXT) \
 	componentpicktree.$(OBJEXT) componentlibrarydialog.$(OBJEXT) \
-	textsettingsdialog.$(OBJEXT) pinsettingsdialog.$(OBJEXT) \
-	propertiescustomdialog.$(OBJEXT) presscombobox.$(OBJEXT) \
+	propertydialog.$(OBJEXT) propertywidget.$(OBJEXT) \
+	propertywidgettext.$(OBJEXT) propertywidgetpin.$(OBJEXT) \
+	propertywidgetcustom.$(OBJEXT) propertywidgetconfig.$(OBJEXT) \
+	propertycontainerimpl.$(OBJEXT) propertyeditorwidget.$(OBJEXT) \
+	propertymodel.$(OBJEXT) propertyvariantdelegate.$(OBJEXT) \
+	propertybase.$(OBJEXT) presscolorbox.$(OBJEXT) \
 	netlistexplorerdialog.$(OBJEXT) resources.$(OBJEXT)
 opendsim_OBJECTS = $(am_opendsim_OBJECTS)
 am__DEPENDENCIES_1 =
@@ -274,12 +278,20 @@ opendsim_SOURCES = \
   componentpickwidget.cxx \
   componentpicktree.cxx \
   componentlibrarydialog.cxx \
-  textsettingsdialog.cxx \
-  pinsettingsdialog.cxx \
-  propertiescustomdialog.cxx \
-  presscombobox.cxx \
+  propertydialog.cxx \
+  propertywidget.cxx \
+  propertywidgettext.cxx \
+  propertywidgetpin.cxx \
+  propertywidgetcustom.cxx \
+  propertywidgetconfig.cxx \
+  propertycontainerimpl.cxx \
+  propertyeditorwidget.cxx \
+  propertymodel.cxx \
+  propertyvariantdelegate.cxx \
+  propertybase.cxx \
+  presscolorbox.cxx \
   netlistexplorerdialog.cxx \
-  resources.cpp
+  resources.cxx
 
 MOCHEADERS = \
   mainwindow.h \
@@ -291,23 +303,25 @@ MOCHEADERS = \
   componentpickwidget.h \
   componentpicktree.h \
   componentlibrarydialog.h \
-  textsettingsdialog.h \
-  pinsettingsdialog.h \
-  propertiescustomdialog.h \
-  presscombobox.h \
-  netlistexplorerdialog.h
+  propertywidgettext.h \
+  propertywidgetpin.h \
+  propertywidgetcustom.h \
+  propertydialog.h \
+  presscolorbox.h \
+  netlistexplorerdialog.h \
+  propertybase.h
 
 MOCFILES = $(MOCHEADERS:.h=.moc)
 opendsim_LDFLAGS = $(QT_LDFLAGS)
 opendsim_LDADD = devices/libdsimdevices.la $(top_srcdir)/opendsim-core/libdsim.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la $(QT_LIBS)
 opendsim_DEPENDENCIES = devices/libdsimdevices.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la
-BUILT_SOURCES = $(MOCFILES)
-CLEANFILES = $(MOCFILES)
+BUILT_SOURCES = resources.cxx $(MOCFILES)
+CLEANFILES = resources.cxx $(MOCFILES)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .cpp .cxx .lo .o .obj
+.SUFFIXES: .cxx .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -397,9 +411,18 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mainwindow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/netlistexplorerdialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/opendsim-edit.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pinsettingsdialog.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/presscombobox.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertiescustomdialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/presscolorbox.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertybase.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertycontainerimpl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertydialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertyeditorwidget.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertymodel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertyvariantdelegate.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidget.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgetconfig.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgetcustom.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgetpin.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgettext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/resources.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/schemaeditorform.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/schemascene.Po@am__quote@
@@ -413,29 +436,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/staffpad.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/templatecustom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/templatestyle.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/textsettingsdialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/transformations.Po@am__quote@
-
-.cpp.o:
-@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
-
-.cpp.obj:
-@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ `$(CYGPATH_W) '$<'`; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.cpp.lo:
-@am__fastdepCXX_TRUE@	if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
 .cxx.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -746,7 +747,7 @@ uninstall-info: uninstall-info-recursive
 	uninstall-binPROGRAMS uninstall-info-am
 
 
-resources.cpp: resources.qrc
+resources.cxx: resources.qrc
 	$(RCC) -o $@ $<
 
 %.moc: %.h

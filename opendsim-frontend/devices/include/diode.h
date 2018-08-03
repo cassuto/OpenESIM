@@ -21,16 +21,13 @@
 class dev_diode : public IDevice
 {
 public:
-  dev_diode( const char *reference, int id, circuit_t *circuit, void *reserved );
+  dev_diode( const char *reference, int id, void *reserved );
 
   static DeviceLibraryEntry *libraryEntry();
-  static IDevice *construct( const char *reference, int id, circuit_t *circuit, void *reserved );
+  static IDevice *construct( const char *reference, int id, void *reserved );
 
-  int create( ISchematic *schematic );
-  int init();
-  struct IRECT get_bound();
-  int render_frame( IDeviceGraph *graph );
-  int uninit();
+  int create( ISchematic *schematic, IPropertyContainer *properties );
+  int init( IPropertyContainer *properties );
 };
 
 #endif

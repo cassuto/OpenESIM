@@ -13,7 +13,7 @@
  *  Lesser General Public License for more details.
  */
 
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include "lispdataset.h"
 #include "templatestyle.h"
 #include "templatecustom.h"
@@ -147,12 +147,12 @@ int TemplateCustom::deserialize( LispDataset *dataset )
               usebkcolorCustom = true;
             }
           else if( 0==symbol.compare( "bk" ) )
-           {
-             rc = dataset->des( bkcolor.r );                UPDATE_RC(rc);
-             rc = dataset->des( bkcolor.g );                UPDATE_RC(rc);
-             rc = dataset->des( bkcolor.b );                UPDATE_RC(rc);
-             colorCustom = true;
-           }
+            {
+              rc = dataset->des( bkcolor.r );                UPDATE_RC(rc);
+              rc = dataset->des( bkcolor.g );                UPDATE_RC(rc);
+              rc = dataset->des( bkcolor.b );                UPDATE_RC(rc);
+              bkcolorCustom = true;
+            }
           else if( 0==symbol.compare( "si" ) )
             {
               rc = dataset->des( size );                    UPDATE_RC(rc);

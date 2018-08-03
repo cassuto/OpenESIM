@@ -17,7 +17,7 @@
 #include <QtGui>
 #include <cstring>
 #include <dsim/logtrace.h>
-#include <dsim/error.h>
+#include <frontend/error.h>
 #include "schemasheet.h"
 #include "schemascene.h"
 #include "lispdataset.h"

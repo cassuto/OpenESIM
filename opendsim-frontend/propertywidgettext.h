@@ -13,34 +13,30 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef PRESSCOMBOBOX_H_
-#define PRESSCOMBOBOX_H_
+#ifndef PROPERTYWIDGETTEXT_H_
+#define PROPERTYWIDGETTEXT_H_
 
-#include <QtWidgets>
+#include "propertywidget.h"
 
 namespace dsim
 {
 
-class PressComboBox : public QComboBox
+class ElementText;
+class PropertyWidgetText : public PropertyWidget
 {
   Q_OBJECT
 
 public:
-  PressComboBox( QWidget *parent = 0l );
+  PropertyWidgetText( ElementText *element, QWidget *parent = 0l );
+  ~PropertyWidgetText();
 
-  void setColor( const QColor &color );
-  void setEnabled( bool enabled );
-
-  inline const QColor& color() const { return m_color; }
-
-protected:
-  void mousePressEvent( QMouseEvent *event );
-
-signals:
-  void clicked();
+  const char *name() const { return "Text"; }
+  void firstPage();
+  void accept();
 
 private:
-  QColor m_color;
+  QComboBox *m_text;
+  QButtonGroup *m_roatationButtons;
 };
 
 }

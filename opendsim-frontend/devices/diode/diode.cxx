@@ -33,48 +33,26 @@ DeviceLibraryEntry *dev_diode::libraryEntry()
       0l);
 }
 
-IDevice *dev_diode::construct( const char *reference, int id, circuit_t *circuit, void *reserved )
+IDevice *dev_diode::construct( const char *reference, int id, void *reserved )
 {
-  return new dev_diode( reference, id, circuit, reserved );
+  return new dev_diode( reference, id, reserved );
 }
 
-dev_diode::dev_diode( const char *reference, int id, circuit_t *circuit, void *reserved )
-  : IDevice( reference, id, circuit, reserved )
+dev_diode::dev_diode( const char *reference, int id, void *reserved )
+  : IDevice( reference, id, reserved )
+{}
+
+int dev_diode::create( ISchematic *schematic, IPropertyContainer *properties )
 {
+  int rc = IDevice::baseinit( "D", m_circuit );             UPDATE_RC(rc);
+  rc = properties->readModel( m_mdel );                         UPDATE_RC(rc);
+  rc = properties->readDevice( this );                          UPDATE_RC(rc);
+
+  UNUSED(schematic);
+  return rc;
 }
 
-int dev_diode::create( ISchematic *schematic )
+int dev_diode::init( IPropertyContainer *properties )
 {
-  return 0;
-}
-
-int dev_diode::init()
-{
-  int rc = IDevice::baseinit( "diode" ); UPDATE_RC(rc);
-  return circ_element_config( (m_mdel, ELM_CONFIG_SET, /*vz*/2, 0));
-}
-
-struct IRECT dev_diode::get_bound()
-{
-  return IRECT( -12, -8, 24, 16 );
-}
-
-int dev_diode::render_frame( IDeviceGraph *graph )
-{
-  graph->setStyle("component");
-
-  graph->line( 7, 0, -8, -7 );
-  graph->line( -8, -7, -8, 7 );
-  graph->line( -8, 7, 7, 0 );
-
-  graph->setPenWidth( 3 );
-
-  graph->line( 7, -6, 7, 6 );
-
-  return 0;
-}
-
-int dev_diode::uninit()
-{
-  return 0;
+  return properties->configModel( m_mdel );
 }
