@@ -97,5 +97,3 @@ void PropertyWidgetText::accept()
 }
 
 }
-
-#include "propertywidgettext.moc"

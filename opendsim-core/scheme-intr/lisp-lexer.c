@@ -46,7 +46,7 @@ lisp_isdigit( ds_scheme_t *sc, char ch )
 }
 
 static int
-parse_number( ds_scheme_t *sc, char ch, DS_OUT ds_scheme_synlist_t **synlist )
+parse_number( ds_scheme_t *sc, char ch, DS_OUT ds_scheme_synlist_t **synlist, char *unitOut )
 {
   register char ch0;
   double n = 0, sign = 1, scale = 0;
@@ -112,7 +112,79 @@ parse_number( ds_scheme_t *sc, char ch, DS_OUT ds_scheme_synlist_t **synlist )
 
   lisp_buffer_ungetc( sc );
 
+  char unt;
+  char unit;
+
+  unit = lisp_buffer_getc( sc );
+  if ( unit == EOF ) return fault_unexpected_token();
+
+  /* parse the unit part */
+  if ( lisp_isdelimiter( unit ) )
+    {
+      lisp_buffer_ungetc( sc ); /* there is no unit defined */
+      unt = SCHEME_UNIT_ONE;
+    }
+  else
+    {
+      if ( unit == 'f' || unit == 'F' )
+
+        unt = SCHEME_UNIT_F;
+
+      else if ( unit == 'p' || unit == 'P' )
+
+        unt = SCHEME_UNIT_P;
+
+      else if ( unit == 'n' || unit == 'N' )
+
+        unt = SCHEME_UNIT_N;
+
+      else if ( unit == 'u' || unit == 'U' )
+
+        unt = SCHEME_UNIT_U;
+
+      else if ( unit == 'm' )
+        {
+          unt = SCHEME_UNIT_MIL;
+        }
+      else if ( unit == 'k' || unit == 'K' )
+
+        unt = SCHEME_UNIT_K;
+
+      else if ( unit == 'M' )
+
+        unt = SCHEME_UNIT_MEG;
+
+      else if ( unit == 'g' || unit == 'G' )
+
+        unt = SCHEME_UNIT_G;
+
+      else if ( unit == 't' || unit == 'T' )
+
+        unt = SCHEME_UNIT_T;
+
+      else if ( unit == 'd' || unit == 'D' )
+        {
+          unit = lisp_buffer_getc( sc );
+          if ( unit == EOF ) return fault_unexpected_token();
+
+          if ( unit == 'b' || unit == 'B' )
+            {
+              unt = SCHEME_UNIT_DB;
+            }
+          else
+            return fault_unexpected_token();
+        }
+      else
+        return fault_unexpected_token();
+    }
+
+  if( unitOut )
+    {
+      *unitOut = unt;
+    }
+
   n = sign * n * pow(10.0, (scale + subscale * signsubscale)); /* number = +/- number.fraction * 10^+/- exponent */
+  n = lispex_convert_unit( (ds_scheme_unit_t)unit, n );
 
   *synlist = lisp_synlist_create();
   if ( !*synlist )
@@ -120,6 +192,7 @@ parse_number( ds_scheme_t *sc, char ch, DS_OUT ds_scheme_synlist_t **synlist )
 
   (*synlist)->synnode.type = SCHEME_VAL_NUMBER;
   (*synlist)->synnode.val.number = n;
+
   return 0;
 }
 
@@ -150,69 +223,20 @@ static int
 parse_time( ds_scheme_t *sc, DS_OUT ds_scheme_synlist_t **synlist )
 {
   int rc = 0;
-  double val = 0;
+  char unit;
   register char ch;
-  char unit[2];
-  char unt = SCHEME_UNIT_NONE;
   ds_scheme_synlist_t *num = NULL;
 
   *synlist = NULL;
 
   ch = lisp_buffer_getc( sc );
   if ( ch == EOF ) return fault_unexpected_token();
-  if ( (rc = parse_number( sc, ch, &num)) )
+  if ( (rc = parse_number( sc, ch, &num, &unit)) )
     return rc;
 
-  unit[0] = lisp_buffer_getc( sc );
-  if ( unit[0] == EOF ) return fault_unexpected_token();
-
-  /* parse the unit part */  
-  if ( unit[0] == 's')
-    {
-      unt = SCHEME_UNIT_S;
-    }
-  else if ( lisp_isdelimiter( unit[0] ) )
-    {
-      lisp_buffer_ungetc( sc ); /* there is no unit defined */
-      unt = SCHEME_UNIT_NONE;
-    }
-  else
-    {
-      unit[1] = lisp_buffer_getc( sc );
-      if ( unit[1] == EOF ) return fault_unexpected_token();
-
-      if ( unit[1] == 's' || unit[1] == 'S' )
-        {
-          if ( unit[0] == 'f' || unit[0] == 'F' )
-             
-            unt = SCHEME_UNIT_FS;
-         
-          else if ( unit[0] == 'p' || unit[0] == 'P' )
-             
-            unt = SCHEME_UNIT_PS;
-         
-          else if ( unit[0] == 'n' || unit[0] == 'N' )
-             
-            unt = SCHEME_UNIT_NS;
-         
-          else if ( unit[0] == 'u' || unit[0] == 'U' )
-             
-            unt = SCHEME_UNIT_US;
-         
-          else if ( unit[0] == 'm' || unit[0] == 'M' )
-            
-            unt = SCHEME_UNIT_MS;
-
-          else
-            return fault_unexpected_token();
-        }
-      else
-        return fault_unexpected_token();
-    }
-
   num->synnode.type = SCHEME_VAL_TIME;
-  num->synnode.val.time.time = val;
-  num->synnode.val.time.unit = unt;
+  num->synnode.val.time.time = lispval_number( num ); /* may be useless and optimized out */
+  num->synnode.val.time.unit = unit;
   *synlist = num;
   return 0;
 }
@@ -327,7 +351,7 @@ lisp_lex( ds_scheme_t *sc, int dep, DS_OUT ds_scheme_synlist_t **synout )
       /* parse the number */
       else if ( lisp_isdigit( sc, ch ) )
         {
-          if ( (rc = parse_number( sc, ch, &synlist )) ) return rc;
+          if ( (rc = parse_number( sc, ch, &synlist, NULL )) ) return rc;
         }
       /* parse the boolean */
       else if ( ch == '#' )

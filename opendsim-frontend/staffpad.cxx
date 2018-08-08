@@ -26,7 +26,7 @@ StaffPad::StaffPad( int index, const QPointF &pos, SchemaScene *schgraph, QGraph
           : StaffGraphItem( index, schgraph, parent, events )
 {
   setPos( pos );
-  setBoundingRect( QRect( 0, 0, 4, 4 ) );
+  setBoundingRect( QRect( 0, 0, 2, 2 ) );
 }
 
 StaffPad::~StaffPad()
@@ -41,7 +41,7 @@ void StaffPad::paint( QPainter *painter, const QStyleOptionGraphicsItem *option,
   painter->setBrush( brush );
   painter->setPen( Qt::red );
 
-  painter->drawRect( boundingRect() );
+  painter->drawRect( 0, 0, width(), height() );
 
   UNUSED(option); UNUSED(widget);
 }

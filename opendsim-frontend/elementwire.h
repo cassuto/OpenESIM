@@ -43,6 +43,7 @@ public:
   inline QPointF p2() { return line().p2(); }
   inline qreal dx() { return line().p2().x() - line().p1().x(); }
   inline qreal dy() { return line().p2().y() - line().p1().y(); }
+  inline void setHint( bool hint ) { m_hint = hint; update(); }
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
 
@@ -64,7 +65,7 @@ private slots:
 
 private:
   ElementWire         *m_elementWire;
-  bool                 m_selected;
+  bool                 m_hint;
 
 public:
   enum { Type = UserType + 3868 /*magic*/ };
@@ -100,6 +101,7 @@ public:
   void split( int index, ElementAbstractPort* port1, ElementAbstractPort* port2 );
   void move( QPointF delta );
   void layoutWires( ElementAbstractPort *port, const QPointF &pos );
+  void setHint( bool hint );
   WireSegment *wireAt( const QPointF &scenePos );
   QList<qreal> pointList();
   inline QList<WireSegment *> *wireSegments() { return &m_wires; }

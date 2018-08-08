@@ -38,6 +38,7 @@ enum DrawMode
   MODE_RECT,
   MODE_ELLIPSE,
   MODE_SCRIPT,
+  MODE_ORIGIN,
   MODE_COMPONENT
 };
 
@@ -156,6 +157,7 @@ private: // schemaviewactions.cxx
   bool mouseMoveRect( QMouseEvent *event );
   bool mousePressEllipse( QMouseEvent *event );
   bool mouseMoveEllipse( QMouseEvent *event );
+  bool mousePressOrigin( QMouseEvent *event );
   bool keyPressComponent( QKeyEvent *event );
   bool keyPressPin( QKeyEvent *event );
   bool keyPressText( QKeyEvent *event );

@@ -40,7 +40,8 @@ bool Templatestyle::isStyle( const char *style )
   return( 0 == std::strcmp( style, "component" )
    || 0 == std::strcmp( style, "pin" )
    || 0 == std::strcmp( style, "wire" )
-   || 0 == std::strcmp( style, "joint" ) );
+   || 0 == std::strcmp( style, "joint" )
+   || 0 == std::strcmp( style, "painter" ) );
 }
 
 StyleItem Templatestyle::lineStyle( const char *styleName, bool selected )
@@ -50,7 +51,7 @@ StyleItem Templatestyle::lineStyle( const char *styleName, bool selected )
   if( 0 == std::strcmp( styleName, "component" ) )
     {
       style.line = LINE_SOLID;
-      style.width = 1.0f;
+      style.width = 1.5f;
       if( selected )
         { style.color.r = 128; style.color.g = 0; style.color.b = 0; }
       else
@@ -84,6 +85,15 @@ StyleItem Templatestyle::lineStyle( const char *styleName, bool selected )
     {
       style.line = LINE_NONE;
     }
+  else if( 0 == std::strcmp( styleName, "painter" ) )
+    {
+      style.line = LINE_SOLID;
+      style.width = 1.0f;
+      if( selected )
+        { style.color.r = 128; style.color.g = 0; style.color.b = 0; }
+      else
+        { style.color.r = 0; style.color.g = 0; style.color.b = 128; }
+    }
   return style;
 }
 
@@ -104,6 +114,11 @@ StyleItem Templatestyle::fillStyle( const char *styleName, bool selected )
         { style.bkcolor.r = 128; style.bkcolor.g = 0; style.bkcolor.b = 0; }
       else
         { style.bkcolor.r = 128; style.bkcolor.g = 0; style.bkcolor.b = 128; }
+    }
+  else if( 0 == std::strcmp( styleName, "painter" ) )
+    {
+      style.brush = BRUSH_NONE;
+      style.usebkcolor = true;
     }
   return style;
 }
@@ -126,6 +141,14 @@ StyleItem Templatestyle::textStyle( const char *styleName, bool selected )
         { style.color.r = 128; style.color.g = 0; style.color.b = 0; }
       else
         { style.color.r = 0; style.color.g = 0; style.color.b = 255; }
+      style.size = 8;
+    }
+  else if( 0 == std::strcmp( styleName, "painter" ) )
+    {
+      if( selected )
+        { style.color.r = 128; style.color.g = 0; style.color.b = 0; }
+      else
+        { style.color.r = 128; style.color.g = 0; style.color.b = 128; }
       style.size = 8;
     }
   return style;

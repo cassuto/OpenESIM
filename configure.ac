@@ -107,7 +107,7 @@ case $host_os in
       /usr/local/include/qt5"
     for path in $paths; do
       if test -f "$path/QtWidgets/qapplication.h"; then
-        QT_INCLUDES="$path -I$path/QtWidgets -I$path/QtGui -I$path/QtCore -I$path/QtSvg -I$path/QtXml -I$path/QtScript"
+        QT_INCLUDES="$path -I$path/QtWidgets -I$path/QtGui -I$path/QtCore -I$path/QtConcurrent -I$path/QtSvg -I$path/QtXml -I$path/QtScript"
         QT_VER=5
         break
       fi
@@ -132,7 +132,7 @@ case $host_os in
        fi])
     if test "$enable_mt" = yes; then
       QT_LDF=""
-      QT_LIB="-lQt5Widgets -lQt5Core -lQt5Gui -lQt5Xml -lQt5Svg -lQt5Script"
+      QT_LIB="-lQt5Widgets -lQt5Core -lQt5Gui -lQt5Xml -lQt5Concurrent -lQt5Svg -lQt5Script"
       QT_INC="$QT_DEF -DQT_THREAD_SUPPORT -D_REENTRANT"
       [case $host_os in
         *freebsd*) QT_LIB="$QT_LIB -pthread" ;;
@@ -141,13 +141,13 @@ case $host_os in
       QT_MTS="multi-threaded"
     else
       QT_LDF=""
-      QT_LIB="-lQt5Widgets -lQt5Core -lQt5Gui -lQt5Xml -lQt5Svg -lQt5Script"
+      QT_LIB="-lQt5Widgets -lQt5Core -lQt5Gui -lQt5Xml -lQt5Concurrent -lQt5Svg -lQt5Script"
       QT_INC="$QT_DEF"
       QT_MTS="non-threaded"
     fi
     case $host_os in
       *mingw* | *msys*)
-      QT_LIB="-lQt5Widgets -lQt5Core -lQt5Gui -lQt5Xml -lQt5Svg -lQt5Script"
+      QT_LIB="-lQt5Widgets -lQt5Core -lQt5Gui -lQt5Xml -lQt5Concurrent -lQt5Svg -lQt5Script"
       QT_INC="$QT_INC -DQT_DLL -DUNICODE"
       QT_LDF="$QT_LDF -mwindows"
       ;;

@@ -133,5 +133,3 @@ void PropertyWidgetPin::accept()
 }
 
 }
-
-#include "propertywidgetpin.moc"

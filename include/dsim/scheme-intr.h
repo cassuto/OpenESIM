@@ -73,16 +73,24 @@ typedef enum
   SCHEME_VAL_PAIR
 } ds_scheme_type_t;
 
-enum ds_scheme_timeunit
+typedef enum ds_scheme_unit /* never change the order of following enums */
 {
-  SCHEME_UNIT_NONE = 0,
-  SCHEME_UNIT_FS,
-  SCHEME_UNIT_PS,
-  SCHEME_UNIT_NS,
-  SCHEME_UNIT_US,
-  SCHEME_UNIT_MS,
-  SCHEME_UNIT_S
-};
+  SCHEME_UNIT_ONE = 0,
+  SCHEME_UNIT_F,            /* 1.00e-15 */
+  SCHEME_UNIT_P,            /* 1.00e-12 */
+  SCHEME_UNIT_N,            /* 1.00e-09 */
+  SCHEME_UNIT_U,            /* 1.00e-06 */
+  SCHEME_UNIT_MIL,          /* 1.00e-03 */
+  SCHEME_UNIT_K,            /* 1.00e+03 */
+  SCHEME_UNIT_MEG,          /* 1.00e+06 */
+  SCHEME_UNIT_G,            /* 1.00e+09 */
+  SCHEME_UNIT_T,            /* 1.00e+12 */
+  SCHEME_UNIT_PETA,         /* 1.00e+15 */
+  SCHEME_UNIT_E,            /* 1.00e+18 */
+  SCHEME_UNIT_Z,            /* 1.00e+21 */
+  SCHEME_UNIT_Y,            /* 1.00e+24 */
+  SCHEME_UNIT_DB,           /* 20log10 */
+} ds_scheme_unit_t;
 
 typedef struct ds_scheme_time_s
 {
@@ -135,6 +143,11 @@ int lisp_add_symbol( ds_scheme_t *sc, const char *symbol_name, ds_scheme_pfn_sym
 /* lisp-parser.c */
 int lisp_parse( ds_scheme_t *sc, const ds_scheme_synlist_t *synlist, DS_OUT ds_scheme_vallist_t **out );
 int lisp_get_param_count( ds_scheme_t *sc, const ds_scheme_synlist_t *synlist );
+
+/* lispex-units.c */
+double lispex_convert_unit( ds_scheme_unit_t unit, double src );
+const char *lispex_unit_disp( ds_scheme_unit_t unit );
+double lispex_unit_coeff( ds_scheme_unit_t unit );
 
 #define lisp_vallist_create lisp_synlist_create
 #define lisp_vallist_free lisp_synlist_free

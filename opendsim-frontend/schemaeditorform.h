@@ -46,6 +46,9 @@ public:
   int open( const char *filename );
   int save( const char *filename );
   int compileNetlist();
+  int debugStep();
+  int debugRun();
+  void debugEnd();
   void gotoCenter();
   inline LispDataset *dataset() const { return dom; }
   inline SchemaSheet *schemaSheet() const { return schsheet; }
@@ -63,6 +66,7 @@ private slots:
   void onModeEllipse();
   void onModeText();
   void onModeScript();
+  void onModeOrigin();
 
 private:
   QAction *modeSelection,
@@ -77,7 +81,8 @@ private:
           *modeDrawLine,
           *modeDrawRect,
           *modeDrawEllipse,
-          *modeDrawText;
+          *modeDrawText,
+          *modeDrawOrigin;
 
   QToolBar *modeToolBar;
   ComponentPickWidget *componentPick;

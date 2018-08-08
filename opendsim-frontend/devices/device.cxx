@@ -40,6 +40,17 @@ IDevice::IDevice( const char *reference_, int id_, void *reserved_ )
 
 IDevice::~IDevice() {}
 
+circ_element_t *IDevice::createModel( const char *mdel_symbol, circuit_t *circuit )
+{
+  circ_element_t *m_mdel = circ_element_create( circuit, mdel_symbol, m_id );
+  if( m_mdel )
+    {
+      circuit_attach_element( circuit, m_mdel );
+      return m_mdel;
+    }
+  return 0l;
+}
+
 /* set up main mdel */
 int IDevice::baseinit( const char *mdel_symbol, circuit_t *circuit )
 {

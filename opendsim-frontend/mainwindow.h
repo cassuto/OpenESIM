@@ -58,6 +58,19 @@ protected:
   QSize sizeHint () const;
 
 private:
+  enum SchemaEditState
+  {
+    SCHEDIT_INPUT,
+    SCHEDIT_RUNNING,
+    SCHEDIT_FROZEN
+  };
+
+  void setSchemaEditState( SchemaEditState state );
+
+private:
+
+  SchemaEditState m_schemaEditState;
+
   QSettings m_settings;
 
   Templatestyle *m_template;
@@ -69,8 +82,13 @@ private:
           *fileSave,
           *fileQuit;
   QAction *designViewNetlist;
-  QMenu *designMenu;
+  QAction *debugStep;
+  QAction *debugRun;
+  QAction *debugEnd;
   QMenu *fileMenu;
+  QMenu *debugMenu;
+  QMenu *designMenu;
+
   QToolBar *fileToolBar;
   QMdiArea *workspace;
   QLabel *statusLabel;
@@ -96,6 +114,9 @@ private slots:
   void onFileSave();
   void onFileQuit();
   void onDesignViewNetlist();
+  void onDebugStep();
+  void onDebugRun();
+  void onDebugEnd();
   void onUpdateMenus();
 
 signals:

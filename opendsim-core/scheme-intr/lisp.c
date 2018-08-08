@@ -297,17 +297,7 @@ lisp_print( ds_scheme_vallist_t *vallist, char *buff, int maxlen )
 
       /* print time */
     case SCHEME_VAL_TIME:
-      switch ( lispval_time( vallist ).unit )
-      {
-        case SCHEME_UNIT_NONE: disp = ""; break;
-        case SCHEME_UNIT_FS: disp = "fs"; break;
-        case SCHEME_UNIT_PS: disp = "ps"; break;
-        case SCHEME_UNIT_NS: disp = "ns"; break;
-        case SCHEME_UNIT_US: disp = "us"; break;
-        case SCHEME_UNIT_MS: disp = "ms"; break;
-        case SCHEME_UNIT_S:  disp = "s";  break;
-        default: disp = "?"; break;
-      }
+      disp = lispex_unit_disp( lispval_time( vallist ).unit );
       CHECK_POS(); pos += snprintf( &buff[pos], maxlen - pos, "%lf %s", lispval_time( vallist ).time, disp );
       break;
 

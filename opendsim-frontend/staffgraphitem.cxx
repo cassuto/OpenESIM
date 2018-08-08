@@ -33,10 +33,10 @@ StaffGraphItem::~StaffGraphItem()
 }
 
 qreal StaffGraphItem::width()
-{ return boundingRect().right() - boundingRect().left() + 1; }
+{ return boundingRect().right() - boundingRect().left() - 1; }
 
 qreal StaffGraphItem::height()
-{ return boundingRect().bottom() - boundingRect().top() + 1; }
+{ return boundingRect().bottom() - boundingRect().top() - 1; }
 
 QPointF StaffGraphItem::central()
 { return QPointF( boundingRect().x() + width() / 2, boundingRect().y() + height() / 2); }
@@ -72,6 +72,7 @@ void StaffGraphItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
   event->accept();
   ungrabMouse();
+  if( m_events ) m_events->staffMouseReleaseEvent( m_index, event );
 }
 
 

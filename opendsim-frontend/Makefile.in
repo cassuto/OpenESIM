@@ -75,20 +75,22 @@ am_opendsim_OBJECTS = opendsim-edit.$(OBJEXT) \
 	elementwire.$(OBJEXT) elementpin.$(OBJEXT) \
 	elementtext.$(OBJEXT) elementrect.$(OBJEXT) \
 	elementline.$(OBJEXT) elementjoint.$(OBJEXT) \
-	elementellipse.$(OBJEXT) elementabstractport.$(OBJEXT) \
-	staffgraphitem.$(OBJEXT) staffpad.$(OBJEXT) \
-	schemaviewactions.$(OBJEXT) schemaviewmenus.$(OBJEXT) \
-	mainwindow.$(OBJEXT) schemawidget.$(OBJEXT) \
-	schemaview.$(OBJEXT) schemascene.$(OBJEXT) \
-	schemaeditorform.$(OBJEXT) componentpickwidget.$(OBJEXT) \
-	componentpicktree.$(OBJEXT) componentlibrarydialog.$(OBJEXT) \
-	propertydialog.$(OBJEXT) propertywidget.$(OBJEXT) \
-	propertywidgettext.$(OBJEXT) propertywidgetpin.$(OBJEXT) \
-	propertywidgetcustom.$(OBJEXT) propertywidgetconfig.$(OBJEXT) \
-	propertycontainerimpl.$(OBJEXT) propertyeditorwidget.$(OBJEXT) \
-	propertymodel.$(OBJEXT) propertyvariantdelegate.$(OBJEXT) \
-	propertybase.$(OBJEXT) presscolorbox.$(OBJEXT) \
-	netlistexplorerdialog.$(OBJEXT) resources.$(OBJEXT)
+	elementellipse.$(OBJEXT) elementorigin.$(OBJEXT) \
+	elementabstractport.$(OBJEXT) staffgraphitem.$(OBJEXT) \
+	staffpad.$(OBJEXT) schemaviewactions.$(OBJEXT) \
+	schemaviewmenus.$(OBJEXT) mainwindow.$(OBJEXT) \
+	schemawidget.$(OBJEXT) schemaview.$(OBJEXT) \
+	schemascene.$(OBJEXT) schemaeditorform.$(OBJEXT) \
+	componentpickwidget.$(OBJEXT) componentpicktree.$(OBJEXT) \
+	componentlibrarydialog.$(OBJEXT) propertydialog.$(OBJEXT) \
+	propertywidget.$(OBJEXT) propertywidgettext.$(OBJEXT) \
+	propertywidgetpin.$(OBJEXT) propertywidgetcustom.$(OBJEXT) \
+	propertywidgetcomponent.$(OBJEXT) \
+	propertywidgetconfig.$(OBJEXT) propertycontainerimpl.$(OBJEXT) \
+	propertyeditorwidget.$(OBJEXT) propertymodel.$(OBJEXT) \
+	propertyvariantdelegate.$(OBJEXT) propertybase.$(OBJEXT) \
+	presscolorbox.$(OBJEXT) netlistexplorerdialog.$(OBJEXT) \
+	unitsconversion.$(OBJEXT) resources.$(OBJEXT)
 opendsim_OBJECTS = $(am_opendsim_OBJECTS)
 am__DEPENDENCIES_1 =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -265,6 +267,7 @@ opendsim_SOURCES = \
   elementline.cxx \
   elementjoint.cxx \
   elementellipse.cxx \
+  elementorigin.cxx \
   elementabstractport.cxx \
   staffgraphitem.cxx \
   staffpad.cxx \
@@ -283,6 +286,7 @@ opendsim_SOURCES = \
   propertywidgettext.cxx \
   propertywidgetpin.cxx \
   propertywidgetcustom.cxx \
+  propertywidgetcomponent.cxx \
   propertywidgetconfig.cxx \
   propertycontainerimpl.cxx \
   propertyeditorwidget.cxx \
@@ -291,6 +295,7 @@ opendsim_SOURCES = \
   propertybase.cxx \
   presscolorbox.cxx \
   netlistexplorerdialog.cxx \
+  unitsconversion.cxx \
   resources.cxx
 
 MOCHEADERS = \
@@ -303,9 +308,8 @@ MOCHEADERS = \
   componentpickwidget.h \
   componentpicktree.h \
   componentlibrarydialog.h \
-  propertywidgettext.h \
-  propertywidgetpin.h \
   propertywidgetcustom.h \
+  propertywidgetcomponent.h \
   propertydialog.h \
   presscolorbox.h \
   netlistexplorerdialog.h \
@@ -402,6 +406,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementgraphitem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementjoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementline.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementorigin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementpin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementrect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementtext.Po@am__quote@
@@ -419,6 +424,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertymodel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertyvariantdelegate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidget.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgetcomponent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgetconfig.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgetcustom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgetpin.Po@am__quote@
@@ -437,6 +443,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/templatecustom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/templatestyle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/transformations.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unitsconversion.Po@am__quote@
 
 .cxx.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

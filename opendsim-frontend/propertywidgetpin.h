@@ -25,8 +25,6 @@ namespace dsim
 class ElementPin;
 class PropertyWidgetPin : public PropertyWidget
 {
-  Q_OBJECT
-
 public:
   PropertyWidgetPin( ElementPin *pin, QWidget *parent = 0l );
 

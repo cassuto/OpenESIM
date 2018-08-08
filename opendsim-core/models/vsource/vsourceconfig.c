@@ -49,13 +49,12 @@ LIB_FUNC(vsource_config)( circ_element_t *element, int op, ... )
     case ELM_CONFIG_GET: /* Query the value of parameter */
       {
         int param_id = va_arg( vlist, int );
-        double *value = va_arg( vlist, double* );
         switch ( param_id )
         {
-          case 0: *value = param->vh; break;
-          case 1: *value = param->vl; break;
-          case 2: *value = param->volt_out; break;
-          case 3: *value = param->imp; break;
+          case 0: *(va_arg( vlist, double* )) = param->vh; break;
+          case 1: *(va_arg( vlist, double* )) = param->vl; break;
+          case 2: *(va_arg( vlist, int* )) = (int)param->out; break;
+          case 3: *(va_arg( vlist, double* )) = param->imp; break;
           default: rc = -DS_FAULT;
         }
       }

@@ -27,6 +27,7 @@
 #include "propertywidgetcustom.h"
 #include "propertywidgettext.h"
 #include "propertywidgetpin.h"
+#include "propertywidgetcomponent.h"
 #include "propertywidgetconfig.h"
 #include "mainwindow.h"
 #include "schemaview.h"
@@ -177,6 +178,7 @@ void SchemaView::onEditProperties( bool )
         }
       else if( ComponentGraphItem *component = element_cast<ComponentGraphItem *>( m_selectedElements ) )
         {
+          settings.addPropertyWidget( new PropertyWidgetComponent( component, &settings ) );
           settings.addPropertyWidget( new PropertyWidgetConfig( component->properties(), &settings ) );
           settings.exec();
         }

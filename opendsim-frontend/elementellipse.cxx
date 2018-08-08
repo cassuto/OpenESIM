@@ -13,6 +13,7 @@
  *  Lesser General Public License for more details.
  */
 
+#include <cmath>
 #include <frontend/error.h>
 
 #include "templatestyle.h"
@@ -37,8 +38,9 @@ ElementEllipse::ElementEllipse( const QRectF &rect, int id, SchemaScene *scene, 
         }
     }
 
-  setRect( rect );
+  setRectParent( rect );
   setStyle( "component" );
+  setFineturningEnabled( true );
 }
 
 ElementEllipse::~ElementEllipse()
@@ -51,24 +53,37 @@ void ElementEllipse::setStyle( const char *style )
   update();
 }
 
-void ElementEllipse::setRect( const QRectF &rect )
+void ElementEllipse::setRectParent( const QRectF &rect )
 {
   QRectF r( rect );
-  if( r.width() < gridWh ) r.setWidth( gridWh );
-  if( r.height() < gridHt ) r.setHeight( gridHt );
 
-  QGraphicsEllipseItem::setRect( r );
+  setPos( r.topLeft() );
+  QGraphicsEllipseItem::setRect( mapRectFromParent( r ) );
   updatePads();
+}
+
+QRectF ElementEllipse::rectParent() const
+{ return mapRectToParent( rect() ); }
+
+void ElementEllipse::normalizeRect()
+{
+  QRectF rect( rectParent().normalized() );
+
+  if( rect.width() < gridWh/4 ) rect.setWidth( gridWh/4 ); // limit the minimum size
+  if( rect.height() < gridHt/4 ) rect.setHeight( gridHt/4 );
+  setRectParent( rect );
 }
 
 int ElementEllipse::serialize( LispDataset *dataset )
 {
   int rc = ElementGraphItem::serialize( dataset );                  UPDATE_RC(rc);
 
-  rc = dataset->ser( double(rect().topLeft().x()) );                UPDATE_RC(rc);
-  rc = dataset->ser( double(rect().topLeft().y()) );                UPDATE_RC(rc);
-  rc = dataset->ser( double(rect().bottomRight().x()) );            UPDATE_RC(rc);
-  rc = dataset->ser( double(rect().bottomRight().y()) );            UPDATE_RC(rc);
+  double x1, y1, x2, y2;
+  rectParent().normalized().getCoords( &x1, &y1, &x2, &y2 );
+  rc = dataset->ser( x1 );                                          UPDATE_RC(rc);
+  rc = dataset->ser( y1 );                                          UPDATE_RC(rc);
+  rc = dataset->ser( x2 );                                          UPDATE_RC(rc);
+  rc = dataset->ser( y2 );                                          UPDATE_RC(rc);
 
   return rc;
 }
@@ -84,10 +99,9 @@ int ElementEllipse::deserialize( LispDataset *dataset )
   rc = dataset->des( x2 );                                          UPDATE_RC(rc);
   rc = dataset->des( y2 );                                          UPDATE_RC(rc);
 
-  QRectF rect = QGraphicsEllipseItem::rect();
-  rect.setTopLeft( QPointF( x1, y1 ) );
-  rect.setBottomRight( QPointF( x2, y2 ) );
-  setRect( rect );
+  QRectF rect;
+  rect.setCoords( x1, y1, x2, y2 );
+  setRectParent( rect.normalized() );
   return rc;
 }
 
@@ -115,7 +129,7 @@ void ElementEllipse::setSelected( bool selected )
 void ElementEllipse::staffMoveEvent( int index, bool fineturning, QGraphicsSceneMouseEvent *event )
 {
   QPointF cp = fineturning ? event->scenePos() : togrid(event->scenePos());
-  QRectF rect = QGraphicsEllipseItem::rect();
+  QRectF rect = rectParent();
 
   switch( index )
   {
@@ -144,12 +158,14 @@ void ElementEllipse::staffMoveEvent( int index, bool fineturning, QGraphicsScene
       }
   }
 
-  setRect( rect );
+  setRectParent( rect );
 }
+
+void ElementEllipse::staffMouseReleaseEvent( int, QGraphicsSceneMouseEvent * )
+{ normalizeRect(); }
 
 void ElementEllipse::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
 {
-
   Templatestyle::apply( this, customLine(), customFill(), style(), isSelected() );
 
   QGraphicsEllipseItem::paint( painter, option, widget );

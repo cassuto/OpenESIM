@@ -15,7 +15,6 @@
 
 #define TRACE_UNIT "schemaviewactions"
 #include <cstring>
-#include <cstdio>
 #include <dsim/logtrace.h>
 
 #include "schemascene.h"
@@ -28,6 +27,7 @@
 #include "elementrect.h"
 #include "elementellipse.h"
 #include "elementjoint.h"
+#include "elementorigin.h"
 
 #include "mainwindow.h"
 #include "schemaview.h"
@@ -71,6 +71,7 @@ void SchemaView::setMode( DrawMode mode )
     case MODE_RECT:
     case MODE_ELLIPSE:
     case MODE_SCRIPT:
+    case MODE_ORIGIN:
     case MODE_COMPONENT:
       this->setCursor( QCursor( Qt::CrossCursor ));
       break;
@@ -167,6 +168,15 @@ void SchemaView::setMode( DrawMode mode )
       {
         switchEventHandlers( &SchemaView::mousePressEllipse,
                              &SchemaView::mouseMoveEllipse,
+                             0l,
+                             0l,
+                             0l );
+        break;
+      }
+    case MODE_ORIGIN:
+      {
+        switchEventHandlers( &SchemaView::mousePressOrigin,
+                             0l,
                              0l,
                              0l,
                              0l );
@@ -438,9 +448,9 @@ bool SchemaView::mousePressRect( QMouseEvent *event )
           ElementRect *rectElement = static_cast<ElementRect *>(m_hintElement);
           rectElement->setVisible( false );
 
-          QRectF rect = rectElement->rect();
+          QRectF rect( rectElement->rectParent() );
           rect.setTopLeft( togrid( mapToScene( event->pos() ) ) );
-          rectElement->setRect( rect );
+          rectElement->setRectParent( rect );
 
           m_moving = true;
           event->accept();
@@ -449,11 +459,12 @@ bool SchemaView::mousePressRect( QMouseEvent *event )
       else if( m_moving )
         {
           ElementRect *rectElement = static_cast<ElementRect *>(m_hintElement);
-          QRectF rect = rectElement->rect();
+          QRectF rect = rectElement->rectParent();
 
           if( rect.topLeft() != rect.bottomRight() ) // accept this rectangle
             {
-              m_hintElement->graphicsItem()->setVisible( true );
+              rectElement->normalizeRect();
+              rectElement->setVisible( true );
               m_hintElement = 0l;
             }
 
@@ -479,9 +490,9 @@ bool SchemaView::mouseMoveRect( QMouseEvent *event )
   if( m_moving )
     {
       ElementRect *rectElement = static_cast<ElementRect *>(m_hintElement);
-      QRectF rect = rectElement->rect();
+      QRectF rect( rectElement->rectParent() );
       rect.setBottomRight( togrid( mapToScene( event->pos() ) ) );
-      rectElement->setRect( rect );
+      rectElement->setRectParent( rect );
       rectElement->setVisible( true );
 
       event->accept();
@@ -504,9 +515,9 @@ bool SchemaView::mousePressEllipse( QMouseEvent *event )
           ElementEllipse *ellipseElement = static_cast<ElementEllipse *>(m_hintElement);
           ellipseElement->setVisible( false );
 
-          QRectF rect = ellipseElement->rect();
+          QRectF rect( ellipseElement->rectParent() );
           rect.setTopLeft( togrid( mapToScene( event->pos() ) ) );
-          ellipseElement->setRect( rect );
+          ellipseElement->setRectParent( rect );
 
           m_moving = true;
           event->accept();
@@ -515,12 +526,13 @@ bool SchemaView::mousePressEllipse( QMouseEvent *event )
       else if( m_moving )
         {
           ElementEllipse *ellipseElement = static_cast<ElementEllipse *>(m_hintElement);
-          QRectF rect = ellipseElement->rect();
+          QRectF rect = ellipseElement->rectParent();
 
           if( rect.topLeft() != rect.bottomRight() ) // accept this ellipse
             {
+              ellipseElement->setRectParent( rect );
+              ellipseElement->normalizeRect();
               ellipseElement->setVisible( true );
-              ellipseElement->setRect( rect );
               m_hintElement = 0l;
             }
 
@@ -546,14 +558,39 @@ bool SchemaView::mouseMoveEllipse( QMouseEvent *event )
   if( m_moving )
     {
       ElementEllipse *ellipseElement = static_cast<ElementEllipse *>(m_hintElement);
-      QRectF rect = ellipseElement->rect();
+      QRectF rect( ellipseElement->rectParent() );
       rect.setBottomRight( togrid( mapToScene( event->pos() ) ) );
-      ellipseElement->setRect( rect );
+      ellipseElement->setRectParent( rect );
       ellipseElement->setVisible( true );
 
       event->accept();
       return false;
     }
+  return true;
+}
+
+// ------------------------------------------------------------------ //
+// Mouse actions for origin mode
+// ------------------------------------------------------------------ //
+
+bool SchemaView::mousePressOrigin( QMouseEvent *event )
+{
+  if( event->button() == Qt::LeftButton )
+    {
+      if( 0l == m_hintElement )
+        {
+          m_hintElement = createElement( "origin", QPoint( 0, 0 ) );
+          ElementOrigin *originElement = static_cast<ElementOrigin *>(m_hintElement);
+          originElement->setPos( togrid( mapToScene( event->pos() ) ) );
+
+          m_hintElement = 0l; // accept this origin
+          setMode( MODE_SELECTION );
+
+          event->accept();
+          return false;
+        }
+    }
+  setMode( MODE_SELECTION ); // give up drawing
   return true;
 }
 
@@ -592,11 +629,11 @@ void SchemaView::dragEnterEvent( QDragEnterEvent *event )
   std::string symbol = text.toStdString();
   QPointF cp = togrid( mapToScene(event->pos()) );
 
-  ElementText *symbolText = static_cast<ElementText *>(createElement( "text", cp, /*edit*/true, /*deser*/false ));
+  ElementText *valueText = static_cast<ElementText *>(createElement( "text", cp, /*edit*/true, /*deser*/false ));
   ElementText *referenceText = static_cast<ElementText *>(createElement( "text", cp, /*edit*/true, /*deser*/false ));
 
   m_hintComponent = static_cast<ComponentGraphItem *>(createElement( "component", cp, /*edit*/true, /*deser*/false ));
-  int rc = m_hintComponent->init( symbol.c_str(), symbolText, referenceText );
+  int rc = m_hintComponent->init( symbol.c_str(), valueText, referenceText );
   if( MainWindow::instance()->processRc( rc ) )
     {
       event->ignore();

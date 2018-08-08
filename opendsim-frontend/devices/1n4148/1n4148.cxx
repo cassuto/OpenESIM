@@ -23,7 +23,7 @@ DeviceLibraryEntry *dev_1n4148::libraryEntry()
 {
   return new DeviceLibraryEntry(
       /* symbol_name */     "1n4148",
-      /* reference_name */  "D",
+      /* reference_name */  "D?",
       /* category */        "Diodes",
       /* sub_category */    "Switching",
       /* description */     "1N4148 Diode",
@@ -44,15 +44,15 @@ dev_1n4148::dev_1n4148( const char *reference, int id, void *reserved )
 
 int dev_1n4148::create( ISchematic *schematic, IPropertyContainer *properties )
 {
-  int rc = IDevice::baseinit( "D", m_circuit );             UPDATE_RC(rc);
-  rc = properties->readModel( m_mdel );                         UPDATE_RC(rc);
+  int rc = IDevice::baseinit( "D", m_circuit );                 UPDATE_RC(rc);
+  rc = properties->readModel( m_mdel, 0 );                      UPDATE_RC(rc);
   rc = properties->readDevice( this );                          UPDATE_RC(rc);
 
   UNUSED(schematic);
   return rc;
 }
 
-int dev_1n4148::init( IPropertyContainer *properties )
+int dev_1n4148::init( ISchematic *, IPropertyContainer *properties )
 {
   return properties->configModel( m_mdel );
 }

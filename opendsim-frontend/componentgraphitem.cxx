@@ -28,6 +28,7 @@
 #include "elementtext.h"
 #include "elementwire.h"
 #include "elementpin.h"
+#include "elementorigin.h"
 #include "propertycontainerimpl.h"
 #include "componentgraphimpl.h"
 #include "componentgraphitem.h"
@@ -42,61 +43,65 @@ ComponentGraphItem::ComponentGraphItem( int id, SchemaScene *scene, bool edit, Q
                   : ElementGraphItem<QGraphicsItemGroup>( id, scene, edit, parent )
                   , m_deviceEntry( 0l )
                   , m_device( 0l )
-                  , m_deviceGraph( new ComponentGraphImpl() )
-                  , m_symbolText( 0l )
+                  , m_valueText( 0l )
                   , m_referenceText( 0l )
                   , m_properties( new PropertyContainerImpl )
+                  , m_deviceGraph( new ComponentGraphImpl )
 {
+  m_schematic = new SchematicImpl( view(), this );
+
   setFlags( QGraphicsItemGroup::ItemIsSelectable | QGraphicsItemGroup::ItemSendsGeometryChanges );
-  setFineturningEnabled(false);
+  setFineturningEnabled( false );
 }
 
 ComponentGraphItem::~ComponentGraphItem()
 {
-  delete m_deviceGraph;
+  delete schematic();
+  delete deviceGraph();
+  delete properties();
 }
 
-int ComponentGraphItem::init( const char *deviceEntry, ElementText *symbolText, ElementText *referenceText )
+int ComponentGraphItem::init( const char *deviceEntry, ElementText *valueText, ElementText *referenceText )
 {
   int rc;
   bool deser = ( 0l != m_device );
-  m_symbolText = symbolText;
+  m_valueText = valueText;
   m_referenceText = referenceText;
 
   if( !deser )
     {
-      addElement( m_symbolText ); // add sub element
+      addElement( m_valueText ); // add sub element
       addElement( m_referenceText );
 
-      m_symbolText->setStyle( "component" );
+      m_valueText->setStyle( "component" );
       m_referenceText->setStyle( "component" );
 
       rc = findEntry( deviceEntry );    UPDATE_RC(rc);
 
       m_symbol = deviceEntry;
       m_reference = m_deviceEntry->reference_name; // to allocate a default reference
-      m_reference += "?";
 
       rc = createDevice();              UPDATE_RC(rc);
+
+      if( properties()->valued() )
+        m_value = properties()->value(); // if there is no default value, use the symbol instead
+      else
+        m_value = deviceEntry;
     }
 
   /*
    * Set up sub elements
    */
-  m_symbolText->setText( deviceEntry );
-  m_symbolText->setTextEditable( false );
-  m_referenceText->setText( m_reference.c_str() );
+  setValue( m_value.c_str() );
+  setReference( m_reference.c_str() );
 
   /*
    * Load component symbol and layout
    */
   if( !deser )
     {
-      QPointF oldpos = pos(); QGraphicsItemGroup::setPos( QPointF( 0, 0) ); // ensure right offset aligned to grid
-
       rc = view()->loadSymbol( this, m_deviceEntry->symbolfile ); UPDATE_RC(rc);
 
-      QGraphicsItemGroup::setPos( oldpos );
       setLayout();
     }
   return 0;
@@ -106,13 +111,18 @@ int ComponentGraphItem::createDevice()
 {
   trace_assert( m_deviceEntry );
 
-  int rc = view()->sheet()->createDevice( m_deviceEntry, m_reference.c_str(), id(), m_properties, &m_device );  UPDATE_RC(rc);
+  schematic()->reset();
+  properties()->reset();
+  int rc = view()->sheet()->createDevice( m_deviceEntry, m_reference.c_str(), id(), schematic(), properties(), &m_device );  UPDATE_RC(rc);
 
   return m_device ? 0 : -DS_CREATE_IDEVICE;
 }
 
 int ComponentGraphItem::initDevice()
-{ return device()->init( m_properties ); }
+{
+  syncParameters();
+  return device()->init( schematic(), properties() );
+}
 
 int ComponentGraphItem::findEntry( const char *symbol )
 {
@@ -123,18 +133,13 @@ int ComponentGraphItem::findEntry( const char *symbol )
 
 void ComponentGraphItem::setLayout()
 {
-  if( m_symbolText && m_referenceText )
+  if( m_valueText && m_referenceText )
     {
-      m_symbolText->setPos( pos() + QPointF( boundingRect().left(),
-                                boundingRect().top() - m_symbolText->boundingRect().height() - 8 ) );
+      m_valueText->setPos( pos() + QPointF( boundingRect().left(),
+                            boundingRect().top() - m_valueText->boundingRect().height() - 8 ) );
       m_referenceText->setPos( pos() + QPointF( boundingRect().left(),
-                                boundingRect().top() - m_symbolText->boundingRect().height() - m_referenceText->boundingRect().height() - 8 ) );
+                              boundingRect().top() - m_valueText->boundingRect().height() - m_referenceText->boundingRect().height() - 8 ) );
     }
-}
-
-void ComponentGraphItem::setPos( const QPointF &pos )
-{
-  QGraphicsItemGroup::setPos( pos + QPointF( gridWh/2, gridHt/2 ) ); // force align to grid
 }
 
 void ComponentGraphItem::setDirect( ElemDirect direct )
@@ -212,8 +217,22 @@ QList<ElementBase *>::iterator ComponentGraphItem::pinsEnd()
 std::string ComponentGraphItem::reference()
 { return m_referenceText->text().toStdString(); }
 
+std::string ComponentGraphItem::value()
+{ return m_valueText->text().toStdString(); }
+
 std::string ComponentGraphItem::symbol()
 { return m_symbol; }
+
+void ComponentGraphItem::setReference( const QString &reference )
+{ m_reference = reference.toStdString(); m_referenceText->setText( reference ); }
+
+void ComponentGraphItem::setValue( const QString &value )
+{ m_valueText->setText( value ); }
+
+void ComponentGraphItem::syncParameters() // It's preferred to call this function before reading/writing properties
+{
+  properties()->setValue( value() );
+}
 
 int ComponentGraphItem::resolveSubElements()
 {
@@ -221,13 +240,33 @@ int ComponentGraphItem::resolveSubElements()
 
   QList<ElementBase *>::const_iterator it = elements().begin();
 
-  m_symbolText = element_cast<ElementText *>(*it++);
+  m_valueText = element_cast<ElementText *>(*it++);
   m_referenceText = element_cast<ElementText *>(*it++);
 
-  if( 0l==m_symbolText || 0l==m_referenceText )
+  if( 0l==m_valueText || 0l==m_referenceText )
     return -DS_INVALID_ELEMENT_ID;
 
-  QPointF oldpos = pos(); QGraphicsItemGroup::setPos( QPointF( 0, 0) ); // ensure right offset aligned to grid
+  ElementOrigin *originElement = 0l;
+  foreach( ElementBase *element, elements() )
+    {
+      if( 0==std::strcmp( element->classname(), "origin" ) )
+        { originElement = static_cast<ElementOrigin *>(element); break; }
+    }
+
+  QPointF origin;
+  if( originElement )
+    { origin = originElement->originPos(); }
+  else
+    {
+      /*
+       * there is no origin information, using the default origin.
+       * Unnecessary to consider grid alignment as the position of origin is relative to the origin of QGraphicsItemGroup. After an graphics item
+       * is belonged to a QGraphicsItemGroup, whose position will represent the relative value, so the origin should always be located at (0, 0)...
+       */
+      origin = QPointF( 0, 0 );
+    }
+
+  QPointF oldpos = pos(); QGraphicsItemGroup::setPos( origin );
   for( ; it!=elements().end(); ++it )
     {
       addComponentElementInner( *it );
@@ -235,7 +274,7 @@ int ComponentGraphItem::resolveSubElements()
   QGraphicsItemGroup::setPos( oldpos );
 
   setDirect( direct() );
-  return init( m_symbol.c_str(), m_symbolText, m_referenceText );
+  return init( m_symbol.c_str(), m_valueText, m_referenceText );
 }
 
 void ComponentGraphItem::releaseSubElements()
@@ -279,9 +318,10 @@ int ComponentGraphItem::serialize( LispDataset *dataset )
 
   rc = dataset->ser( double(pos().x()) );                   UPDATE_RC(rc);
   rc = dataset->ser( double(pos().y()) );                   UPDATE_RC(rc);
-  rc = dataset->ser( m_symbol );                            UPDATE_RC(rc);
+  rc = dataset->ser( symbol() );                            UPDATE_RC(rc);
+  rc = dataset->ser( value() );                             UPDATE_RC(rc);
   rc = dataset->ser( reference() );                         UPDATE_RC(rc);
-  rc = m_properties->serialize( dataset );                  UPDATE_RC(rc);
+  rc = properties()->serialize( dataset );                  UPDATE_RC(rc);
 
   return rc;
 }
@@ -291,15 +331,15 @@ int ComponentGraphItem::deserialize( LispDataset *dataset )
   int rc = ElementGraphItem<QGraphicsItemGroup>::deserialize( dataset ); UPDATE_RC(rc);
 
   double x, y;
-  std::string symbol;
   rc = dataset->des( x );                                   UPDATE_RC(rc);
   rc = dataset->des( y );                                   UPDATE_RC(rc);
   rc = dataset->des( m_symbol );                            UPDATE_RC(rc);
+  rc = dataset->des( m_value );                             UPDATE_RC(rc);
   rc = dataset->des( m_reference );                         UPDATE_RC(rc);
 
   rc = findEntry( m_symbol.c_str() );                       UPDATE_RC(rc);
   rc = createDevice();                                      UPDATE_RC(rc);
-  rc = m_properties->deserialize( dataset );                UPDATE_RC(rc);
+  rc = properties()->deserialize( dataset );                UPDATE_RC(rc);
 
   QGraphicsItemGroup::setPos( QPointF( x, y ) );
   return 0;
@@ -341,6 +381,7 @@ void ComponentGraphItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
             }
         }
     }
+  event->ignore();
 }
 
 void ComponentGraphItem::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
@@ -371,7 +412,7 @@ void ComponentGraphItem::paint( QPainter* painter, const QStyleOptionGraphicsIte
       m_deviceGraph->setPainter( painter );
       m_deviceGraph->setSelected( isSelected() );
 
-      m_device->render_frame( m_deviceGraph );
+      m_device->render_frame( schematic(), m_deviceGraph );
     }
 }
 

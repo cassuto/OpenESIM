@@ -54,6 +54,12 @@
 #define DS_UNKNOWN_PROPERTY_ENTRY (DS_FRONTEND+13)
 /** Can't find the device */
 #define DS_FIND_DEVICE (DS_FRONTEND+14)
+/** The type of the value item is mismatched, or you have specified an invalid id */
+#define DS_INVALID_VALUE_TYPE (DS_FRONTEND+15)
+/** The value Id is duplicated */
+#define DS_DUP_VALUE_ID (DS_FRONTEND+16)
+/** Can't place the origin because there have been an origin before */
+#define DS_DUP_ORIGIN (DS_FRONTEND+17)
 
 /* }}gen */
 

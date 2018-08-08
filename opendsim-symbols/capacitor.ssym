@@ -1,0 +1,13 @@
+(format ssymbol 1 )
+(origin 36 12 )
+(elements
+  (text 1 () 0 "pin" (cust ) (cust ) (cust ) 36 7 "a" )
+  (text 2 () 0 "pin" (cust ) (cust ) (cust ) 17 0.5 "1" )
+  (pin 3 (1 2 ) 0 "pin" (cust ) (cust ) (cust ) 12 12 17 #f #f 0 )
+  (text 4 () 0 "pin" (cust ) (cust ) (cust ) 21 7 "b" )
+  (text 5 () 0 "pin" (cust ) (cust ) (cust ) 40 0.5 "2" )
+  (pin 6 (4 5 ) 2 "pin" (cust ) (cust ) (cust ) 52 12 17 #f #f 0 )
+  (line 7 () 0 "component" (cust ) (cust ) (cust ) 29 5.79925 (points (28 4 ) (28 20 ) ) )
+  (line 8 () 0 "component" (cust ) (cust ) (cust ) 35 5.79925 (points (36 4 ) (36 20 ) ) )
+  (origin 9 () 0 "component" (cust ) (cust ) (cust ) 36 12 )
+)

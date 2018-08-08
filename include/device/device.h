@@ -121,8 +121,8 @@ public:
 
   virtual ModelPropertyValue *propertyModelValue() const=0;
   virtual DevicePropertyValue *propertyDeviceValue() const=0;
-  virtual int readModel( circ_element_t *element )=0;
-  virtual int readDevice( IDevice *device )=0;
+  virtual int readModel( circ_element_t *element, int valueid = -1 )=0;
+  virtual int readDevice( IDevice *device, int valueid = -1 )=0;
   virtual int configModel( circ_element_t *element )=0;
   virtual int configDevice( IDevice *device )=0;
 };
@@ -137,16 +137,17 @@ public:
   // Component Interface
   //
   virtual int           create( ISchematic *, IPropertyContainer * ) { return 0; }
-  virtual int           init( IPropertyContainer * ) { return 0; }
+  virtual int           init( ISchematic *, IPropertyContainer * ) { return 0; }
   virtual int           pin_count();
   virtual circ_pin_t *  pin( int index );
   virtual int           config( int op, ... );
-  virtual int           render_frame( IDeviceGraph *graph ) { UNUSED(graph); return 0; }
+  virtual int           render_frame( ISchematic *, IDeviceGraph * ) { return 0; }
   virtual int           uninit() { return 0; }
 
   //
   // Inline model Interface
   //
+  circ_element_t *createModel( const char *mdel_symbol, circuit_t *circuit );
   int baseinit( const char *mdel_symbol, circuit_t *circuit );
   int baseinit( device_type type, circuit_t *circuit );
   void baseuninit();

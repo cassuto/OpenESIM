@@ -70,6 +70,8 @@ C_DECLS
 #define DS_TYPE_MISMATCH (19)
 /** Not matched */
 #define DS_NOT_MATCHED (26)
+/** Failed to create model */
+#define DS_CREATE_MODEL (27)
 
 /* }}gen */
 

@@ -227,7 +227,7 @@ circuit_run_step( circuit_t *circuit )
               if( ++counter > 1000 ) break; /* Limit the number of loops */
             }
           if( counter > 0 ) trace_debug(("circuit_run_step()  Non-Linear Solved in steps %d\n", counter));
-          /* todo: point out whether converged and throw warring if needed. */
+          /* todo: point out whether converged and throw warring if no. */
         }
       if( !hashmap_empty(&circuit->changed_node_list) )
         if( (rc = solve_matrix( circuit )) )

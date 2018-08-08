@@ -25,6 +25,7 @@ LIB_FUNC(vsource_create)( circ_element_t *element )
   param->volt_out  = model_cero_doub;
   param->imp      = model_cero_doub;
   param->admit    = 1/param->imp;
+  param->out      = true;
 
   param->src_node = circ_node_create( element->circuit, true );
   if( param->src_node )

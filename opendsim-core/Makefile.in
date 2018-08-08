@@ -78,9 +78,10 @@ am_libdsim_la_OBJECTS = libdsim_la-logtrace.lo libdsim_la-string.lo \
 	libdsim_la-prime.lo libdsim_la-bound.lo libdsim_la-errors.lo \
 	libdsim_la-lisp-buffer.lo libdsim_la-lisp-fault.lo \
 	libdsim_la-lisp-lexer.lo libdsim_la-lisp-parser.lo \
-	libdsim_la-lisp.lo libdsim_la-circmatrix.lo \
-	libdsim_la-circuit.lo libdsim_la-circ-pin.lo \
-	libdsim_la-circ-node.lo libdsim_la-circ-element.lo
+	libdsim_la-lispex-units.lo libdsim_la-lisp.lo \
+	libdsim_la-circmatrix.lo libdsim_la-circuit.lo \
+	libdsim_la-circ-pin.lo libdsim_la-circ-node.lo \
+	libdsim_la-circ-element.lo
 libdsim_la_OBJECTS = $(am_libdsim_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -254,6 +255,7 @@ libdsim_la_SOURCES = util/logtrace.c \
                 scheme-intr/lisp-fault.c \
                 scheme-intr/lisp-lexer.c \
                 scheme-intr/lisp-parser.c \
+                scheme-intr/lispex-units.c \
                 scheme-intr/lisp.c \
                 math/circ-matrix/circmatrix.c \
                 circuit/circuit.c \
@@ -355,6 +357,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsim_la-lisp-lexer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsim_la-lisp-parser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsim_la-lisp.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsim_la-lispex-units.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsim_la-list.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsim_la-logtrace.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsim_la-prime.Plo@am__quote@
@@ -474,6 +477,13 @@ libdsim_la-lisp-parser.lo: scheme-intr/lisp-parser.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='scheme-intr/lisp-parser.c' object='libdsim_la-lisp-parser.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsim_la_CPPFLAGS) $(CPPFLAGS) $(libdsim_la_CFLAGS) $(CFLAGS) -c -o libdsim_la-lisp-parser.lo `test -f 'scheme-intr/lisp-parser.c' || echo '$(srcdir)/'`scheme-intr/lisp-parser.c
+
+libdsim_la-lispex-units.lo: scheme-intr/lispex-units.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsim_la_CPPFLAGS) $(CPPFLAGS) $(libdsim_la_CFLAGS) $(CFLAGS) -MT libdsim_la-lispex-units.lo -MD -MP -MF "$(DEPDIR)/libdsim_la-lispex-units.Tpo" -c -o libdsim_la-lispex-units.lo `test -f 'scheme-intr/lispex-units.c' || echo '$(srcdir)/'`scheme-intr/lispex-units.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsim_la-lispex-units.Tpo" "$(DEPDIR)/libdsim_la-lispex-units.Plo"; else rm -f "$(DEPDIR)/libdsim_la-lispex-units.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='scheme-intr/lispex-units.c' object='libdsim_la-lispex-units.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsim_la_CPPFLAGS) $(CPPFLAGS) $(libdsim_la_CFLAGS) $(CFLAGS) -c -o libdsim_la-lispex-units.lo `test -f 'scheme-intr/lispex-units.c' || echo '$(srcdir)/'`scheme-intr/lispex-units.c
 
 libdsim_la-lisp.lo: scheme-intr/lisp.c
 @am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsim_la_CPPFLAGS) $(CPPFLAGS) $(libdsim_la_CFLAGS) $(CFLAGS) -MT libdsim_la-lisp.lo -MD -MP -MF "$(DEPDIR)/libdsim_la-lisp.Tpo" -c -o libdsim_la-lisp.lo `test -f 'scheme-intr/lisp.c' || echo '$(srcdir)/'`scheme-intr/lisp.c; \

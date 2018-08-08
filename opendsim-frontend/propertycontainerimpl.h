@@ -33,7 +33,7 @@ public:
   class PropertyEntry
   {
   public:
-    PropertyEntry();
+    PropertyEntry( PropertyClass type );
     ~PropertyEntry();
 
     PropertyClass                   propertyClass;
@@ -68,14 +68,18 @@ public:
   const model_variable_prop_t *modelEntry( int index );
   const device_variable_prop_t *deviceEntry( int index );
 
-  int readModel( circ_element_t *element );
-  int readDevice( IDevice *device );
+  void reset();
+  int readModel( circ_element_t *element, int valueid = -1 );
+  int readDevice( IDevice *device, int valueid = -1 );
   int configModel( circ_element_t *element );
   int configDevice( IDevice *device );
 
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
 
+  inline void setValue( const std::string &value ){ m_value = value; }
+  inline const char *value() const { return m_value.c_str(); }
+  inline bool valued() const { return !m_value.empty(); }
 private:
   inline PropertyEntry *propertyModel() const { return m_modelEntry; }
   inline PropertyEntry *propertyDevice() const { return m_deviceEntry; }
@@ -89,6 +93,14 @@ private:
 private:
   PropertyEntry             *m_modelEntry;
   PropertyEntry             *m_deviceEntry;
+  std::string                m_value;
+  int                        m_valueid;
+  PropertyClass              m_valueClass;
+  union
+  {
+    model_variable_type_t    model;
+    device_variable_type_t   device;
+  } m_valueType;
   std::map<std::string, ModelPropertyValue*> m_modelIndex;
   std::map<std::string, DevicePropertyValue*> m_deviceIndex;
 };

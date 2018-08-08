@@ -18,6 +18,7 @@
 
 #include <QList>
 #include <QHash>
+#include <QFuture>
 #include <dsim/circmatrix.h>
 #include <dsim/circuit.h>
 
@@ -32,8 +33,9 @@ namespace dsim
 
 class SchemaView;
 class ComponentGraphItem;
-class ElementAbstractPort;
+class SchematicImpl;
 class PropertyContainerImpl;
+class ElementAbstractPort;
 
 class SchemaSheet
 {
@@ -53,27 +55,33 @@ public:
   int init();
   void uninit();
   int reinit();
-  int createDevice( const char *symbol, const char *reference, int id, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice );
-  int createDevice( const DeviceLibraryEntry *entry, const char *reference, int id, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice );
+  int createDevice( const char *symbol, const char *reference, int id, SchematicImpl *schematic, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice );
+  int createDevice( const DeviceLibraryEntry *entry, const char *reference, int id, SchematicImpl *schematic, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice );
   void deleteDevice( IDevice *device );
 
   int generateNetlist();
   inline const QList<SchemaNode *> *nodes() const { return &m_nodes; }
   int compile();
   int runStep();
+  int run();
   void end();
+  bool running();
 
   void setSchemaView( SchemaView *schemaView );
-  inline ISchematic *schematic() const { return m_schematic; }
   inline SchemaView *schemaView() const { return m_schemaView; }
 
 private:
-  SchematicImpl     *m_schematic;
+  int runLoop();
+
+private:
   SchemaView        *m_schemaView;
   circ_matrix_t     *m_matrix;
   circuit_t         *m_circuit;
   QList<SchemaNode *> m_nodes;
   QHash<ComponentGraphItem *, char> m_components;
+  bool               m_compiled;
+  bool volatile      m_canceled;
+  QFuture<int>       m_stepFuture;
 };
 
 }

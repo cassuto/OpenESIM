@@ -30,6 +30,7 @@
 #include "elementrect.h"
 #include "elementellipse.h"
 #include "elementjoint.h"
+#include "elementorigin.h"
 #include "schemaview.h"
 
 namespace dsim
@@ -174,6 +175,11 @@ ElementBase *SchemaView::createElement( const char *classname, const QPointF &po
       ElementEllipse *ellipseElement = new ElementEllipse( QRectF( pos, pos ), id, m_schemaGraph, editable );
       element = ellipseElement;
     }
+  else if( 0==std::strcmp( classname, "origin" ) )
+    {
+      ElementOrigin *originElement = new ElementOrigin( pos, id, m_schemaGraph, editable );
+      element = originElement;
+    }
   else
     {
       return 0l;
@@ -252,6 +258,33 @@ int SchemaView::serialize( LispDataset *dom )
 {
   int rc = 0;
 
+  if( dom->type() == DOM_SCHEMA_SYMBOL )
+    {
+      ElementOrigin *origin = 0l;
+      foreach( ElementBase *element, elements() )
+        {
+          if( 0==std::strcmp( element->classname(), "origin" ) )
+            {
+              origin = static_cast<ElementOrigin *>(element);
+              break;
+            }
+        }
+      dom->beginNode( false, "origin" );
+      {
+        if( origin )
+          {
+            rc = dom->ser( double(origin->originPos().x()) ); UPDATE_RC(rc);
+            rc = dom->ser( double(origin->originPos().y()) ); UPDATE_RC(rc);
+          }
+        else
+          {
+            rc = dom->ser( double(0) );         UPDATE_RC(rc);
+            rc = dom->ser( double(0) );         UPDATE_RC(rc);
+          }
+      }
+      dom->endNode();
+    }
+
   dom->beginEntry( "elements" );
   {
     foreach( ElementBase *element, m_elements[0] )
@@ -328,25 +361,20 @@ int SchemaView::deserialize( LispDataset *dom )
 }
 
 int SchemaView::loadSymbol( ComponentGraphItem *component, const char *filename )
-{
+{ using namespace std;
   int rc = 0;
-
-  using namespace std;
 
   string fn( "library/" );
   fn += filename;
-
   ifstream instream( fn.c_str() );
-
   if( !instream.is_open() ) return -DS_OPEN_FILE;
 
   clearStack( 1 );
+  stack = 1;
 
   /*
    * Parse ssymbol file
    */
-  stack = 1;
-
   LispDataset *dom = new LispDataset( DOM_SCHEMA_SYMBOL );
 
   rc = dom->init();                     if( rc ) { stack = 0; return rc; }
@@ -356,10 +384,22 @@ int SchemaView::loadSymbol( ComponentGraphItem *component, const char *filename 
 
   delete dom;
 
-  /*
-   * Reset all the elements in stack 1
-   */
   stack = 0;
+
+  ElementOrigin *originElement = 0l;
+  foreach( ElementBase *element, m_elements[1] )
+    {
+      if( 0==std::strcmp( element->classname(), "origin" ) )
+        { originElement = static_cast<ElementOrigin *>(element); break; }
+    }
+
+  QPointF origin;
+  if( originElement )
+    { origin = originElement->originPos(); }
+  else
+    { origin.setX( gridWh/2 ); origin.setY( gridHt/2 ); } // there is no origin information, using the default origin that is aligned to the grid.
+
+  QPointF oldOrigin = component->pos(); component->setPos( origin );
 
   foreach( ElementBase *element, m_elements[1] )
     {
@@ -367,6 +407,7 @@ int SchemaView::loadSymbol( ComponentGraphItem *component, const char *filename 
       m_elements[stack].append( element );
       component->addComponentElement( element );
     }
+  component->setPos( oldOrigin );
 
   clearStack( 1 );
 

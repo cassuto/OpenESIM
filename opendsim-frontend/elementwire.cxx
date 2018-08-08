@@ -32,7 +32,7 @@ namespace dsim
 WireSegment::WireSegment( const QLineF &line, ElementWire *wire, QGraphicsItem* parent )
           : QGraphicsLineItem( line, parent )
           , m_elementWire( wire )
-          , m_selected( false )
+          , m_hint( false )
 {
   setFlag( QGraphicsItemGroup::ItemIsSelectable, false );
   setAcceptHoverEvents( true );
@@ -140,7 +140,7 @@ void WireSegment::mousePressEvent( QGraphicsSceneMouseEvent *event )
       switch( m_elementWire->view()->mode() )
       {
         case MODE_SELECTION:
-          event->ignore();
+          event->accept();
           grabMouse();
           return;
 
@@ -183,25 +183,35 @@ void WireSegment::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
 
 void WireSegment::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
-  event->accept();
-
   //m_elementWire->removeNullWires( this );
 
   if( event->button() == Qt::LeftButton )
     {
+      event->accept();
       ungrabMouse();
     }
+  else
+    event->ignore();
 }
 
 void WireSegment::hoverEnterEvent( QGraphicsSceneHoverEvent *event )
-{ event->accept(); m_selected = true; update(); }
+{
+  event->accept();
+
+  if( MODE_WIRE == m_elementWire->view()->mode() )
+    {
+      if( static_cast<ElementWire *>(m_elementWire->view()->m_hintElement) == m_elementWire ) // avoid select itself
+        { m_elementWire->setHint( false ); return; }
+    }
+  m_elementWire->setHint( true );
+}
 
 void WireSegment::hoverLeaveEvent( QGraphicsSceneHoverEvent *event )
-{ event->accept(); m_selected = false; update(); }
+{ event->accept(); m_elementWire->setHint( false ); }
 
 void WireSegment::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
 {
-  Templatestyle::apply( painter, 0l, 0l, "wire", m_selected );
+  Templatestyle::apply( painter, 0l, 0l, "wire", m_hint );
 
   setPen( painter->pen() );
   QGraphicsLineItem::paint( painter, option, widget );
@@ -556,16 +566,21 @@ void ElementWire::layoutWires( ElementAbstractPort *port, const QPointF &pos )
           wire->setP1( point );
 
           if( wire->dx() == prewire->dx() || wire->dy() == prewire->dy() ) // Lines aligned or null line
-          {
+            {
               if( wire->isSelected() || prewire->isSelected())
-              {
+                {
                   prewire->setPlainP2( wire->p2() );
                   removeWire( wire  );
                   if( m_activeLine > 0 )  m_activeLine -= 1;
-              }
+                }
           }
         }
     }
+}
+
+void ElementWire::setHint( bool hint )
+{
+  foreach( WireSegment *wire, m_wires ) wire->setHint( hint );
 }
 
 WireSegment *ElementWire::wireAt( const QPointF &scenePos )

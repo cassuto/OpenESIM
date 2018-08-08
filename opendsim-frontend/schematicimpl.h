@@ -22,16 +22,19 @@ namespace dsim
 {
 
 class SchemaView;
+class ComponentGraphItem;
 
 class SchematicImpl : public ISchematic
 {
 public:
-  SchematicImpl();
+  SchematicImpl( SchemaView *schemaView, ComponentGraphItem *component );
 
-  void setSchemaView( SchemaView *schemaView );
+  void reset();
+  void changeValue( const char *value );
 
 private:
   SchemaView *m_schemaView;
+  ComponentGraphItem *m_component;
 };
 
 }

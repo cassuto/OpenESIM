@@ -30,6 +30,12 @@
 
 #include "1n4148.h"
 #include "diode.h"
+#include "vsource-dc.h"
+#include "vsource-dc-0v.h"
+#include "register.h"
+#include "capacitor.h"
+#include "inductor.h"
+#include "voltprobe.h"
 
 #include <dsim/device-lib.h>
 
@@ -120,6 +126,12 @@ int device_lib_init()
 
   rc = Entry( dev_1n4148::libraryEntry() );     UPDATE_RC(rc);
   rc = Entry( dev_diode::libraryEntry() );      UPDATE_RC(rc);
+  rc = Entry( dev_vsource_dc::libraryEntry() ); UPDATE_RC(rc);
+  rc = Entry( dev_vsource_dc_zero::libraryEntry() ); UPDATE_RC(rc);
+  rc = Entry( dev_voltprobe::libraryEntry() );  UPDATE_RC(rc);
+  rc = Entry( dev_register::libraryEntry() );   UPDATE_RC(rc);
+  rc = Entry( dev_capacitor::libraryEntry() );  UPDATE_RC(rc);
+  rc = Entry( dev_inductor::libraryEntry() );   UPDATE_RC(rc);
 
   return 0;
 }

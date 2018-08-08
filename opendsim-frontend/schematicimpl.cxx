@@ -15,17 +15,23 @@
 
 #include <frontend/error.h>
 #include "schemaview.h"
+#include "componentgraphitem.h"
 #include "schematicimpl.h"
 
 namespace dsim
 {
 
-SchematicImpl::SchematicImpl()
-              : m_schemaView( 0l )
+SchematicImpl::SchematicImpl( SchemaView *schemaView, ComponentGraphItem *component )
+              : m_schemaView( schemaView )
+              , m_component( component )
 {
 }
 
-void SchematicImpl::setSchemaView( SchemaView *schemaView )
-{ m_schemaView = schemaView; }
+void SchematicImpl::reset() {}
+
+void SchematicImpl::changeValue( const char *value )
+{
+  m_component->setValue( value );
+}
 
 }

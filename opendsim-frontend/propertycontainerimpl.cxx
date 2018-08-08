@@ -19,24 +19,33 @@
 #include <dsim/string.h>
 #include <dsim/circuit.h>
 #include <string>
+#include <sstream>
 
 #include "lispdataset.h"
+#include "unitsconversion.h"
 #include "propertycontainerimpl.h"
 
 namespace dsim
 {
 
-PropertyContainerImpl::PropertyEntry::PropertyEntry()
-                                 : propertyClass( PROPERTY_MODEL )
+PropertyContainerImpl::PropertyEntry::PropertyEntry( PropertyClass type )
+                                 : propertyClass( type )
                                  , tabCount( 0 )
 {
-  value.model = new ModelPropertyValue;
-  value.model->next = 0l;
-  tail.model = value.model;
+  switch( type )
+  {
+    case PROPERTY_MODEL:
+      value.model = new ModelPropertyValue;
+      value.model->next = 0l;
+      tail.model = value.model;
+      break;
 
-  value.device = new DevicePropertyValue;
-  value.device->next = 0l;
-  tail.device = value.device;
+    case PROPERTY_DEVICE:
+      value.device = new DevicePropertyValue;
+      value.device->next = 0l;
+      tail.device = value.device;
+      break;
+  }
 }
 
 template <class propertyValue>
@@ -52,18 +61,25 @@ template <class propertyValue>
 
 PropertyContainerImpl::PropertyEntry::~PropertyEntry()
 {
-  removePropertyValues( value.model );
-  removePropertyValues( value.device );
+  switch( propertyClass )
+  {
+    case PROPERTY_MODEL: removePropertyValues( value.model ); break;
+    case PROPERTY_DEVICE: removePropertyValues( value.device ); break;
+  }
 }
 
 void PropertyContainerImpl::PropertyEntry::removeValues()
 {
-  removePropertyValues( value.model );
-  removePropertyValues( value.device );
+  switch( propertyClass )
+  {
+    case PROPERTY_MODEL: removePropertyValues( value.model ); break;
+    case PROPERTY_DEVICE: removePropertyValues( value.device ); break;
+  }
 }
 
 void PropertyContainerImpl::PropertyEntry::addValue( ModelPropertyValue *src )
 {
+  trace_assert( propertyClass == PROPERTY_MODEL );
   src->next = 0l;
   tail.model->next = src;
   tail.model = src;
@@ -71,6 +87,7 @@ void PropertyContainerImpl::PropertyEntry::addValue( ModelPropertyValue *src )
 
 void PropertyContainerImpl::PropertyEntry::addValue( DevicePropertyValue *src )
 {
+  trace_assert( propertyClass == PROPERTY_DEVICE );
   src->next = 0l;
   tail.device->next = src;
   tail.device = src;
@@ -79,20 +96,17 @@ void PropertyContainerImpl::PropertyEntry::addValue( DevicePropertyValue *src )
 PropertyContainerImpl::PropertyContainerImpl()
                   : m_modelEntry( 0l )
                   , m_deviceEntry( 0l )
+                  , m_valueid( -1 )
+                  , m_valueClass( PROPERTY_MODEL )
 {}
 
-PropertyContainerImpl::~PropertyContainerImpl()
-{
-  delete m_modelEntry;
-  delete m_deviceEntry;
-}
+PropertyContainerImpl::~PropertyContainerImpl() { reset(); }
 
 void PropertyContainerImpl::setModelEntries( const model_variable_prop_t *props, int count )
 {
   trace_assert( 0l==m_modelEntry );
 
-  m_modelEntry = new PropertyEntry;
-  m_modelEntry->propertyClass = PROPERTY_MODEL;
+  m_modelEntry = new PropertyEntry( PROPERTY_MODEL );
   m_modelEntry->tab.model = props;
   m_modelEntry->tabCount = count;
 }
@@ -101,8 +115,7 @@ void PropertyContainerImpl::setDeviceEntries( const device_variable_prop_t *prop
 {
   trace_assert( 0l==m_deviceEntry );
 
-  m_deviceEntry = new PropertyEntry;
-  m_deviceEntry->propertyClass = PROPERTY_DEVICE;
+  m_deviceEntry = new PropertyEntry( PROPERTY_DEVICE );
   m_deviceEntry->tab.device = props;
   m_deviceEntry->tabCount = count;
 }
@@ -133,7 +146,7 @@ int PropertyContainerImpl::serialize( LispDataset *dataset )
     {
       rc = dataset->beginNode(true, "model");       UPDATE_RC(rc);
 
-      for( ModelPropertyValue *entry = m_modelEntry->value.model->next; entry; entry = entry->next )
+      for( ModelPropertyValue *entry = propertyModelValue(); entry; entry = entry->next )
         {
           const char *symbol = m_modelEntry->tab.model[entry->index].symbol;
 
@@ -189,7 +202,7 @@ int PropertyContainerImpl::serialize( LispDataset *dataset )
     {
       rc = dataset->beginNode(true, "device");      UPDATE_RC(rc);
 
-      for( DevicePropertyValue *entry = m_deviceEntry->value.device->next; entry; entry = entry->next )
+      for( DevicePropertyValue *entry = propertyDeviceValue(); entry; entry = entry->next )
         {
           const char *symbol = m_deviceEntry->tab.device[entry->index].symbol;
 
@@ -367,7 +380,16 @@ int PropertyContainerImpl::deserialize( LispDataset *dataset )
   return rc;
 }
 
-int PropertyContainerImpl::readModel( circ_element_t *element )
+void PropertyContainerImpl::reset()
+{
+  delete m_modelEntry;
+  delete m_deviceEntry;
+
+  m_modelEntry = 0l; m_deviceEntry = 0l;
+  m_valueid = -1;
+}
+
+int PropertyContainerImpl::readModel( circ_element_t *element, int valueid )
 {
   if( m_modelEntry ) return 0;
   int count;
@@ -427,16 +449,38 @@ int PropertyContainerImpl::readModel( circ_element_t *element )
               return -DS_INVALID_PROPERTY_TYPE;
           }
 
-          propertyModel()->addValue( val );
+          if( UNLIKELY( valueid == i ) ) // read root value
+            {
+              switch( var->type )
+              {
+                case DEV_VAR_DOUBLE:    setValue( UnitsConversion::toString( val->u.vd ).toStdString() ); break;
+                case DEV_VAR_FLOAT:     setValue( UnitsConversion::toString( val->u.vf ).toStdString() ); break;
+                case DEV_VAR_INTEGER:   setValue( UnitsConversion::toString( val->u.vi ).toStdString() ); break;
+                default:
+                  return -DS_INVALID_VALUE_TYPE;
+              }
+              if( m_valueid == -1 )
+                {
+                  m_valueid = valueid;
+                  m_valueClass = PROPERTY_MODEL;
+                  m_valueType.model = var->type;
+                }
+              else
+                return -DS_DUP_VALUE_ID;
+            }
+          else
+            {
+              propertyModel()->addValue( val );
 
-          registerModelEntry( val, propertyModel()->tab.model[i].symbol );
+              registerModelEntry( val, propertyModel()->tab.model[i].symbol );
+            }
         }
     }
 
   return rc;
 }
 
-int PropertyContainerImpl::readDevice( IDevice *device )
+int PropertyContainerImpl::readDevice( IDevice *device, int valueid )
 {
   if( m_modelEntry ) return 0;
   int count;
@@ -488,9 +532,31 @@ int PropertyContainerImpl::readDevice( IDevice *device )
               return -DS_INVALID_PROPERTY_TYPE;
           }
 
-          propertyDevice()->addValue( val );
+          if( UNLIKELY( valueid == i ) ) // read root value
+            {
+              switch( var->type )
+              {
+                case DEV_VAR_DOUBLE:    setValue( UnitsConversion::toString( val->u.vd ).toStdString() ); break;
+                case DEV_VAR_FLOAT:     setValue( UnitsConversion::toString( val->u.vf ).toStdString() ); break;
+                case DEV_VAR_INTEGER:   setValue( UnitsConversion::toString( val->u.vi ).toStdString() ); break;
+                default:
+                  return -DS_INVALID_VALUE_TYPE;
+              }
+              if( m_valueid == -1 )
+                {
+                  m_valueid = valueid;
+                  m_valueClass = PROPERTY_DEVICE;
+                  m_valueType.device = var->type;
+                }
+              else
+                return -DS_DUP_VALUE_ID;
+            }
+          else
+            {
+              propertyDevice()->addValue( val );
 
-          registerDeviceEntry( val, propertyDevice()->tab.device[i].symbol );
+              registerDeviceEntry( val, propertyDevice()->tab.device[i].symbol );
+            }
         }
     }
 
@@ -501,11 +567,30 @@ int PropertyContainerImpl::configModel( circ_element_t *element )
 {
   int rc = 0;
 
+  if( m_valueClass == PROPERTY_MODEL && m_valueid != -1 ) // apply root value for model
+    {
+      switch( m_valueType.model )
+      {
+        case MDEL_VAR_DOUBLE:
+          rc = circ_element_config(( element, ELM_CONFIG_SET, m_valueid, double( UnitsConversion::toNumber( value() ) ) )); UPDATE_RC(rc);
+          break;
+        case MDEL_VAR_FLOAT:
+          rc = circ_element_config(( element, ELM_CONFIG_SET, m_valueid, float( UnitsConversion::toNumber( value() ) ) )); UPDATE_RC(rc);
+          break;
+        case MDEL_VAR_INTEGER:
+          rc = circ_element_config(( element, ELM_CONFIG_SET, m_valueid, int( UnitsConversion::toNumber( value() ) ) )); UPDATE_RC(rc);
+          break;
+        default:
+          return -DS_INVALID_VALUE_TYPE;
+      }
+    }
+
   if( propertyModel()->tabCount )
     {
-      for( ModelPropertyValue *val = propertyModel()->value.model; val; val=val->next )
+      for( ModelPropertyValue *val = propertyModelValue(); val; val=val->next )
         {
           int index = val->index;
+
           switch( val->type )
           {
             case MDEL_VAR_DOUBLE:
@@ -553,11 +638,30 @@ int PropertyContainerImpl::configDevice( IDevice *device )
 {
   int rc = 0;
 
+  if( m_valueClass == PROPERTY_DEVICE && m_valueid != -1 ) // apply root value for device
+    {
+      switch( m_valueType.device )
+      {
+        case DEV_VAR_DOUBLE:
+          rc = device->config( ELM_CONFIG_SET, m_valueid, double( UnitsConversion::toNumber( value() ) ) ); UPDATE_RC(rc);
+          break;
+        case DEV_VAR_FLOAT:
+          rc = device->config( ELM_CONFIG_SET, m_valueid, float( UnitsConversion::toNumber( value() ) ) ); UPDATE_RC(rc);
+          break;
+        case DEV_VAR_INTEGER:
+          rc = device->config( ELM_CONFIG_SET, m_valueid, int( UnitsConversion::toNumber( value() ) ) ); UPDATE_RC(rc);
+          break;
+        default:
+          return -DS_INVALID_VALUE_TYPE;
+      }
+    }
+
   if( propertyDevice()->tabCount )
     {
-      for( DevicePropertyValue *val = propertyDevice()->value.device; val; val=val->next )
+      for( DevicePropertyValue *val = propertyDeviceValue(); val; val=val->next )
         {
           int index = val->index;
+
           switch( val->type )
           {
             case DEV_VAR_DOUBLE:

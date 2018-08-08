@@ -34,6 +34,7 @@ libdsim_la_SOURCES =  util/logtrace.c \
                 scheme-intr/lisp-fault.c \
                 scheme-intr/lisp-lexer.c \
                 scheme-intr/lisp-parser.c \
+                scheme-intr/lispex-units.c \
                 scheme-intr/lisp.c \
                 math/circ-matrix/circmatrix.c \
                 circuit/circuit.c \

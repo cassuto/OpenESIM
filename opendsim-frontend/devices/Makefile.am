@@ -24,7 +24,13 @@ INCLUDES = -I$(top_builddir)/include      \
 
 libdsimdevices_la_SOURCES = \
   1n4148/1n4148.cxx \
-  diode/diode.cxx
+  diode/diode.cxx \
+  register/register.cxx \
+  capacitor/capacitor.cxx \
+  inductor/inductor.cxx \
+  vsource-dc/vsource-dc.cxx \
+  vsource-dc-0v/vsource-dc-0v.cxx \
+  voltprobe/voltprobe.cxx
 
 libdsimdevices_la_SOURCES += \
   device.cxx \

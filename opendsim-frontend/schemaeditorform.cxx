@@ -72,7 +72,12 @@ void SchemaEditorForm::createActions()
       modeDrawPin = new QAction(QIcon((":/bitmaps/modepin.png")), tr("Drawing a component pin"), this);
       modeDrawPin->setStatusTip(tr("Drawing a component pin..."));
 
+      modeDrawOrigin = new QAction(QIcon((":/bitmaps/modeorigin.png")), tr("Drawing a origin"), this);
+      modeDrawOrigin->setStatusTip(tr("Drawing a origin..."));
+
       connect( modeDrawPin, SIGNAL(triggered()), this, SLOT(onModePin()) );
+
+      connect( modeDrawOrigin, SIGNAL(triggered()), this, SLOT(onModeOrigin()) );
     }
 
   modeDrawScript = new QAction(QIcon((":/bitmaps/modescript.png")), tr("Drawing the script mode"), this);
@@ -127,6 +132,10 @@ void SchemaEditorForm::createToolbars()
   modeToolBar->addAction( modeDrawEllipse );
   modeToolBar->addAction( modeDrawText );
   modeToolBar->addAction( modeDrawScript );
+  if( dom->type() == DOM_SCHEMA_SYMBOL )
+    {
+      modeToolBar->addAction( modeDrawOrigin );
+    }
 
   modeToolBar->setIconSize( QSize(16, 16) );
   this->addToolBar( Qt::LeftToolBarArea, modeToolBar );
@@ -169,6 +178,8 @@ void SchemaEditorForm::onModeText()
 { schema->setMode( MODE_TEXT ); }
 void SchemaEditorForm::onModeScript()
 { schema->setMode( MODE_SCRIPT ); }
+void SchemaEditorForm::onModeOrigin()
+{ schema->setMode( MODE_ORIGIN ); }
 
 void SchemaEditorForm::gotoCenter()
 { schema->view()->gotoCenter(); }
@@ -209,9 +220,30 @@ int SchemaEditorForm::save( const char *filename )
 }
 
 int SchemaEditorForm::compileNetlist()
+{ return schsheet->generateNetlist(); }
+
+int SchemaEditorForm::debugStep()
 {
-  return schsheet->generateNetlist();
+  int rc;
+  if( !(rc = schsheet->compile()) )
+    {
+      return schsheet->runStep();
+    }
+  return rc;
 }
+
+int SchemaEditorForm::debugRun()
+{
+  int rc;
+  if( !(rc = schsheet->compile()) )
+    {
+      return schsheet->run();
+    }
+  return rc;
+}
+
+void SchemaEditorForm::debugEnd()
+{ schsheet->end(); }
 
 } // namespace dsim
 

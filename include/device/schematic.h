@@ -21,6 +21,8 @@ class ISchematic
 public:
   ISchematic() {}
   virtual ~ISchematic() {}
+
+  virtual void changeValue( const char *value )=0;
 };
 
 #endif

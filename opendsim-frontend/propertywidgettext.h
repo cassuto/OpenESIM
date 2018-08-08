@@ -24,8 +24,6 @@ namespace dsim
 class ElementText;
 class PropertyWidgetText : public PropertyWidget
 {
-  Q_OBJECT
-
 public:
   PropertyWidgetText( ElementText *element, QWidget *parent = 0l );
   ~PropertyWidgetText();

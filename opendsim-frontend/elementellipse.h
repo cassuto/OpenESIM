@@ -13,8 +13,8 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef ELEMENTROUND_H_
-#define ELEMENTROUND_H_
+#ifndef ELEMENTELLIPSE_H_
+#define ELEMENTELLIPSE_H_
 
 #include "elementgraphitem.h"
 #include "staffgraphitem.h"
@@ -33,7 +33,9 @@ public:
   const char *classname() const { return "ellipse"; }
 
   void setStyle( const char *style );
-  void setRect( const QRectF &rect );
+  void setRectParent( const QRectF &rect );
+  QRectF rectParent() const;
+  void normalizeRect();
 
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
@@ -42,6 +44,7 @@ public:
 
 protected:
   void staffMoveEvent( int index, bool fineturning, QGraphicsSceneMouseEvent *event );
+  void staffMouseReleaseEvent( int index, QGraphicsSceneMouseEvent *event );
   void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0 );
 
 private:

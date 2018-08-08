@@ -46,6 +46,7 @@ opendsim_SOURCES = \
   elementline.cxx \
   elementjoint.cxx \
   elementellipse.cxx \
+  elementorigin.cxx \
   elementabstractport.cxx \
   staffgraphitem.cxx \
   staffpad.cxx \
@@ -64,6 +65,7 @@ opendsim_SOURCES = \
   propertywidgettext.cxx \
   propertywidgetpin.cxx \
   propertywidgetcustom.cxx \
+  propertywidgetcomponent.cxx \
   propertywidgetconfig.cxx \
   propertycontainerimpl.cxx \
   propertyeditorwidget.cxx \
@@ -72,6 +74,7 @@ opendsim_SOURCES = \
   propertybase.cxx \
   presscolorbox.cxx \
   netlistexplorerdialog.cxx \
+  unitsconversion.cxx \
   resources.cxx
   
 MOCHEADERS = \
@@ -84,9 +87,8 @@ MOCHEADERS = \
   componentpickwidget.h \
   componentpicktree.h \
   componentlibrarydialog.h \
-  propertywidgettext.h \
-  propertywidgetpin.h \
   propertywidgetcustom.h \
+  propertywidgetcomponent.h \
   propertydialog.h \
   presscolorbox.h \
   netlistexplorerdialog.h \

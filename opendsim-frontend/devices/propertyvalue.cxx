@@ -21,11 +21,11 @@ ModelPropertyValue::ModelPropertyValue()
                    , index( 0 )
                    , next( 0l ) { u.vsp = 0l; }
 
-ModelPropertyValue::~ModelPropertyValue() { ds_heap_free( u.vsp ); }
+ModelPropertyValue::~ModelPropertyValue() { if( type == MDEL_VAR_STRPTR ) ds_heap_free( u.vsp ); }
 
 DevicePropertyValue::DevicePropertyValue()
                    : type( DEV_VAR_UNKNOWN )
                    , index( 0 )
                    , next( 0l ) { u.vsp = 0l; }
 
-DevicePropertyValue::~DevicePropertyValue() { ds_heap_free( u.vsp ); }
+DevicePropertyValue::~DevicePropertyValue() { if( type == DEV_VAR_STRPTR ) ds_heap_free( u.vsp ); }

@@ -72,7 +72,11 @@ libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libdsimdevices_la_LIBADD =
 am_libdsimdevices_la_OBJECTS = libdsimdevices_la-1n4148.lo \
-	libdsimdevices_la-diode.lo libdsimdevices_la-device.lo \
+	libdsimdevices_la-diode.lo libdsimdevices_la-register.lo \
+	libdsimdevices_la-capacitor.lo libdsimdevices_la-inductor.lo \
+	libdsimdevices_la-vsource-dc.lo \
+	libdsimdevices_la-vsource-dc-0v.lo \
+	libdsimdevices_la-voltprobe.lo libdsimdevices_la-device.lo \
 	libdsimdevices_la-device-lib.lo \
 	libdsimdevices_la-propertyvalue.lo
 libdsimdevices_la_OBJECTS = $(am_libdsimdevices_la_OBJECTS)
@@ -222,6 +226,9 @@ INCLUDES = -I$(top_builddir)/include      \
 #########################################################################
 # Targets.
 libdsimdevices_la_SOURCES = 1n4148/1n4148.cxx diode/diode.cxx \
+	register/register.cxx capacitor/capacitor.cxx \
+	inductor/inductor.cxx vsource-dc/vsource-dc.cxx \
+	vsource-dc-0v/vsource-dc-0v.cxx voltprobe/voltprobe.cxx \
 	device.cxx device-lib.cxx propertyvalue.cxx
 libdsimdevices_la_CFLAGS = -Wno-unused-function
 libdsimdevices_la_CPPFLAGS = -Wno-unused-function
@@ -295,10 +302,16 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-1n4148.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-capacitor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-device-lib.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-device.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-diode.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-inductor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-propertyvalue.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-register.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-voltprobe.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-vsource-dc-0v.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-vsource-dc.Plo@am__quote@
 
 .cxx.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -334,6 +347,48 @@ libdsimdevices_la-diode.lo: diode/diode.cxx
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='diode/diode.cxx' object='libdsimdevices_la-diode.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-diode.lo `test -f 'diode/diode.cxx' || echo '$(srcdir)/'`diode/diode.cxx
+
+libdsimdevices_la-register.lo: register/register.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-register.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-register.Tpo" -c -o libdsimdevices_la-register.lo `test -f 'register/register.cxx' || echo '$(srcdir)/'`register/register.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsimdevices_la-register.Tpo" "$(DEPDIR)/libdsimdevices_la-register.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-register.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='register/register.cxx' object='libdsimdevices_la-register.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-register.lo `test -f 'register/register.cxx' || echo '$(srcdir)/'`register/register.cxx
+
+libdsimdevices_la-capacitor.lo: capacitor/capacitor.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-capacitor.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-capacitor.Tpo" -c -o libdsimdevices_la-capacitor.lo `test -f 'capacitor/capacitor.cxx' || echo '$(srcdir)/'`capacitor/capacitor.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsimdevices_la-capacitor.Tpo" "$(DEPDIR)/libdsimdevices_la-capacitor.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-capacitor.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='capacitor/capacitor.cxx' object='libdsimdevices_la-capacitor.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-capacitor.lo `test -f 'capacitor/capacitor.cxx' || echo '$(srcdir)/'`capacitor/capacitor.cxx
+
+libdsimdevices_la-inductor.lo: inductor/inductor.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-inductor.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-inductor.Tpo" -c -o libdsimdevices_la-inductor.lo `test -f 'inductor/inductor.cxx' || echo '$(srcdir)/'`inductor/inductor.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsimdevices_la-inductor.Tpo" "$(DEPDIR)/libdsimdevices_la-inductor.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-inductor.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='inductor/inductor.cxx' object='libdsimdevices_la-inductor.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-inductor.lo `test -f 'inductor/inductor.cxx' || echo '$(srcdir)/'`inductor/inductor.cxx
+
+libdsimdevices_la-vsource-dc.lo: vsource-dc/vsource-dc.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-vsource-dc.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-vsource-dc.Tpo" -c -o libdsimdevices_la-vsource-dc.lo `test -f 'vsource-dc/vsource-dc.cxx' || echo '$(srcdir)/'`vsource-dc/vsource-dc.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsimdevices_la-vsource-dc.Tpo" "$(DEPDIR)/libdsimdevices_la-vsource-dc.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-vsource-dc.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='vsource-dc/vsource-dc.cxx' object='libdsimdevices_la-vsource-dc.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-vsource-dc.lo `test -f 'vsource-dc/vsource-dc.cxx' || echo '$(srcdir)/'`vsource-dc/vsource-dc.cxx
+
+libdsimdevices_la-vsource-dc-0v.lo: vsource-dc-0v/vsource-dc-0v.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-vsource-dc-0v.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-vsource-dc-0v.Tpo" -c -o libdsimdevices_la-vsource-dc-0v.lo `test -f 'vsource-dc-0v/vsource-dc-0v.cxx' || echo '$(srcdir)/'`vsource-dc-0v/vsource-dc-0v.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsimdevices_la-vsource-dc-0v.Tpo" "$(DEPDIR)/libdsimdevices_la-vsource-dc-0v.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-vsource-dc-0v.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='vsource-dc-0v/vsource-dc-0v.cxx' object='libdsimdevices_la-vsource-dc-0v.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-vsource-dc-0v.lo `test -f 'vsource-dc-0v/vsource-dc-0v.cxx' || echo '$(srcdir)/'`vsource-dc-0v/vsource-dc-0v.cxx
+
+libdsimdevices_la-voltprobe.lo: voltprobe/voltprobe.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-voltprobe.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-voltprobe.Tpo" -c -o libdsimdevices_la-voltprobe.lo `test -f 'voltprobe/voltprobe.cxx' || echo '$(srcdir)/'`voltprobe/voltprobe.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsimdevices_la-voltprobe.Tpo" "$(DEPDIR)/libdsimdevices_la-voltprobe.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-voltprobe.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='voltprobe/voltprobe.cxx' object='libdsimdevices_la-voltprobe.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-voltprobe.lo `test -f 'voltprobe/voltprobe.cxx' || echo '$(srcdir)/'`voltprobe/voltprobe.cxx
 
 libdsimdevices_la-device.lo: device.cxx
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-device.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-device.Tpo" -c -o libdsimdevices_la-device.lo `test -f 'device.cxx' || echo '$(srcdir)/'`device.cxx; \

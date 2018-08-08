@@ -27,7 +27,7 @@ public:
   static IDevice *construct( const char *reference, int id, void *reserved );
 
   int create( ISchematic *schematic, IPropertyContainer *properties );
-  int init( IPropertyContainer *properties );
+  int init( ISchematic *schematic, IPropertyContainer *properties );
 };
 
 #endif //!defined(DEVICE_1N4148_H_)

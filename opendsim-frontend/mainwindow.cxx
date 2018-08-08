@@ -59,6 +59,8 @@ MainWindow::MainWindow()
 
   readSettings();
 
+  setSchemaEditState( SCHEDIT_INPUT );
+
   trace_assert( 0l==m_pinstance );
   m_pinstance = this;
 }
@@ -90,6 +92,12 @@ void MainWindow::closeEvent( QCloseEvent *event )
 QSize MainWindow::sizeHint () const
 {
   return QSize( 1087, 572 );
+}
+
+void MainWindow::setSchemaEditState( SchemaEditState state )
+{
+  m_schemaEditState = state;
+  onUpdateMenus();
 }
 
 /***************************************************
@@ -132,6 +140,23 @@ void MainWindow::createActions()
   designViewNetlist = new QAction(tr("&View netlist..."), this);
   designViewNetlist->setStatusTip( tr("View schematic netlist...") );
   connect(designViewNetlist, SIGNAL(triggered()), SLOT(onDesignViewNetlist()));
+
+  /*
+   * Simulation actions
+   */
+  debugStep = new QAction(tr("&Step"), this);
+  debugStep->setStatusTip( tr("Step...") );
+  connect(debugStep, SIGNAL(triggered()), SLOT(onDebugStep()));
+
+  debugRun = new QAction(tr("&Run"), this);
+  debugRun->setStatusTip( tr("Run simulation...") );
+  debugRun->setEnabled( false );
+  connect(debugRun, SIGNAL(triggered()), SLOT(onDebugRun()));
+
+  debugEnd = new QAction(tr("&End"), this);
+  debugEnd->setStatusTip( tr("Step...") );
+  debugEnd->setEnabled( false );
+  connect(debugEnd, SIGNAL(triggered()), SLOT(onDebugEnd()));
 }
 
 void MainWindow::createMenuBar()
@@ -160,6 +185,16 @@ void MainWindow::createMenuBar()
   designMenu->addAction( designViewNetlist );
 
   menuBar()->addMenu(designMenu);
+
+  /*
+   * Menu entry 'debug'
+   */
+  debugMenu = new QMenu( tr("&Debug") );
+  debugMenu->addAction( debugRun );
+  debugMenu->addAction( debugStep );
+  debugMenu->addAction( debugEnd );
+
+  menuBar()->addMenu(debugMenu);
 }
 
 void MainWindow::createToolBars()
@@ -295,11 +330,101 @@ void MainWindow::onDesignViewNetlist()
     }
 }
 
+void MainWindow::onDebugStep()
+{
+  SchemaEditorForm *schema = activeSchemaEditor();
+  if( schema )
+    {
+      switch( m_schemaEditState )
+      {
+        case SCHEDIT_INPUT:
+        case SCHEDIT_FROZEN:
+          if( processRc( schema->debugStep() ) )
+            setSchemaEditState( SCHEDIT_INPUT ); // failed
+          else
+            setSchemaEditState( SCHEDIT_FROZEN );
+          break;
+        default:
+          break;
+      }
+    }
+}
+
+void MainWindow::onDebugRun()
+{
+  SchemaEditorForm *schema = activeSchemaEditor();
+  if( schema )
+    {
+      switch( m_schemaEditState )
+      {
+        case SCHEDIT_INPUT:
+          if( processRc( schema->debugRun() ) )
+            setSchemaEditState( SCHEDIT_INPUT ); // failed
+          else
+            setSchemaEditState( SCHEDIT_RUNNING );
+          break;
+        case SCHEDIT_FROZEN:
+          {
+            if( QMessageBox::warning( this, tr("Restart the debugging"), tr("The circuit is currently running, confirm to restart the debugging ?"),
+                                      QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Yes ) == QMessageBox::Yes )
+              {
+                schema->debugEnd();
+                if( processRc( schema->debugRun() ) )
+                  setSchemaEditState( SCHEDIT_INPUT ); // failed
+                else
+                  setSchemaEditState( SCHEDIT_RUNNING );
+              }
+            break;
+          }
+        default:
+          break;
+      }
+    }
+}
+
+void MainWindow::onDebugEnd()
+{
+  SchemaEditorForm *schema = activeSchemaEditor();
+  if( schema )
+    {
+      switch( m_schemaEditState )
+      {
+        case SCHEDIT_RUNNING:
+        case SCHEDIT_FROZEN:
+          schema->debugEnd();
+          setSchemaEditState( SCHEDIT_INPUT );
+        default:
+          break;
+      }
+    }
+}
+
 void MainWindow::onUpdateMenus()
 {
   bool hasActiveSchame = ( 0l != activeSchemaEditor() );
   fileSave->setEnabled( hasActiveSchame );
   designViewNetlist->setEnabled( hasActiveSchame );
+
+  switch( m_schemaEditState )
+  {
+    case SCHEDIT_INPUT:
+      debugStep->setEnabled( hasActiveSchame );
+      debugRun->setEnabled( hasActiveSchame );
+      debugEnd->setEnabled( false );
+      break;
+
+    case SCHEDIT_RUNNING:
+      debugStep->setEnabled( false );
+      debugRun->setEnabled( false );
+      debugEnd->setEnabled( hasActiveSchame );
+      break;
+
+    case SCHEDIT_FROZEN:
+      debugStep->setEnabled( hasActiveSchame );
+      debugRun->setEnabled( hasActiveSchame );
+      debugEnd->setEnabled( hasActiveSchame );
+      break;
+  }
 }
 
 

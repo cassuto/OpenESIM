@@ -27,11 +27,13 @@
 class IDevice;
 class IDeviceGraph;
 class DeviceLibraryEntry;
-class PropertyContainer;
 
 namespace dsim
 {
 
+class PropertyContainerImpl;
+class SchematicImpl;
+class ComponentGraphImpl;
 class ElementText;
 class ElementPin;
 
@@ -43,14 +45,17 @@ public:
 
   const char *classname() const { return "component"; }
 
-  int init( const char *deviceEntry, ElementText *symbolText, ElementText *referenceText );
+  int init( const char *deviceEntry, ElementText *valueText, ElementText *referenceText );
   int createDevice();
   int initDevice();
 
   void setLayout();
   std::string reference();
+  std::string value();
   std::string symbol();
-  void setPos( const QPointF &pos );
+  void setReference( const QString &reference );
+  void setValue( const QString &value );
+  void syncParameters();
   void setDirect( ElemDirect direct );
   int addComponentElement( ElementBase *element );
   ElementPin *atPin( const QPointF &pos );
@@ -66,6 +71,7 @@ public:
   inline IDevice *device() const { return m_device; }
   inline IDeviceGraph *deviceGraph() const { return m_deviceGraph; }
   inline PropertyContainerImpl *properties() const { return m_properties; }
+  inline SchematicImpl *schematic() const { return m_schematic; }
 
 protected:
   QVariant itemChange( GraphicsItemChange change, const QVariant &value );
@@ -79,12 +85,14 @@ private:
 private:
   const DeviceLibraryEntry *m_deviceEntry;
   IDevice              *m_device;
-  ComponentGraphImpl   *m_deviceGraph;
-  std::string           m_symbol;
-  std::string           m_reference;
-  ElementText          *m_symbolText;
+  std::string           m_symbol; // guarantee synchronization among serialize() deserialize() and init()
+  std::string           m_reference; // guarantee synchronization among serialize() deserialize() and init()
+  std::string           m_value; // guarantee synchronization among serialize() deserialize() and init()
+  ElementText          *m_valueText;
   ElementText          *m_referenceText;
+  SchematicImpl        *m_schematic;
   PropertyContainerImpl *m_properties;
+  ComponentGraphImpl   *m_deviceGraph;
 };
 
 }

@@ -28,7 +28,8 @@
 #include <functional>
 #include <string>
 #include <cstring>
-#include <cstdio>
+#include <QtConcurrent>
+#include <QThread>
 
 #include "schemaview.h"
 #include "elementwire.h"
@@ -45,10 +46,10 @@ namespace dsim
 {
 
 SchemaSheet::SchemaSheet()
-            : m_schematic( new SchematicImpl )
-            , m_schemaView( 0l )
+            : m_schemaView( 0l )
             , m_matrix( 0l )
             , m_circuit( 0l )
+            , m_compiled( false )
 
 {}
 
@@ -56,6 +57,7 @@ SchemaSheet::~SchemaSheet() { uninit(); }
 
 int SchemaSheet::init()
 {
+  m_compiled = false;
   m_matrix = matrix_create();
   if( m_matrix )
     {
@@ -71,6 +73,7 @@ void SchemaSheet::uninit()
     { circuit_free( m_circuit ); m_circuit = 0l; } // will free attached elements as well
   if( m_matrix )
     { matrix_free( m_matrix ); m_matrix = 0l; }
+  m_compiled = false;
 }
 
 int SchemaSheet::reinit()
@@ -79,12 +82,12 @@ int SchemaSheet::reinit()
   return init();
 }
 
-int SchemaSheet::createDevice( const char *symbol, const char *reference, int id, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice )
+int SchemaSheet::createDevice( const char *symbol, const char *reference, int id, SchematicImpl *schematic, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice )
 {
-  return createDevice( device_lib_entry( symbol ), reference, id, property, ppdevice );
+  return createDevice( device_lib_entry( symbol ), reference, id, schematic, property, ppdevice );
 }
 
-int SchemaSheet::createDevice( const DeviceLibraryEntry *entry, const char *reference, int id, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice )
+int SchemaSheet::createDevice( const DeviceLibraryEntry *entry, const char *reference, int id, SchematicImpl *schematic, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice )
 {
   *ppdevice = 0l;
   if( !entry ) return -DS_FAULT;
@@ -94,7 +97,7 @@ int SchemaSheet::createDevice( const DeviceLibraryEntry *entry, const char *refe
   if( device )
     {
       device->setCircuit( m_circuit );
-      if( (rc = device->create( schematic(), property )) )
+      if( (rc = device->create( schematic, property )) )
         {
           delete device;
           return rc;
@@ -133,6 +136,7 @@ static inline void unionSets( int *sets, int *next, int *last, int x, int y )
 
 int SchemaSheet::generateNetlist() // m_nodes is valid while schemaView() keeping not updated.
 {
+  m_compiled = false;
   int setsSize = 0;
   QList<ElementAbstractPort *> ports;
   QHash<ElementAbstractPort *, char> portVisited; // store the index of each port, beginning with # 1
@@ -231,6 +235,7 @@ int SchemaSheet::generateNetlist() // m_nodes is valid while schemaView() keepin
 
 int SchemaSheet::compile()
 {
+  if( m_compiled ) return 0;
   int rc = generateNetlist(); UPDATE_RC(rc);
   bool needReinit = false;
 
@@ -239,23 +244,19 @@ int SchemaSheet::compile()
       needReinit = true;
       rc = reinit(); UPDATE_RC(rc);
     }
-
-  m_components.clear();
-
-  /*
-   * Initializing device models
-   */
-  foreach( SchemaNode *node, *(nodes()) )
+  if( needReinit )
     {
-      foreach( ElementAbstractPort *port, *(node->ports()) )
+      m_components.clear();
+      foreach( SchemaNode *node, *(nodes()) )
         {
-          ComponentGraphItem *component = port->component();
-          if( 0== m_components[component] )
+          foreach( ElementAbstractPort *port, *(node->ports()) )
             {
-              m_components[component] = 1;
-              if( needReinit )
-                { rc = component->createDevice(); UPDATE_RC(rc); }
-              rc = component->initDevice(); UPDATE_RC(rc);
+              ComponentGraphItem *component = port->component();
+              if( 0== m_components[component] )
+                {
+                  m_components[component] = 1;
+                  rc = component->createDevice(); UPDATE_RC(rc); // create the device again
+                }
             }
         }
     }
@@ -275,7 +276,7 @@ int SchemaSheet::compile()
           foreach( ElementAbstractPort *port, *(node->ports()) )
             {
               device = port->component()->device();
-              pinIndex = port->reference().toInt( &isInt );     // parse target pin
+              pinIndex = port->reference().toInt( &isInt )-1;     // parse target pin
               if( isInt && pinIndex >= 0 && pinIndex < device->pin_count() )
                 {
                   rc = circ_pin_set_node( device->pin( pinIndex ), circNode ); UPDATE_RC(rc);
@@ -287,22 +288,69 @@ int SchemaSheet::compile()
       else
         return -DS_CREATE_CIRCUIT_NODE;
     }
-  return circuit_init( m_circuit );
+
+  m_components.clear();
+
+  /*
+   * Initializing device models
+   */
+  foreach( SchemaNode *node, *(nodes()) )
+    {
+      foreach( ElementAbstractPort *port, *(node->ports()) )
+        {
+          ComponentGraphItem *component = port->component();
+
+          if( 0== m_components[component] )
+            {
+              m_components[component] = 1;
+              rc = component->initDevice(); UPDATE_RC(rc);
+            }
+        }
+    }
+
+  rc = circuit_init( m_circuit ); UPDATE_RC(rc);
+  m_compiled = true;
+  return 0;
 }
 
 int SchemaSheet::runStep()
 { return circuit_run_step( m_circuit ); }
 
+int SchemaSheet::runLoop()
+{
+  int rc;
+  for( ;; )
+    {
+      if( (rc = circuit_run_step( m_circuit )) ) return rc;
+      if( m_canceled ) break;
+    }
+  return 0;
+}
+
+int SchemaSheet::run()
+{
+  if( m_stepFuture.isFinished() )
+    {
+      m_canceled = false;
+      m_stepFuture = QtConcurrent::run( this, &SchemaSheet::runLoop );
+    }
+  return 0;
+}
+
 void SchemaSheet::end()
 {
+  m_canceled = true;
+  m_stepFuture.waitForFinished();
   uninit();
   m_components.clear();
   m_components.squeeze();
 }
 
+bool SchemaSheet::running()
+{ return m_stepFuture.isRunning() && m_canceled; }
+
 void SchemaSheet::setSchemaView( SchemaView *schemaView )
 {
-  m_schematic->setSchemaView( schemaView );
   m_schemaView = schemaView;
 }
 
