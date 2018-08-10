@@ -50,6 +50,13 @@ typedef enum io_type
   IOTYPE_PULLDOWN
 } io_type_t;
 
+typedef enum probe_type
+{
+  PROBE_NONE = 0,
+  PROBE_VOLTAGE,
+  PROBE_CURRENT
+} probe_type_t;
+
 typedef enum
 {
   DEV_VAR_UNKNOWN = 0,
@@ -145,7 +152,14 @@ public:
   virtual int           uninit() { return 0; }
 
   //
-  // Inline model Interface
+  // Probe Interface
+  //
+  virtual probe_type_t  probe_type() { return PROBE_NONE; }
+  virtual const char   *probe_attrs() { return 0l; }
+  virtual double        probe_value() { return 0; }
+
+  //
+  // Inline Model Interface
   //
   circ_element_t *createModel( const char *mdel_symbol, circuit_t *circuit );
   int baseinit( const char *mdel_symbol, circuit_t *circuit );
@@ -168,6 +182,7 @@ public:
   virtual int reserved7() { return 0; }
   virtual int reserved8() { return 0; }
 
+public:
   void setCircuit( circuit_t *circuit );
 
 protected:

@@ -13,7 +13,7 @@
  *  Lesser General Public License for more details.
  */
 
-#include <dsim/device-lib.h>
+#include <frontend/device-lib.h>
 #include <dsim/list.h>
 #include <dsim/hashmap.h>
 #include <dsim/rbtree.h>

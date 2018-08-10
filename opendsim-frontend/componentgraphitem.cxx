@@ -18,7 +18,7 @@
 #include <device/device.h>
 #include <device/graph.h>
 #include <dsim/logtrace.h>
-#include <dsim/device-lib.h>
+#include <frontend/device-lib.h>
 #include <frontend/error.h>
 #include <cstring>
 

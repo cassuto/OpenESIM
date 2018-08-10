@@ -16,6 +16,7 @@
 #include <QAction>
 #include <QToolBar>
 #include <QFileDialog>
+#include <QMdiSubWindow>
 
 #include <fstream>
 #include <frontend/error.h>
@@ -25,6 +26,8 @@
 #include "schemasheet.h"
 #include "mainwindow.h"
 #include "componentpickwidget.h"
+#include "instrumentmanagement.h"
+#include "instrumentrackform.h"
 #include "schemawidget.h"
 #include "schemaeditorform.h"
 
@@ -35,6 +38,8 @@ SchemaEditorForm::SchemaEditorForm( DomType type, QWidget *parent_ )
                 : QMainWindow( parent_ )
                 , dom( new LispDataset( type ) )
                 , schsheet( new SchemaSheet() )
+                , instruments( new InstrumentManagement )
+                , rackForm( 0l )
 {
   createActions();
   createToolbars();
@@ -90,6 +95,9 @@ void SchemaEditorForm::createActions()
   modeDrawEllipse->setStatusTip(tr("Drawing a ellipse..."));
   modeDrawText = new QAction(QIcon((":/bitmaps/modetext.png")), tr("Drawing a text"), this);
   modeDrawText->setStatusTip(tr("Drawing a text..."));
+  modeInstrument = new QAction(QIcon((":/bitmaps/modeinst.png")), tr("Instrument Rack View"), this);
+  modeInstrument->setStatusTip(tr("Instrument Rack Mode..."));
+  modeInstrument->setCheckable( true );
 
   connect( modeSelection, SIGNAL(triggered()), this, SLOT(onModeSelection()) );
 
@@ -102,6 +110,8 @@ void SchemaEditorForm::createActions()
   connect( modeDrawText, SIGNAL(triggered()), this, SLOT(onModeText()) );
 
   connect( modeDrawScript, SIGNAL(triggered()), this, SLOT(onModeScript()) );
+
+  connect( modeInstrument, SIGNAL(toggled(bool)), this, SLOT(onModeInstrument(bool)) );
 
 }
 
@@ -122,11 +132,14 @@ void SchemaEditorForm::createToolbars()
       modeToolBar->addAction( modeDrawBus );
       modeToolBar->addAction( modeDrawSubCircuit );
       modeToolBar->addSeparator();
+      modeToolBar->addAction( modeInstrument );
+      modeToolBar->addSeparator();
     }
   else if( dom->type() == DOM_SCHEMA_SYMBOL )
     {
       modeToolBar->addAction( modeDrawPin );
     }
+
   modeToolBar->addAction( modeDrawLine );
   modeToolBar->addAction( modeDrawRect );
   modeToolBar->addAction( modeDrawEllipse );
@@ -180,6 +193,26 @@ void SchemaEditorForm::onModeScript()
 { schema->setMode( MODE_SCRIPT ); }
 void SchemaEditorForm::onModeOrigin()
 { schema->setMode( MODE_ORIGIN ); }
+
+void SchemaEditorForm::onModeInstrument( bool toggled )
+{
+  if( toggled && !rackForm )
+    {
+      InstrumentRackForm *rack = new InstrumentRackForm( instruments, this );
+      connect( rack, SIGNAL(closed()), this , SLOT(onInstrumentRackClosed()) );
+      rackForm = MainWindow::instance()->addChild( rack );
+      rackForm->show();
+    }
+  else if( !toggled && rackForm )
+    {
+      MainWindow::instance()->removeChild( rackForm );
+      delete rackForm;
+      rackForm = 0l;
+    }
+}
+
+void SchemaEditorForm::onInstrumentRackClosed()
+{ rackForm = 0l; modeInstrument->setChecked( false ); }
 
 void SchemaEditorForm::gotoCenter()
 { schema->view()->gotoCenter(); }

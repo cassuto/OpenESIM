@@ -13,24 +13,13 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef DEVICE_VOLTPROBE_H_
-#define DEVICE_VOLTPROBE_H_
+#ifndef INSTRUMENTINTERNAL_H_
+#define INSTRUMENTINTERNAL_H_
 
-#include "device-lib-internal.h"
-
-class dev_voltprobe : public IDevice
-{
-public:
-  dev_voltprobe( const char *reference, int id, void *reserved );
-
-  static DeviceLibraryEntry *libraryEntry();
-  static IDevice *construct( const char *reference, int id, void *reserved );
-
-  int create( ISchematic *schematic, IPropertyContainer *properties );
-  int init( ISchematic *schematic, IPropertyContainer *properties );
-  probe_type_t probe_type();
-  const char *probe_name();
-  double probe_value();
-};
+#include <dsim/error.h>
+#include <dsim/misc.h>
+#include <device/device.h>
+#include <instrument/instrumentbase.h>
+#include <instrument/libentry.h>
 
 #endif

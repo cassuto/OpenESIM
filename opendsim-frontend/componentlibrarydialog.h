@@ -20,7 +20,7 @@
 
 #include <dsim/hashmap.h>
 #include <dsim/rbtree.h>
-#include <dsim/device-lib.h>
+#include <frontend/device-lib.h>
 
 namespace dsim
 {

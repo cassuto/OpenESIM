@@ -13,24 +13,43 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef DEVICE_VOLTPROBE_H_
-#define DEVICE_VOLTPROBE_H_
+#ifndef OSCOPERENDERER_H_
+#define OSCOPERENDERER_H_
 
-#include "device-lib-internal.h"
+#include <QWidget>
 
-class dev_voltprobe : public IDevice
+namespace dsim
+{
+  
+class OscopeRenderer : public QWidget
 {
 public:
-  dev_voltprobe( const char *reference, int id, void *reserved );
+  OscopeRenderer( int width, int height, QWidget *parent = 0l );
 
-  static DeviceLibraryEntry *libraryEntry();
-  static IDevice *construct( const char *reference, int id, void *reserved );
+  void setSamples( const int samples[], int size );
+  void setVsize( double max, double min );
 
-  int create( ISchematic *schematic, IPropertyContainer *properties );
-  int init( ISchematic *schematic, IPropertyContainer *properties );
-  probe_type_t probe_type();
-  const char *probe_name();
-  double probe_value();
+public:
+  QSize sizeHint() const;
+  QSize minimumSizeHint() const;
+
+protected:
+  void paintEvent( QPaintEvent *event );
+
+private:
+  const int *m_samples;
+  int m_sampleSize;
+
+  int m_width;
+  int m_height;
+  double m_hCenter;
+  double m_vCenter;
+  double m_vMax;
+  double m_vMin;
+  double m_margin;
+  double m_scale;
 };
+  
+}
 
 #endif

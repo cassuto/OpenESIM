@@ -362,6 +362,7 @@ AC_CONFIG_FILES([Makefile
                  opendsim-core/models/Makefile
                  opendsim-frontend/Makefile
                  opendsim-frontend/devices/Makefile
+                 opendsim-frontend/instruments/Makefile
                  testcase/Makefile])
                  
 # Check for Git short SHA to tag version

@@ -13,24 +13,27 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef DEVICE_VOLTPROBE_H_
-#define DEVICE_VOLTPROBE_H_
+#ifndef INSTRUMENTBASE_H_
+#define INSTRUMENTBASE_H_
 
-#include "device-lib-internal.h"
+class IDevice;
 
-class dev_voltprobe : public IDevice
+class InstrumentBase
 {
 public:
-  dev_voltprobe( const char *reference, int id, void *reserved );
+  explicit InstrumentBase();
+  virtual ~InstrumentBase();
 
-  static DeviceLibraryEntry *libraryEntry();
-  static IDevice *construct( const char *reference, int id, void *reserved );
+  virtual void clockTick()=0; // Asynchronous, called when simulator runs a step
 
-  int create( ISchematic *schematic, IPropertyContainer *properties );
-  int init( ISchematic *schematic, IPropertyContainer *properties );
-  probe_type_t probe_type();
-  const char *probe_name();
-  double probe_value();
+  virtual void open()=0;
+  virtual void close()=0;
+
+  void setProbeDevice( IDevice *probe );
+  inline IDevice *probeDevice() const { return m_probeDevice; }
+
+private:
+  IDevice *m_probeDevice;
 };
 
 #endif

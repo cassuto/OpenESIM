@@ -17,10 +17,10 @@
 
 #include <dsim/logtrace.h>
 #include <device/libentry.h>
-#include <dsim/device-lib.h>
 #include <dsim/scheme-intr.h>
-#include <frontend/error.h>
 #include <dsim/misc.h>
+#include <frontend/error.h>
+#include <frontend/device-lib.h>
 #include <cstring>
 #include <sstream>
 #include <algorithm>

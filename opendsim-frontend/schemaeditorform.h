@@ -23,6 +23,7 @@
 
 class QAction;
 class QToolBar;
+class QMdiSubWindow;
 
 namespace dsim
 {
@@ -30,12 +31,14 @@ namespace dsim
 class ComponentPickWidget;
 class SchemaWidget;
 class SchemaSheet;
+class InstrumentManagement;
+class InstrumentRackForm;
 
 /***************************************************
   *****  Schema editor MDI sub window object   *****
   ***************************************************/
 
-class SchemaEditorForm : public QMainWindow/*QMdiSubWindow*/ {
+class SchemaEditorForm : public QMainWindow {
   Q_OBJECT
 
 public:
@@ -50,8 +53,10 @@ public:
   int debugRun();
   void debugEnd();
   void gotoCenter();
+
   inline LispDataset *dataset() const { return dom; }
   inline SchemaSheet *schemaSheet() const { return schsheet; }
+  inline InstrumentManagement *instrumentMan() const { return instruments; }
 
 private:
   void createActions();
@@ -67,6 +72,8 @@ private slots:
   void onModeText();
   void onModeScript();
   void onModeOrigin();
+  void onModeInstrument( bool );
+  void onInstrumentRackClosed();
 
 private:
   QAction *modeSelection,
@@ -76,6 +83,8 @@ private:
           *modeDrawScript,
           *modeDrawBus,
           *modeDrawSubCircuit;
+
+  QAction *modeInstrument;
 
   QAction *modeDrawPin,
           *modeDrawLine,
@@ -92,6 +101,8 @@ private:
   LispDataset *dom;
 
   SchemaSheet *schsheet;
+  InstrumentManagement *instruments;
+  QMdiSubWindow *rackForm;
 };
 
 } // namespace dsim

@@ -19,7 +19,8 @@
 #define TRACE_UNIT "main"
 
 #include <dsim/logtrace.h>
-#include <dsim/device-lib.h>
+#include <frontend/device-lib.h>
+#include <frontend/instrument-lib.h>
 #include <frontend/error.h>
 #include <dsim/misc.h>
 #include <dsim/version.h>
@@ -62,11 +63,16 @@ int main( int argc, char *argv[] )
   reserved = new char[64 * 1024 * 1024];
   std::set_new_handler( new_handler );
 
-  trace_info(("loading device library...\n"));
+  trace_info(("loading device && instrument library...\n"));
 
   if( device_lib_init() )
     {
       trace_error(("failed to initialize device library!\n"));
+      return 1;
+    }
+  if( instrument_lib_init() )
+    {
+      trace_error(("failed to initialize instrument library!\n"));
       return 1;
     }
 

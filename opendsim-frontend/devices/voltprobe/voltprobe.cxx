@@ -57,3 +57,13 @@ int dev_voltprobe::init( ISchematic *, IPropertyContainer * )
       rc = circ_element_config(( m_mdel, ELM_CONFIG_SET, /*g*/2, (int)false )); UPDATE_RC(rc);
   return rc;
 }
+
+probe_type_t dev_voltprobe::probe_type() { return PROBE_VOLTAGE; }
+
+const char *dev_voltprobe::probe_name()
+{
+  return "vpb";
+}
+
+double dev_voltprobe::probe_value() { return circ_pin_get_volt( m_mdel->pin_vector[0] ); }
+

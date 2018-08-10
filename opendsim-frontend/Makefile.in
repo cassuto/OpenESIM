@@ -90,7 +90,10 @@ am_opendsim_OBJECTS = opendsim-edit.$(OBJEXT) \
 	propertyeditorwidget.$(OBJEXT) propertymodel.$(OBJEXT) \
 	propertyvariantdelegate.$(OBJEXT) propertybase.$(OBJEXT) \
 	presscolorbox.$(OBJEXT) netlistexplorerdialog.$(OBJEXT) \
-	unitsconversion.$(OBJEXT) resources.$(OBJEXT)
+	unitsconversion.$(OBJEXT) instrumentpickdialog.$(OBJEXT) \
+	instrumentrackform.$(OBJEXT) \
+	instrumentrackcellwidget.$(OBJEXT) \
+	instrumentmanagement.$(OBJEXT) resources.$(OBJEXT)
 opendsim_OBJECTS = $(am_opendsim_OBJECTS)
 am__DEPENDENCIES_1 =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -237,7 +240,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-SUBDIRS = devices
+SUBDIRS = devices instruments
 INCLUDES = -I$(top_builddir)/include      \
            -I$(top_srcdir)/include        \
            -I$(top_builddir)/opendsim-core  \
@@ -296,6 +299,10 @@ opendsim_SOURCES = \
   presscolorbox.cxx \
   netlistexplorerdialog.cxx \
   unitsconversion.cxx \
+  instrumentpickdialog.cxx \
+  instrumentrackform.cxx \
+  instrumentrackcellwidget.cxx \
+  instrumentmanagement.cxx \
   resources.cxx
 
 MOCHEADERS = \
@@ -313,12 +320,14 @@ MOCHEADERS = \
   propertydialog.h \
   presscolorbox.h \
   netlistexplorerdialog.h \
-  propertybase.h
+  propertybase.h \
+  instrumentpickdialog.h \
+  instrumentrackform.h
 
 MOCFILES = $(MOCHEADERS:.h=.moc)
 opendsim_LDFLAGS = $(QT_LDFLAGS)
-opendsim_LDADD = devices/libdsimdevices.la $(top_srcdir)/opendsim-core/libdsim.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la $(QT_LIBS)
-opendsim_DEPENDENCIES = devices/libdsimdevices.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la
+opendsim_LDADD = instruments/libdsiminstruments.la devices/libdsimdevices.la $(top_srcdir)/opendsim-core/libdsim.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la $(QT_LIBS)
+opendsim_DEPENDENCIES = instruments/libdsiminstruments.la devices/libdsimdevices.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la
 BUILT_SOURCES = resources.cxx $(MOCFILES)
 CLEANFILES = resources.cxx $(MOCFILES)
 all: $(BUILT_SOURCES)
@@ -412,6 +421,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementtext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementwire.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/idallocator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/instrumentmanagement.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/instrumentpickdialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/instrumentrackcellwidget.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/instrumentrackform.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lispdataset.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mainwindow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/netlistexplorerdialog.Po@am__quote@

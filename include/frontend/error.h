@@ -60,6 +60,8 @@
 #define DS_DUP_VALUE_ID (DS_FRONTEND+16)
 /** Can't place the origin because there have been an origin before */
 #define DS_DUP_ORIGIN (DS_FRONTEND+17)
+/** Failed to create the instrument */
+#define DS_CREATE_INSTRUMENT (DS_FRONTEND+18)
 
 /* }}gen */
 

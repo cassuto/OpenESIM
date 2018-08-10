@@ -17679,7 +17679,7 @@ $as_echo "#define OS_BSD 1" >>confdefs.h
   ;;
 esac
 
-ac_config_files="$ac_config_files Makefile opendsim-core/Makefile opendsim-core/models/Makefile opendsim-frontend/Makefile opendsim-frontend/devices/Makefile testcase/Makefile"
+ac_config_files="$ac_config_files Makefile opendsim-core/Makefile opendsim-core/models/Makefile opendsim-frontend/Makefile opendsim-frontend/devices/Makefile opendsim-frontend/instruments/Makefile testcase/Makefile"
 
 
 # Check for Git short SHA to tag version
@@ -17688,9 +17688,9 @@ GIT="unknown"
 if test -d ".git"; then
 
 
-$as_echo "#define GIT \"bc7ae53\"" >>confdefs.h
+$as_echo "#define GIT \"18bde45\"" >>confdefs.h
 
-  GIT=bc7ae53
+  GIT=18bde45
   echo "Found Git clone... $GIT"
 fi
 
@@ -18799,6 +18799,7 @@ do
     "opendsim-core/models/Makefile") CONFIG_FILES="$CONFIG_FILES opendsim-core/models/Makefile" ;;
     "opendsim-frontend/Makefile") CONFIG_FILES="$CONFIG_FILES opendsim-frontend/Makefile" ;;
     "opendsim-frontend/devices/Makefile") CONFIG_FILES="$CONFIG_FILES opendsim-frontend/devices/Makefile" ;;
+    "opendsim-frontend/instruments/Makefile") CONFIG_FILES="$CONFIG_FILES opendsim-frontend/instruments/Makefile" ;;
     "testcase/Makefile") CONFIG_FILES="$CONFIG_FILES testcase/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

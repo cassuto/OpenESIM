@@ -13,24 +13,21 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef DEVICE_VOLTPROBE_H_
-#define DEVICE_VOLTPROBE_H_
+#ifndef INSTRUMENTLIBENTRY_H_
+#define INSTRUMENTLIBENTRY_H_
 
-#include "device-lib-internal.h"
+class InstrumentBase;
+typedef InstrumentBase *(*pfnInstrumentConst)();
 
-class dev_voltprobe : public IDevice
+class InstrumentLibraryEntry
 {
 public:
-  dev_voltprobe( const char *reference, int id, void *reserved );
-
-  static DeviceLibraryEntry *libraryEntry();
-  static IDevice *construct( const char *reference, int id, void *reserved );
-
-  int create( ISchematic *schematic, IPropertyContainer *properties );
-  int init( ISchematic *schematic, IPropertyContainer *properties );
-  probe_type_t probe_type();
-  const char *probe_name();
-  double probe_value();
+  InstrumentLibraryEntry( const char *classname, pfnInstrumentConst construct ) : classname( classname ), construct( construct )
+  {}
+public:
+  const char *classname;
+  pfnInstrumentConst construct;
 };
+
 
 #endif

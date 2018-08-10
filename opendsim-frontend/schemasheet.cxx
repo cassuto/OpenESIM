@@ -16,7 +16,7 @@
 #define TRACE_UNIT "schemasheet"
 
 #include <dsim/logtrace.h>
-#include <dsim/device-lib.h>
+#include <frontend/device-lib.h>
 #include <dsim/circmatrix.h>
 #include <dsim/circuit.h>
 #include <model/circ-node.h>

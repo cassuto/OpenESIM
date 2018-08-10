@@ -13,24 +13,38 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef DEVICE_VOLTPROBE_H_
-#define DEVICE_VOLTPROBE_H_
+#ifndef INSTRUMENTPICKDIALOG_H_
+#define INSTRUMENTPICKDIALOG_H_
 
-#include "device-lib-internal.h"
+#include <QDialog>
 
-class dev_voltprobe : public IDevice
+class QTreeWidget;
+
+class InstrumentBase;
+
+namespace dsim
 {
+
+class InstrumentManagement;
+
+class InstrumentPickDialog : public QDialog
+{
+  Q_OBJECT
 public:
-  dev_voltprobe( const char *reference, int id, void *reserved );
+  InstrumentPickDialog( InstrumentManagement *rack, QWidget *parent = 0l );
+  inline QString selectedClassname() const { return m_selectedClassname; }
 
-  static DeviceLibraryEntry *libraryEntry();
-  static IDevice *construct( const char *reference, int id, void *reserved );
+private slots:
+void itemClicked( QTreeWidgetItem *, int );
+  void itemDoubleClicked( QTreeWidgetItem *, int );
 
-  int create( ISchematic *schematic, IPropertyContainer *properties );
-  int init( ISchematic *schematic, IPropertyContainer *properties );
-  probe_type_t probe_type();
-  const char *probe_name();
-  double probe_value();
+private:
+  InstrumentManagement *m_rack;
+  QTreeWidget   *m_instList;
+  QTreeWidgetItem *m_root;
+  QString m_selectedClassname;
 };
+
+}
 
 #endif

@@ -37,7 +37,7 @@
 #include "inductor.h"
 #include "voltprobe.h"
 
-#include <dsim/device-lib.h>
+#include <frontend/device-lib.h>
 
 static hashmap_t device_categories;     /* category_node */
 static rb_tree_t device_tree;           /* device_entry_search_node */

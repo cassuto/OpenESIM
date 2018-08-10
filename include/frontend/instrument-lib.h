@@ -13,24 +13,30 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef DEVICE_VOLTPROBE_H_
-#define DEVICE_VOLTPROBE_H_
+#ifndef INSTRUMENTLIB_H_
+#define INSTRUMENTLIB_H_
 
-#include "device-lib-internal.h"
+#if !defined(__cplusplus)
+#error cplusplus only
+#endif
 
-class dev_voltprobe : public IDevice
+#include <dsim/types.h>
+#include <dsim/list.h>
+#include <dsim/hashmap.h>
+#include <dsim/rbtree.h>
+
+class InstrumentLibraryEntry;
+
+typedef struct
 {
-public:
-  dev_voltprobe( const char *reference, int id, void *reserved );
+  DS_RBTREE_NODE();
 
-  static DeviceLibraryEntry *libraryEntry();
-  static IDevice *construct( const char *reference, int id, void *reserved );
+  const char *classname;
+  InstrumentLibraryEntry *entry;
+} inst_entry_search_node_t;
 
-  int create( ISchematic *schematic, IPropertyContainer *properties );
-  int init( ISchematic *schematic, IPropertyContainer *properties );
-  probe_type_t probe_type();
-  const char *probe_name();
-  double probe_value();
-};
+int instrument_lib_init();
+rb_tree_t *instrument_lib_get_tree();
+InstrumentLibraryEntry *instrument_lib_entry( const char *classname );
 
 #endif

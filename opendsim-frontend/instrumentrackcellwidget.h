@@ -13,24 +13,29 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef DEVICE_VOLTPROBE_H_
-#define DEVICE_VOLTPROBE_H_
+#ifndef INSTRUMENTRACKCELLWIDGET_H_
+#define INSTRUMENTRACKCELLWIDGET_H_
 
-#include "device-lib-internal.h"
+#include <QtWidgets>
 
-class dev_voltprobe : public IDevice
+class InstrumentBase;
+
+namespace dsim
+{
+
+class InstrumentPair;
+
+class InstrumentRackCellWidget : public QWidget
 {
 public:
-  dev_voltprobe( const char *reference, int id, void *reserved );
+  InstrumentRackCellWidget( const InstrumentPair &inst, int index, QWidget *parent = 0l );
 
-  static DeviceLibraryEntry *libraryEntry();
-  static IDevice *construct( const char *reference, int id, void *reserved );
-
-  int create( ISchematic *schematic, IPropertyContainer *properties );
-  int init( ISchematic *schematic, IPropertyContainer *properties );
-  probe_type_t probe_type();
-  const char *probe_name();
-  double probe_value();
+private:
+  InstrumentPair m_inst;
+  int m_index;
+  QLabel *m_nameLabel;
 };
+
+}
 
 #endif

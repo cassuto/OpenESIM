@@ -215,8 +215,8 @@ void MainWindow::createWorkspace()
   /*
    * Workspace
    */
-  workspace = new QMdiArea(this);
-  this->setCentralWidget(workspace);
+  workspace = new QMdiArea( this );
+  setCentralWidget( workspace );
 
   connect( workspace, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(onUpdateMenus()) );
   onUpdateMenus();
@@ -438,7 +438,7 @@ SchemaEditorForm *MainWindow::newSchemaDocument( DomType type )
 
   if( !processRc( schema->init() ) )
     {
-      this->workspace->addSubWindow( schema );
+      workspace->addSubWindow( schema );
 
       schema->show();
       schema->gotoCenter();
@@ -447,6 +447,12 @@ SchemaEditorForm *MainWindow::newSchemaDocument( DomType type )
   schema->deleteLater();
   return 0l;
 }
+
+QMdiSubWindow *MainWindow::addChild( QWidget *child )
+{ return workspace->addSubWindow( child ); }
+
+void MainWindow::removeChild( QMdiSubWindow *child )
+{ workspace->removeSubWindow( child ); }
 
 /**
  * Report the error code

@@ -27,6 +27,7 @@ class QToolBar;
 class QMdiArea;
 class QAction;
 class QLabel;
+class QMdiSubWindow;
 
 namespace dsim
 {
@@ -47,6 +48,8 @@ public:
   static MainWindow* instance() { return m_pinstance; }
 
 public:
+  QMdiSubWindow *addChild( QWidget *child );
+  void removeChild( QMdiSubWindow *child );
   int processRc( int rc );
   void noMemory();
 

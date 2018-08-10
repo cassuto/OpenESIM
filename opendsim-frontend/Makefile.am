@@ -13,7 +13,7 @@
 #  Lesser General Public License for more details.
 #
 
-SUBDIRS = devices
+SUBDIRS = devices instruments
 
 INCLUDES = -I$(top_builddir)/include      \
            -I$(top_srcdir)/include        \
@@ -75,6 +75,10 @@ opendsim_SOURCES = \
   presscolorbox.cxx \
   netlistexplorerdialog.cxx \
   unitsconversion.cxx \
+  instrumentpickdialog.cxx \
+  instrumentrackform.cxx \
+  instrumentrackcellwidget.cxx \
+  instrumentmanagement.cxx \
   resources.cxx
   
 MOCHEADERS = \
@@ -92,7 +96,9 @@ MOCHEADERS = \
   propertydialog.h \
   presscolorbox.h \
   netlistexplorerdialog.h \
-  propertybase.h
+  propertybase.h \
+  instrumentpickdialog.h \
+  instrumentrackform.h
 
 MOCFILES = $(MOCHEADERS:.h=.moc)
 
@@ -103,8 +109,8 @@ resources.cxx: resources.qrc
 	$(MOC) -o $@ $<
 
 opendsim_LDFLAGS = $(QT_LDFLAGS)
-opendsim_LDADD = devices/libdsimdevices.la $(top_srcdir)/opendsim-core/libdsim.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la $(QT_LIBS)
-opendsim_DEPENDENCIES = devices/libdsimdevices.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la
+opendsim_LDADD = instruments/libdsiminstruments.la devices/libdsimdevices.la $(top_srcdir)/opendsim-core/libdsim.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la $(QT_LIBS)
+opendsim_DEPENDENCIES = instruments/libdsiminstruments.la devices/libdsimdevices.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la
 
 BUILT_SOURCES = resources.cxx $(MOCFILES)
 CLEANFILES = resources.cxx $(MOCFILES)
