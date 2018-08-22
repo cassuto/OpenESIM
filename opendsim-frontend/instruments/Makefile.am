@@ -26,15 +26,21 @@ INCLUDES = -I$(top_builddir)/include      \
 libdsiminstruments_la_SOURCES = \
   oscilloscope/oscilloscope.cxx \
   oscilloscope/oscopeform.cxx \
-  oscilloscope/oscoperenderer.cxx
+  oscilloscope/oscoperenderer.cxx \
+  plotter/plotter.cxx \
+  plotter/plotterform.cxx \
+  plotter/plotterrenderer.cxx
 
 libdsiminstruments_la_SOURCES += \
   instrumentbase.cxx \
-  instrument-lib.cxx
+  instrument-lib.cxx \
+  instrumentpanel.cxx
   
 MOCHEADERS = \
   include/inst_oscilloscope.h \
-  oscilloscope/oscopeform.h
+  include/inst_plotter.h \
+  oscilloscope/oscopeform.h \
+  plotter/plotterform.h
 
 MOCFILES = $(MOCHEADERS:.h=.moc)
 

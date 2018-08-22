@@ -19,8 +19,8 @@ int
 LIB_FUNC(buff_event)( circ_element_t *element )
 {
   int rc;
-  int ports = circ_element_get_pin_count(element);
-  bool state;
+  int ports = circ_element_get_pin_count(element)/2;
+  logic_state_t state;
 
   DEFINE_PARAM(param, element, buff_param_t);
 

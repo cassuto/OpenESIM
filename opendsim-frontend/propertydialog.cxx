@@ -33,7 +33,7 @@ PropertyDialog::PropertyDialog( QWidget *parent /*= 0l*/ ) : QDialog( parent )
 
   QDialogButtonBox *buttons = new QDialogButtonBox( this );
   buttons->addButton( tr("OK"), QDialogButtonBox::AcceptRole );
-  buttons->addButton( tr("Cancel"), QDialogButtonBox::AcceptRole );
+  buttons->addButton( tr("Cancel"), QDialogButtonBox::RejectRole );
   layout->addWidget( buttons );
 
   connect( buttons, SIGNAL(accepted()), this, SLOT(onAccept()));

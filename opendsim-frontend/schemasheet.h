@@ -36,6 +36,7 @@ class ComponentGraphItem;
 class SchematicImpl;
 class PropertyContainerImpl;
 class ElementAbstractPort;
+class InstrumentManagement;
 
 class SchemaSheet
 {
@@ -57,24 +58,24 @@ public:
   int reinit();
   int createDevice( const char *symbol, const char *reference, int id, SchematicImpl *schematic, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice );
   int createDevice( const DeviceLibraryEntry *entry, const char *reference, int id, SchematicImpl *schematic, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice );
-  void deleteDevice( IDevice *device );
 
   int generateNetlist();
   inline const QList<SchemaNode *> *nodes() const { return &m_nodes; }
   int compile();
   int runStep();
   int run();
-  void end();
+  int end();
   bool running();
 
   void setSchemaView( SchemaView *schemaView );
   inline SchemaView *schemaView() const { return m_schemaView; }
-
+  inline InstrumentManagement *instrumentManagement() const { return m_instrumentManagement; }
 private:
   int runLoop();
 
 private:
   SchemaView        *m_schemaView;
+  InstrumentManagement *m_instrumentManagement;
   circ_matrix_t     *m_matrix;
   circuit_t         *m_circuit;
   QList<SchemaNode *> m_nodes;

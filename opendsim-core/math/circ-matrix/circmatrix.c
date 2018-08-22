@@ -20,6 +20,7 @@
 #include <math.h>
 
 #define TRACE_UNIT "circmatrix"
+#define DEBUG_MATRIX 0
 
 #include <dsim/memory.h>
 #include <dsim/error.h>
@@ -170,8 +171,9 @@ matrix_stamp( circ_matrix_t *matrix, int row, int col, double value )
   if( ( row == 0 )|( col == 0 ) ) return;
 
   trace_assert( matrix->inited );
+#if DEBUG_MATRIX
   trace_debug(("matrix_stamp() row: %d, col: %d, value: %f\n", row, col, value));
-
+#endif
   matrix->admit_changed = true;
   matrix->circ_matrix[row-1][col-1] = value;  /* circ_node numbers start at 1 */
 }
@@ -182,8 +184,9 @@ matrix_stamp_coef( circ_matrix_t *matrix, int row, double value )
   if( row == 0 ) return;
 
   trace_assert( matrix->inited );
+#if DEBUG_MATRIX
   trace_debug(("matrix_stamp_coef() row: %d, value: %f\n", row, value));
-
+#endif
   matrix->curr_changed = true;
   matrix->coef_vector[row-1] = value;
 }

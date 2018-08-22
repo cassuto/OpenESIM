@@ -93,7 +93,7 @@ public:
     float  vf;
     int    vi;
     int    vb;
-    char  *vsp;
+    const char *vsp;
     /** ignored pointer type, they should be assigned by device model internally */
   } u;
   int index;
@@ -113,7 +113,7 @@ public:
     float  vf;
     int    vi;
     int    vb;
-    char  *vsp;
+    const char *vsp;
   } u;
   int index;
   struct DevicePropertyValue *next;

@@ -46,7 +46,8 @@ lisp_buffer_getc( ds_scheme_t *sc )
   register char c;
   register int len;
 
-  if ( sc->buffer_read_pos >= (int)sizeof(sc->buffer) )
+  trace_assert( sc->buffer_read_pos <= (int)sizeof(sc->buffer) );
+  if ( sc->buffer_read_pos == (int)sizeof(sc->buffer) )
     {
       memmove( sc->buffer, sc->buffer + sizeof(sc->buffer) - LISP_BUFFER_UNGET_SIZE, LISP_BUFFER_UNGET_SIZE );
 
@@ -57,7 +58,7 @@ lisp_buffer_getc( ds_scheme_t *sc )
       /* fill in the cache (buffer) */
       while( sc->buffer_write_pos < (int)sizeof(sc->buffer) - LISP_BUFFER_UNGET_SIZE )
         {
-          int remain = sizeof(sc->buffer) - LISP_BUFFER_UNGET_SIZE - sc->buffer_write_pos;
+          int remain = sizeof(sc->buffer) - sc->buffer_write_pos;
 
           len = sc->stream_in_read( sc, sc->buffer + sc->buffer_write_pos, remain );
           if ( len > 0 )

@@ -27,31 +27,39 @@ class InstrumentBase;
 namespace dsim
 {
 
+class SchemaView;
 class InstrumentManagement;
 
 class InstrumentRackForm : public QMainWindow
 {
   Q_OBJECT
 public:
-  InstrumentRackForm( InstrumentManagement *rack, QWidget *parent = 0l );
+  InstrumentRackForm( SchemaView *schemaView, InstrumentManagement *rack, QWidget *parent = 0l );
+  ~InstrumentRackForm();
+  inline void setMdiWnd( QMdiSubWindow *mdisub ) { m_mdiWnd = mdisub; }
 
 private:
   void createActions();
   void createToolBar();
   void createRackBox();
 
-  void insertInstrument( const InstrumentPair &inst, int index );
+  void insertInstrument( const InstrumentPair &inst );
 
 signals:
   void closed();
 private slots:
   void onAddInstrument();
+  void onSchemaEditorClosed();
 
 protected:
+  QSize minimumSizeHint() const;
   void closeEvent( QCloseEvent *closeEvent );
 
 private:
+  QWidget *m_parent;
+  SchemaView *m_schemaView;
   InstrumentManagement *m_rack;
+  QMdiSubWindow *m_mdiWnd;
   QAction *actAddInstrument;
   QToolBox *toolBox;
 };

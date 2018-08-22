@@ -75,8 +75,12 @@ am_libdsiminstruments_la_OBJECTS =  \
 	libdsiminstruments_la-oscilloscope.lo \
 	libdsiminstruments_la-oscopeform.lo \
 	libdsiminstruments_la-oscoperenderer.lo \
+	libdsiminstruments_la-plotter.lo \
+	libdsiminstruments_la-plotterform.lo \
+	libdsiminstruments_la-plotterrenderer.lo \
 	libdsiminstruments_la-instrumentbase.lo \
-	libdsiminstruments_la-instrument-lib.lo
+	libdsiminstruments_la-instrument-lib.lo \
+	libdsiminstruments_la-instrumentpanel.lo
 libdsiminstruments_la_OBJECTS = $(am_libdsiminstruments_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -133,6 +137,7 @@ LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSOCKET_LD = @LIBSOCKET_LD@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -226,10 +231,14 @@ INCLUDES = -I$(top_builddir)/include      \
 # Targets.
 libdsiminstruments_la_SOURCES = oscilloscope/oscilloscope.cxx \
 	oscilloscope/oscopeform.cxx oscilloscope/oscoperenderer.cxx \
-	instrumentbase.cxx instrument-lib.cxx
+	plotter/plotter.cxx plotter/plotterform.cxx \
+	plotter/plotterrenderer.cxx instrumentbase.cxx \
+	instrument-lib.cxx instrumentpanel.cxx
 MOCHEADERS = \
   include/inst_oscilloscope.h \
-  oscilloscope/oscopeform.h
+  include/inst_plotter.h \
+  oscilloscope/oscopeform.h \
+  plotter/plotterform.h
 
 MOCFILES = $(MOCHEADERS:.h=.moc)
 libdsiminstruments_la_CFLAGS = -Wno-unused-function
@@ -308,9 +317,13 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsiminstruments_la-instrument-lib.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsiminstruments_la-instrumentbase.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsiminstruments_la-instrumentpanel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsiminstruments_la-oscilloscope.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsiminstruments_la-oscopeform.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsiminstruments_la-oscoperenderer.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsiminstruments_la-plotter.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsiminstruments_la-plotterform.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsiminstruments_la-plotterrenderer.Plo@am__quote@
 
 .cxx.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -354,6 +367,27 @@ libdsiminstruments_la-oscoperenderer.lo: oscilloscope/oscoperenderer.cxx
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsiminstruments_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsiminstruments_la-oscoperenderer.lo `test -f 'oscilloscope/oscoperenderer.cxx' || echo '$(srcdir)/'`oscilloscope/oscoperenderer.cxx
 
+libdsiminstruments_la-plotter.lo: plotter/plotter.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsiminstruments_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsiminstruments_la-plotter.lo -MD -MP -MF "$(DEPDIR)/libdsiminstruments_la-plotter.Tpo" -c -o libdsiminstruments_la-plotter.lo `test -f 'plotter/plotter.cxx' || echo '$(srcdir)/'`plotter/plotter.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsiminstruments_la-plotter.Tpo" "$(DEPDIR)/libdsiminstruments_la-plotter.Plo"; else rm -f "$(DEPDIR)/libdsiminstruments_la-plotter.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='plotter/plotter.cxx' object='libdsiminstruments_la-plotter.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsiminstruments_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsiminstruments_la-plotter.lo `test -f 'plotter/plotter.cxx' || echo '$(srcdir)/'`plotter/plotter.cxx
+
+libdsiminstruments_la-plotterform.lo: plotter/plotterform.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsiminstruments_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsiminstruments_la-plotterform.lo -MD -MP -MF "$(DEPDIR)/libdsiminstruments_la-plotterform.Tpo" -c -o libdsiminstruments_la-plotterform.lo `test -f 'plotter/plotterform.cxx' || echo '$(srcdir)/'`plotter/plotterform.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsiminstruments_la-plotterform.Tpo" "$(DEPDIR)/libdsiminstruments_la-plotterform.Plo"; else rm -f "$(DEPDIR)/libdsiminstruments_la-plotterform.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='plotter/plotterform.cxx' object='libdsiminstruments_la-plotterform.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsiminstruments_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsiminstruments_la-plotterform.lo `test -f 'plotter/plotterform.cxx' || echo '$(srcdir)/'`plotter/plotterform.cxx
+
+libdsiminstruments_la-plotterrenderer.lo: plotter/plotterrenderer.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsiminstruments_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsiminstruments_la-plotterrenderer.lo -MD -MP -MF "$(DEPDIR)/libdsiminstruments_la-plotterrenderer.Tpo" -c -o libdsiminstruments_la-plotterrenderer.lo `test -f 'plotter/plotterrenderer.cxx' || echo '$(srcdir)/'`plotter/plotterrenderer.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsiminstruments_la-plotterrenderer.Tpo" "$(DEPDIR)/libdsiminstruments_la-plotterrenderer.Plo"; else rm -f "$(DEPDIR)/libdsiminstruments_la-plotterrenderer.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='plotter/plotterrenderer.cxx' object='libdsiminstruments_la-plotterrenderer.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsiminstruments_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsiminstruments_la-plotterrenderer.lo `test -f 'plotter/plotterrenderer.cxx' || echo '$(srcdir)/'`plotter/plotterrenderer.cxx
+
 libdsiminstruments_la-instrumentbase.lo: instrumentbase.cxx
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsiminstruments_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsiminstruments_la-instrumentbase.lo -MD -MP -MF "$(DEPDIR)/libdsiminstruments_la-instrumentbase.Tpo" -c -o libdsiminstruments_la-instrumentbase.lo `test -f 'instrumentbase.cxx' || echo '$(srcdir)/'`instrumentbase.cxx; \
 @am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsiminstruments_la-instrumentbase.Tpo" "$(DEPDIR)/libdsiminstruments_la-instrumentbase.Plo"; else rm -f "$(DEPDIR)/libdsiminstruments_la-instrumentbase.Tpo"; exit 1; fi
@@ -367,6 +401,13 @@ libdsiminstruments_la-instrument-lib.lo: instrument-lib.cxx
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='instrument-lib.cxx' object='libdsiminstruments_la-instrument-lib.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsiminstruments_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsiminstruments_la-instrument-lib.lo `test -f 'instrument-lib.cxx' || echo '$(srcdir)/'`instrument-lib.cxx
+
+libdsiminstruments_la-instrumentpanel.lo: instrumentpanel.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsiminstruments_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsiminstruments_la-instrumentpanel.lo -MD -MP -MF "$(DEPDIR)/libdsiminstruments_la-instrumentpanel.Tpo" -c -o libdsiminstruments_la-instrumentpanel.lo `test -f 'instrumentpanel.cxx' || echo '$(srcdir)/'`instrumentpanel.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsiminstruments_la-instrumentpanel.Tpo" "$(DEPDIR)/libdsiminstruments_la-instrumentpanel.Plo"; else rm -f "$(DEPDIR)/libdsiminstruments_la-instrumentpanel.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='instrumentpanel.cxx' object='libdsiminstruments_la-instrumentpanel.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsiminstruments_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsiminstruments_la-instrumentpanel.lo `test -f 'instrumentpanel.cxx' || echo '$(srcdir)/'`instrumentpanel.cxx
 
 mostlyclean-libtool:
 	-rm -f *.lo

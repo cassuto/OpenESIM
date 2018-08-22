@@ -55,12 +55,13 @@ LIBOBJDIR =
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/adc/makefile.inc $(srcdir)/bjt/makefile.inc \
 	$(srcdir)/capacitor/makefile.inc $(srcdir)/d-and/makefile.inc \
-	$(srcdir)/d-buff/makefile.inc $(srcdir)/d-or/makefile.inc \
-	$(srcdir)/d-xor/makefile.inc $(srcdir)/dac/makefile.inc \
-	$(srcdir)/dev/makefile.inc $(srcdir)/diode/makefile.inc \
-	$(srcdir)/inductor/makefile.inc $(srcdir)/mosfet/makefile.inc \
-	$(srcdir)/opamp/makefile.inc $(srcdir)/pn/makefile.inc \
-	$(srcdir)/register/makefile.inc $(srcdir)/vsource/makefile.inc
+	$(srcdir)/d-buff/makefile.inc $(srcdir)/d-mcu-avr/makefile.inc \
+	$(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc \
+	$(srcdir)/dac/makefile.inc $(srcdir)/dev/makefile.inc \
+	$(srcdir)/diode/makefile.inc $(srcdir)/inductor/makefile.inc \
+	$(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc \
+	$(srcdir)/pn/makefile.inc $(srcdir)/register/makefile.inc \
+	$(srcdir)/vsource/makefile.inc
 subdir = opendsim-core/models
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -78,7 +79,8 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(libdir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libdsimmodels_la_LIBADD =
+am__DEPENDENCIES_1 =
+libdsimmodels_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_libdsimmodels_la_OBJECTS = libdsimmodels_la-register.lo \
 	libdsimmodels_la-registercreate.lo \
 	libdsimmodels_la-registerinit.lo \
@@ -136,9 +138,63 @@ am_libdsimmodels_la_OBJECTS = libdsimmodels_la-register.lo \
 	libdsimmodels_la-d-and.lo libdsimmodels_la-d-buff.lo \
 	libdsimmodels_la-dbuffcreate.lo libdsimmodels_la-dbuffinit.lo \
 	libdsimmodels_la-dbuffevent.lo libdsimmodels_la-dbuffconfig.lo \
-	libdsimmodels_la-dbuffuninit.lo libdsimmodels_la-dev.lo \
-	libdsimmodels_la-adevcreate.lo libdsimmodels_la-adevinit.lo \
-	libdsimmodels_la-adevstamp.lo libdsimmodels_la-adevvchanged.lo \
+	libdsimmodels_la-dbuffuninit.lo libdsimmodels_la-dmcuavr.lo \
+	libdsimmodels_la-dmcuavrcreate.lo \
+	libdsimmodels_la-dmcuavrinit.lo \
+	libdsimmodels_la-dmcuavrevent.lo \
+	libdsimmodels_la-dmcuavrconfig.lo \
+	libdsimmodels_la-dmcuavrreset.lo \
+	libdsimmodels_la-dmcuavruninit.lo \
+	libdsimmodels_la-dmcuavrclock.lo \
+	libdsimmodels_la-dmcuavrmmcus.lo \
+	libdsimmodels_la-sim_mega128.lo \
+	libdsimmodels_la-sim_mega16m1.lo libdsimmodels_la-sim_mega8.lo \
+	libdsimmodels_la-sim_tiny25.lo \
+	libdsimmodels_la-sim_mega1280.lo \
+	libdsimmodels_la-sim_mega2560.lo \
+	libdsimmodels_la-sim_mega88.lo \
+	libdsimmodels_la-sim_tiny4313.lo \
+	libdsimmodels_la-sim_mega1281.lo \
+	libdsimmodels_la-sim_mega32.lo libdsimmodels_la-sim_megax.lo \
+	libdsimmodels_la-sim_tiny44.lo \
+	libdsimmodels_la-sim_mega1284.lo \
+	libdsimmodels_la-sim_mega324.lo libdsimmodels_la-sim_megax4.lo \
+	libdsimmodels_la-sim_tiny45.lo \
+	libdsimmodels_la-sim_mega128rfa1.lo \
+	libdsimmodels_la-sim_mega324a.lo \
+	libdsimmodels_la-sim_megax8.lo libdsimmodels_la-sim_tiny84.lo \
+	libdsimmodels_la-sim_mega128rfr2.lo \
+	libdsimmodels_la-sim_mega328.lo \
+	libdsimmodels_la-sim_megaxm1.lo libdsimmodels_la-sim_tiny85.lo \
+	libdsimmodels_la-sim_mega16.lo \
+	libdsimmodels_la-sim_mega32u4.lo \
+	libdsimmodels_la-sim_tiny13.lo libdsimmodels_la-sim_tinyx4.lo \
+	libdsimmodels_la-sim_mega164.lo libdsimmodels_la-sim_mega48.lo \
+	libdsimmodels_la-sim_tiny2313.lo \
+	libdsimmodels_la-sim_tinyx5.lo libdsimmodels_la-sim_mega168.lo \
+	libdsimmodels_la-sim_mega64.lo \
+	libdsimmodels_la-sim_tiny2313a.lo \
+	libdsimmodels_la-sim_usb162.lo libdsimmodels_la-sim_mega169.lo \
+	libdsimmodels_la-sim_mega644.lo libdsimmodels_la-sim_tiny24.lo \
+	libdsimmodels_la-avr_acomp.lo libdsimmodels_la-avr_ioport.lo \
+	libdsimmodels_la-avr_usb.lo \
+	libdsimmodels_la-sim_cycle_timers.lo \
+	libdsimmodels_la-sim_irq.lo libdsimmodels_la-avr_adc.lo \
+	libdsimmodels_la-avr_lin.lo libdsimmodels_la-avr_watchdog.lo \
+	libdsimmodels_la-sim_elf.lo libdsimmodels_la-sim_utils.lo \
+	libdsimmodels_la-avr_bitbang.lo libdsimmodels_la-avr_spi.lo \
+	libdsimmodels_la-read_elf.lo libdsimmodels_la-sim_gdb.lo \
+	libdsimmodels_la-sim_vcd_file.lo \
+	libdsimmodels_la-avr_eeprom.lo libdsimmodels_la-avr_timer.lo \
+	libdsimmodels_la-sim_avr.lo libdsimmodels_la-sim_hex.lo \
+	libdsimmodels_la-avr_extint.lo libdsimmodels_la-avr_twi.lo \
+	libdsimmodels_la-sim_cmds.lo \
+	libdsimmodels_la-sim_interrupts.lo \
+	libdsimmodels_la-avr_flash.lo libdsimmodels_la-avr_uart.lo \
+	libdsimmodels_la-sim_core.lo libdsimmodels_la-sim_io.lo \
+	libdsimmodels_la-dev.lo libdsimmodels_la-adevcreate.lo \
+	libdsimmodels_la-adevinit.lo libdsimmodels_la-adevstamp.lo \
+	libdsimmodels_la-adevvchanged.lo \
 	libdsimmodels_la-adevconfig.lo libdsimmodels_la-adevreset.lo \
 	libdsimmodels_la-adevuninit.lo libdsimmodels_la-ddevcreate.lo \
 	libdsimmodels_la-ddevinit.lo libdsimmodels_la-ddevstamp.lo \
@@ -210,6 +266,7 @@ LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSOCKET_LD = @LIBSOCKET_LD@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -293,10 +350,9 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 lib_LTLIBRARIES = libdsimmodels.la
-INCLUDES = -I$(top_builddir)/include      \
-           -I$(top_srcdir)/include        \
-           -I./include
-
+INCLUDES = -I$(top_builddir)/include -I$(top_srcdir)/include \
+	-I./include -Id-mcu-avr/thirdparty/cores \
+	-Id-mcu-avr/thirdparty/sim
 
 #########################################################################
 # Targets.
@@ -332,19 +388,90 @@ libdsimmodels_la_SOURCES = register/register.c \
 	adc/adcuninit.c d-or/d-or.c d-xor/d-xor.c d-and/d-and.c \
 	d-buff/d-buff.c d-buff/dbuffcreate.c d-buff/dbuffinit.c \
 	d-buff/dbuffevent.c d-buff/dbuffconfig.c d-buff/dbuffuninit.c \
-	dev/dev.c dev/adevcreate.c dev/adevinit.cxx dev/adevstamp.cxx \
-	dev/adevvchanged.cxx dev/adevconfig.c dev/adevreset.cxx \
-	dev/adevuninit.cxx dev/ddevcreate.c dev/ddevinit.cxx \
-	dev/ddevstamp.cxx dev/ddevevent.cxx dev/ddevconfig.c \
-	dev/ddevreset.cxx dev/ddevuninit.cxx mdel-parameter.c \
-	mdel-lib.c
+	d-mcu-avr/dmcuavr.c d-mcu-avr/dmcuavrcreate.c \
+	d-mcu-avr/dmcuavrinit.c d-mcu-avr/dmcuavrevent.c \
+	d-mcu-avr/dmcuavrconfig.c d-mcu-avr/dmcuavrreset.c \
+	d-mcu-avr/dmcuavruninit.c d-mcu-avr/dmcuavrclock.c \
+	d-mcu-avr/dmcuavrmmcus.c \
+	d-mcu-avr/thirdparty/cores/sim_mega128.c \
+	d-mcu-avr/thirdparty/cores/sim_mega16m1.c \
+	d-mcu-avr/thirdparty/cores/sim_mega8.c \
+	d-mcu-avr/thirdparty/cores/sim_tiny25.c \
+	d-mcu-avr/thirdparty/cores/sim_mega1280.c \
+	d-mcu-avr/thirdparty/cores/sim_mega2560.c \
+	d-mcu-avr/thirdparty/cores/sim_mega88.c \
+	d-mcu-avr/thirdparty/cores/sim_tiny4313.c \
+	d-mcu-avr/thirdparty/cores/sim_mega1281.c \
+	d-mcu-avr/thirdparty/cores/sim_mega32.c \
+	d-mcu-avr/thirdparty/cores/sim_megax.c \
+	d-mcu-avr/thirdparty/cores/sim_tiny44.c \
+	d-mcu-avr/thirdparty/cores/sim_mega1284.c \
+	d-mcu-avr/thirdparty/cores/sim_mega324.c \
+	d-mcu-avr/thirdparty/cores/sim_megax4.c \
+	d-mcu-avr/thirdparty/cores/sim_tiny45.c \
+	d-mcu-avr/thirdparty/cores/sim_mega128rfa1.c \
+	d-mcu-avr/thirdparty/cores/sim_mega324a.c \
+	d-mcu-avr/thirdparty/cores/sim_megax8.c \
+	d-mcu-avr/thirdparty/cores/sim_tiny84.c \
+	d-mcu-avr/thirdparty/cores/sim_mega128rfr2.c \
+	d-mcu-avr/thirdparty/cores/sim_mega328.c \
+	d-mcu-avr/thirdparty/cores/sim_megaxm1.c \
+	d-mcu-avr/thirdparty/cores/sim_tiny85.c \
+	d-mcu-avr/thirdparty/cores/sim_mega16.c \
+	d-mcu-avr/thirdparty/cores/sim_mega32u4.c \
+	d-mcu-avr/thirdparty/cores/sim_tiny13.c \
+	d-mcu-avr/thirdparty/cores/sim_tinyx4.c \
+	d-mcu-avr/thirdparty/cores/sim_mega164.c \
+	d-mcu-avr/thirdparty/cores/sim_mega48.c \
+	d-mcu-avr/thirdparty/cores/sim_tiny2313.c \
+	d-mcu-avr/thirdparty/cores/sim_tinyx5.c \
+	d-mcu-avr/thirdparty/cores/sim_mega168.c \
+	d-mcu-avr/thirdparty/cores/sim_mega64.c \
+	d-mcu-avr/thirdparty/cores/sim_tiny2313a.c \
+	d-mcu-avr/thirdparty/cores/sim_usb162.c \
+	d-mcu-avr/thirdparty/cores/sim_mega169.c \
+	d-mcu-avr/thirdparty/cores/sim_mega644.c \
+	d-mcu-avr/thirdparty/cores/sim_tiny24.c \
+	d-mcu-avr/thirdparty/sim/avr_acomp.c \
+	d-mcu-avr/thirdparty/sim/avr_ioport.c \
+	d-mcu-avr/thirdparty/sim/avr_usb.c \
+	d-mcu-avr/thirdparty/sim/sim_cycle_timers.c \
+	d-mcu-avr/thirdparty/sim/sim_irq.c \
+	d-mcu-avr/thirdparty/sim/avr_adc.c \
+	d-mcu-avr/thirdparty/sim/avr_lin.c \
+	d-mcu-avr/thirdparty/sim/avr_watchdog.c \
+	d-mcu-avr/thirdparty/sim/sim_elf.c \
+	d-mcu-avr/thirdparty/sim/sim_utils.c \
+	d-mcu-avr/thirdparty/sim/avr_bitbang.c \
+	d-mcu-avr/thirdparty/sim/avr_spi.c \
+	d-mcu-avr/thirdparty/sim/read_elf.c \
+	d-mcu-avr/thirdparty/sim/sim_gdb.c \
+	d-mcu-avr/thirdparty/sim/sim_vcd_file.c \
+	d-mcu-avr/thirdparty/sim/avr_eeprom.c \
+	d-mcu-avr/thirdparty/sim/avr_timer.c \
+	d-mcu-avr/thirdparty/sim/sim_avr.c \
+	d-mcu-avr/thirdparty/sim/sim_hex.c \
+	d-mcu-avr/thirdparty/sim/avr_extint.c \
+	d-mcu-avr/thirdparty/sim/avr_twi.c \
+	d-mcu-avr/thirdparty/sim/sim_cmds.c \
+	d-mcu-avr/thirdparty/sim/sim_interrupts.c \
+	d-mcu-avr/thirdparty/sim/avr_flash.c \
+	d-mcu-avr/thirdparty/sim/avr_uart.c \
+	d-mcu-avr/thirdparty/sim/sim_core.c \
+	d-mcu-avr/thirdparty/sim/sim_io.c dev/dev.c dev/adevcreate.c \
+	dev/adevinit.cxx dev/adevstamp.cxx dev/adevvchanged.cxx \
+	dev/adevconfig.c dev/adevreset.cxx dev/adevuninit.cxx \
+	dev/ddevcreate.c dev/ddevinit.cxx dev/ddevstamp.cxx \
+	dev/ddevevent.cxx dev/ddevconfig.c dev/ddevreset.cxx \
+	dev/ddevuninit.cxx mdel-parameter.c mdel-lib.c
+libdsimmodels_la_LIBADD = $(LIBELF_LIBS) $(LIBSOCKET_LD)
 libdsimmodels_la_CFLAGS = -Wno-unused-function
 libdsimmodels_la_CPPFLAGS = -Wno-unused-function
 all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .cxx .lo .o .obj
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/register/makefile.inc $(srcdir)/capacitor/makefile.inc $(srcdir)/diode/makefile.inc $(srcdir)/pn/makefile.inc $(srcdir)/bjt/makefile.inc $(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc $(srcdir)/inductor/makefile.inc $(srcdir)/vsource/makefile.inc $(srcdir)/dac/makefile.inc $(srcdir)/adc/makefile.inc $(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc $(srcdir)/d-and/makefile.inc $(srcdir)/d-buff/makefile.inc $(srcdir)/dev/makefile.inc $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/register/makefile.inc $(srcdir)/capacitor/makefile.inc $(srcdir)/diode/makefile.inc $(srcdir)/pn/makefile.inc $(srcdir)/bjt/makefile.inc $(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc $(srcdir)/inductor/makefile.inc $(srcdir)/vsource/makefile.inc $(srcdir)/dac/makefile.inc $(srcdir)/adc/makefile.inc $(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc $(srcdir)/d-and/makefile.inc $(srcdir)/d-buff/makefile.inc $(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/dev/makefile.inc $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -423,6 +550,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-adevstamp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-adevuninit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-adevvchanged.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_acomp.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_adc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_bitbang.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_eeprom.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_extint.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_flash.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_ioport.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_lin.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_spi.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_timer.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_twi.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_uart.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_usb.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-avr_watchdog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-bjt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-bjtconfig.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-bjtcreate.Plo@am__quote@
@@ -469,6 +610,15 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-diodestamp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-diodeuninit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-diodevchanged.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavr.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavrclock.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavrconfig.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavrcreate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavrevent.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavrinit.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavrmmcus.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavrreset.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavruninit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-inductor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-inductorconfig.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-inductorcreate.Plo@am__quote@
@@ -499,12 +649,64 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-pnstamp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-pnuninit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-pnvchanged.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-read_elf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-register.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-registerconfig.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-registercreate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-registerinit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-registerstamp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-registeruninit.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_avr.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_cmds.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_core.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_cycle_timers.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_elf.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_gdb.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_hex.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_interrupts.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_io.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_irq.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega128.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega1280.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega1281.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega1284.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega128rfa1.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega128rfr2.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega16.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega164.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega168.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega169.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega16m1.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega2560.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega32.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega324.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega324a.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega328.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega32u4.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega48.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega64.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega644.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega8.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_mega88.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_megax.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_megax4.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_megax8.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_megaxm1.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_tiny13.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_tiny2313.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_tiny2313a.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_tiny24.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_tiny25.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_tiny4313.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_tiny44.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_tiny45.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_tiny84.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_tiny85.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_tinyx4.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_tinyx5.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_usb162.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_utils.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-sim_vcd_file.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-vsource.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-vsourceconfig.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-vsourcecreate.Plo@am__quote@
@@ -1136,6 +1338,531 @@ libdsimmodels_la-dbuffuninit.lo: d-buff/dbuffuninit.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dbuffuninit.lo `test -f 'd-buff/dbuffuninit.c' || echo '$(srcdir)/'`d-buff/dbuffuninit.c
 
+libdsimmodels_la-dmcuavr.lo: d-mcu-avr/dmcuavr.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dmcuavr.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dmcuavr.Tpo" -c -o libdsimmodels_la-dmcuavr.lo `test -f 'd-mcu-avr/dmcuavr.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavr.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dmcuavr.Tpo" "$(DEPDIR)/libdsimmodels_la-dmcuavr.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dmcuavr.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/dmcuavr.c' object='libdsimmodels_la-dmcuavr.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dmcuavr.lo `test -f 'd-mcu-avr/dmcuavr.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavr.c
+
+libdsimmodels_la-dmcuavrcreate.lo: d-mcu-avr/dmcuavrcreate.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dmcuavrcreate.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dmcuavrcreate.Tpo" -c -o libdsimmodels_la-dmcuavrcreate.lo `test -f 'd-mcu-avr/dmcuavrcreate.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrcreate.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dmcuavrcreate.Tpo" "$(DEPDIR)/libdsimmodels_la-dmcuavrcreate.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dmcuavrcreate.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/dmcuavrcreate.c' object='libdsimmodels_la-dmcuavrcreate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dmcuavrcreate.lo `test -f 'd-mcu-avr/dmcuavrcreate.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrcreate.c
+
+libdsimmodels_la-dmcuavrinit.lo: d-mcu-avr/dmcuavrinit.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dmcuavrinit.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dmcuavrinit.Tpo" -c -o libdsimmodels_la-dmcuavrinit.lo `test -f 'd-mcu-avr/dmcuavrinit.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrinit.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dmcuavrinit.Tpo" "$(DEPDIR)/libdsimmodels_la-dmcuavrinit.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dmcuavrinit.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/dmcuavrinit.c' object='libdsimmodels_la-dmcuavrinit.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dmcuavrinit.lo `test -f 'd-mcu-avr/dmcuavrinit.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrinit.c
+
+libdsimmodels_la-dmcuavrevent.lo: d-mcu-avr/dmcuavrevent.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dmcuavrevent.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dmcuavrevent.Tpo" -c -o libdsimmodels_la-dmcuavrevent.lo `test -f 'd-mcu-avr/dmcuavrevent.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrevent.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dmcuavrevent.Tpo" "$(DEPDIR)/libdsimmodels_la-dmcuavrevent.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dmcuavrevent.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/dmcuavrevent.c' object='libdsimmodels_la-dmcuavrevent.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dmcuavrevent.lo `test -f 'd-mcu-avr/dmcuavrevent.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrevent.c
+
+libdsimmodels_la-dmcuavrconfig.lo: d-mcu-avr/dmcuavrconfig.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dmcuavrconfig.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dmcuavrconfig.Tpo" -c -o libdsimmodels_la-dmcuavrconfig.lo `test -f 'd-mcu-avr/dmcuavrconfig.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrconfig.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dmcuavrconfig.Tpo" "$(DEPDIR)/libdsimmodels_la-dmcuavrconfig.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dmcuavrconfig.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/dmcuavrconfig.c' object='libdsimmodels_la-dmcuavrconfig.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dmcuavrconfig.lo `test -f 'd-mcu-avr/dmcuavrconfig.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrconfig.c
+
+libdsimmodels_la-dmcuavrreset.lo: d-mcu-avr/dmcuavrreset.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dmcuavrreset.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dmcuavrreset.Tpo" -c -o libdsimmodels_la-dmcuavrreset.lo `test -f 'd-mcu-avr/dmcuavrreset.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrreset.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dmcuavrreset.Tpo" "$(DEPDIR)/libdsimmodels_la-dmcuavrreset.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dmcuavrreset.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/dmcuavrreset.c' object='libdsimmodels_la-dmcuavrreset.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dmcuavrreset.lo `test -f 'd-mcu-avr/dmcuavrreset.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrreset.c
+
+libdsimmodels_la-dmcuavruninit.lo: d-mcu-avr/dmcuavruninit.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dmcuavruninit.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dmcuavruninit.Tpo" -c -o libdsimmodels_la-dmcuavruninit.lo `test -f 'd-mcu-avr/dmcuavruninit.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavruninit.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dmcuavruninit.Tpo" "$(DEPDIR)/libdsimmodels_la-dmcuavruninit.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dmcuavruninit.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/dmcuavruninit.c' object='libdsimmodels_la-dmcuavruninit.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dmcuavruninit.lo `test -f 'd-mcu-avr/dmcuavruninit.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavruninit.c
+
+libdsimmodels_la-dmcuavrclock.lo: d-mcu-avr/dmcuavrclock.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dmcuavrclock.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dmcuavrclock.Tpo" -c -o libdsimmodels_la-dmcuavrclock.lo `test -f 'd-mcu-avr/dmcuavrclock.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrclock.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dmcuavrclock.Tpo" "$(DEPDIR)/libdsimmodels_la-dmcuavrclock.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dmcuavrclock.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/dmcuavrclock.c' object='libdsimmodels_la-dmcuavrclock.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dmcuavrclock.lo `test -f 'd-mcu-avr/dmcuavrclock.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrclock.c
+
+libdsimmodels_la-dmcuavrmmcus.lo: d-mcu-avr/dmcuavrmmcus.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dmcuavrmmcus.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dmcuavrmmcus.Tpo" -c -o libdsimmodels_la-dmcuavrmmcus.lo `test -f 'd-mcu-avr/dmcuavrmmcus.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrmmcus.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dmcuavrmmcus.Tpo" "$(DEPDIR)/libdsimmodels_la-dmcuavrmmcus.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dmcuavrmmcus.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/dmcuavrmmcus.c' object='libdsimmodels_la-dmcuavrmmcus.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dmcuavrmmcus.lo `test -f 'd-mcu-avr/dmcuavrmmcus.c' || echo '$(srcdir)/'`d-mcu-avr/dmcuavrmmcus.c
+
+libdsimmodels_la-sim_mega128.lo: d-mcu-avr/thirdparty/cores/sim_mega128.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega128.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega128.Tpo" -c -o libdsimmodels_la-sim_mega128.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega128.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega128.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega128.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega128.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega128.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega128.c' object='libdsimmodels_la-sim_mega128.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega128.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega128.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega128.c
+
+libdsimmodels_la-sim_mega16m1.lo: d-mcu-avr/thirdparty/cores/sim_mega16m1.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega16m1.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega16m1.Tpo" -c -o libdsimmodels_la-sim_mega16m1.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega16m1.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega16m1.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega16m1.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega16m1.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega16m1.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega16m1.c' object='libdsimmodels_la-sim_mega16m1.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega16m1.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega16m1.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega16m1.c
+
+libdsimmodels_la-sim_mega8.lo: d-mcu-avr/thirdparty/cores/sim_mega8.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega8.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega8.Tpo" -c -o libdsimmodels_la-sim_mega8.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega8.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega8.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega8.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega8.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega8.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega8.c' object='libdsimmodels_la-sim_mega8.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega8.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega8.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega8.c
+
+libdsimmodels_la-sim_tiny25.lo: d-mcu-avr/thirdparty/cores/sim_tiny25.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_tiny25.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_tiny25.Tpo" -c -o libdsimmodels_la-sim_tiny25.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny25.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny25.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_tiny25.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_tiny25.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_tiny25.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_tiny25.c' object='libdsimmodels_la-sim_tiny25.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_tiny25.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny25.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny25.c
+
+libdsimmodels_la-sim_mega1280.lo: d-mcu-avr/thirdparty/cores/sim_mega1280.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega1280.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega1280.Tpo" -c -o libdsimmodels_la-sim_mega1280.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega1280.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega1280.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega1280.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega1280.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega1280.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega1280.c' object='libdsimmodels_la-sim_mega1280.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega1280.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega1280.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega1280.c
+
+libdsimmodels_la-sim_mega2560.lo: d-mcu-avr/thirdparty/cores/sim_mega2560.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega2560.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega2560.Tpo" -c -o libdsimmodels_la-sim_mega2560.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega2560.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega2560.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega2560.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega2560.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega2560.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega2560.c' object='libdsimmodels_la-sim_mega2560.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega2560.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega2560.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega2560.c
+
+libdsimmodels_la-sim_mega88.lo: d-mcu-avr/thirdparty/cores/sim_mega88.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega88.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega88.Tpo" -c -o libdsimmodels_la-sim_mega88.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega88.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega88.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega88.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega88.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega88.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega88.c' object='libdsimmodels_la-sim_mega88.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega88.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega88.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega88.c
+
+libdsimmodels_la-sim_tiny4313.lo: d-mcu-avr/thirdparty/cores/sim_tiny4313.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_tiny4313.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_tiny4313.Tpo" -c -o libdsimmodels_la-sim_tiny4313.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny4313.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny4313.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_tiny4313.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_tiny4313.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_tiny4313.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_tiny4313.c' object='libdsimmodels_la-sim_tiny4313.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_tiny4313.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny4313.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny4313.c
+
+libdsimmodels_la-sim_mega1281.lo: d-mcu-avr/thirdparty/cores/sim_mega1281.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega1281.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega1281.Tpo" -c -o libdsimmodels_la-sim_mega1281.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega1281.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega1281.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega1281.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega1281.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega1281.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega1281.c' object='libdsimmodels_la-sim_mega1281.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega1281.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega1281.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega1281.c
+
+libdsimmodels_la-sim_mega32.lo: d-mcu-avr/thirdparty/cores/sim_mega32.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega32.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega32.Tpo" -c -o libdsimmodels_la-sim_mega32.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega32.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega32.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega32.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega32.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega32.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega32.c' object='libdsimmodels_la-sim_mega32.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega32.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega32.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega32.c
+
+libdsimmodels_la-sim_megax.lo: d-mcu-avr/thirdparty/cores/sim_megax.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_megax.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_megax.Tpo" -c -o libdsimmodels_la-sim_megax.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_megax.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_megax.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_megax.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_megax.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_megax.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_megax.c' object='libdsimmodels_la-sim_megax.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_megax.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_megax.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_megax.c
+
+libdsimmodels_la-sim_tiny44.lo: d-mcu-avr/thirdparty/cores/sim_tiny44.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_tiny44.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_tiny44.Tpo" -c -o libdsimmodels_la-sim_tiny44.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny44.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny44.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_tiny44.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_tiny44.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_tiny44.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_tiny44.c' object='libdsimmodels_la-sim_tiny44.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_tiny44.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny44.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny44.c
+
+libdsimmodels_la-sim_mega1284.lo: d-mcu-avr/thirdparty/cores/sim_mega1284.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega1284.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega1284.Tpo" -c -o libdsimmodels_la-sim_mega1284.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega1284.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega1284.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega1284.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega1284.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega1284.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega1284.c' object='libdsimmodels_la-sim_mega1284.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega1284.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega1284.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega1284.c
+
+libdsimmodels_la-sim_mega324.lo: d-mcu-avr/thirdparty/cores/sim_mega324.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega324.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega324.Tpo" -c -o libdsimmodels_la-sim_mega324.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega324.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega324.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega324.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega324.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega324.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega324.c' object='libdsimmodels_la-sim_mega324.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega324.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega324.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega324.c
+
+libdsimmodels_la-sim_megax4.lo: d-mcu-avr/thirdparty/cores/sim_megax4.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_megax4.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_megax4.Tpo" -c -o libdsimmodels_la-sim_megax4.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_megax4.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_megax4.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_megax4.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_megax4.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_megax4.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_megax4.c' object='libdsimmodels_la-sim_megax4.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_megax4.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_megax4.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_megax4.c
+
+libdsimmodels_la-sim_tiny45.lo: d-mcu-avr/thirdparty/cores/sim_tiny45.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_tiny45.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_tiny45.Tpo" -c -o libdsimmodels_la-sim_tiny45.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny45.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny45.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_tiny45.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_tiny45.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_tiny45.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_tiny45.c' object='libdsimmodels_la-sim_tiny45.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_tiny45.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny45.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny45.c
+
+libdsimmodels_la-sim_mega128rfa1.lo: d-mcu-avr/thirdparty/cores/sim_mega128rfa1.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega128rfa1.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega128rfa1.Tpo" -c -o libdsimmodels_la-sim_mega128rfa1.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega128rfa1.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega128rfa1.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega128rfa1.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega128rfa1.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega128rfa1.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega128rfa1.c' object='libdsimmodels_la-sim_mega128rfa1.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega128rfa1.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega128rfa1.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega128rfa1.c
+
+libdsimmodels_la-sim_mega324a.lo: d-mcu-avr/thirdparty/cores/sim_mega324a.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega324a.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega324a.Tpo" -c -o libdsimmodels_la-sim_mega324a.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega324a.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega324a.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega324a.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega324a.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega324a.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega324a.c' object='libdsimmodels_la-sim_mega324a.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega324a.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega324a.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega324a.c
+
+libdsimmodels_la-sim_megax8.lo: d-mcu-avr/thirdparty/cores/sim_megax8.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_megax8.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_megax8.Tpo" -c -o libdsimmodels_la-sim_megax8.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_megax8.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_megax8.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_megax8.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_megax8.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_megax8.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_megax8.c' object='libdsimmodels_la-sim_megax8.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_megax8.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_megax8.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_megax8.c
+
+libdsimmodels_la-sim_tiny84.lo: d-mcu-avr/thirdparty/cores/sim_tiny84.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_tiny84.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_tiny84.Tpo" -c -o libdsimmodels_la-sim_tiny84.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny84.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny84.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_tiny84.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_tiny84.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_tiny84.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_tiny84.c' object='libdsimmodels_la-sim_tiny84.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_tiny84.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny84.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny84.c
+
+libdsimmodels_la-sim_mega128rfr2.lo: d-mcu-avr/thirdparty/cores/sim_mega128rfr2.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega128rfr2.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega128rfr2.Tpo" -c -o libdsimmodels_la-sim_mega128rfr2.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega128rfr2.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega128rfr2.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega128rfr2.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega128rfr2.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega128rfr2.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega128rfr2.c' object='libdsimmodels_la-sim_mega128rfr2.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega128rfr2.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega128rfr2.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega128rfr2.c
+
+libdsimmodels_la-sim_mega328.lo: d-mcu-avr/thirdparty/cores/sim_mega328.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega328.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega328.Tpo" -c -o libdsimmodels_la-sim_mega328.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega328.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega328.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega328.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega328.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega328.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega328.c' object='libdsimmodels_la-sim_mega328.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega328.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega328.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega328.c
+
+libdsimmodels_la-sim_megaxm1.lo: d-mcu-avr/thirdparty/cores/sim_megaxm1.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_megaxm1.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_megaxm1.Tpo" -c -o libdsimmodels_la-sim_megaxm1.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_megaxm1.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_megaxm1.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_megaxm1.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_megaxm1.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_megaxm1.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_megaxm1.c' object='libdsimmodels_la-sim_megaxm1.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_megaxm1.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_megaxm1.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_megaxm1.c
+
+libdsimmodels_la-sim_tiny85.lo: d-mcu-avr/thirdparty/cores/sim_tiny85.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_tiny85.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_tiny85.Tpo" -c -o libdsimmodels_la-sim_tiny85.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny85.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny85.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_tiny85.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_tiny85.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_tiny85.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_tiny85.c' object='libdsimmodels_la-sim_tiny85.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_tiny85.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny85.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny85.c
+
+libdsimmodels_la-sim_mega16.lo: d-mcu-avr/thirdparty/cores/sim_mega16.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega16.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega16.Tpo" -c -o libdsimmodels_la-sim_mega16.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega16.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega16.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega16.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega16.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega16.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega16.c' object='libdsimmodels_la-sim_mega16.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega16.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega16.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega16.c
+
+libdsimmodels_la-sim_mega32u4.lo: d-mcu-avr/thirdparty/cores/sim_mega32u4.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega32u4.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega32u4.Tpo" -c -o libdsimmodels_la-sim_mega32u4.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega32u4.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega32u4.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega32u4.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega32u4.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega32u4.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega32u4.c' object='libdsimmodels_la-sim_mega32u4.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega32u4.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega32u4.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega32u4.c
+
+libdsimmodels_la-sim_tiny13.lo: d-mcu-avr/thirdparty/cores/sim_tiny13.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_tiny13.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_tiny13.Tpo" -c -o libdsimmodels_la-sim_tiny13.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny13.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny13.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_tiny13.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_tiny13.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_tiny13.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_tiny13.c' object='libdsimmodels_la-sim_tiny13.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_tiny13.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny13.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny13.c
+
+libdsimmodels_la-sim_tinyx4.lo: d-mcu-avr/thirdparty/cores/sim_tinyx4.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_tinyx4.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_tinyx4.Tpo" -c -o libdsimmodels_la-sim_tinyx4.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tinyx4.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tinyx4.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_tinyx4.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_tinyx4.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_tinyx4.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_tinyx4.c' object='libdsimmodels_la-sim_tinyx4.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_tinyx4.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tinyx4.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tinyx4.c
+
+libdsimmodels_la-sim_mega164.lo: d-mcu-avr/thirdparty/cores/sim_mega164.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega164.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega164.Tpo" -c -o libdsimmodels_la-sim_mega164.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega164.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega164.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega164.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega164.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega164.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega164.c' object='libdsimmodels_la-sim_mega164.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega164.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega164.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega164.c
+
+libdsimmodels_la-sim_mega48.lo: d-mcu-avr/thirdparty/cores/sim_mega48.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega48.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega48.Tpo" -c -o libdsimmodels_la-sim_mega48.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega48.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega48.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega48.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega48.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega48.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega48.c' object='libdsimmodels_la-sim_mega48.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega48.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega48.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega48.c
+
+libdsimmodels_la-sim_tiny2313.lo: d-mcu-avr/thirdparty/cores/sim_tiny2313.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_tiny2313.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_tiny2313.Tpo" -c -o libdsimmodels_la-sim_tiny2313.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny2313.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny2313.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_tiny2313.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_tiny2313.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_tiny2313.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_tiny2313.c' object='libdsimmodels_la-sim_tiny2313.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_tiny2313.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny2313.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny2313.c
+
+libdsimmodels_la-sim_tinyx5.lo: d-mcu-avr/thirdparty/cores/sim_tinyx5.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_tinyx5.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_tinyx5.Tpo" -c -o libdsimmodels_la-sim_tinyx5.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tinyx5.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tinyx5.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_tinyx5.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_tinyx5.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_tinyx5.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_tinyx5.c' object='libdsimmodels_la-sim_tinyx5.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_tinyx5.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tinyx5.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tinyx5.c
+
+libdsimmodels_la-sim_mega168.lo: d-mcu-avr/thirdparty/cores/sim_mega168.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega168.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega168.Tpo" -c -o libdsimmodels_la-sim_mega168.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega168.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega168.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega168.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega168.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega168.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega168.c' object='libdsimmodels_la-sim_mega168.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega168.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega168.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega168.c
+
+libdsimmodels_la-sim_mega64.lo: d-mcu-avr/thirdparty/cores/sim_mega64.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega64.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega64.Tpo" -c -o libdsimmodels_la-sim_mega64.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega64.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega64.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega64.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega64.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega64.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega64.c' object='libdsimmodels_la-sim_mega64.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega64.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega64.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega64.c
+
+libdsimmodels_la-sim_tiny2313a.lo: d-mcu-avr/thirdparty/cores/sim_tiny2313a.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_tiny2313a.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_tiny2313a.Tpo" -c -o libdsimmodels_la-sim_tiny2313a.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny2313a.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny2313a.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_tiny2313a.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_tiny2313a.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_tiny2313a.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_tiny2313a.c' object='libdsimmodels_la-sim_tiny2313a.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_tiny2313a.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny2313a.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny2313a.c
+
+libdsimmodels_la-sim_usb162.lo: d-mcu-avr/thirdparty/cores/sim_usb162.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_usb162.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_usb162.Tpo" -c -o libdsimmodels_la-sim_usb162.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_usb162.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_usb162.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_usb162.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_usb162.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_usb162.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_usb162.c' object='libdsimmodels_la-sim_usb162.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_usb162.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_usb162.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_usb162.c
+
+libdsimmodels_la-sim_mega169.lo: d-mcu-avr/thirdparty/cores/sim_mega169.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega169.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega169.Tpo" -c -o libdsimmodels_la-sim_mega169.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega169.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega169.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega169.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega169.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega169.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega169.c' object='libdsimmodels_la-sim_mega169.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega169.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega169.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega169.c
+
+libdsimmodels_la-sim_mega644.lo: d-mcu-avr/thirdparty/cores/sim_mega644.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_mega644.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_mega644.Tpo" -c -o libdsimmodels_la-sim_mega644.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega644.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega644.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_mega644.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_mega644.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_mega644.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_mega644.c' object='libdsimmodels_la-sim_mega644.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_mega644.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_mega644.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_mega644.c
+
+libdsimmodels_la-sim_tiny24.lo: d-mcu-avr/thirdparty/cores/sim_tiny24.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_tiny24.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_tiny24.Tpo" -c -o libdsimmodels_la-sim_tiny24.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny24.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny24.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_tiny24.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_tiny24.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_tiny24.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/cores/sim_tiny24.c' object='libdsimmodels_la-sim_tiny24.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_tiny24.lo `test -f 'd-mcu-avr/thirdparty/cores/sim_tiny24.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/cores/sim_tiny24.c
+
+libdsimmodels_la-avr_acomp.lo: d-mcu-avr/thirdparty/sim/avr_acomp.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_acomp.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_acomp.Tpo" -c -o libdsimmodels_la-avr_acomp.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_acomp.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_acomp.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_acomp.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_acomp.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_acomp.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_acomp.c' object='libdsimmodels_la-avr_acomp.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_acomp.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_acomp.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_acomp.c
+
+libdsimmodels_la-avr_ioport.lo: d-mcu-avr/thirdparty/sim/avr_ioport.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_ioport.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_ioport.Tpo" -c -o libdsimmodels_la-avr_ioport.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_ioport.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_ioport.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_ioport.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_ioport.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_ioport.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_ioport.c' object='libdsimmodels_la-avr_ioport.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_ioport.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_ioport.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_ioport.c
+
+libdsimmodels_la-avr_usb.lo: d-mcu-avr/thirdparty/sim/avr_usb.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_usb.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_usb.Tpo" -c -o libdsimmodels_la-avr_usb.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_usb.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_usb.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_usb.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_usb.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_usb.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_usb.c' object='libdsimmodels_la-avr_usb.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_usb.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_usb.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_usb.c
+
+libdsimmodels_la-sim_cycle_timers.lo: d-mcu-avr/thirdparty/sim/sim_cycle_timers.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_cycle_timers.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_cycle_timers.Tpo" -c -o libdsimmodels_la-sim_cycle_timers.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_cycle_timers.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_cycle_timers.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_cycle_timers.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_cycle_timers.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_cycle_timers.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/sim_cycle_timers.c' object='libdsimmodels_la-sim_cycle_timers.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_cycle_timers.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_cycle_timers.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_cycle_timers.c
+
+libdsimmodels_la-sim_irq.lo: d-mcu-avr/thirdparty/sim/sim_irq.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_irq.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_irq.Tpo" -c -o libdsimmodels_la-sim_irq.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_irq.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_irq.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_irq.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_irq.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_irq.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/sim_irq.c' object='libdsimmodels_la-sim_irq.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_irq.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_irq.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_irq.c
+
+libdsimmodels_la-avr_adc.lo: d-mcu-avr/thirdparty/sim/avr_adc.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_adc.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_adc.Tpo" -c -o libdsimmodels_la-avr_adc.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_adc.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_adc.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_adc.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_adc.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_adc.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_adc.c' object='libdsimmodels_la-avr_adc.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_adc.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_adc.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_adc.c
+
+libdsimmodels_la-avr_lin.lo: d-mcu-avr/thirdparty/sim/avr_lin.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_lin.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_lin.Tpo" -c -o libdsimmodels_la-avr_lin.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_lin.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_lin.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_lin.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_lin.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_lin.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_lin.c' object='libdsimmodels_la-avr_lin.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_lin.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_lin.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_lin.c
+
+libdsimmodels_la-avr_watchdog.lo: d-mcu-avr/thirdparty/sim/avr_watchdog.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_watchdog.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_watchdog.Tpo" -c -o libdsimmodels_la-avr_watchdog.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_watchdog.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_watchdog.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_watchdog.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_watchdog.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_watchdog.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_watchdog.c' object='libdsimmodels_la-avr_watchdog.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_watchdog.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_watchdog.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_watchdog.c
+
+libdsimmodels_la-sim_elf.lo: d-mcu-avr/thirdparty/sim/sim_elf.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_elf.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_elf.Tpo" -c -o libdsimmodels_la-sim_elf.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_elf.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_elf.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_elf.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_elf.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_elf.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/sim_elf.c' object='libdsimmodels_la-sim_elf.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_elf.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_elf.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_elf.c
+
+libdsimmodels_la-sim_utils.lo: d-mcu-avr/thirdparty/sim/sim_utils.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_utils.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_utils.Tpo" -c -o libdsimmodels_la-sim_utils.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_utils.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_utils.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_utils.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_utils.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_utils.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/sim_utils.c' object='libdsimmodels_la-sim_utils.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_utils.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_utils.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_utils.c
+
+libdsimmodels_la-avr_bitbang.lo: d-mcu-avr/thirdparty/sim/avr_bitbang.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_bitbang.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_bitbang.Tpo" -c -o libdsimmodels_la-avr_bitbang.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_bitbang.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_bitbang.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_bitbang.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_bitbang.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_bitbang.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_bitbang.c' object='libdsimmodels_la-avr_bitbang.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_bitbang.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_bitbang.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_bitbang.c
+
+libdsimmodels_la-avr_spi.lo: d-mcu-avr/thirdparty/sim/avr_spi.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_spi.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_spi.Tpo" -c -o libdsimmodels_la-avr_spi.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_spi.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_spi.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_spi.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_spi.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_spi.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_spi.c' object='libdsimmodels_la-avr_spi.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_spi.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_spi.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_spi.c
+
+libdsimmodels_la-read_elf.lo: d-mcu-avr/thirdparty/sim/read_elf.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-read_elf.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-read_elf.Tpo" -c -o libdsimmodels_la-read_elf.lo `test -f 'd-mcu-avr/thirdparty/sim/read_elf.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/read_elf.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-read_elf.Tpo" "$(DEPDIR)/libdsimmodels_la-read_elf.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-read_elf.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/read_elf.c' object='libdsimmodels_la-read_elf.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-read_elf.lo `test -f 'd-mcu-avr/thirdparty/sim/read_elf.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/read_elf.c
+
+libdsimmodels_la-sim_gdb.lo: d-mcu-avr/thirdparty/sim/sim_gdb.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_gdb.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_gdb.Tpo" -c -o libdsimmodels_la-sim_gdb.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_gdb.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_gdb.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_gdb.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_gdb.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_gdb.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/sim_gdb.c' object='libdsimmodels_la-sim_gdb.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_gdb.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_gdb.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_gdb.c
+
+libdsimmodels_la-sim_vcd_file.lo: d-mcu-avr/thirdparty/sim/sim_vcd_file.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_vcd_file.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_vcd_file.Tpo" -c -o libdsimmodels_la-sim_vcd_file.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_vcd_file.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_vcd_file.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_vcd_file.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_vcd_file.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_vcd_file.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/sim_vcd_file.c' object='libdsimmodels_la-sim_vcd_file.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_vcd_file.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_vcd_file.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_vcd_file.c
+
+libdsimmodels_la-avr_eeprom.lo: d-mcu-avr/thirdparty/sim/avr_eeprom.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_eeprom.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_eeprom.Tpo" -c -o libdsimmodels_la-avr_eeprom.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_eeprom.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_eeprom.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_eeprom.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_eeprom.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_eeprom.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_eeprom.c' object='libdsimmodels_la-avr_eeprom.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_eeprom.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_eeprom.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_eeprom.c
+
+libdsimmodels_la-avr_timer.lo: d-mcu-avr/thirdparty/sim/avr_timer.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_timer.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_timer.Tpo" -c -o libdsimmodels_la-avr_timer.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_timer.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_timer.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_timer.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_timer.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_timer.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_timer.c' object='libdsimmodels_la-avr_timer.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_timer.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_timer.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_timer.c
+
+libdsimmodels_la-sim_avr.lo: d-mcu-avr/thirdparty/sim/sim_avr.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_avr.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_avr.Tpo" -c -o libdsimmodels_la-sim_avr.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_avr.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_avr.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_avr.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_avr.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_avr.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/sim_avr.c' object='libdsimmodels_la-sim_avr.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_avr.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_avr.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_avr.c
+
+libdsimmodels_la-sim_hex.lo: d-mcu-avr/thirdparty/sim/sim_hex.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_hex.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_hex.Tpo" -c -o libdsimmodels_la-sim_hex.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_hex.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_hex.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_hex.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_hex.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_hex.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/sim_hex.c' object='libdsimmodels_la-sim_hex.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_hex.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_hex.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_hex.c
+
+libdsimmodels_la-avr_extint.lo: d-mcu-avr/thirdparty/sim/avr_extint.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_extint.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_extint.Tpo" -c -o libdsimmodels_la-avr_extint.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_extint.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_extint.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_extint.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_extint.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_extint.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_extint.c' object='libdsimmodels_la-avr_extint.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_extint.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_extint.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_extint.c
+
+libdsimmodels_la-avr_twi.lo: d-mcu-avr/thirdparty/sim/avr_twi.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_twi.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_twi.Tpo" -c -o libdsimmodels_la-avr_twi.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_twi.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_twi.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_twi.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_twi.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_twi.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_twi.c' object='libdsimmodels_la-avr_twi.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_twi.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_twi.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_twi.c
+
+libdsimmodels_la-sim_cmds.lo: d-mcu-avr/thirdparty/sim/sim_cmds.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_cmds.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_cmds.Tpo" -c -o libdsimmodels_la-sim_cmds.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_cmds.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_cmds.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_cmds.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_cmds.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_cmds.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/sim_cmds.c' object='libdsimmodels_la-sim_cmds.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_cmds.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_cmds.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_cmds.c
+
+libdsimmodels_la-sim_interrupts.lo: d-mcu-avr/thirdparty/sim/sim_interrupts.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_interrupts.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_interrupts.Tpo" -c -o libdsimmodels_la-sim_interrupts.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_interrupts.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_interrupts.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_interrupts.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_interrupts.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_interrupts.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/sim_interrupts.c' object='libdsimmodels_la-sim_interrupts.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_interrupts.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_interrupts.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_interrupts.c
+
+libdsimmodels_la-avr_flash.lo: d-mcu-avr/thirdparty/sim/avr_flash.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_flash.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_flash.Tpo" -c -o libdsimmodels_la-avr_flash.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_flash.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_flash.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_flash.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_flash.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_flash.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_flash.c' object='libdsimmodels_la-avr_flash.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_flash.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_flash.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_flash.c
+
+libdsimmodels_la-avr_uart.lo: d-mcu-avr/thirdparty/sim/avr_uart.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-avr_uart.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-avr_uart.Tpo" -c -o libdsimmodels_la-avr_uart.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_uart.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_uart.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-avr_uart.Tpo" "$(DEPDIR)/libdsimmodels_la-avr_uart.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-avr_uart.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/avr_uart.c' object='libdsimmodels_la-avr_uart.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-avr_uart.lo `test -f 'd-mcu-avr/thirdparty/sim/avr_uart.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/avr_uart.c
+
+libdsimmodels_la-sim_core.lo: d-mcu-avr/thirdparty/sim/sim_core.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_core.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_core.Tpo" -c -o libdsimmodels_la-sim_core.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_core.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_core.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_core.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_core.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_core.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/sim_core.c' object='libdsimmodels_la-sim_core.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_core.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_core.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_core.c
+
+libdsimmodels_la-sim_io.lo: d-mcu-avr/thirdparty/sim/sim_io.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-sim_io.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-sim_io.Tpo" -c -o libdsimmodels_la-sim_io.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_io.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_io.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-sim_io.Tpo" "$(DEPDIR)/libdsimmodels_la-sim_io.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-sim_io.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mcu-avr/thirdparty/sim/sim_io.c' object='libdsimmodels_la-sim_io.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_io.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_io.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_io.c
+
 libdsimmodels_la-dev.lo: dev/dev.c
 @am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dev.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dev.Tpo" -c -o libdsimmodels_la-dev.lo `test -f 'dev/dev.c' || echo '$(srcdir)/'`dev/dev.c; \
 @am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dev.Tpo" "$(DEPDIR)/libdsimmodels_la-dev.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dev.Tpo"; exit 1; fi
@@ -1335,7 +2062,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/adc $(distdir)/bjt $(distdir)/capacitor $(distdir)/d-and $(distdir)/d-buff $(distdir)/d-or $(distdir)/d-xor $(distdir)/dac $(distdir)/dev $(distdir)/diode $(distdir)/inductor $(distdir)/mosfet $(distdir)/opamp $(distdir)/pn $(distdir)/register $(distdir)/vsource
+	$(mkdir_p) $(distdir)/adc $(distdir)/bjt $(distdir)/capacitor $(distdir)/d-and $(distdir)/d-buff $(distdir)/d-mcu-avr $(distdir)/d-or $(distdir)/d-xor $(distdir)/dac $(distdir)/dev $(distdir)/diode $(distdir)/inductor $(distdir)/mosfet $(distdir)/opamp $(distdir)/pn $(distdir)/register $(distdir)/vsource
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

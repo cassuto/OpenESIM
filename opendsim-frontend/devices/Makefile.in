@@ -76,8 +76,8 @@ am_libdsimdevices_la_OBJECTS = libdsimdevices_la-1n4148.lo \
 	libdsimdevices_la-capacitor.lo libdsimdevices_la-inductor.lo \
 	libdsimdevices_la-vsource-dc.lo \
 	libdsimdevices_la-vsource-dc-0v.lo \
-	libdsimdevices_la-voltprobe.lo libdsimdevices_la-device.lo \
-	libdsimdevices_la-device-lib.lo \
+	libdsimdevices_la-voltprobe.lo libdsimdevices_la-atmega164.lo \
+	libdsimdevices_la-device.lo libdsimdevices_la-device-lib.lo \
 	libdsimdevices_la-propertyvalue.lo
 libdsimdevices_la_OBJECTS = $(am_libdsimdevices_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -135,6 +135,7 @@ LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSOCKET_LD = @LIBSOCKET_LD@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -229,7 +230,8 @@ libdsimdevices_la_SOURCES = 1n4148/1n4148.cxx diode/diode.cxx \
 	register/register.cxx capacitor/capacitor.cxx \
 	inductor/inductor.cxx vsource-dc/vsource-dc.cxx \
 	vsource-dc-0v/vsource-dc-0v.cxx voltprobe/voltprobe.cxx \
-	device.cxx device-lib.cxx propertyvalue.cxx
+	atmega164/atmega164.cxx device.cxx device-lib.cxx \
+	propertyvalue.cxx
 libdsimdevices_la_CFLAGS = -Wno-unused-function
 libdsimdevices_la_CPPFLAGS = -Wno-unused-function
 all: all-am
@@ -302,6 +304,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-1n4148.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-atmega164.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-capacitor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-device-lib.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-device.Plo@am__quote@
@@ -389,6 +392,13 @@ libdsimdevices_la-voltprobe.lo: voltprobe/voltprobe.cxx
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='voltprobe/voltprobe.cxx' object='libdsimdevices_la-voltprobe.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-voltprobe.lo `test -f 'voltprobe/voltprobe.cxx' || echo '$(srcdir)/'`voltprobe/voltprobe.cxx
+
+libdsimdevices_la-atmega164.lo: atmega164/atmega164.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-atmega164.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-atmega164.Tpo" -c -o libdsimdevices_la-atmega164.lo `test -f 'atmega164/atmega164.cxx' || echo '$(srcdir)/'`atmega164/atmega164.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsimdevices_la-atmega164.Tpo" "$(DEPDIR)/libdsimdevices_la-atmega164.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-atmega164.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='atmega164/atmega164.cxx' object='libdsimdevices_la-atmega164.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-atmega164.lo `test -f 'atmega164/atmega164.cxx' || echo '$(srcdir)/'`atmega164/atmega164.cxx
 
 libdsimdevices_la-device.lo: device.cxx
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-device.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-device.Tpo" -c -o libdsimdevices_la-device.lo `test -f 'device.cxx' || echo '$(srcdir)/'`device.cxx; \

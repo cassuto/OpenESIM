@@ -50,7 +50,7 @@ LIB_FUNC(buff_config)( circ_element_t *element, int op, ... )
         int param_id = va_arg( vlist, int );
         switch ( param_id )
         {
-          case 0: *(va_arg( vlist, int* )) = circ_element_get_pin_count(element); break;
+          case 0: *(va_arg( vlist, int* )) = circ_element_get_pin_count(element) / 2; break;
           default: rc = -DS_FAULT;
         }
       }

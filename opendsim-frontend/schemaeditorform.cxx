@@ -37,8 +37,7 @@ namespace dsim
 SchemaEditorForm::SchemaEditorForm( DomType type, QWidget *parent_ )
                 : QMainWindow( parent_ )
                 , dom( new LispDataset( type ) )
-                , schsheet( new SchemaSheet() )
-                , instruments( new InstrumentManagement )
+                , schsheet( new SchemaSheet )
                 , rackForm( 0l )
 {
   createActions();
@@ -198,9 +197,14 @@ void SchemaEditorForm::onModeInstrument( bool toggled )
 {
   if( toggled && !rackForm )
     {
-      InstrumentRackForm *rack = new InstrumentRackForm( instruments, this );
-      connect( rack, SIGNAL(closed()), this , SLOT(onInstrumentRackClosed()) );
+      InstrumentRackForm *rack = new InstrumentRackForm( schema->view(), schsheet->instrumentManagement(), this );
       rackForm = MainWindow::instance()->addChild( rack );
+      rack->setMdiWnd( rackForm );
+
+      connect( rack, SIGNAL(closed()), this , SLOT(onInstrumentRackClosed()) );
+
+      connect( this, SIGNAL(closed()), rack, SLOT(onSchemaEditorClosed()) );
+
       rackForm->show();
     }
   else if( !toggled && rackForm )
@@ -275,8 +279,11 @@ int SchemaEditorForm::debugRun()
   return rc;
 }
 
-void SchemaEditorForm::debugEnd()
-{ schsheet->end(); }
+int SchemaEditorForm::debugEnd()
+{ return schsheet->end(); }
+
+void SchemaEditorForm::closeEvent( QCloseEvent *event )
+{ event->accept(); emit closed(); }
 
 } // namespace dsim
 

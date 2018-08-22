@@ -28,14 +28,13 @@ namespace dsim
 
 InstrumentManagement::InstrumentManagement() {}
 
-int InstrumentManagement::addInstrument( InstrumentLibraryEntry *entry, InstrumentBase DS_OUT **ppInstance, int DS_OUT *pIndex )
+int InstrumentManagement::addInstrument( InstrumentLibraryEntry *entry, InstrumentBase DS_OUT **ppInstance )
 {
   if( entry )
     {
-      if( InstrumentBase *instance = entry->construct() )
+      if( InstrumentBase *instance = entry->construct( /*index*/m_insts.count() ) )
         {
           *ppInstance = instance;
-          *pIndex = m_insts.count();
           m_insts.append( InstrumentPair( entry, instance ) );
           return 0;
         }
@@ -43,13 +42,20 @@ int InstrumentManagement::addInstrument( InstrumentLibraryEntry *entry, Instrume
   return -DS_CREATE_INSTRUMENT;
 }
 
-int InstrumentManagement::addInstrument( const char *classname, InstrumentBase DS_OUT **ppInstance, int DS_OUT *pIndex )
-{ return addInstrument( instrument_lib_entry( classname ), ppInstance, pIndex); }
+int InstrumentManagement::addInstrument( const char *classname, InstrumentBase DS_OUT **ppInstance )
+{ return addInstrument( instrument_lib_entry( classname ), ppInstance ); }
 
-void InstrumentManagement::removeInstrument( int index )
+void InstrumentManagement::removeInstrument( const InstrumentPair &pair )
 {
-  trace_assert( index >= 0 && index < m_insts.count() );
-  m_insts.removeAt( index );
+  int index = m_insts.indexOf( pair );
+  if( index > -1 )
+    {
+      m_insts.removeAt( index );
+      for( int i=index; i<m_insts.count(); i++ )
+        {
+          m_insts.at(i).base->setIndex( i );
+        }
+    }
 }
 
 rb_tree_t *InstrumentManagement::instrumentTree() const

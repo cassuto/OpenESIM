@@ -29,7 +29,7 @@ public:
   int create( ISchematic *schematic, IPropertyContainer *properties );
   int init( ISchematic *schematic, IPropertyContainer *properties );
   probe_type_t probe_type();
-  const char *probe_name();
+  const char *probe_attrs();
   double probe_value();
 };
 

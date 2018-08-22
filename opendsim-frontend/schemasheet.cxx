@@ -38,6 +38,7 @@
 #include "elementabstractport.h"
 #include "componentgraphitem.h"
 #include "schematicimpl.h"
+#include "instrumentmanagement.h"
 #include "propertycontainerimpl.h"
 
 #include "schemasheet.h"
@@ -47,6 +48,7 @@ namespace dsim
 
 SchemaSheet::SchemaSheet()
             : m_schemaView( 0l )
+            , m_instrumentManagement( new InstrumentManagement )
             , m_matrix( 0l )
             , m_circuit( 0l )
             , m_compiled( false )
@@ -107,11 +109,6 @@ int SchemaSheet::createDevice( const DeviceLibraryEntry *entry, const char *refe
       return rc;
     }
   return -DS_NO_MEMORY;
-}
-
-void SchemaSheet::deleteDevice( IDevice *device )
-{
-  delete device;
 }
 
 static inline int setsFind( int *sets, int x )
@@ -237,29 +234,7 @@ int SchemaSheet::compile()
 {
   if( m_compiled ) return 0;
   int rc = generateNetlist(); UPDATE_RC(rc);
-  bool needReinit = false;
-
-  if( !m_matrix || !m_circuit )
-    {
-      needReinit = true;
-      rc = reinit(); UPDATE_RC(rc);
-    }
-  if( needReinit )
-    {
-      m_components.clear();
-      foreach( SchemaNode *node, *(nodes()) )
-        {
-          foreach( ElementAbstractPort *port, *(node->ports()) )
-            {
-              ComponentGraphItem *component = port->component();
-              if( 0== m_components[component] )
-                {
-                  m_components[component] = 1;
-                  rc = component->createDevice(); UPDATE_RC(rc); // create the device again
-                }
-            }
-        }
-    }
+  end();
 
   /*
    * Connect physical nodes
@@ -275,7 +250,7 @@ int SchemaSheet::compile()
           circuit_attach_node( m_circuit, circNode );
           foreach( ElementAbstractPort *port, *(node->ports()) )
             {
-              device = port->component()->device();
+              device = port->component()->device()->get();
               pinIndex = port->reference().toInt( &isInt )-1;     // parse target pin
               if( isInt && pinIndex >= 0 && pinIndex < device->pin_count() )
                 {
@@ -319,9 +294,15 @@ int SchemaSheet::runStep()
 int SchemaSheet::runLoop()
 {
   int rc;
+  int tick = 0;
   for( ;; )
     {
-      if( (rc = circuit_run_step( m_circuit )) ) return rc;
+      if( tick++ > 10000000 )
+        {
+          tick = 0;
+          m_instrumentManagement->clockTick();
+          if( (rc = circuit_run_step( m_circuit )) ) return rc;
+        }
       if( m_canceled ) break;
     }
   return 0;
@@ -337,21 +318,35 @@ int SchemaSheet::run()
   return 0;
 }
 
-void SchemaSheet::end()
+int SchemaSheet::end()
 {
   m_canceled = true;
   m_stepFuture.waitForFinished();
-  uninit();
+
+  int rc = reinit(); if( rc ) return -DS_RECREATE_CIRCUIT;
+
   m_components.clear();
-  m_components.squeeze();
+
+  foreach( SchemaNode *node, *(nodes()) )
+    {
+      foreach( ElementAbstractPort *port, *(node->ports()) )
+        {
+          ComponentGraphItem *component = port->component();
+          if( 0== m_components[component] )
+            {
+              m_components[component] = 1;
+              rc = component->createDevice(); if( rc ) return -DS_RECREATE_CIRCUIT; // create the device again
+            }
+        }
+    }
+
+  return rc;
 }
 
 bool SchemaSheet::running()
 { return m_stepFuture.isRunning() && m_canceled; }
 
 void SchemaSheet::setSchemaView( SchemaView *schemaView )
-{
-  m_schemaView = schemaView;
-}
+{ m_schemaView = schemaView; }
 
 }

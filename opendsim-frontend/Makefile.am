@@ -79,6 +79,7 @@ opendsim_SOURCES = \
   instrumentrackform.cxx \
   instrumentrackcellwidget.cxx \
   instrumentmanagement.cxx \
+  probepickdialog.cxx \
   resources.cxx
   
 MOCHEADERS = \
@@ -98,7 +99,9 @@ MOCHEADERS = \
   netlistexplorerdialog.h \
   propertybase.h \
   instrumentpickdialog.h \
-  instrumentrackform.h
+  instrumentrackform.h \
+  instrumentrackcellwidget.h \
+  probepickdialog.h
 
 MOCFILES = $(MOCHEADERS:.h=.moc)
 
@@ -109,8 +112,20 @@ resources.cxx: resources.qrc
 	$(MOC) -o $@ $<
 
 opendsim_LDFLAGS = $(QT_LDFLAGS)
-opendsim_LDADD = instruments/libdsiminstruments.la devices/libdsimdevices.la $(top_srcdir)/opendsim-core/libdsim.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la $(QT_LIBS)
-opendsim_DEPENDENCIES = instruments/libdsiminstruments.la devices/libdsimdevices.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la
+opendsim_LDADD = \
+  instruments/libdsiminstruments.la \
+  devices/libdsimdevices.la \
+  $(top_srcdir)/opendsim-core/libdsim.la \
+  $(top_srcdir)/opendsim-core/models/libdsimmodels.la \
+  $(QT_LIBS) \
+  $(LIBELF_LIBS) \
+  $(LIBSOCKET_LD)
+  
+opendsim_DEPENDENCIES = \
+  instruments/libdsiminstruments.la \
+  devices/libdsimdevices.la \
+  $(top_srcdir)/opendsim-core/models/libdsimmodels.la \
+  $(top_srcdir)/opendsim-core/libdsim.la
 
 BUILT_SOURCES = resources.cxx $(MOCFILES)
 CLEANFILES = resources.cxx $(MOCFILES)

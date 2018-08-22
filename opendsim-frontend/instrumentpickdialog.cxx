@@ -32,7 +32,7 @@ InstrumentPickDialog::InstrumentPickDialog( InstrumentManagement *rack, QWidget 
 
   QVBoxLayout *layout = new QVBoxLayout( this );
 
-  QLabel *label = new QLabel( tr("Select a instrument from following list:"), this );
+  QLabel *label = new QLabel( tr("Select an instrument from the following list:"), this );
   layout->addWidget( label );
 
   m_instList = new QTreeWidget( this );
@@ -58,7 +58,7 @@ InstrumentPickDialog::InstrumentPickDialog( InstrumentManagement *rack, QWidget 
 
   QDialogButtonBox *buttons = new QDialogButtonBox( this );
   buttons->addButton( tr("OK"), QDialogButtonBox::AcceptRole );
-  buttons->addButton( tr("Cancel"), QDialogButtonBox::AcceptRole );
+  buttons->addButton( tr("Cancel"), QDialogButtonBox::RejectRole );
 
   layout->addWidget( buttons );
 

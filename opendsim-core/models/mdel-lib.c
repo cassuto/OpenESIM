@@ -19,6 +19,10 @@
 
 #define TRACE_UNIT "model-lib"
 
+#include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
+
 #include <dsim/logtrace.h>
 #include <dsim/node-template.h>
 
@@ -37,6 +41,7 @@ extern circ_element_descriptor_t mdel_adc;
 extern circ_element_descriptor_t mdel_or;
 extern circ_element_descriptor_t mdel_xor;
 extern circ_element_descriptor_t mdel_and;
+extern circ_element_descriptor_t mdel_mcu_avr;
 extern circ_element_descriptor_t mdel_ddev;
 extern circ_element_descriptor_t mdel_adev;
 
@@ -55,6 +60,7 @@ static const circ_element_descriptor_t *element_descriptors[] =
     &mdel_or,
     &mdel_xor,
     &mdel_and,
+    &mdel_mcu_avr,
     &mdel_adev,
     &mdel_ddev
   };
@@ -201,4 +207,17 @@ model_destroy_instance( const circ_element_descriptor_t *desc, const void *mdel,
   ds_heap_free( element->param );
 
   model_lib_release(); /* decrease the reference count */
+}
+
+void
+model_log( const char *format, ... )
+{
+  char buff[2048];
+  va_list args;
+  va_start( args, format );
+
+  vsnprintf( buff, sizeof(buff), format, args );
+  va_end( args );
+
+  trace_info(("%s\n", buff ));
 }

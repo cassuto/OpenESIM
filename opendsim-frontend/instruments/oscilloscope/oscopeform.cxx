@@ -22,7 +22,7 @@
 namespace dsim
 {
 
-OscopeForm::OscopeForm( inst_oscilloscope *oscope, QWidget *parent /*= 0l*/ ) : QMainWindow( parent )
+OscopeForm::OscopeForm( inst_oscilloscope *oscope, InstrumentPanel *parent /*= 0l*/ ) : InstrumentPanel( parent )
            , m_oscope( oscope )
 {
   QHBoxLayout *centralLayout = new QHBoxLayout( this );

@@ -28,7 +28,7 @@ LIB_FUNC(dac_config)( circ_element_t *element, int op, ... )
     case ELM_CONFIG_LIST_COUNT: /* Query the number of parameters */
       {
         int *count = va_arg( vlist, int* );
-        *count = 1;
+        *count = 5;
       }
       break;
 

@@ -33,6 +33,8 @@ public:
 {}
   InstrumentLibraryEntry *entry;
   InstrumentBase *base;
+
+  bool operator==( const InstrumentPair &pair ) { return pair.entry == entry && pair.base == base; } // explicit
 };
 
 class InstrumentManagement
@@ -40,9 +42,9 @@ class InstrumentManagement
 public:
   InstrumentManagement();
 
-  int addInstrument( InstrumentLibraryEntry *entry, InstrumentBase DS_OUT **instance, int DS_OUT *index );
-  int addInstrument( const char *classname, InstrumentBase DS_OUT **instance, int DS_OUT *index );
-  void removeInstrument( int index );
+  int addInstrument( InstrumentLibraryEntry *entry, InstrumentBase DS_OUT **instance );
+  int addInstrument( const char *classname, InstrumentBase DS_OUT **instance );
+  void removeInstrument( const InstrumentPair &pair );
   rb_tree_t *instrumentTree() const;
   inline const QList<InstrumentPair> & instruments() const { return m_insts; }
   void clockTick();

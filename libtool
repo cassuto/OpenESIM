@@ -1,6 +1,6 @@
 #! /bin/sh
 # Generated automatically by config.status (opendsim) 0.0.1
-# Libtool was configured on host lenovo-b31538e7:
+# Libtool was configured on host LAPTOP-89V7LGOT:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 
 # Provide generalized library-building support services.
@@ -76,19 +76,19 @@ build=i686-pc-mingw32
 build_os=mingw32
 
 # A sed program that does not truncate output.
-SED="/usr/bin/sed"
+SED="/bin/sed"
 
 # Sed that helps us avoid accidentally triggering echo(1) options like -n.
 Xsed="$SED -e 1s/^X//"
 
 # A grep program that handles long lines.
-GREP="/usr/bin/grep"
+GREP="/bin/grep"
 
 # An ERE matcher.
-EGREP="/usr/bin/grep -E"
+EGREP="/bin/grep -E"
 
 # A literal string matcher.
-FGREP="/usr/bin/grep -F"
+FGREP="/bin/grep -F"
 
 # A BSD- or MS-compatible name lister.
 NM="/mingw/bin/nm -B"
@@ -165,7 +165,7 @@ lock_old_archive_extraction=no
 LTCC="gcc"
 
 # LTCC compiler flags.
-LTCFLAGS="-std=c99 -g -pipe -W -Wall -Wmissing-prototypes"
+LTCFLAGS="-I/usr/local/include/harfbuzz -I/usr/local/include -std=c99 -g -pipe -W -Wall -Wmissing-prototypes"
 
 # Take the output of nm and produce a listing of raw symbols and C names.
 global_symbol_pipe="sed -n -e 's/^.*[	 ]\\([ABCDGIRSTW][ABCDGIRSTW]*\\)[	 ][	 ]*_\\([_A-Za-z][_A-Za-z0-9]*\\)\\{0,1\\}\$/\\1 _\\2 \\2/p' | sed '/ __gnu_lto/d'"
@@ -192,7 +192,7 @@ nm_file_list_spec="@"
 lt_sysroot=
 
 # Command to truncate a binary pipe.
-lt_truncate_bin="/d/WinAVR-20100110/utils/bin/dd bs=4096 count=1"
+lt_truncate_bin="/bin/sed -e 4q"
 
 # The name of the directory that contains temporary libtool files.
 objdir=.libs
@@ -292,7 +292,7 @@ finish_eval=""
 hardcode_into_libs=no
 
 # Compile-time system search path for libraries.
-sys_lib_search_path_spec="d:/mingw/lib/gcc/i686-w64-mingw32/4.9.2 d:/mingw/lib/gcc d:/mingw/i686-w64-mingw32/lib d:/mingw/lib "
+sys_lib_search_path_spec="d:/mingw/lib/gcc/i686-w64-mingw32/4.9.2 d:/mingw/lib/gcc D:/msys/1.0/local/lib d:/mingw/i686-w64-mingw32/lib d:/mingw/lib D:/msys/1.0/local/include "
 
 # Detected run-time system search path for libraries.
 sys_lib_dlsearch_path_spec="/lib /usr/lib"
@@ -524,7 +524,7 @@ func_cc_basename ()
 # ### END FUNCTIONS SHARED WITH CONFIGURE
 
 #! /bin/sh
-## DO NOT EDIT - This file generated from /usr/src/ports/libtool/libtool-2.4.6-4.i686/src/libtool-2.4.6/build-aux/ltmain.in
+## DO NOT EDIT - This file generated from /usr/src/ports/libtool/libtool-2.4.6-6.x86_64/src/libtool-2.4.6/build-aux/ltmain.in
 ##               by inline-source v2014-01-03.01
 
 # libtool (GNU libtool) 2.4.6
@@ -11814,7 +11814,7 @@ file_list_spec=""
 hardcode_action=immediate
 
 # The directories searched by this compiler when creating a shared library.
-compiler_lib_search_dirs="d:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2 d:/mingw/bin/../lib/gcc d:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../../../i686-w64-mingw32/lib/../lib d:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../../../lib d:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../../../i686-w64-mingw32/lib d:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../.."
+compiler_lib_search_dirs="d:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2 d:/mingw/bin/../lib/gcc D:/msys/1.0/local/lib/../lib D:/msys/1.0/local/include/../lib d:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../../../i686-w64-mingw32/lib/../lib d:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../../../lib D:/msys/1.0/local/lib D:/msys/1.0/local/include d:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../../../i686-w64-mingw32/lib d:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../.."
 
 # Dependencies to place before and after the objects being linked to
 # create a shared library.
@@ -11825,6 +11825,6 @@ postdeps="-lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lpthre
 
 # The library search path used internally by the compiler when linking
 # a shared library.
-compiler_lib_search_path="-Ld:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2 -Ld:/mingw/bin/../lib/gcc -Ld:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../../../i686-w64-mingw32/lib/../lib -Ld:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../../../lib -Ld:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../../../i686-w64-mingw32/lib -Ld:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../.."
+compiler_lib_search_path="-Ld:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2 -Ld:/mingw/bin/../lib/gcc -LD:/msys/1.0/local/lib/../lib -LD:/msys/1.0/local/include/../lib -Ld:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../../../i686-w64-mingw32/lib/../lib -Ld:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../../../lib -LD:/msys/1.0/local/lib -LD:/msys/1.0/local/include -Ld:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../../../i686-w64-mingw32/lib -Ld:/mingw/bin/../lib/gcc/i686-w64-mingw32/4.9.2/../../.."
 
 # ### END LIBTOOL TAG CONFIG: CXX

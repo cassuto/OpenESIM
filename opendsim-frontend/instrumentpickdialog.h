@@ -19,6 +19,7 @@
 #include <QDialog>
 
 class QTreeWidget;
+class QTreeWidgetItem;
 
 class InstrumentBase;
 
@@ -35,7 +36,7 @@ public:
   inline QString selectedClassname() const { return m_selectedClassname; }
 
 private slots:
-void itemClicked( QTreeWidgetItem *, int );
+  void itemClicked( QTreeWidgetItem *, int );
   void itemDoubleClicked( QTreeWidgetItem *, int );
 
 private:

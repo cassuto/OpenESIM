@@ -17,7 +17,7 @@
 #define INSTRUMENTLIBENTRY_H_
 
 class InstrumentBase;
-typedef InstrumentBase *(*pfnInstrumentConst)();
+typedef InstrumentBase *(*pfnInstrumentConst)( int index );
 
 class InstrumentLibraryEntry
 {

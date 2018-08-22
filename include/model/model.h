@@ -35,6 +35,7 @@ typedef int (*pfn_element_event)( circ_element_t *element );
 typedef int (*pfn_element_config)( circ_element_t *element, int op, ... );
 typedef void (*pfn_element_reset)( circ_element_t *element );
 typedef void (*pfn_element_uninit)( circ_element_t *element );
+typedef int (*pfn_element_clock)( circ_element_t *element );
 
 typedef enum
 {
@@ -62,6 +63,7 @@ typedef struct dsim_descriptor_s
   pfn_element_config    pfn_config;
   pfn_element_reset     pfn_reset;
   pfn_element_uninit    pfn_uninit;
+  pfn_element_clock     pfn_clock;
 } dsim_descriptor_t;
 
 typedef struct circ_element_descriptor_s
@@ -125,7 +127,7 @@ typedef enum
   MDEL_VAR_FLOAT,      /* float */
   MDEL_VAR_INTEGER,    /* int */
   MDEL_VAR_BOOL,       /* int (NOT bool type variable) */
-  MDEL_VAR_STRPTR,     /* char * */
+  MDEL_VAR_STRPTR,     /* const char * */
   MDEL_VAR_VOIDPTR,    /* void * */
   MDEL_VAR_CONST_VOIDPTR /* const void * */
 } model_variable_type_t;
@@ -139,6 +141,7 @@ typedef struct
 
 int model_create_instance( circ_element_t *element, const char *symbol, const circ_element_descriptor_t DS_OUT **ppdesc, const void DS_OUT **ppmdel );
 void model_destroy_instance( const circ_element_descriptor_t *desc, const void *mdel, circ_element_t *element );
+void model_log( const char *format, ... );
 
 extern double model_cero_doub;
 extern double model_high_imp;
@@ -146,6 +149,17 @@ extern double model_logic_vh;
 extern double model_logic_vl;
 extern double model_logic_vth;
 extern double model_logic_high_imp;
+
+typedef enum
+{
+  MDEL_ERR = 0,
+  MDEL_WARNING,
+  MDEL_INFO,
+  MDEL_DEBUG,
+  MDEL_VERBOSE
+} mdel_loglevel_t;
+
+#define mdel_logtrace(level, params) do { model_log params ; } while(0)
 
 END_C_DECLS
 

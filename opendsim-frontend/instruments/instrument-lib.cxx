@@ -31,6 +31,7 @@
 #include <instrument/libentry.h>
 
 #include "inst_oscilloscope.h"
+#include "inst_plotter.h"
 
 #include <frontend/instrument-lib.h>
 
@@ -69,8 +70,8 @@ int instrument_lib_init()
 
   rb_init( &instrument_tree );
 
-  rc = Entry( inst_oscilloscope::libraryEntry() ); UPDATE_RC(rc);
-
+  rc = Entry( inst_oscilloscope::libraryEntry() );  UPDATE_RC(rc);
+  rc = Entry( inst_plotter::libraryEntry() );       UPDATE_RC(rc);
   return 0;
 }
 

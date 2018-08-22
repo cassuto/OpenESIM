@@ -395,7 +395,7 @@ int LispDataset::des( DomEntry &ent, const char *symbol )
               return 0;
             }
         }
-      else if( current()->child && symbol[0] == '\0' )
+      else if( symbol[0] == '\0' )
         {
           ent = DomEntry( current()->child );
           m_synlist = current()->next;

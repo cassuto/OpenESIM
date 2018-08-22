@@ -14,6 +14,7 @@
  */
 
 #include <QtWidgets>
+#include <dsim/misc.h>
 #include <instrument/instrumentbase.h>
 #include <instrument/libentry.h>
 #include <frontend/instrument-lib.h>
@@ -26,9 +27,12 @@
 namespace dsim
 {
 
-InstrumentRackForm::InstrumentRackForm( InstrumentManagement *rack, QWidget *parent /*= 0l*/ )
+InstrumentRackForm::InstrumentRackForm( SchemaView *schemaView, InstrumentManagement *rack, QWidget *parent /*= 0l*/ )
                    : QMainWindow( parent )
+                   , m_parent( parent )
+                   , m_schemaView( schemaView )
                    , m_rack( rack )
+                   , m_mdiWnd( 0l )
 {
   setWindowTitle( tr("Instrument Rack View") );
 
@@ -36,8 +40,12 @@ InstrumentRackForm::InstrumentRackForm( InstrumentManagement *rack, QWidget *par
   createToolBar();
   createRackBox();
 
-  int index=0;
-  foreach( InstrumentPair pair, rack->instruments() ) insertInstrument( pair, index++ );
+  foreach( InstrumentPair pair, rack->instruments() ) insertInstrument( pair );
+}
+
+InstrumentRackForm::~InstrumentRackForm()
+{
+  DebugBreakPoint();
 }
 
 void InstrumentRackForm::createActions()
@@ -64,9 +72,10 @@ void InstrumentRackForm::createRackBox()
   setCentralWidget( toolBox );
 }
 
-void InstrumentRackForm::insertInstrument( const InstrumentPair &inst, int index )
+void InstrumentRackForm::insertInstrument( const InstrumentPair &inst )
 {
-  toolBox->addItem( new InstrumentRackCellWidget( inst, index, this ), /*text*/inst.entry->classname );
+  int index = inst.base->index();
+  toolBox->addItem( new InstrumentRackCellWidget( m_schemaView, inst, index, this ), /*text*/QString("#%1 %2").arg(index).arg(inst.entry->classname) );
 }
 
 void InstrumentRackForm::onAddInstrument()
@@ -77,10 +86,9 @@ void InstrumentRackForm::onAddInstrument()
       if( InstrumentLibraryEntry *entry = instrument_lib_entry( instDialog->selectedClassname().toLocal8Bit().data() ) )
         {
           InstrumentBase *instance;
-          int index;
-          if( MainWindow::instance()->processRc( m_rack->addInstrument( entry, &instance, &index ) ) )
+          if( !MainWindow::instance()->processRc( m_rack->addInstrument( entry, &instance ) ) )
             {
-              insertInstrument( InstrumentPair( entry, instance ), index );
+              insertInstrument( InstrumentPair( entry, instance ) );
             }
         }
       else
@@ -88,6 +96,12 @@ void InstrumentRackForm::onAddInstrument()
     }
   instDialog->deleteLater();
 }
+
+void InstrumentRackForm::onSchemaEditorClosed()
+{ MainWindow::instance()->removeChild( m_mdiWnd ); m_mdiWnd->setParent( m_parent ); }
+
+QSize InstrumentRackForm::minimumSizeHint() const
+{ return QSize( 296, 327 ); }
 
 void InstrumentRackForm::closeEvent( QCloseEvent *closeEvent )
 { closeEvent->accept(); emit closed(); }

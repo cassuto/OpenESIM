@@ -62,6 +62,8 @@
 #define DS_DUP_ORIGIN (DS_FRONTEND+17)
 /** Failed to create the instrument */
 #define DS_CREATE_INSTRUMENT (DS_FRONTEND+18)
+/** Failed to recreate circuit, as a result the editor will become unavailable */
+#define DS_RECREATE_CIRCUIT (DS_FRONTEND+19)
 
 /* }}gen */
 

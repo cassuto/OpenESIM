@@ -16,24 +16,29 @@
 #ifndef INSTRUMENTBASE_H_
 #define INSTRUMENTBASE_H_
 
+#include <instrument/pointerproxy.h>
+
 class IDevice;
 
 class InstrumentBase
 {
 public:
-  explicit InstrumentBase();
+  explicit InstrumentBase( int index );
   virtual ~InstrumentBase();
 
+  virtual void setIndex( int index );
   virtual void clockTick()=0; // Asynchronous, called when simulator runs a step
 
   virtual void open()=0;
   virtual void close()=0;
 
-  void setProbeDevice( IDevice *probe );
-  inline IDevice *probeDevice() const { return m_probeDevice; }
+  void setProbeDevice( PointerProxy<IDevice> *probe );
+  inline PointerProxy<IDevice> *probeDevice() const { return m_probeDevice; }
+  inline int index() const { return m_index; }
 
 private:
-  IDevice *m_probeDevice;
+  PointerProxy<IDevice> *m_probeDevice;
+  int m_index;
 };
 
 #endif

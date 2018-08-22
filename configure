@@ -637,6 +637,7 @@ LIBOBJS
 RCC
 UIC
 MOC
+LIBSOCKET_LD
 QT_LIBS
 QT_LDFLAGS
 QT_INCLUDES
@@ -16757,6 +16758,57 @@ else
 fi
 
 
+# Checks for libraries.
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for elf_begin in -lelf" >&5
+$as_echo_n "checking for elf_begin in -lelf... " >&6; }
+if ${ac_cv_lib_elf_elf_begin+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lelf  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char elf_begin ();
+int
+main ()
+{
+return elf_begin ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_elf_elf_begin=yes
+else
+  ac_cv_lib_elf_elf_begin=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_elf_elf_begin" >&5
+$as_echo "$ac_cv_lib_elf_elf_begin" >&6; }
+if test "x$ac_cv_lib_elf_elf_begin" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBELF 1
+_ACEOF
+
+  LIBS="-lelf $LIBS"
+
+else
+
+                               as_fn_error $? "The $PACKAGE package needs the 'libelf' to compile properly." "$LINENO" 5
+
+fi
+
+
 if test "$SED" = ":"; then
   as_fn_error $? "The $PACKAGE package needs the 'sed' to compile properly." "$LINENO" 5
 fi
@@ -16764,8 +16816,37 @@ if test "$python" = ":"; then
   as_fn_error $? "The $PACKAGE package needs the 'python' to compile properly." "$LINENO" 5
 fi
 
+
+LIBELF_INC=
+LIBELF_LIBS="-lelf"
+LIBELF_LDF=
+
+save_LIBS="$LIBS"
+save_CXXFLAGS="$CXXFLAGS"
+save_LDFLAGS="$LDFLAGS"
+LIBS="$LIBS $LIBELF_LIBS"
+CXXFLAGS="$CXXFLAGS LIBELF_INC"
+LDFLAGS="$LDFLAGS $LIBELF_LDF"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <libelf.h>
+                     int main (int argc, char ** argv) {
+                     return 0; }
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+
+                           break;
+
+
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS="$save_LIBS"
+CXXFLAGS="$save_CXXFLAGS"
+LDFLAGS="$save_LDFLAGS"
+
 # C Compiler standard
-CFLAGS="-std=c99 -g"
+CFLAGS="$CFLAGS -std=c99 -g"
 
 # Checks for debug options
 # Check whether --enable-debug was given.
@@ -16798,6 +16879,23 @@ $as_echo "#define NDEBUG 1" >>confdefs.h
     CXXFLAGS="`echo $CXXFLAGS | sed -e 's/\-g //g'`"
   fi
 fi
+
+# Platform specified, socket
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for whcich kind of socket to use" >&5
+$as_echo_n "checking for whcich kind of socket to use... " >&6; }
+case $host_os in
+  *mingw* | *msys* )
+    LIBSOCKET_LD="-lws2_32"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: winsocket" >&5
+$as_echo "winsocket" >&6; }
+  ;;
+
+  else )
+    LIBSOCKET_LD=""
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: socket" >&5
+$as_echo "socket" >&6; }
+  ;;
+esac
 
 # Platform specific, find libraries, setup compiler flags
 case $host_os in
@@ -16959,6 +17057,7 @@ case $host_os in
     LDFLAGS="$LDFLAGS -Wl,-subsystem,console"
   ;;
 esac
+
 
 
 
@@ -17688,9 +17787,9 @@ GIT="unknown"
 if test -d ".git"; then
 
 
-$as_echo "#define GIT \"18bde45\"" >>confdefs.h
+$as_echo "#define GIT \"0c87754\"" >>confdefs.h
 
-  GIT=18bde45
+  GIT=0c87754
   echo "Found Git clone... $GIT"
 fi
 
@@ -20243,6 +20342,7 @@ Configure Information:
   QT_LIBS         : $QT_LIBS
   QT_LDFLAGS      : $QT_LDFLAGS
   QT_INCLUDES     : $QT_INCLUDES
+  LIBSOCKET_LD    : $LIBSOCKET_LD
 " >&5
 $as_echo "
 Configure Information:
@@ -20261,6 +20361,7 @@ Configure Information:
   QT_LIBS         : $QT_LIBS
   QT_LDFLAGS      : $QT_LDFLAGS
   QT_INCLUDES     : $QT_INCLUDES
+  LIBSOCKET_LD    : $LIBSOCKET_LD
 " >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: " >&5
 $as_echo "" >&6; }

@@ -15,10 +15,11 @@
 
 #include <instrument/instrumentbase.h>
 
-InstrumentBase::InstrumentBase() : m_probeDevice( 0l )
+InstrumentBase::InstrumentBase( int index ) : m_probeDevice( 0l ), m_index( index )
 {}
 
 InstrumentBase::~InstrumentBase() {}
 
-void InstrumentBase::setProbeDevice( IDevice *probe ) { m_probeDevice = probe; }
+void InstrumentBase::setIndex( int index ) { m_index = index; }
 
+void InstrumentBase::setProbeDevice( PointerProxy<IDevice> *probe ) { m_probeDevice = probe; }

@@ -93,7 +93,8 @@ am_opendsim_OBJECTS = opendsim-edit.$(OBJEXT) \
 	unitsconversion.$(OBJEXT) instrumentpickdialog.$(OBJEXT) \
 	instrumentrackform.$(OBJEXT) \
 	instrumentrackcellwidget.$(OBJEXT) \
-	instrumentmanagement.$(OBJEXT) resources.$(OBJEXT)
+	instrumentmanagement.$(OBJEXT) probepickdialog.$(OBJEXT) \
+	resources.$(OBJEXT)
 opendsim_OBJECTS = $(am_opendsim_OBJECTS)
 am__DEPENDENCIES_1 =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -158,6 +159,7 @@ LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSOCKET_LD = @LIBSOCKET_LD@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -303,6 +305,7 @@ opendsim_SOURCES = \
   instrumentrackform.cxx \
   instrumentrackcellwidget.cxx \
   instrumentmanagement.cxx \
+  probepickdialog.cxx \
   resources.cxx
 
 MOCHEADERS = \
@@ -322,12 +325,27 @@ MOCHEADERS = \
   netlistexplorerdialog.h \
   propertybase.h \
   instrumentpickdialog.h \
-  instrumentrackform.h
+  instrumentrackform.h \
+  instrumentrackcellwidget.h \
+  probepickdialog.h
 
 MOCFILES = $(MOCHEADERS:.h=.moc)
 opendsim_LDFLAGS = $(QT_LDFLAGS)
-opendsim_LDADD = instruments/libdsiminstruments.la devices/libdsimdevices.la $(top_srcdir)/opendsim-core/libdsim.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la $(QT_LIBS)
-opendsim_DEPENDENCIES = instruments/libdsiminstruments.la devices/libdsimdevices.la $(top_srcdir)/opendsim-core/models/libdsimmodels.la
+opendsim_LDADD = \
+  instruments/libdsiminstruments.la \
+  devices/libdsimdevices.la \
+  $(top_srcdir)/opendsim-core/libdsim.la \
+  $(top_srcdir)/opendsim-core/models/libdsimmodels.la \
+  $(QT_LIBS) \
+  $(LIBELF_LIBS) \
+  $(LIBSOCKET_LD)
+
+opendsim_DEPENDENCIES = \
+  instruments/libdsiminstruments.la \
+  devices/libdsimdevices.la \
+  $(top_srcdir)/opendsim-core/models/libdsimmodels.la \
+  $(top_srcdir)/opendsim-core/libdsim.la
+
 BUILT_SOURCES = resources.cxx $(MOCFILES)
 CLEANFILES = resources.cxx $(MOCFILES)
 all: $(BUILT_SOURCES)
@@ -430,6 +448,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/netlistexplorerdialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/opendsim-edit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/presscolorbox.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/probepickdialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertybase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertycontainerimpl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertydialog.Po@am__quote@

@@ -22,6 +22,7 @@
 #include "componentgraphimpl.h"
 #include "transformations.h"
 
+#include <instrument/pointerproxy.h>
 #include "elementgraphitem.h"
 
 class IDevice;
@@ -68,7 +69,7 @@ public:
   void releaseSubElements();
 
 public:
-  inline IDevice *device() const { return m_device; }
+  inline PointerProxy<IDevice> *device() const { return m_device; }
   inline IDeviceGraph *deviceGraph() const { return m_deviceGraph; }
   inline PropertyContainerImpl *properties() const { return m_properties; }
   inline SchematicImpl *schematic() const { return m_schematic; }
@@ -84,7 +85,7 @@ private:
 
 private:
   const DeviceLibraryEntry *m_deviceEntry;
-  IDevice              *m_device;
+  PointerProxy<IDevice> *m_device;
   std::string           m_symbol; // guarantee synchronization among serialize() deserialize() and init()
   std::string           m_reference; // guarantee synchronization among serialize() deserialize() and init()
   std::string           m_value; // guarantee synchronization among serialize() deserialize() and init()

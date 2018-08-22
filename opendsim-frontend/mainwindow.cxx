@@ -391,8 +391,11 @@ void MainWindow::onDebugEnd()
       {
         case SCHEDIT_RUNNING:
         case SCHEDIT_FROZEN:
-          schema->debugEnd();
-          setSchemaEditState( SCHEDIT_INPUT );
+          if( processRc( schema->debugEnd() ) )
+            setSchemaEditState( SCHEDIT_FROZEN );
+          else
+            setSchemaEditState( SCHEDIT_INPUT );
+          break;
         default:
           break;
       }
@@ -434,7 +437,7 @@ void MainWindow::onUpdateMenus()
 
 SchemaEditorForm *MainWindow::newSchemaDocument( DomType type )
 {
-  SchemaEditorForm *schema = new SchemaEditorForm( type, 0l );
+  SchemaEditorForm *schema = new SchemaEditorForm( type, workspace );
 
   if( !processRc( schema->init() ) )
     {

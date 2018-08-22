@@ -30,7 +30,8 @@ libdsimdevices_la_SOURCES = \
   inductor/inductor.cxx \
   vsource-dc/vsource-dc.cxx \
   vsource-dc-0v/vsource-dc-0v.cxx \
-  voltprobe/voltprobe.cxx
+  voltprobe/voltprobe.cxx \
+  atmega164/atmega164.cxx
 
 libdsimdevices_la_SOURCES += \
   device.cxx \

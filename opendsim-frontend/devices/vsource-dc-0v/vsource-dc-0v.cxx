@@ -51,4 +51,5 @@ int dev_vsource_dc_zero::create( ISchematic */*schematic*/, IPropertyContainer *
 int dev_vsource_dc_zero::init( ISchematic *, IPropertyContainer *properties )
 {
   return circ_element_config(( m_mdel, ELM_CONFIG_SET, /*Vh*/0, 0.0f ));
+  UNUSED(properties);
 }

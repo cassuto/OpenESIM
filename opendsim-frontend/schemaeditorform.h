@@ -31,7 +31,6 @@ namespace dsim
 class ComponentPickWidget;
 class SchemaWidget;
 class SchemaSheet;
-class InstrumentManagement;
 class InstrumentRackForm;
 
 /***************************************************
@@ -51,17 +50,19 @@ public:
   int compileNetlist();
   int debugStep();
   int debugRun();
-  void debugEnd();
+  int debugEnd();
   void gotoCenter();
 
   inline LispDataset *dataset() const { return dom; }
   inline SchemaSheet *schemaSheet() const { return schsheet; }
-  inline InstrumentManagement *instrumentMan() const { return instruments; }
 
 private:
   void createActions();
   void createToolbars();
   void createWidgets();
+
+signals:
+  void closed();
 
 private slots:
   void onModeSelection();
@@ -74,6 +75,9 @@ private slots:
   void onModeOrigin();
   void onModeInstrument( bool );
   void onInstrumentRackClosed();
+
+protected:
+  void closeEvent( QCloseEvent *event );
 
 private:
   QAction *modeSelection,
@@ -101,7 +105,6 @@ private:
   LispDataset *dom;
 
   SchemaSheet *schsheet;
-  InstrumentManagement *instruments;
   QMdiSubWindow *rackForm;
 };
 

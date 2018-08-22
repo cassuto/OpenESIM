@@ -16,7 +16,7 @@
 #ifndef OSCOPEFORM_H_
 #define OSCOPEFORM_H_
 
-#include <QtWidgets>
+#include <instrument/instrumentpanel.h>
 
 class inst_oscilloscope;
 
@@ -24,11 +24,11 @@ namespace dsim
 {
 
 class OscopeRenderer;
-class OscopeForm : public QMainWindow
+class OscopeForm : public InstrumentPanel
 {
   Q_OBJECT
 public:
-  OscopeForm( inst_oscilloscope *oscope, QWidget *parent = 0l );
+  OscopeForm( inst_oscilloscope *oscope, InstrumentPanel *parent = 0l );
 
 private slots: // from class OscilloscopeInst
   void onDivChanged( double div, QString unit );

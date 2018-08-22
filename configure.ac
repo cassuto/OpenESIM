@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.68])
+AC_PREREQ([2.69])
 AC_INIT([OpenDSIM], [0.0.1], [diyer175@hotmail.com])
 AC_CANONICAL_HOST
 AM_INIT_AUTOMAKE([1.9])
@@ -18,8 +18,13 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_SED
 AC_PROG_LIBTOOL
-AC_CHECK_TOOL(SED, sed, :)
-AC_CHECK_TOOL(PYTHON, python, :)
+AC_CHECK_TOOL([SED], sed, :)
+AC_CHECK_TOOL([PYTHON], python, :)
+
+# Checks for libraries.
+AC_CHECK_LIB([elf], elf_begin, [], [
+                               AC_MSG_ERROR([The $PACKAGE package needs the 'libelf' to compile properly.])
+                    ])
 
 if test "$SED" = ":"; then
   AC_MSG_ERROR([The $PACKAGE package needs the 'sed' to compile properly.])
@@ -28,8 +33,31 @@ if test "$python" = ":"; then
   AC_MSG_ERROR([The $PACKAGE package needs the 'python' to compile properly.])
 fi
 
+
+LIBELF_INC=
+LIBELF_LIBS="-lelf"
+LIBELF_LDF=
+
+save_LIBS="$LIBS"
+save_CXXFLAGS="$CXXFLAGS"
+save_LDFLAGS="$LDFLAGS"
+LIBS="$LIBS $LIBELF_LIBS"
+CXXFLAGS="$CXXFLAGS LIBELF_INC"
+LDFLAGS="$LDFLAGS $LIBELF_LDF"
+AC_LINK_IFELSE(
+    [AC_LANG_SOURCE([#include <libelf.h>
+                     int main (int argc, char ** argv) {
+                     return 0; }])],
+                     [
+                           break;
+                     ]
+)
+LIBS="$save_LIBS"
+CXXFLAGS="$save_CXXFLAGS"
+LDFLAGS="$save_LDFLAGS"
+
 # C Compiler standard
-CFLAGS="-std=c99 -g"
+CFLAGS="$CFLAGS -std=c99 -g"
 
 # Checks for debug options
 AC_ARG_ENABLE([debug],
@@ -56,6 +84,20 @@ else
     CXXFLAGS="`echo $CXXFLAGS | sed -e 's/\-g //g'`"
   fi
 fi
+
+# Platform specified, socket
+AC_MSG_CHECKING([for whcich kind of socket to use])
+case $host_os in
+  *mingw* | *msys* )
+    LIBSOCKET_LD="-lws2_32"
+    AC_MSG_RESULT([winsocket])
+  ;;
+  
+  else )
+    LIBSOCKET_LD=""
+    AC_MSG_RESULT([socket])
+  ;;
+esac
 
 # Platform specific, find libraries, setup compiler flags
 case $host_os in
@@ -212,6 +254,7 @@ esac
 AC_SUBST(QT_LDFLAGS)
 AC_SUBST(QT_LIBS)
 AC_SUBST(QT_INCLUDES)
+AC_SUBST(LIBSOCKET_LD)
 
 # Checks for MOC/UIC/RCC support.
 AC_PATH_PROGS(MOC, moc, :, [$QT_DIR/bin:$PATH])
@@ -397,5 +440,6 @@ Configure Information:
   QT_LIBS         : $QT_LIBS
   QT_LDFLAGS      : $QT_LDFLAGS
   QT_INCLUDES     : $QT_INCLUDES
+  LIBSOCKET_LD    : $LIBSOCKET_LD
 ])
 AC_MSG_RESULT([])

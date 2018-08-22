@@ -64,7 +64,7 @@ circ_pin_set_node( circ_pin_t *pin, struct circ_node_s *node )
 int
 circ_pin_set_nodecomp( circ_pin_t *pin, struct circ_node_s *node )
 {
-  trace_assert( pin->node->analog && (( node && node->analog) || (!node)) );
+  trace_assert( ((pin->node && pin->node->analog) || (!pin->node)) && (( node && node->analog) || (!node)) );
   pin->node_comp = node;
   int node_comp_index = 0;
   if( node ) node_comp_index = circ_node_get_index( node );

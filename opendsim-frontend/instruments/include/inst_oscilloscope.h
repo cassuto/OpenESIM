@@ -36,11 +36,11 @@ class inst_oscilloscope : public QObject, public InstrumentBase
 {
   Q_OBJECT
 public:
-  inst_oscilloscope();
+  explicit inst_oscilloscope( int index );
   ~inst_oscilloscope();
 
   static InstrumentLibraryEntry *libraryEntry();
-  static InstrumentBase *construct();
+  static InstrumentBase *construct( int index );
 
   void clockTick();
   void open();

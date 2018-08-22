@@ -36,7 +36,7 @@ int TemplateCustom::serialize( LispDataset *dataset )
 {
   int rc = 0;
 
-  rc = dataset->beginNode(true, "cust");                    UPDATE_RC(rc);
+  rc = dataset->beginNode(true);                            UPDATE_RC(rc);
 
   if( lineCustom )
     {
@@ -107,7 +107,7 @@ int TemplateCustom::deserialize( LispDataset *dataset )
   int i;
   DomEntry entry;
 
-  int rc = dataset->des( entry, "cust" );                   UPDATE_RC(rc);
+  int rc = dataset->des( entry );                           UPDATE_RC(rc);
 
   for( entry.begin(); entry.valid(); ++entry )
     {

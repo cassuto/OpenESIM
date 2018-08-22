@@ -18,22 +18,34 @@
 
 #include <QtWidgets>
 
+class QLabel;
 class InstrumentBase;
 
 namespace dsim
 {
 
 class InstrumentPair;
+class SchemaView;
 
 class InstrumentRackCellWidget : public QWidget
 {
+  Q_OBJECT
 public:
-  InstrumentRackCellWidget( const InstrumentPair &inst, int index, QWidget *parent = 0l );
+  InstrumentRackCellWidget( SchemaView *schemaView, const InstrumentPair &inst, int index, QWidget *parent = 0l );
 
 private:
+  void updateProbeStatus();
+
+private slots:
+  void onAddProbe( const QString& );
+  void onRemoveProbe( const QString& );
+  void onOpenPanel( const QString& );
+
+private:
+  SchemaView *m_schemaView;
   InstrumentPair m_inst;
+  QLabel *m_probeName;
   int m_index;
-  QLabel *m_nameLabel;
 };
 
 }

@@ -22,7 +22,8 @@ INCLUDES = -I$(top_builddir)/include      \
 #########################################################################
 # Targets.
 
-libdsimmodels_la_SOURCES = 
+libdsimmodels_la_SOURCES =
+libdsimmodels_la_LIBADD =
 
 include register/makefile.inc
 include capacitor/makefile.inc
@@ -39,6 +40,7 @@ include d-or/makefile.inc
 include d-xor/makefile.inc
 include d-and/makefile.inc
 include d-buff/makefile.inc
+include d-mcu-avr/makefile.inc
 include dev/makefile.inc
 
 libdsimmodels_la_SOURCES += mdel-parameter.c \

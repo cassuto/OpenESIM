@@ -42,7 +42,7 @@ DECLARE_ELEMENT_CAST(ElementPin, "pin")
 ComponentGraphItem::ComponentGraphItem( int id, SchemaScene *scene, bool edit, QGraphicsItem *parent )
                   : ElementGraphItem<QGraphicsItemGroup>( id, scene, edit, parent )
                   , m_deviceEntry( 0l )
-                  , m_device( 0l )
+                  , m_device( new PointerProxy<IDevice>( 0l ) )
                   , m_valueText( 0l )
                   , m_referenceText( 0l )
                   , m_properties( new PropertyContainerImpl )
@@ -59,12 +59,14 @@ ComponentGraphItem::~ComponentGraphItem()
   delete schematic();
   delete deviceGraph();
   delete properties();
+  delete device()->get();
+  delete device();
 }
 
 int ComponentGraphItem::init( const char *deviceEntry, ElementText *valueText, ElementText *referenceText )
 {
   int rc;
-  bool deser = ( 0l != m_device );
+  bool deser = ( device()->valid() );
   m_valueText = valueText;
   m_referenceText = referenceText;
 
@@ -111,17 +113,24 @@ int ComponentGraphItem::createDevice()
 {
   trace_assert( m_deviceEntry );
 
+  delete device()->get();
+  device()->erase();
+
   schematic()->reset();
   properties()->reset();
-  int rc = view()->sheet()->createDevice( m_deviceEntry, m_reference.c_str(), id(), schematic(), properties(), &m_device );  UPDATE_RC(rc);
 
-  return m_device ? 0 : -DS_CREATE_IDEVICE;
+  IDevice *dev = 0l;
+  if( int rc = view()->sheet()->createDevice( m_deviceEntry, m_reference.c_str(), id(), schematic(), properties(), &dev ) )
+    return rc;
+  device()->set( dev );
+
+  return dev ? 0 : -DS_CREATE_IDEVICE;
 }
 
 int ComponentGraphItem::initDevice()
 {
   syncParameters();
-  return device()->init( schematic(), properties() );
+  return device()->valid() ? device()->get()->init( schematic(), properties() ) : 0;
 }
 
 int ComponentGraphItem::findEntry( const char *symbol )
@@ -279,10 +288,6 @@ int ComponentGraphItem::resolveSubElements()
 
 void ComponentGraphItem::releaseSubElements()
 {
-  if( device() )
-    {
-      view()->sheet()->deleteDevice( device() );
-    }
   if( !elements().empty() )
     {
       if( elements().count() > 2 )
@@ -407,12 +412,12 @@ void ComponentGraphItem::paint( QPainter* painter, const QStyleOptionGraphicsIte
   /*
    * Render component graphics
    */
-  if( m_device )
+  if( m_device->valid() )
     {
       m_deviceGraph->setPainter( painter );
       m_deviceGraph->setSelected( isSelected() );
 
-      m_device->render_frame( schematic(), m_deviceGraph );
+      m_device->get()->render_frame( schematic(), m_deviceGraph );
     }
 }
 

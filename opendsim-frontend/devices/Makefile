@@ -37,7 +37,7 @@ pkglibdir = $(libdir)/opendsim
 pkgincludedir = $(includedir)/opendsim
 top_builddir = ../..
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
-INSTALL = /usr/bin/install -c
+INSTALL = ../.././install-sh -c
 install_sh_DATA = $(install_sh) -c -m 644
 install_sh_PROGRAM = $(install_sh) -c
 install_sh_SCRIPT = $(install_sh) -c
@@ -76,8 +76,8 @@ am_libdsimdevices_la_OBJECTS = libdsimdevices_la-1n4148.lo \
 	libdsimdevices_la-capacitor.lo libdsimdevices_la-inductor.lo \
 	libdsimdevices_la-vsource-dc.lo \
 	libdsimdevices_la-vsource-dc-0v.lo \
-	libdsimdevices_la-voltprobe.lo libdsimdevices_la-device.lo \
-	libdsimdevices_la-device-lib.lo \
+	libdsimdevices_la-voltprobe.lo libdsimdevices_la-atmega164.lo \
+	libdsimdevices_la-device.lo libdsimdevices_la-device-lib.lo \
 	libdsimdevices_la-propertyvalue.lo
 libdsimdevices_la_OBJECTS = $(am_libdsimdevices_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -96,18 +96,18 @@ DIST_SOURCES = $(libdsimdevices_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} D:\OpenDSIM-0.1/missing --run aclocal-1.9
+ACLOCAL = ${SHELL} /e/opendsim-0.1/missing --run aclocal-1.9
 AMDEP_FALSE = #
 AMDEP_TRUE = 
-AMTAR = ${SHELL} D:\OpenDSIM-0.1/missing --run tar
+AMTAR = ${SHELL} /e/opendsim-0.1/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} D:\OpenDSIM-0.1/missing --run autoconf
-AUTOHEADER = ${SHELL} D:\OpenDSIM-0.1/missing --run autoheader
-AUTOMAKE = ${SHELL} D:\OpenDSIM-0.1/missing --run automake-1.9
+AUTOCONF = ${SHELL} /e/opendsim-0.1/missing --run autoconf
+AUTOHEADER = ${SHELL} /e/opendsim-0.1/missing --run autoheader
+AUTOMAKE = ${SHELL} /e/opendsim-0.1/missing --run automake-1.9
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -std=c99 -g -pipe -W -Wall -Wmissing-prototypes
+CFLAGS = -I/usr/local/include/harfbuzz -I/usr/local/include -std=c99 -g -pipe -W -Wall -Wmissing-prototypes
 CPP = gcc -E
 CPPFLAGS = 
 CXX = g++
@@ -123,10 +123,10 @@ DUMPBIN =
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 
-EGREP = /usr/bin/grep -E
+EGREP = /bin/grep -E
 EXEEXT = .exe
-FGREP = /usr/bin/grep -F
-GREP = /usr/bin/grep
+FGREP = /bin/grep -F
+GREP = /bin/grep
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
@@ -134,15 +134,16 @@ INSTALL_STRIP_PROGRAM = ${SHELL} $(install_sh) -c -s
 LD = d:/mingw/i686-w64-mingw32/bin/ld.exe
 LDFLAGS =  -Wl,-subsystem,console
 LIBOBJS = 
-LIBS = 
+LIBS = -lelf 
+LIBSOCKET_LD = -lws2_32
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = cp -pR
 LTLIBOBJS = 
 LT_SYS_LIBRARY_PATH = 
-MAKEINFO = ${SHELL} D:\OpenDSIM-0.1/missing --run makeinfo
+MAKEINFO = ${SHELL} /e/opendsim-0.1/missing --run makeinfo
 MANIFEST_TOOL = :
-MOC = /f/documents/Qt/Qt5.5.1/5.5/mingw492_32/bin/moc
+MOC = /e/Qt/5.5.1/5.5/mingw492_32/bin/moc
 NM = /mingw/bin/nm -B
 NMEDIT = 
 OBJDUMP = objdump
@@ -158,16 +159,16 @@ PACKAGE_URL =
 PACKAGE_VERSION = 0.0.1
 PATH_SEPARATOR = :
 PYTHON = python
-QT_INCLUDES = -IF:/documents/Qt/Qt5.5.1/5.5/mingw492_32/include -IF:/documents/Qt/Qt5.5.1/5.5/mingw492_32/include/QtWidgets -IF:/documents/Qt/Qt5.5.1/5.5/mingw492_32/include/QtGui -IF:/documents/Qt/Qt5.5.1/5.5/mingw492_32/include/QtCore -IF:/documents/Qt/Qt5.5.1/5.5/mingw492_32/include/QtConcurrent -IF:/documents/Qt/Qt5.5.1/5.5/mingw492_32/include/QtSvg -IF:/documents/Qt/Qt5.5.1/5.5/mingw492_32/include/QtXml -IF:/documents/Qt/Qt5.5.1/5.5/mingw492_32/include/QtScript -DQT_DEBUG -DQT_THREAD_SUPPORT -D_REENTRANT -mthreads -DQT_DLL -DUNICODE
-QT_LDFLAGS = -LF:/documents/Qt/Qt5.5.1/5.5/mingw492_32/lib  -mthreads -mwindows
+QT_INCLUDES = -IE:/Qt/5.5.1/5.5/mingw492_32/include -IE:/Qt/5.5.1/5.5/mingw492_32/include/QtWidgets -IE:/Qt/5.5.1/5.5/mingw492_32/include/QtGui -IE:/Qt/5.5.1/5.5/mingw492_32/include/QtCore -IE:/Qt/5.5.1/5.5/mingw492_32/include/QtConcurrent -IE:/Qt/5.5.1/5.5/mingw492_32/include/QtSvg -IE:/Qt/5.5.1/5.5/mingw492_32/include/QtXml -IE:/Qt/5.5.1/5.5/mingw492_32/include/QtScript -DQT_DEBUG -DQT_THREAD_SUPPORT -D_REENTRANT -mthreads -DQT_DLL -DUNICODE
+QT_LDFLAGS = -LE:/Qt/5.5.1/5.5/mingw492_32/lib  -mthreads -mwindows
 QT_LIBS = -lQt5Widgets -lQt5Core -lQt5Gui -lQt5Xml -lQt5Concurrent -lQt5Svg -lQt5Script
 RANLIB = ranlib
-RCC = /f/documents/Qt/Qt5.5.1/5.5/mingw492_32/bin/rcc
-SED = /usr/bin/sed
+RCC = /e/Qt/5.5.1/5.5/mingw492_32/bin/rcc
+SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = strip
-UIC = /f/documents/Qt/Qt5.5.1/5.5/mingw492_32/bin/uic
+UIC = /e/Qt/5.5.1/5.5/mingw492_32/bin/uic
 VERSION = 0.0.1
 ac_ct_AR = ar
 ac_ct_CC = gcc
@@ -201,7 +202,7 @@ host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = D:\OpenDSIM-0.1/install-sh
+install_sh = /e/opendsim-0.1/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -229,7 +230,8 @@ libdsimdevices_la_SOURCES = 1n4148/1n4148.cxx diode/diode.cxx \
 	register/register.cxx capacitor/capacitor.cxx \
 	inductor/inductor.cxx vsource-dc/vsource-dc.cxx \
 	vsource-dc-0v/vsource-dc-0v.cxx voltprobe/voltprobe.cxx \
-	device.cxx device-lib.cxx propertyvalue.cxx
+	atmega164/atmega164.cxx device.cxx device-lib.cxx \
+	propertyvalue.cxx
 libdsimdevices_la_CFLAGS = -Wno-unused-function
 libdsimdevices_la_CPPFLAGS = -Wno-unused-function
 all: all-am
@@ -302,6 +304,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ./$(DEPDIR)/libdsimdevices_la-1n4148.Plo
+include ./$(DEPDIR)/libdsimdevices_la-atmega164.Plo
 include ./$(DEPDIR)/libdsimdevices_la-capacitor.Plo
 include ./$(DEPDIR)/libdsimdevices_la-device-lib.Plo
 include ./$(DEPDIR)/libdsimdevices_la-device.Plo
@@ -389,6 +392,13 @@ libdsimdevices_la-voltprobe.lo: voltprobe/voltprobe.cxx
 #	source='voltprobe/voltprobe.cxx' object='libdsimdevices_la-voltprobe.lo' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-voltprobe.lo `test -f 'voltprobe/voltprobe.cxx' || echo '$(srcdir)/'`voltprobe/voltprobe.cxx
+
+libdsimdevices_la-atmega164.lo: atmega164/atmega164.cxx
+	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-atmega164.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-atmega164.Tpo" -c -o libdsimdevices_la-atmega164.lo `test -f 'atmega164/atmega164.cxx' || echo '$(srcdir)/'`atmega164/atmega164.cxx; \
+	then mv -f "$(DEPDIR)/libdsimdevices_la-atmega164.Tpo" "$(DEPDIR)/libdsimdevices_la-atmega164.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-atmega164.Tpo"; exit 1; fi
+#	source='atmega164/atmega164.cxx' object='libdsimdevices_la-atmega164.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-atmega164.lo `test -f 'atmega164/atmega164.cxx' || echo '$(srcdir)/'`atmega164/atmega164.cxx
 
 libdsimdevices_la-device.lo: device.cxx
 	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-device.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-device.Tpo" -c -o libdsimdevices_la-device.lo `test -f 'device.cxx' || echo '$(srcdir)/'`device.cxx; \

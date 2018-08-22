@@ -18,24 +18,25 @@
 #include "oscopeform.h"
 #include "inst_oscilloscope.h"
 
-inst_oscilloscope::inst_oscilloscope()
-                 : m_sampleSize( 0 )
+inst_oscilloscope::inst_oscilloscope( int index )
+                 : InstrumentBase( index )
+                 , m_sampleSize( 0 )
                  , m_samples( 0l )
                  , m_smplCount( 0 )
                  , m_waitingTiggerCount( 0 )
                  , m_stepCount( 0 )
                  , m_updtCount( 0 )
                  , m_Htick( 0 )
-                 , m_Hscale( 0 )
-                 , m_prevHscale( 0 )
+                 , m_Hscale( 10 )
+                 , m_prevHscale( 10 )
                  , m_Hpos( 0 )
-                 , m_prevHpos( 0 )
-                 , m_Vscale( 0 )
+                 , m_prevHpos( 1 )
+                 , m_Vscale( 1 )
                  , m_prevVscale( 0 )
                  , m_Vpos( 0 )
                  , m_prevVpos( 0 )
                  , m_ampli( 0 )
-                 , m_filter( 0 )
+                 , m_filter( 0.3 )
                  , max( 0 )
                  , mid( 0 )
                  , min( 0 )
@@ -74,7 +75,7 @@ InstrumentLibraryEntry *inst_oscilloscope::libraryEntry()
         inst_oscilloscope::construct);
 }
 
-InstrumentBase *inst_oscilloscope::construct() { return new inst_oscilloscope(); }
+InstrumentBase *inst_oscilloscope::construct( int index ) { return new inst_oscilloscope( index ); }
 
 void inst_oscilloscope::open()
 { m_form->show(); }
@@ -85,7 +86,7 @@ void inst_oscilloscope::close()
 void inst_oscilloscope::clockTick() // asynchronous
 {
   double sample = 0;
-  if ( probeDevice() ) sample = probeDevice()->probe_value();
+  if ( probeDevice() && probeDevice()->valid() ) sample = probeDevice()->get()->probe_value();
 
   if( sample > max ) max = sample;
   if( sample < min ) min = sample;

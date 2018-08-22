@@ -39,7 +39,8 @@ QWidget *PropertyVariantDelegate::createEditor( QWidget *parent, const QStyleOpt
   {
     case QVariant::Color:
     case QVariant::Int:
-    case QVariant::Double:    
+    case QVariant::Double:
+    case QVariant::String:
     case QVariant::UserType:
       {
         QWidget *editor = p->createEditor(parent, option);
