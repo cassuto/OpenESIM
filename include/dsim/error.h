@@ -72,6 +72,8 @@ C_DECLS
 #define DS_NOT_MATCHED (26)
 /** Failed to create model */
 #define DS_CREATE_MODEL (27)
+/** (scheme-lisp) Expected a parameter but there is no */
+#define DS_EXPECT_PARAM (28)
 
 /* }}gen */
 

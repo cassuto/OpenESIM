@@ -314,7 +314,7 @@ do { \
         return -DS_TYPE_MISMATCH; \
     } \
   else \
-    return -DS_FAULT; \
+    return -DS_EXPECT_PARAM; \
 } while(0)
 
 int LispDataset::des( int &val )
@@ -355,7 +355,7 @@ int LispDataset::des( std::string &val, bool symbol )
 
 #define DES_LIST_TEMPLATE(_listclear, _elemtype, _schemaval, _ctype, _listappend ) \
 do { \
-  if( !current() ) return -DS_FAULT; \
+  if( !current() ) return -DS_EXPECT_PARAM; \
     if( synlst_check_type_ptr( current(), SCHEME_VAL_PAIR ) ) \
       { \
         _listclear(); \
@@ -384,6 +384,7 @@ int LispDataset::des( QList<int> &ids )
 
 int LispDataset::des( DomEntry &ent, const char *symbol )
 {
+  if( !current() ) return DS_EXPECT_PARAM;
   if( current()->synnode.type == SCHEME_VAL_PAIR )
     {
       if( current()->child && current()->child->synnode.type == SCHEME_VAL_SYMBOL )

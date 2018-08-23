@@ -107,12 +107,12 @@ int dev_atmega164::config( int op, ... )
         int param_id = va_arg( vlist, int );
         switch ( param_id )
         {
-          case 1: /* ROM image filename */
+          case 0: /* ROM image filename */
             {
               rc = circ_element_config(( m_mdel, ELM_CONFIG_SET, 1/*imgfn*/, va_arg( vlist, const char* ) ));
               break;
             }
-          case 2: /* (MHz) Frequency of system clock */
+          case 1: /* (MHz) Frequency of system clock */
             {
               rc = circ_element_config(( m_mdel, ELM_CONFIG_SET, 2/*clk_freq*/, va_arg( vlist, int ) ));
               break;

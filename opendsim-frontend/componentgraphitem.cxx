@@ -117,7 +117,7 @@ int ComponentGraphItem::createDevice()
   device()->erase();
 
   schematic()->reset();
-  properties()->reset();
+  //properties()->reset();
 
   IDevice *dev = 0l;
   if( int rc = view()->sheet()->createDevice( m_deviceEntry, m_reference.c_str(), id(), schematic(), properties(), &dev ) )
@@ -343,6 +343,7 @@ int ComponentGraphItem::deserialize( LispDataset *dataset )
   rc = dataset->des( m_reference );                         UPDATE_RC(rc);
 
   rc = findEntry( m_symbol.c_str() );                       UPDATE_RC(rc);
+  properties()->reset();
   rc = createDevice();                                      UPDATE_RC(rc);
   rc = properties()->deserialize( dataset );                UPDATE_RC(rc);
 

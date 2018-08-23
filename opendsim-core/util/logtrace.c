@@ -31,7 +31,7 @@
 static const char *log_unit_name = 0;
 static const char *log_unit_filename = 0;
 static int log_unit_line = 0;
-static ds_log_level_t log_level = LOG_INFO;
+static ds_log_level_t log_level = LOGTRACE_INFO;
 
 
 static
@@ -77,7 +77,7 @@ ds_log_trace( const char *format, ... )
   vsnprintf(buff, sizeof(buff), format, args);
   va_end(args);
 
-  if( log_level == LOG_PANIC )
+  if( log_level == LOGTRACE_PANIC )
     log_printf( "Panic! in %s: %d\n", log_unit_filename, log_unit_line );
 
   log_printf( "[%s] %s", log_unit_name, buff );

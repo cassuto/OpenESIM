@@ -42,7 +42,6 @@ int dev_inductor::create( ISchematic *schematic, IPropertyContainer *properties 
 {
   int rc = IDevice::baseinit( "L", m_circuit );                 UPDATE_RC(rc);
   rc = properties->readModel( m_mdel, 0 );                      UPDATE_RC(rc);
-  rc = properties->readDevice( this );                          UPDATE_RC(rc);
 
   UNUSED(schematic);
   return rc;

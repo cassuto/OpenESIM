@@ -27,11 +27,11 @@ C_DECLS
 
 typedef enum ds_log_level_e
 {
-  LOG_PANIC = 0,
-  LOG_ERROR,
-  LOG_WARNING,
-  LOG_INFO,
-  LOG_DEBUG
+  LOGTRACE_PANIC = 0,
+  LOGTRACE_ERROR,
+  LOGTRACE_WARNING,
+  LOGTRACE_INFO,
+  LOGTRACE_DEBUG
 } ds_log_level_t;
 
 #define ds_log_lock()
@@ -48,7 +48,7 @@ void ds_panic( int rc );
   do { \
     ds_log_lock(); \
     ds_log_set_unit (TRACE_UNIT, __FILE__, __LINE__); \
-    ds_log_set_level (LOG_PANIC); \
+    ds_log_set_level (LOGTRACE_PANIC); \
     ds_log_trace msg ; \
     ds_log_unlock(); \
     DebugBreakPoint(); \
@@ -59,7 +59,7 @@ void ds_panic( int rc );
   do { \
     ds_log_lock(); \
     ds_log_set_unit (TRACE_UNIT, __FILE__, __LINE__); \
-    ds_log_set_level (LOG_ERROR); \
+    ds_log_set_level (LOGTRACE_ERROR); \
     ds_log_trace msg ; \
     ds_log_unlock(); \
   } while(0)
@@ -68,7 +68,7 @@ void ds_panic( int rc );
   do { \
     ds_log_lock(); \
     ds_log_set_unit (TRACE_UNIT, __FILE__, __LINE__); \
-    ds_log_set_level (LOG_WARNING); \
+    ds_log_set_level (LOGTRACE_WARNING); \
     ds_log_trace msg ; \
     ds_log_unlock(); \
   } while(0)
@@ -77,7 +77,7 @@ void ds_panic( int rc );
   do { \
     ds_log_lock(); \
     ds_log_set_unit (TRACE_UNIT, __FILE__, __LINE__); \
-    ds_log_set_level (LOG_INFO); \
+    ds_log_set_level (LOGTRACE_INFO); \
     ds_log_trace msg ; \
     ds_log_unlock(); \
   } while(0)
@@ -91,7 +91,7 @@ void ds_panic( int rc );
     do { \
       ds_log_lock(); \
       ds_log_set_unit (TRACE_UNIT, __FILE__, __LINE__); \
-      ds_log_set_level (LOG_DEBUG); \
+      ds_log_set_level (LOGTRACE_DEBUG); \
       ds_log_trace msg ; \
       ds_log_unlock(); \
     } while(0)

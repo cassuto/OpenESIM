@@ -482,7 +482,7 @@ int PropertyContainerImpl::readModel( circ_element_t *element, int valueid )
 
 int PropertyContainerImpl::readDevice( IDevice *device, int valueid )
 {
-  if( m_modelEntry ) return 0;
+  if( m_deviceEntry ) return 0;
   int count;
   const device_variable_prop_t *props = 0l;
   int rc = device->config( ELM_CONFIG_LIST_COUNT, &count ); UPDATE_RC(rc);
