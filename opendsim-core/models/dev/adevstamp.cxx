@@ -19,7 +19,7 @@
 int
 LIB_FUNC(adev_stamp)( circ_element_t *element )
 {
-  DEFINE_PARAM(param, element, adev_param_t);
+  DEFINE_PARAM(param, element, ddev_param_t);
 
   return ((IDevice*)(param->pIDevice))->mdel_stamp();
 }

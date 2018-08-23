@@ -244,7 +244,7 @@ int SchemaSheet::compile()
   int pinIndex; bool isInt = false;
   foreach( SchemaNode *node, *(nodes()) )
     {
-      circNode = circ_node_create( m_circuit, true );
+      circNode = circ_node_create( m_circuit, true ); //!fixme AD netlist
       if( circNode )
         {
           circuit_attach_node( m_circuit, circNode );

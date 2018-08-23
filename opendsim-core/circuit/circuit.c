@@ -91,7 +91,7 @@ circuit_init( circuit_t *circuit )
   foreach_list( circ_element_t, element, &circuit->analog_element_list )
     if( (rc = asim_element_init( element )) )
       return rc;
-    
+
   foreach_list( circ_element_t, element, &circuit->digital_element_list )
     if( (rc = dsim_element_init( element )) )
       return rc;
@@ -99,10 +99,6 @@ circuit_init( circuit_t *circuit )
   /* Initialize matrix */
   foreach_list( circ_element_t, element, &circuit->analog_element_list )
     if( (rc = asim_element_stamp( element )) )
-      return rc;
-
-  foreach_list( circ_element_t, element, &circuit->digital_element_list )
-    if( (rc = dsim_element_stamp( element )) )
       return rc;
 
   foreach_list( circ_node_t, node, &circuit->analog_node_list )
@@ -197,6 +193,15 @@ circuit_run_step( circuit_t *circuit )
           logic_list = &circuit->logic_list_pong;
         }
       circuit->logic_list_curr_ping = !circuit->logic_list_curr_ping;
+
+      foreach_list( circ_element_t, element, &circuit->analog_element_list )
+        if( element->desc->mdel_type == MDEL_AD )
+          if( (rc = dsim_element_clock( element )) ) /* AD model clk */
+            return rc;
+
+      foreach_list( circ_element_t, element, &circuit->digital_element_list )
+        if( (rc = dsim_element_clock( element )) ) /* digital model clk */
+          return rc;
 
       foreach_hashmap( list_voidptr_node_t, element, logic_list )
         if( (rc = dsim_element_event( (circ_element_t*)(element->val) )) )
@@ -311,6 +316,7 @@ circuit_attach_element( circuit_t *circuit, circ_element_t *element )
 {
   switch( element->desc->mdel_type )
   {
+    case MDEL_AD:
     case MDEL_ANALOG:
       if( !list_contains( &circuit->analog_element_list, list_node(element) ) )
         {

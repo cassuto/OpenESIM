@@ -143,10 +143,11 @@ int IDevice::mdel_stamp()
   { return 0; }
 int IDevice::mdel_vchanged()
   { return 0; }
-int IDevice::mdel_event()
-  { return 0; }
 void IDevice::mdel_reset()
   {}
 void IDevice::mdel_uninit()
   {}
-
+int IDevice::mdel_clock()
+  { return 0; }
+int IDevice::mdel_event()
+  { return 0; }

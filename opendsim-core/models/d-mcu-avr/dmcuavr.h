@@ -34,10 +34,15 @@ typedef struct mcu_avr_param_s
   avr_irq_t **ddr_irqs;
   avr_irq_t **wr_port_irqs;
   logic_state_t * state;
+  double adc_in_imp;
+  double dac_out_imp;
+  double aref_in_imp;
 } mcu_avr_param_t;
 
 int LIB_FUNC(mcu_avr_create)( circ_element_t * );
 int LIB_FUNC(mcu_avr_init)( circ_element_t * );
+int LIB_FUNC(mcu_avr_stamp)( circ_element_t * );
+int LIB_FUNC(mcu_avr_vchanged)( circ_element_t * );
 int LIB_FUNC(mcu_avr_event)( circ_element_t * );
 int LIB_FUNC(mcu_avr_config)( circ_element_t *, int, ... );
 void LIB_FUNC(mcu_avr_reset)( circ_element_t *element );

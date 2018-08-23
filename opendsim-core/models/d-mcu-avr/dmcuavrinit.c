@@ -14,6 +14,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "dmcuavr.h"
@@ -49,6 +50,13 @@ get_firmware_type( const char *fn )
   return FIRMWARE_UNKNOWN;
 }
 
+static inline int
+fixup_addr( int addr )
+{
+  if( addr < 64 ) addr += 32;
+  return addr;
+}
+
 static int
 get_reg_addr( const regmap_t *map, const char *entry )
 {
@@ -56,7 +64,7 @@ get_reg_addr( const regmap_t *map, const char *entry )
     {
       if( 0==strcmp( map[i].entry, entry ) )
         {
-          return map[i].address;
+          return fixup_addr( map[i].address );
         }
     }
   return -1;
@@ -71,6 +79,9 @@ uart_pty_out_cb( struct avr_irq_t* irq, uint32_t value, void* pparam )
   UNUSED( irq );
   circ_element_t* element = (circ_element_t *)pparam;
   DEFINE_PARAM(param, element, mcu_avr_param_t);
+
+  mdel_logtrace( MDEL_INFO, ("UART: out %d (%c)", value, value) );
+
   UNUSED( param ); //!todo processing usart output
   UNUSED( value );
 }
@@ -111,72 +122,89 @@ elf_read_firmware_ext(const char * file, elf_firmware_t * firmware); // thirdpar
 static int
 mcu_avr_map_pins( avr_t *avr_processor, const regmap_t *regmap, const pinmap_t *pinmap, mcu_avr_param_t *param, circ_element_t *element )
 {
-  for( int i=0; pinmap[i].bankid != -PIN_END; i++ )
+  for( int i=0; pinmap[i].typemask != PIN_END; i++ )
     {
       int pinid = i;
 
-      switch( pinmap[i].bankid )
+      if( pinmap[i].bank != 'X' )
       {
-        case -PIN_VCC:
-        case -PIN_GND:
-        case -PIN_AREF:
-        case -PIN_AVCC:
-          break;
+        char pinreg[8];
 
-        default:
+        /*
+         * PORTX Register IRQs
+         */
+        strcpy( pinreg, "PORT" );
+        pinreg[4] = pinmap[i].bank;
+        pinreg[5] = '\0';
+        int port_addr = get_reg_addr( regmap, pinreg );
+        if( port_addr < 0 )
           {
-            char pinreg[8];
-
-            /*
-             * PORTX Register IRQs
-             */
-            strcpy( pinreg, "PORT" );
-            pinreg[4] = pinmap[i].bank;
-            pinreg[5] = '\0';
-            int port_addr = get_reg_addr( regmap, pinreg );
-            if( port_addr < 0 )
-              {
-                mdel_logtrace( MDEL_ERR, ("Unknown port register: \"%s\"!", pinreg) );
-                return -DS_FAULT;
-              }
-            param->port_irqs[pinid] = avr_iomem_getirq( avr_processor,
-                                  port_addr,
-                                  &(pinmap[i].bank),
-                                  pinmap[i].bankid );
-
-            avr_irq_register_notify( param->port_irqs[pinid], port_reg_cb, element );
-
-            param->port_irqs[pinid] = avr_io_getirq( avr_processor, AVR_IOCTL_IOPORT_GETIRQ( pinmap[i].bank ), pinmap[i].bankid );
-            avr_irq_register_notify( param->port_irqs[pinid], port_cb, element );
-
-            /*
-             * DDRX Register IRQs
-             */
-            strcpy( pinreg, "DDR" );
-            pinreg[4] = pinmap[i].bank;
-            pinreg[5] = '\0';
-            int ddr_addr = get_reg_addr( regmap, pinreg );
-            if( ddr_addr < 0 )
-              {
-                mdel_logtrace( MDEL_ERR, ("Unknown ddr register: \"%s\"!", pinreg) );
-                return -DS_FAULT;
-              }
-
-            param->ddr_irqs[pinid] = avr_iomem_getirq( avr_processor,
-                                                       ddr_addr,
-                                                       " ",
-                                                       pinmap[i].bankid );
-
-            avr_irq_register_notify( param->ddr_irqs[pinid], ddr_cb, element );
-
-            /*
-             * IRQ for writing ports
-             */
-            param->wr_port_irqs[pinid] = avr_io_getirq( avr_processor, AVR_IOCTL_IOPORT_GETIRQ(pinmap[i].bank), pinmap[i].bankid );
+            mdel_logtrace( MDEL_ERR, ("Unknown port register: \"%s\"!", pinreg) );
+            return -DS_FAULT;
           }
+        param->port_irqs[pinid] = avr_iomem_getirq( avr_processor,
+                              port_addr,
+                              &(pinmap[i].bank),
+                              pinmap[i].bankid );
+
+        avr_irq_register_notify( param->port_irqs[pinid], port_reg_cb, element );
+
+        param->port_irqs[pinid] = avr_io_getirq( avr_processor, AVR_IOCTL_IOPORT_GETIRQ( pinmap[i].bank ), pinmap[i].bankid );
+        avr_irq_register_notify( param->port_irqs[pinid], port_cb, element );
+
+        /*
+         * DDRX Register IRQs
+         */
+        strcpy( pinreg, "DDR" );
+        pinreg[3] = pinmap[i].bank;
+        pinreg[4] = '\0';
+        int ddr_addr = get_reg_addr( regmap, pinreg );
+        if( ddr_addr < 0 )
+          {
+            mdel_logtrace( MDEL_ERR, ("Unknown ddr register: \"%s\"!", pinreg) );
+            return -DS_FAULT;
+          }
+
+        param->ddr_irqs[pinid] = avr_iomem_getirq( avr_processor,
+                                                   ddr_addr,
+                                                   " ",
+                                                   pinmap[i].bankid );
+
+        avr_irq_register_notify( param->ddr_irqs[pinid], ddr_cb, element );
+
+        /*
+         * IRQ for writing ports
+         */
+        param->wr_port_irqs[pinid] = avr_io_getirq( avr_processor, AVR_IOCTL_IOPORT_GETIRQ(pinmap[i].bank), pinmap[i].bankid );
+
       }
     }
   return 0; // succeeded
+}
+
+static void
+avr_logger( struct avr_t* avr, const int level, const char * format, va_list ap )
+{
+  char buff[2048];
+  vsnprintf( buff, sizeof(buff), format, ap );
+
+  int mdel_level;
+  switch( level )
+  {
+    case LOG_OUTPUT: mdel_level = MDEL_INFO; break;
+    case LOG_ERROR: mdel_level = MDEL_ERR; break;
+    case LOG_WARNING: mdel_level = MDEL_WARNING; break;
+    case LOG_TRACE: mdel_level = MDEL_VERBOSE; break;
+    case LOG_DEBUG: mdel_level = MDEL_VERBOSE; break;
+    case LOG_NONE:
+    default:
+      mdel_level = MDEL_INFO;
+  }
+
+  size_t len = strlen(buff);
+  char *pos = buff + len - 1;
+  if( *pos == '\n' ) *pos = '\0';
+  mdel_logtrace( mdel_level, ("%s", buff ) );
 }
 
 int
@@ -184,6 +212,8 @@ LIB_FUNC(mcu_avr_init)( circ_element_t *element )
 {
   int rc;
   DEFINE_PARAM(param, element, mcu_avr_param_t);
+
+  avr_global_logger_set( avr_logger );
 
   if( param->romimg_fn )
     {
@@ -318,7 +348,29 @@ LIB_FUNC(mcu_avr_init)( circ_element_t *element )
           param->wr_port_irqs = ds_heap_alloc( sizeof(avr_irq_t *) * pincount );
           if( param->state && param->port_irqs && param->ddr_irqs && param->wr_port_irqs )
             {
-              return mcu_avr_map_pins( param->avr_processor, param->mcu->regmap, param->mcu->pinmap, param, element ); // succeeded
+              if( (rc = mcu_avr_map_pins( param->avr_processor, param->mcu->regmap, param->mcu->pinmap, param, element )) )
+                return rc;
+
+              for( int i=0; i < pincount; i++ )
+                {
+                  if( (param->mcu->pinmap[i].typemask & PIN_VCC) ||
+                      (param->mcu->pinmap[i].typemask & PIN_GND) ||
+                      (param->mcu->pinmap[i].typemask & PIN_AREF) ||
+                      (param->mcu->pinmap[i].typemask & PIN_AVCC) )
+                    {
+                      if( element->pin_vector[i]->connected )
+                        if( (rc = circ_node_add_changed_fast( PINNODE(element,i), element )) ) /* analog field */
+                          return rc;
+                    }
+                  else if( param->mcu->pinmap[i].typemask & PIN_IO )
+                    {
+                      if( element->pin_vector[i]->connected )
+                        if( (rc = circ_node_add_logic( PINNODE(element, i), element )) ) /* digital field */
+                          return rc;
+                    }
+                }
+
+              return 0; // succeeded
             }
           else
             return -DS_NO_MEMORY;

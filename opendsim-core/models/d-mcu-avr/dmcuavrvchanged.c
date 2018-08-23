@@ -16,7 +16,7 @@
 #include "dmcuavr.h"
 
 int
-LIB_FUNC(mcu_avr_event)( circ_element_t *element )
+LIB_FUNC(mcu_avr_vchanged)( circ_element_t *element )
 {
   int ports = circ_element_get_pin_count(element);
   logic_state_t state;
@@ -25,20 +25,14 @@ LIB_FUNC(mcu_avr_event)( circ_element_t *element )
 
   for( int i=0; i < ports; i++ )
     {
-      if( param->mcu->pinmap[i].typemask & PIN_IO )
-        {
-          state = GET_STATE( element->pin_vector[i] );
-          if( state != param->state[i] )
-            {
-              param->state[i] = state;
-              switch( state )
-              {
-                case SIG_HIGH: avr_raise_irq( param->wr_port_irqs[i], 1 ); break;
-                case SIG_LOW: avr_raise_irq( param->wr_port_irqs[i], 0 ); break;
-                default: break;
-              }
-            }
-        }
+      double volt = GET_VOLT( element->pin_vector[i] );
+
+      if( param->mcu->pinmap[i].typemask & PIN_VCC )
+        param->avr_processor->vcc = volt * 1000;
+      else if( param->mcu->pinmap[i].typemask & PIN_AREF )
+        param->avr_processor->aref = volt * 1000;
+      else if( param->mcu->pinmap[i].typemask & PIN_AVCC )
+        param->avr_processor->avcc = volt * 1000;
     }
   return 0;
 }

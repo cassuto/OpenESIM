@@ -7,7 +7,7 @@
 static const mmcu_t mmcus[] =
 {
   {"atmega164", regmaps_atmega164, 28, pinmaps_atmega164 },
-  {NULL, NULL}
+  {NULL, NULL, -1, NULL}
 };
 
 const mmcu_t *

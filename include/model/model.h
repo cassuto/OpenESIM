@@ -40,7 +40,8 @@ typedef int (*pfn_element_clock)( circ_element_t *element );
 typedef enum
 {
   MDEL_ANALOG,
-  MDEL_DIGITAL
+  MDEL_DIGITAL,
+  MDEL_AD
 } mdel_type_t;
 
 typedef struct asim_descriptor_s
@@ -58,13 +59,27 @@ typedef struct dsim_descriptor_s
 {
   pfn_element_create    pfn_create;
   pfn_element_init      pfn_init;
-  pfn_element_stamp     pfn_stamp;
-  pfn_element_event     pfn_event;
+  /* pass */ pfn_element_stamp     padding0;
+  /* pass */ pfn_element_vchanged  padding1;
   pfn_element_config    pfn_config;
   pfn_element_reset     pfn_reset;
   pfn_element_uninit    pfn_uninit;
   pfn_element_clock     pfn_clock;
+  pfn_element_event     pfn_event;
 } dsim_descriptor_t;
+
+typedef struct adsim_descriptor_s
+{
+  pfn_element_create    pfn_create;
+  pfn_element_init      pfn_init;
+  pfn_element_stamp     pfn_stamp;
+  pfn_element_vchanged  pfn_vchanged;
+  pfn_element_config    pfn_config;
+  pfn_element_reset     pfn_reset;
+  pfn_element_uninit    pfn_uninit;
+  pfn_element_clock     pfn_clock;
+  pfn_element_event     pfn_event;
+} adsim_descriptor_t;
 
 typedef struct circ_element_descriptor_s
 {
@@ -155,6 +170,7 @@ typedef enum
   MDEL_ERR = 0,
   MDEL_WARNING,
   MDEL_INFO,
+  MDEL_TRACE,
   MDEL_DEBUG,
   MDEL_VERBOSE
 } mdel_loglevel_t;

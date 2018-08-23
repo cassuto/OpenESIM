@@ -25,8 +25,6 @@ dsim_descriptor_t dsim_buff =
 
     .pfn_init = buff_init,              /* callback function to initialize the simulator model */
 
-    .pfn_stamp = NULL,                  /* callback function to stamp node matrix */
-
     .pfn_event = buff_event,            /* callback function to inform volt changed */
 
     .pfn_config = buff_config,          /* callback function to configure the element */

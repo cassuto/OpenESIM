@@ -27,11 +27,11 @@ void LIB_FUNC(adev_uninit)( circ_element_t * );
 
 int LIB_FUNC(ddev_create)( circ_element_t * );
 int LIB_FUNC(ddev_init)( circ_element_t * );
-int LIB_FUNC(ddev_stamp)( circ_element_t * );
-int LIB_FUNC(ddev_event)( circ_element_t * );
 void LIB_FUNC(ddev_reset)( circ_element_t * );
 int LIB_FUNC(ddev_config)( circ_element_t *, int, ... );
 void LIB_FUNC(ddev_uninit)( circ_element_t * );
+int LIB_FUNC(ddev_clock)( circ_element_t * );
+int LIB_FUNC(ddev_event)( circ_element_t * );
 
 END_C_DECLS
 

@@ -16,28 +16,31 @@
 #include "dmcuavr.h"
 
 int
-LIB_FUNC(mcu_avr_event)( circ_element_t *element )
+LIB_FUNC(mcu_avr_stamp)( circ_element_t *element )
 {
+  int rc;
   int ports = circ_element_get_pin_count(element);
-  logic_state_t state;
-
   DEFINE_PARAM(param, element, mcu_avr_param_t);
 
   for( int i=0; i < ports; i++ )
     {
-      if( param->mcu->pinmap[i].typemask & PIN_IO )
+      if( param->mcu->pinmap[i].typemask & PIN_ADC )
         {
-          state = GET_STATE( element->pin_vector[i] );
-          if( state != param->state[i] )
-            {
-              param->state[i] = state;
-              switch( state )
-              {
-                case SIG_HIGH: avr_raise_irq( param->wr_port_irqs[i], 1 ); break;
-                case SIG_LOW: avr_raise_irq( param->wr_port_irqs[i], 0 ); break;
-                default: break;
-              }
-            }
+          if( element->pin_vector[i]->connected )
+            if( (rc = circ_node_stamp_admit( PINNODE(element, i), element->pin_vector[i], 1/param->adc_in_imp )) )
+              return rc;
+        }
+      else if( param->mcu->pinmap[i].typemask & PIN_DAC )
+        {
+          if( element->pin_vector[i]->connected )
+            if( (rc = circ_node_stamp_admit( PINNODE(element, i), element->pin_vector[i], 1/param->dac_out_imp )) )
+              return rc;
+        }
+      else if( param->mcu->pinmap[i].typemask & PIN_AREF )
+        {
+          if( element->pin_vector[i]->connected )
+            if( (rc = circ_node_stamp_admit( PINNODE(element, i), element->pin_vector[i], 1/param->aref_in_imp )) )
+              return rc;
         }
     }
   return 0;

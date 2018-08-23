@@ -19,7 +19,7 @@
 
 #include "dac.h"
 
-dsim_descriptor_t dsim_dac =
+adsim_descriptor_t adsim_dac =
   {
     .pfn_create = dac_create,           /* callback function to create parameters */
 
@@ -27,14 +27,18 @@ dsim_descriptor_t dsim_dac =
 
     .pfn_stamp = dac_stamp,             /* callback function to stamp node matrix */
 
-    .pfn_event = dac_event,             /* callback function to receive logic event */
+    .pfn_vchanged = NULL,               /* callback function to inform volt changed */
 
     .pfn_config = dac_config,           /* callback function to configure the element */
 
     .pfn_reset = NULL,                  /* callback function to reset the status */
 
-    .pfn_uninit = dac_uninit            /* callback function to terminate the parameters */
-  };
+    .pfn_uninit = dac_uninit,           /* callback function to terminate the parameters */
+
+    .pfn_clock = NULL,                  /* callback function to inform clock signal triggered */
+
+    .pfn_event = dac_event              /* callback function to receive logic event */
+};
 
 circ_element_descriptor_t mdel_dac =
   {
@@ -44,7 +48,7 @@ circ_element_descriptor_t mdel_dac =
 
     .pin_count = 2,                     /* alterable, the number of pins of device */
 
-    .mdel_type = MDEL_DIGITAL,          /* the electrical type of this model */
+    .mdel_type = MDEL_AD,               /* the electrical type of this model */
 
-    .mdel = &dsim_dac                   /* pointer to the model descriptor structure */
+    .mdel = &adsim_dac                  /* pointer to the model descriptor structure */
   };

@@ -17,9 +17,9 @@
 #include "dev.h"
 
 int
-LIB_FUNC(ddev_stamp)( circ_element_t *element )
+LIB_FUNC(ddev_clock)( circ_element_t *element )
 {
   DEFINE_PARAM(param, element, ddev_param_t);
 
-  return ((IDevice*)(param->pIDevice))->mdel_stamp();
+  return ((IDevice*)(param->pIDevice))->mdel_clock();
 }

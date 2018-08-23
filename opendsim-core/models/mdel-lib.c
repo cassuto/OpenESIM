@@ -87,6 +87,17 @@ model_lib_init( void )
               trace_error(("duplicated model symbol '%s'\n", symbol));
               return -DS_DUP_MODEL_SYMBOL;
             }
+          switch( element_descriptors[i]->mdel_type ) /* force reserving placeholder  */
+          {
+            case MDEL_ANALOG:
+              break;
+            case MDEL_DIGITAL:
+              ((dsim_descriptor_t *)element_descriptors[i]->mdel)->padding0 = NULL;
+              ((dsim_descriptor_t *)element_descriptors[i]->mdel)->padding1 = NULL;
+              break;
+            case MDEL_AD:
+              break;
+          }
         }
     }
   ref_count ++;
@@ -160,7 +171,7 @@ model_create_instance( circ_element_t *element, const char *symbol, const circ_e
 
         case MDEL_DIGITAL:
           {
-            asim_descriptor_t *dsim = (asim_descriptor_t *)desc->mdel;
+            dsim_descriptor_t *dsim = (dsim_descriptor_t *)desc->mdel;
 
             if( (rc = dsim->pfn_create( element )) )
               goto err_out;
@@ -171,6 +182,23 @@ model_create_instance( circ_element_t *element, const char *symbol, const circ_e
 
             *ppdesc = desc;
             *ppmdel = dsim;
+            rc = 0;
+            break;
+          }
+
+        case MDEL_AD:
+          {
+            adsim_descriptor_t *adsim = (adsim_descriptor_t *)desc->mdel;
+
+            if( (rc = adsim->pfn_create( element )) )
+              goto err_out;
+
+            /* query the number of parameters */
+            if( (rc = adsim->pfn_config( element, ELM_CONFIG_LIST_COUNT, &param_count )) )
+              goto err_out;
+
+            *ppdesc = desc;
+            *ppmdel = adsim;
             rc = 0;
             break;
           }
@@ -202,6 +230,9 @@ model_destroy_instance( const circ_element_descriptor_t *desc, const void *mdel,
     case MDEL_DIGITAL:
       dsim_element_uninit( element );
       break;
+
+    case MDEL_AD:
+      dsim_element_uninit( element );
   }
 
   ds_heap_free( element->param );

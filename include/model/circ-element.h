@@ -47,11 +47,16 @@ circ_element_get_pin_count( circ_element_t *element )
 #define asim_element_uninit(element)        ((element)->u.asim->pfn_uninit ? ((element)->u.asim->pfn_uninit( element )) : 0 )
 
 #define dsim_element_init(element)          ((element)->u.dsim->pfn_init( element ))
-#define dsim_element_stamp(element)         ((element)->u.dsim->pfn_stamp ? ((element)->u.dsim->pfn_stamp( element )) : 0 )
-#define dsim_element_event(element)         ((element)->u.dsim->pfn_event( element ))
 #define dsim_element_config(element)        (element)->u.dsim->pfn_config
 #define dsim_element_reset(element)         ((element)->u.dsim->pfn_reset ? ((element)->u.dsim->pfn_reset(element)) : 0 )
-#define dsim_element_uninit(element)        ((element)->u.dsim->pfn_uninit ? ((element)->u.asim->pfn_uninit( element )) : 0 )
+#define dsim_element_uninit(element)        ((element)->u.dsim->pfn_uninit ? ((element)->u.dsim->pfn_uninit( element )) : 0 )
+#define dsim_element_clock(element)         ((element)->u.dsim->pfn_clock ? ((element)->u.dsim->pfn_clock( element )) : 0 )
+#define dsim_element_event(element)         ((element)->u.dsim->pfn_event( element ))
+
+#define adsim_element_init(element)         ((element)->u.asim->pfn_init( element ))
+#define adsim_element_config(element)       (element)->u.asim->pfn_config
+#define adsim_element_reset(element)        ((element)->u.asim->pfn_reset ? ((element)->u.asim->pfn_reset(element)) : 0 )
+#define adsim_element_uninit(element)       ((element)->u.asim->pfn_uninit ? ((element)->u.asim->pfn_uninit( element )) : 0 )
 
 #define FN_CONFIG_GET_ELEM_PTR(element, op, ...) (element)
 
@@ -66,6 +71,9 @@ circ_element_get_pin_count( circ_element_t *element )
       break; \
     case MDEL_DIGITAL: \
       _rc_ = ((dsim_element_config(FN_CONFIG_GET_ELEM_PTR params) params )); \
+      break; \
+    case MDEL_AD: \
+      _rc_ = ((adsim_element_config(FN_CONFIG_GET_ELEM_PTR params) params )); \
       break; \
   } \
   (_rc_); \

@@ -23,5 +23,9 @@ LIB_FUNC(mcu_avr_create)( circ_element_t *element )
   param->romimg_fn = ds_strdup("");
   param->steps_pclk = 16;
   param->next_cycle = param->steps_pclk;
+
+  param->adc_in_imp = model_high_imp;
+  param->dac_out_imp = model_cero_doub;
+  param->aref_in_imp = model_high_imp;
   return 0;
 }

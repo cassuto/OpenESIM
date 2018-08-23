@@ -42,15 +42,15 @@ dsim_descriptor_t dsim_dev =
 
     .pfn_init = ddev_init,               /* callback function to initialize the simulator model */
 
-    .pfn_stamp = ddev_stamp,             /* callback function to stamp node matrix */
-
-    .pfn_event = ddev_event,             /* callback function to inform volt changed */
-
     .pfn_config = ddev_config,           /* callback function to configure the element */
 
     .pfn_reset = ddev_reset,             /* callback function to reset the status */
 
-    .pfn_uninit = ddev_uninit            /* callback function to terminate the parameters */
+    .pfn_uninit = ddev_uninit,           /* callback function to terminate the parameters */
+
+    .pfn_clock = ddev_clock,             /* callback function to inform volt changed */
+
+    .pfn_event = ddev_event              /* callback function to inform volt changed */
   };
 
 circ_element_descriptor_t mdel_adev =

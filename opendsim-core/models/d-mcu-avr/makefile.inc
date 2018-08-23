@@ -9,11 +9,13 @@ libdsimmodels_la_LIBADD += \
 libdsimmodels_la_SOURCES += d-mcu-avr/dmcuavr.c \
                     d-mcu-avr/dmcuavrcreate.c \
                     d-mcu-avr/dmcuavrinit.c \
-                    d-mcu-avr/dmcuavrevent.c \
+                    d-mcu-avr/dmcuavrstamp.c \
+                    d-mcu-avr/dmcuavrvchanged.c \
                     d-mcu-avr/dmcuavrconfig.c \
                     d-mcu-avr/dmcuavrreset.c \
                     d-mcu-avr/dmcuavruninit.c \
                     d-mcu-avr/dmcuavrclock.c \
+                    d-mcu-avr/dmcuavrevent.c \
                     d-mcu-avr/dmcuavrmmcus.c \
                     d-mcu-avr/thirdparty/cores/sim_mega128.c \
                     d-mcu-avr/thirdparty/cores/sim_mega16m1.c \

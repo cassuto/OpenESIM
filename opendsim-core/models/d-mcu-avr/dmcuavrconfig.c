@@ -30,7 +30,7 @@ LIB_FUNC(mcu_avr_config)( circ_element_t *element, int op, ... )
     case ELM_CONFIG_LIST_COUNT: /* Query the number of parameters */
       {
         int *count = va_arg( vlist, int* );
-        *count = 3;
+        *count = 6;
       }
       break;
 
@@ -41,7 +41,10 @@ LIB_FUNC(mcu_avr_config)( circ_element_t *element, int op, ... )
             {
               { "mmcu", "Model of target MCU", MDEL_VAR_STRPTR },
               { "imgfn", "ROM image filename", MDEL_VAR_STRPTR },
-              { "clk_freq", "(MHz) Frequency of system clock", MDEL_VAR_INTEGER }
+              { "clk_freq", "(MHz) Frequency of system clock", MDEL_VAR_INTEGER },
+              { "adc_imp", "Input impedance of ADC port", MDEL_VAR_DOUBLE },
+              { "dac_imp", "Ouput impedance of DAC port", MDEL_VAR_DOUBLE },
+              { "aref_imp", "Input impedance of AREF port", MDEL_VAR_DOUBLE }
             };
         *prop = prop_list;
       }
@@ -55,6 +58,9 @@ LIB_FUNC(mcu_avr_config)( circ_element_t *element, int op, ... )
           case 0: *(va_arg( vlist, const char** )) = param->mmcu; break;
           case 1: *(va_arg( vlist, const char** )) = param->romimg_fn; break;
           case 2: *(va_arg( vlist, int* )) = param->steps_pclk; break;
+          case 3: *(va_arg( vlist, double* )) = param->adc_in_imp; break;
+          case 4: *(va_arg( vlist, double* )) = param->dac_out_imp; break;
+          case 5: *(va_arg( vlist, double* )) = param->aref_in_imp; break;
           default: rc = -DS_FAULT;
         }
       }
@@ -96,6 +102,21 @@ LIB_FUNC(mcu_avr_config)( circ_element_t *element, int op, ... )
           case 2: /* (MHz) Frequency of system clock */
             {
               param->steps_pclk = va_arg( vlist, int );
+              break;
+            }
+          case 3: /* Input impedance of ADC port */
+            {
+              param->adc_in_imp = va_arg( vlist, double );
+              break;
+            }
+          case 4: /* Output impedance of DAC port */
+            {
+              param->dac_out_imp = va_arg( vlist, double );
+              break;
+            }
+          case 5: /* Input impedance of AREF port */
+            {
+              param->aref_in_imp = va_arg( vlist, double );
               break;
             }
           default:

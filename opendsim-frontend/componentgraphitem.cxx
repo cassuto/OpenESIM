@@ -115,9 +115,7 @@ int ComponentGraphItem::createDevice()
 
   delete device()->get();
   device()->erase();
-
   schematic()->reset();
-  //properties()->reset();
 
   IDevice *dev = 0l;
   if( int rc = view()->sheet()->createDevice( m_deviceEntry, m_reference.c_str(), id(), schematic(), properties(), &dev ) )

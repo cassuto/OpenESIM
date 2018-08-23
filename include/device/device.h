@@ -168,9 +168,10 @@ public:
   virtual int mdel_init();
   virtual int mdel_stamp();
   virtual int mdel_vchanged();
-  virtual int mdel_event();
   virtual void mdel_reset();
   virtual void mdel_uninit();
+  virtual int mdel_clock();
+  virtual int mdel_event();
 
   virtual int reserved0() { return 0; }
   virtual int reserved1() { return 0; }
