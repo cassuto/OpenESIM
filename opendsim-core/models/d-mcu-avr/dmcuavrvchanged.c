@@ -19,20 +19,21 @@ int
 LIB_FUNC(mcu_avr_vchanged)( circ_element_t *element )
 {
   int ports = circ_element_get_pin_count(element);
-  logic_state_t state;
-
   DEFINE_PARAM(param, element, mcu_avr_param_t);
 
   for( int i=0; i < ports; i++ )
     {
       double volt = GET_VOLT( element->pin_vector[i] );
 
-      if( param->mcu->pinmap[i].typemask & PIN_VCC )
-        param->avr_processor->vcc = volt * 1000;
+      if( param->mcu->pinmap[i].typemask & PIN_ADC)
+        return mcu_avr_event( element );
       else if( param->mcu->pinmap[i].typemask & PIN_AREF )
         param->avr_processor->aref = volt * 1000;
       else if( param->mcu->pinmap[i].typemask & PIN_AVCC )
         param->avr_processor->avcc = volt * 1000;
+      else if( param->mcu->pinmap[i].typemask & PIN_VCC )
+        param->avr_processor->vcc = volt * 1000;
     }
+
   return 0;
 }

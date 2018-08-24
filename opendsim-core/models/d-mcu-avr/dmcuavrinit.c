@@ -205,6 +205,8 @@ avr_logger( struct avr_t* avr, const int level, const char * format, va_list ap 
   char *pos = buff + len - 1;
   if( *pos == '\n' ) *pos = '\0';
   mdel_logtrace( mdel_level, ("%s", buff ) );
+
+  UNUSED(avr); UNUSED(mdel_level);
 }
 
 int
@@ -338,7 +340,6 @@ LIB_FUNC(mcu_avr_init)( circ_element_t *element )
       param->avr_processor->frequency = 16000000;
       param->avr_processor->cycle = 0;
 
-      param->mcu = get_mmcu( elf.mmcu );
       if( param->mcu )
         {
           int pincount = param->mcu->pincount;
@@ -351,18 +352,37 @@ LIB_FUNC(mcu_avr_init)( circ_element_t *element )
               if( (rc = mcu_avr_map_pins( param->avr_processor, param->mcu->regmap, param->mcu->pinmap, param, element )) )
                 return rc;
 
+              param->innode = (circ_node_t **)ds_heap_alloc( sizeof(circ_node_t *) * param->analog_count );
+              if( param->innode )
+                {
+                  for( int i=0; i < param->analog_count; i++ )
+                    {
+                      param->innode[i] = circ_node_create( element->circuit, true );
+                      if( NULL==param->innode[i] )
+                        return -DS_NO_MEMORY;
+                      circ_node_set_index( param->innode[i], 0 );
+                    }
+                }
+              else
+                return -DS_NO_MEMORY;
+
+              int analog_i = 0;
               for( int i=0; i < pincount; i++ )
                 {
                   if( (param->mcu->pinmap[i].typemask & PIN_VCC) ||
                       (param->mcu->pinmap[i].typemask & PIN_GND) ||
                       (param->mcu->pinmap[i].typemask & PIN_AREF) ||
-                      (param->mcu->pinmap[i].typemask & PIN_AVCC) )
+                      (param->mcu->pinmap[i].typemask & PIN_AVCC) ||
+                      (param->mcu->pinmap[i].typemask & PIN_ADC) ||
+                      (param->mcu->pinmap[i].typemask & PIN_DAC) )
                     {
+                      if( (rc = circ_pin_set_nodecomp( element->pin_vector[i], param->innode[analog_i++] )))
+                        return rc;
                       if( element->pin_vector[i]->connected )
                         if( (rc = circ_node_add_changed_fast( PINNODE(element,i), element )) ) /* analog field */
                           return rc;
                     }
-                  else if( param->mcu->pinmap[i].typemask & PIN_IO )
+                  else if( (param->mcu->pinmap[i].typemask & PIN_IO) && (~(param->mcu->pinmap[i].typemask) & PIN_ADC) )
                     {
                       if( element->pin_vector[i]->connected )
                         if( (rc = circ_node_add_logic( PINNODE(element, i), element )) ) /* digital field */

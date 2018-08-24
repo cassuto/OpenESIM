@@ -77,7 +77,10 @@ LIB_FUNC(dac_config)( circ_element_t *element, int op, ... )
               int n = va_arg( vlist, int );
               if( (rc = circ_element_set_pins( element, n * 2 )) )
                 break;
-              rc = dac_set_vsrcs( element, param, n );
+              param->outputs_count = n;
+              if( (rc = dac_set_vsrcs( element, param, param->outputs_count )) )
+                break;
+              circ_element_set_digital_pin( element, 0, param->outputs_count-1 );
               break;
             }
           case 1: /* Logic Volt high */

@@ -22,10 +22,17 @@
 
 C_DECLS
 
+typedef enum
+{
+  PIN_TYPE_ANALOG = 0,
+  PIN_TYPE_DIGITAL
+} pin_type_t;
+
 typedef struct circ_pin_s
 {
   bool connected;
   int index;
+  pin_type_t type;
   struct circ_node_s *node, *node_comp;
 } circ_pin_t;
 
@@ -40,6 +47,11 @@ static inline void
 circ_pin_set_index( circ_pin_t *pin, int index )
 {
   pin->index = index;
+}
+static inline void
+circ_pin_set_type( circ_pin_t *pin, pin_type_t type )
+{
+  pin->type = type;
 }
 
 #define circ_pin_set_state(pin, state) \

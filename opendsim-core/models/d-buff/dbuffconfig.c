@@ -63,7 +63,10 @@ LIB_FUNC(buff_config)( circ_element_t *element, int op, ... )
         {
           case 0: /* Number of Input ports */
             {
-              rc = circ_element_set_pins( element, va_arg( vlist, int ) * 2 );
+              int n = va_arg( vlist, int );
+              if( (rc = circ_element_set_pins( element, n * 2 )) )
+                break;
+              circ_element_set_digital_pin( element, 0, n-1 );
               break;
             }
           default:

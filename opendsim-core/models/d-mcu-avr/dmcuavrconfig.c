@@ -73,19 +73,45 @@ LIB_FUNC(mcu_avr_config)( circ_element_t *element, int op, ... )
         {
           case 0: /* Model of target MCU */
             {
-              ds_heap_free( param->mmcu );
+              if( param->mmcu )
+                {
+                  rc = -DS_READONLY; break;
+                }
               param->mmcu = ds_strdup( va_arg( vlist, const char* ) );
               if( param->mmcu )
                 {
                   const mmcu_t *mcu = get_mmcu( param->mmcu );
                   if( mcu )
                     {
-                      rc = circ_element_set_pins( element, mcu->pincount );
+                      param->mcu = mcu;
+                      param->analog_count = 0;
+                      /*
+                       * RESET type of pins
+                       */
+                      rc = circ_element_set_pins( element, mcu->pincount ); UPDATE_RC(rc);
+                      for( int i=0; i<mcu->pincount; i++ )
+                        {
+                          if( param->mcu->pinmap[i].typemask & PIN_IO )
+                            circ_pin_set_type( element->pin_vector[i], PIN_TYPE_DIGITAL );
+                          if( param->mcu->pinmap[i].typemask & PIN_ADC )
+                            {
+                              circ_pin_set_type( element->pin_vector[i], PIN_TYPE_ANALOG );
+                              param->analog_count++;
+                            }
+                          else if( (param->mcu->pinmap[i].typemask & PIN_VCC) ||
+                              (param->mcu->pinmap[i].typemask & PIN_GND) ||
+                              (param->mcu->pinmap[i].typemask & PIN_AREF) ||
+                              (param->mcu->pinmap[i].typemask & PIN_AVCC) ||
+                              (param->mcu->pinmap[i].typemask & PIN_DAC) )
+                            {
+                              param->analog_count++;
+                            }
+                        }
                     }
                   else
                     {
                       mdel_logtrace( MDEL_ERR, ("Register and pin mappings for processor \"%s\" is not found!", param->mmcu) );
-                      return -DS_FAULT;
+                      rc = -DS_FAULT;
                     }
                 }
               else

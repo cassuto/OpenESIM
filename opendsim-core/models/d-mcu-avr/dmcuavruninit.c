@@ -29,4 +29,13 @@ LIB_FUNC(mcu_avr_uninit)( circ_element_t *element )
   ds_heap_free( param->state );
   ds_heap_free( param->port_irqs );
   ds_heap_free( param->ddr_irqs );
+
+  if( param->innode )
+    {
+      for( int i=0; i < param->analog_count; i++ )
+        {
+          circ_node_free( param->innode[i] );
+        }
+    }
+  ds_heap_free( param->innode );
 }

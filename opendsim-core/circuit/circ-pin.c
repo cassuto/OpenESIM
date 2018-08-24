@@ -35,6 +35,7 @@ circ_pin_create( void )
     {
       pin->connected = false;
       pin->index = 0;
+      pin->type = PIN_TYPE_ANALOG; /* default analog type */
       pin->node = pin->node_comp = NULL;
     }
   return pin;
@@ -51,7 +52,13 @@ circ_pin_set_node( circ_pin_t *pin, struct circ_node_s *node )
   trace_assert( !rc );
 
   if( node )
-    rc = circ_node_add_pin( node, pin );
+    {
+      if( (pin->type != PIN_TYPE_ANALOG || !node->analog ) && (pin->type != PIN_TYPE_DIGITAL || node->analog ) )
+        {
+          return -DS_PORT_TYPE_MISMATCH; /* connection between analog and digital nodes without any bridge is not allowed */
+        }
+      rc = circ_node_add_pin( node, pin );
+    }
 
   if ( !rc )
     {

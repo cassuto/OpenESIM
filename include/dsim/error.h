@@ -74,6 +74,8 @@ C_DECLS
 #define DS_CREATE_MODEL (27)
 /** (scheme-lisp) Expected a parameter but there is no */
 #define DS_EXPECT_PARAM (28)
+/** Port type mismatch */
+#define DS_PORT_TYPE_MISMATCH (29)
 
 /* }}gen */
 

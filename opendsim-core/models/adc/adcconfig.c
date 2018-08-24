@@ -74,8 +74,11 @@ LIB_FUNC(adc_config)( circ_element_t *element, int op, ... )
         {
           case 0: /* Number of Input ports */
             {
-              param->inputs_count = va_arg( vlist, int );
-              rc = circ_element_set_pins( element, param->inputs_count * 2 );
+              int n = va_arg( vlist, int );
+              if( (rc = circ_element_set_pins( element, n * 2 )) )
+                break;
+              circ_element_set_digital_pin( element, n, circ_element_get_pin_count(element)-1 );
+              param->inputs_count = n;
               break;
             }
           case 1: /* Logic Volt high */

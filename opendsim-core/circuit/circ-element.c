@@ -17,6 +17,9 @@
  *  Lesser General Public License for more details.
  */
 
+#define TRACE_UNIT "circ-elm"
+
+#include <dsim/logtrace.h>
 #include <dsim/memory.h>
 #include <dsim/error.h>
 #include <dsim/string.h>
@@ -89,6 +92,17 @@ circ_pin_t *
 circ_element_get_pin( circ_element_t *element, int index )
 {
   return element->pin_vector[index];
+}
+
+void
+circ_element_set_digital_pin( circ_element_t *element, int start, int end )
+{
+  trace_assert( start < element->pin_count && end < element->pin_count );
+  trace_assert( start <= end );
+  for( unsigned i=start; i <= end; i++ )
+    {
+      circ_pin_set_type( element->pin_vector[i], PIN_TYPE_DIGITAL );
+    }
 }
 
 void

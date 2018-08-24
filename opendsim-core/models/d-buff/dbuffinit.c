@@ -26,6 +26,8 @@ LIB_FUNC(buff_init)( circ_element_t *element )
 
   if( param->state )
     {
+      circ_element_set_digital_pin( element, 0, ports-1 );
+
       memset( param->state, 0, ports * sizeof(logic_state_t) );
       for( int i=0; i < ports; i++ )
         if( element->pin_vector[i]->connected )

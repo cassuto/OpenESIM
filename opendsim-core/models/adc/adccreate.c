@@ -29,6 +29,9 @@ LIB_FUNC(adc_create)( circ_element_t *element )
   if( param->vsrc_node )
     {
       circ_node_set_index( param->vsrc_node, 0 );
+
+      circ_element_set_digital_pin( element, param->inputs_count, circ_element_get_pin_count(element)-1 );
+
       return 0;
     }
 

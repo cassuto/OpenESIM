@@ -27,14 +27,16 @@ LIB_FUNC(dac_stamp)( circ_element_t *element )
       index = param->outputs_count + i;
       volt = param->volt[i];
 
-      if( (rc = circ_node_stamp_admit( PINNODE(element, index), element->pin_vector[index], admit )) )
-        return rc;
+      if( element->pin_vector[index]->connected )
+        if( (rc = circ_node_stamp_admit( PINNODE(element, index), element->pin_vector[index], admit )) )
+          return rc;
 
       if( (rc = circ_node_set_volt( param->vsrc_node[i], volt )) )
         return rc;
 
-      if( (rc = circ_node_stamp_current( PINNODE(element, index), element->pin_vector[index], volt/param->imp )) )
-        return rc;
+      if( element->pin_vector[index]->connected )
+        if( (rc = circ_node_stamp_current( PINNODE(element, index), element->pin_vector[index], volt/param->imp )) )
+          return rc;
     }
 
   return 0;

@@ -28,6 +28,7 @@ typedef struct circ_pin_s circ_pin_t;
 circ_element_t *circ_element_create( struct circuit_s *circuit, const char *symbol, int id );
 int circ_element_set_pins( circ_element_t *element, int n );
 circ_pin_t *circ_element_get_pin( circ_element_t *element, int index );
+void circ_element_set_digital_pin( circ_element_t *element, int start, int end );
 void circ_element_free( void *element );
 
 static inline int

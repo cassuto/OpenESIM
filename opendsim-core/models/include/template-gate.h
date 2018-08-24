@@ -52,6 +52,8 @@ LIB_FUNC(FNN(init))( circ_element_t *element )
   DEFINE_PARAM(param, element, d_gate_param_t);
   int rc = 0;
 
+  circ_element_set_digital_pin( element, 0, param->inputs_count );
+
   for( int i=0; i < param->inputs_count; i++ )
     {
       if( (rc = circ_node_add_logic( PINNODE(element, i), element )) )

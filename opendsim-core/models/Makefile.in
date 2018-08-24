@@ -55,13 +55,13 @@ LIBOBJDIR =
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/adc/makefile.inc $(srcdir)/bjt/makefile.inc \
 	$(srcdir)/capacitor/makefile.inc $(srcdir)/d-and/makefile.inc \
-	$(srcdir)/d-buff/makefile.inc $(srcdir)/d-mcu-avr/makefile.inc \
-	$(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc \
-	$(srcdir)/dac/makefile.inc $(srcdir)/dev/makefile.inc \
-	$(srcdir)/diode/makefile.inc $(srcdir)/inductor/makefile.inc \
-	$(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc \
-	$(srcdir)/pn/makefile.inc $(srcdir)/register/makefile.inc \
-	$(srcdir)/vsource/makefile.inc
+	$(srcdir)/d-buff/makefile.inc $(srcdir)/d-lcd8544/makefile.inc \
+	$(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/d-or/makefile.inc \
+	$(srcdir)/d-xor/makefile.inc $(srcdir)/dac/makefile.inc \
+	$(srcdir)/dev/makefile.inc $(srcdir)/diode/makefile.inc \
+	$(srcdir)/inductor/makefile.inc $(srcdir)/mosfet/makefile.inc \
+	$(srcdir)/opamp/makefile.inc $(srcdir)/pn/makefile.inc \
+	$(srcdir)/register/makefile.inc $(srcdir)/vsource/makefile.inc
 subdir = opendsim-core/models
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -194,9 +194,15 @@ am_libdsimmodels_la_OBJECTS = libdsimmodels_la-register.lo \
 	libdsimmodels_la-sim_interrupts.lo \
 	libdsimmodels_la-avr_flash.lo libdsimmodels_la-avr_uart.lo \
 	libdsimmodels_la-sim_core.lo libdsimmodels_la-sim_io.lo \
-	libdsimmodels_la-dev.lo libdsimmodels_la-adevcreate.lo \
-	libdsimmodels_la-adevinit.lo libdsimmodels_la-adevstamp.lo \
-	libdsimmodels_la-adevvchanged.lo \
+	libdsimmodels_la-d-lcd8544.lo \
+	libdsimmodels_la-dlcd8544create.lo \
+	libdsimmodels_la-dlcd8544init.lo \
+	libdsimmodels_la-dlcd8544event.lo \
+	libdsimmodels_la-dlcd8544config.lo \
+	libdsimmodels_la-dlcd8544uninit.lo \
+	libdsimmodels_la-dlcd8544reset.lo libdsimmodels_la-dev.lo \
+	libdsimmodels_la-adevcreate.lo libdsimmodels_la-adevinit.lo \
+	libdsimmodels_la-adevstamp.lo libdsimmodels_la-adevvchanged.lo \
 	libdsimmodels_la-adevconfig.lo libdsimmodels_la-adevreset.lo \
 	libdsimmodels_la-adevuninit.lo libdsimmodels_la-ddevcreate.lo \
 	libdsimmodels_la-ddevinit.lo libdsimmodels_la-ddevconfig.lo \
@@ -461,12 +467,16 @@ libdsimmodels_la_SOURCES = register/register.c \
 	d-mcu-avr/thirdparty/sim/avr_flash.c \
 	d-mcu-avr/thirdparty/sim/avr_uart.c \
 	d-mcu-avr/thirdparty/sim/sim_core.c \
-	d-mcu-avr/thirdparty/sim/sim_io.c dev/dev.c dev/adevcreate.c \
-	dev/adevinit.cxx dev/adevstamp.cxx dev/adevvchanged.cxx \
-	dev/adevconfig.c dev/adevreset.cxx dev/adevuninit.cxx \
-	dev/ddevcreate.c dev/ddevinit.cxx dev/ddevconfig.c \
-	dev/ddevreset.cxx dev/ddevuninit.cxx dev/ddevclock.cxx \
-	dev/ddevevent.cxx mdel-parameter.c mdel-lib.c
+	d-mcu-avr/thirdparty/sim/sim_io.c d-lcd8544/d-lcd8544.c \
+	d-lcd8544/dlcd8544create.c d-lcd8544/dlcd8544init.c \
+	d-lcd8544/dlcd8544event.c d-lcd8544/dlcd8544config.c \
+	d-lcd8544/dlcd8544uninit.c d-lcd8544/dlcd8544reset.c dev/dev.c \
+	dev/adevcreate.c dev/adevinit.cxx dev/adevstamp.cxx \
+	dev/adevvchanged.cxx dev/adevconfig.c dev/adevreset.cxx \
+	dev/adevuninit.cxx dev/ddevcreate.c dev/ddevinit.cxx \
+	dev/ddevconfig.c dev/ddevreset.cxx dev/ddevuninit.cxx \
+	dev/ddevclock.cxx dev/ddevevent.cxx mdel-parameter.c \
+	mdel-lib.c
 libdsimmodels_la_LIBADD = $(LIBELF_LIBS) $(LIBSOCKET_LD)
 libdsimmodels_la_CFLAGS = -Wno-unused-function
 libdsimmodels_la_CPPFLAGS = -Wno-unused-function
@@ -474,7 +484,7 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .cxx .lo .o .obj
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/register/makefile.inc $(srcdir)/capacitor/makefile.inc $(srcdir)/diode/makefile.inc $(srcdir)/pn/makefile.inc $(srcdir)/bjt/makefile.inc $(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc $(srcdir)/inductor/makefile.inc $(srcdir)/vsource/makefile.inc $(srcdir)/dac/makefile.inc $(srcdir)/adc/makefile.inc $(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc $(srcdir)/d-and/makefile.inc $(srcdir)/d-buff/makefile.inc $(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/dev/makefile.inc $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/register/makefile.inc $(srcdir)/capacitor/makefile.inc $(srcdir)/diode/makefile.inc $(srcdir)/pn/makefile.inc $(srcdir)/bjt/makefile.inc $(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc $(srcdir)/inductor/makefile.inc $(srcdir)/vsource/makefile.inc $(srcdir)/dac/makefile.inc $(srcdir)/adc/makefile.inc $(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc $(srcdir)/d-and/makefile.inc $(srcdir)/d-buff/makefile.inc $(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/d-lcd8544/makefile.inc $(srcdir)/dev/makefile.inc $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -583,6 +593,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-capacitorvchanged.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-and.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-buff.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-lcd8544.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-or.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-xor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dac.Plo@am__quote@
@@ -613,6 +624,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-diodestamp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-diodeuninit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-diodevchanged.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dlcd8544config.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dlcd8544create.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dlcd8544event.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dlcd8544init.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dlcd8544reset.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dlcd8544uninit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavrclock.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavrconfig.Plo@am__quote@
@@ -1882,6 +1899,55 @@ libdsimmodels_la-sim_io.lo: d-mcu-avr/thirdparty/sim/sim_io.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-sim_io.lo `test -f 'd-mcu-avr/thirdparty/sim/sim_io.c' || echo '$(srcdir)/'`d-mcu-avr/thirdparty/sim/sim_io.c
 
+libdsimmodels_la-d-lcd8544.lo: d-lcd8544/d-lcd8544.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-d-lcd8544.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-d-lcd8544.Tpo" -c -o libdsimmodels_la-d-lcd8544.lo `test -f 'd-lcd8544/d-lcd8544.c' || echo '$(srcdir)/'`d-lcd8544/d-lcd8544.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-d-lcd8544.Tpo" "$(DEPDIR)/libdsimmodels_la-d-lcd8544.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-d-lcd8544.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-lcd8544/d-lcd8544.c' object='libdsimmodels_la-d-lcd8544.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-d-lcd8544.lo `test -f 'd-lcd8544/d-lcd8544.c' || echo '$(srcdir)/'`d-lcd8544/d-lcd8544.c
+
+libdsimmodels_la-dlcd8544create.lo: d-lcd8544/dlcd8544create.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dlcd8544create.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dlcd8544create.Tpo" -c -o libdsimmodels_la-dlcd8544create.lo `test -f 'd-lcd8544/dlcd8544create.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544create.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dlcd8544create.Tpo" "$(DEPDIR)/libdsimmodels_la-dlcd8544create.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dlcd8544create.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-lcd8544/dlcd8544create.c' object='libdsimmodels_la-dlcd8544create.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dlcd8544create.lo `test -f 'd-lcd8544/dlcd8544create.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544create.c
+
+libdsimmodels_la-dlcd8544init.lo: d-lcd8544/dlcd8544init.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dlcd8544init.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dlcd8544init.Tpo" -c -o libdsimmodels_la-dlcd8544init.lo `test -f 'd-lcd8544/dlcd8544init.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544init.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dlcd8544init.Tpo" "$(DEPDIR)/libdsimmodels_la-dlcd8544init.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dlcd8544init.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-lcd8544/dlcd8544init.c' object='libdsimmodels_la-dlcd8544init.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dlcd8544init.lo `test -f 'd-lcd8544/dlcd8544init.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544init.c
+
+libdsimmodels_la-dlcd8544event.lo: d-lcd8544/dlcd8544event.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dlcd8544event.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dlcd8544event.Tpo" -c -o libdsimmodels_la-dlcd8544event.lo `test -f 'd-lcd8544/dlcd8544event.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544event.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dlcd8544event.Tpo" "$(DEPDIR)/libdsimmodels_la-dlcd8544event.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dlcd8544event.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-lcd8544/dlcd8544event.c' object='libdsimmodels_la-dlcd8544event.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dlcd8544event.lo `test -f 'd-lcd8544/dlcd8544event.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544event.c
+
+libdsimmodels_la-dlcd8544config.lo: d-lcd8544/dlcd8544config.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dlcd8544config.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dlcd8544config.Tpo" -c -o libdsimmodels_la-dlcd8544config.lo `test -f 'd-lcd8544/dlcd8544config.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544config.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dlcd8544config.Tpo" "$(DEPDIR)/libdsimmodels_la-dlcd8544config.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dlcd8544config.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-lcd8544/dlcd8544config.c' object='libdsimmodels_la-dlcd8544config.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dlcd8544config.lo `test -f 'd-lcd8544/dlcd8544config.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544config.c
+
+libdsimmodels_la-dlcd8544uninit.lo: d-lcd8544/dlcd8544uninit.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dlcd8544uninit.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dlcd8544uninit.Tpo" -c -o libdsimmodels_la-dlcd8544uninit.lo `test -f 'd-lcd8544/dlcd8544uninit.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544uninit.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dlcd8544uninit.Tpo" "$(DEPDIR)/libdsimmodels_la-dlcd8544uninit.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dlcd8544uninit.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-lcd8544/dlcd8544uninit.c' object='libdsimmodels_la-dlcd8544uninit.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dlcd8544uninit.lo `test -f 'd-lcd8544/dlcd8544uninit.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544uninit.c
+
+libdsimmodels_la-dlcd8544reset.lo: d-lcd8544/dlcd8544reset.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dlcd8544reset.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dlcd8544reset.Tpo" -c -o libdsimmodels_la-dlcd8544reset.lo `test -f 'd-lcd8544/dlcd8544reset.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544reset.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dlcd8544reset.Tpo" "$(DEPDIR)/libdsimmodels_la-dlcd8544reset.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dlcd8544reset.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-lcd8544/dlcd8544reset.c' object='libdsimmodels_la-dlcd8544reset.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dlcd8544reset.lo `test -f 'd-lcd8544/dlcd8544reset.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544reset.c
+
 libdsimmodels_la-dev.lo: dev/dev.c
 @am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dev.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dev.Tpo" -c -o libdsimmodels_la-dev.lo `test -f 'dev/dev.c' || echo '$(srcdir)/'`dev/dev.c; \
 @am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dev.Tpo" "$(DEPDIR)/libdsimmodels_la-dev.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dev.Tpo"; exit 1; fi
@@ -2081,7 +2147,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/adc $(distdir)/bjt $(distdir)/capacitor $(distdir)/d-and $(distdir)/d-buff $(distdir)/d-mcu-avr $(distdir)/d-or $(distdir)/d-xor $(distdir)/dac $(distdir)/dev $(distdir)/diode $(distdir)/inductor $(distdir)/mosfet $(distdir)/opamp $(distdir)/pn $(distdir)/register $(distdir)/vsource
+	$(mkdir_p) $(distdir)/adc $(distdir)/bjt $(distdir)/capacitor $(distdir)/d-and $(distdir)/d-buff $(distdir)/d-lcd8544 $(distdir)/d-mcu-avr $(distdir)/d-or $(distdir)/d-xor $(distdir)/dac $(distdir)/dev $(distdir)/diode $(distdir)/inductor $(distdir)/mosfet $(distdir)/opamp $(distdir)/pn $(distdir)/register $(distdir)/vsource
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

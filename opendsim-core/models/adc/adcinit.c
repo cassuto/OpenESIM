@@ -33,11 +33,14 @@ LIB_FUNC(adc_init)( circ_element_t *element )
     }
   else return -DS_NO_MEMORY;
 
+  circ_element_set_digital_pin( element, param->inputs_count, circ_element_get_pin_count(element)-1 );
+
   for( int i=0; i < param->inputs_count; i++ )
     {
       /* analog field */
-      if( (rc = circ_node_add_changed_fast( PINNODE(element,i), element )) )
-        return rc;
+      if( element->pin_vector[i]->connected )
+        if( (rc = circ_node_add_changed_fast( PINNODE(element,i), element )) )
+          return rc;
 
       if( (rc = circ_pin_set_nodecomp(element->pin_vector[i], param->vsrc_node)) )
         return rc;

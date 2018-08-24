@@ -37,6 +37,9 @@ typedef struct mcu_avr_param_s
   double adc_in_imp;
   double dac_out_imp;
   double aref_in_imp;
+  double vth;
+  int analog_count;
+  circ_node_t **innode;
 } mcu_avr_param_t;
 
 int LIB_FUNC(mcu_avr_create)( circ_element_t * );

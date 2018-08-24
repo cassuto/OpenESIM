@@ -33,6 +33,8 @@ LIB_FUNC(dac_init)( circ_element_t *element )
     }
   else return -DS_NO_MEMORY;
 
+  circ_element_set_digital_pin( element, 0, param->outputs_count-1 );
+
   for( int i=0; i < param->outputs_count; i++ )
     {
       /* digital field */

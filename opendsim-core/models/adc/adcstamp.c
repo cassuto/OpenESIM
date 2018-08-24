@@ -24,8 +24,9 @@ LIB_FUNC(adc_stamp)( circ_element_t *element )
 
   for( int i=0; i < param->inputs_count; i++)
     {
-      if( (rc = circ_node_stamp_admit( PINNODE(element, i), element->pin_vector[i], admit )) )
-        return rc;
+      if( element->pin_vector[i]->connected )
+        if( (rc = circ_node_stamp_admit( PINNODE(element, i), element->pin_vector[i], admit )) )
+          return rc;
     }
 
   return 0;

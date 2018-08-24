@@ -25,7 +25,14 @@ LIB_FUNC(mcu_avr_event)( circ_element_t *element )
 
   for( int i=0; i < ports; i++ )
     {
-      if( param->mcu->pinmap[i].typemask & PIN_IO )
+      if( param->mcu->pinmap[i].typemask & PIN_ADC )
+        {
+          if( circ_pin_get_volt( element->pin_vector[i] ) > param->vth )
+            avr_raise_irq( param->wr_port_irqs[i], 1 );
+          else
+            avr_raise_irq( param->wr_port_irqs[i], 0 );
+        }
+      else if( param->mcu->pinmap[i].typemask & PIN_IO )
         {
           state = GET_STATE( element->pin_vector[i] );
           if( state != param->state[i] )
