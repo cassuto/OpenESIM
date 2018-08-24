@@ -70,7 +70,7 @@ public:
 
 public:
   inline PointerProxy<IDevice> *device() const { return m_device; }
-  inline IDeviceGraph *deviceGraph() const { return m_deviceGraph; }
+  inline ComponentGraphImpl *deviceGraph() const { return m_deviceGraph; }
   inline PropertyContainerImpl *properties() const { return m_properties; }
   inline SchematicImpl *schematic() const { return m_schematic; }
 

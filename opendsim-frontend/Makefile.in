@@ -75,7 +75,8 @@ am_opendsim_OBJECTS = opendsim-edit.$(OBJEXT) \
 	elementwire.$(OBJEXT) elementpin.$(OBJEXT) \
 	elementtext.$(OBJEXT) elementrect.$(OBJEXT) \
 	elementline.$(OBJEXT) elementjoint.$(OBJEXT) \
-	elementellipse.$(OBJEXT) elementorigin.$(OBJEXT) \
+	elementellipse.$(OBJEXT) elementarc.$(OBJEXT) \
+	elementorigin.$(OBJEXT) elementpainter.$(OBJEXT) \
 	elementabstractport.$(OBJEXT) staffgraphitem.$(OBJEXT) \
 	staffpad.$(OBJEXT) schemaviewactions.$(OBJEXT) \
 	schemaviewmenus.$(OBJEXT) mainwindow.$(OBJEXT) \
@@ -86,12 +87,12 @@ am_opendsim_OBJECTS = opendsim-edit.$(OBJEXT) \
 	propertywidget.$(OBJEXT) propertywidgettext.$(OBJEXT) \
 	propertywidgetpin.$(OBJEXT) propertywidgetcustom.$(OBJEXT) \
 	propertywidgetcomponent.$(OBJEXT) \
-	propertywidgetconfig.$(OBJEXT) propertycontainerimpl.$(OBJEXT) \
-	propertyeditorwidget.$(OBJEXT) propertymodel.$(OBJEXT) \
-	propertyvariantdelegate.$(OBJEXT) propertybase.$(OBJEXT) \
-	presscolorbox.$(OBJEXT) netlistexplorerdialog.$(OBJEXT) \
-	unitsconversion.$(OBJEXT) instrumentpickdialog.$(OBJEXT) \
-	instrumentrackform.$(OBJEXT) \
+	propertywidgetconfig.$(OBJEXT) propertywidgetpainter.$(OBJEXT) \
+	propertycontainerimpl.$(OBJEXT) propertyeditorwidget.$(OBJEXT) \
+	propertymodel.$(OBJEXT) propertyvariantdelegate.$(OBJEXT) \
+	propertybase.$(OBJEXT) presscolorbox.$(OBJEXT) \
+	netlistexplorerdialog.$(OBJEXT) unitsconversion.$(OBJEXT) \
+	instrumentpickdialog.$(OBJEXT) instrumentrackform.$(OBJEXT) \
 	instrumentrackcellwidget.$(OBJEXT) \
 	instrumentmanagement.$(OBJEXT) probepickdialog.$(OBJEXT) \
 	resources.$(OBJEXT)
@@ -272,7 +273,9 @@ opendsim_SOURCES = \
   elementline.cxx \
   elementjoint.cxx \
   elementellipse.cxx \
+  elementarc.cxx \
   elementorigin.cxx \
+  elementpainter.cxx \
   elementabstractport.cxx \
   staffgraphitem.cxx \
   staffpad.cxx \
@@ -293,6 +296,7 @@ opendsim_SOURCES = \
   propertywidgetcustom.cxx \
   propertywidgetcomponent.cxx \
   propertywidgetconfig.cxx \
+  propertywidgetpainter.cxx \
   propertycontainerimpl.cxx \
   propertyeditorwidget.cxx \
   propertymodel.cxx \
@@ -320,6 +324,7 @@ MOCHEADERS = \
   componentlibrarydialog.h \
   propertywidgetcustom.h \
   propertywidgetcomponent.h \
+  propertywidgetpainter.h \
   propertydialog.h \
   presscolorbox.h \
   netlistexplorerdialog.h \
@@ -428,12 +433,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/componentpickwidget.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domitem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementabstractport.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementarc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementbase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementellipse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementgraphitem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementjoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementorigin.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementpainter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementpin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementrect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementtext.Po@am__quote@
@@ -459,6 +466,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgetcomponent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgetconfig.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgetcustom.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgetpainter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgetpin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/propertywidgettext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/resources.Po@am__quote@

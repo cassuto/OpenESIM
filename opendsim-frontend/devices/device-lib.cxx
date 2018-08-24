@@ -37,6 +37,7 @@
 #include "inductor.h"
 #include "voltprobe.h"
 #include "atmega164.h"
+#include "lcdm5110.h"
 
 #include <frontend/device-lib.h>
 
@@ -133,7 +134,8 @@ int device_lib_init()
   rc = Entry( dev_register::libraryEntry() );   UPDATE_RC(rc);
   rc = Entry( dev_capacitor::libraryEntry() );  UPDATE_RC(rc);
   rc = Entry( dev_inductor::libraryEntry() );   UPDATE_RC(rc);
-  rc = Entry( dev_atmega164::libraryEntry() );   UPDATE_RC(rc);
+  rc = Entry( dev_atmega164::libraryEntry() );  UPDATE_RC(rc);
+  rc = Entry( dev_lcdm5110::libraryEntry() );   UPDATE_RC(rc);
 
   return 0;
 }

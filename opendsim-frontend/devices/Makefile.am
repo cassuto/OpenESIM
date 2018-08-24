@@ -31,7 +31,8 @@ libdsimdevices_la_SOURCES = \
   vsource-dc/vsource-dc.cxx \
   vsource-dc-0v/vsource-dc-0v.cxx \
   voltprobe/voltprobe.cxx \
-  atmega164/atmega164.cxx
+  atmega164/atmega164.cxx \
+  lcdm5110/lcdm5110.cxx
 
 libdsimdevices_la_SOURCES += \
   device.cxx \

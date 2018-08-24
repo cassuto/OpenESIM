@@ -16,6 +16,8 @@
 #ifndef DEVICE_SCHEMATIC_H_
 #define DEVICE_SCHEMATIC_H_
 
+class IDeviceGraph;
+class IDevice;
 class ISchematic
 {
 public:
@@ -23,6 +25,8 @@ public:
   virtual ~ISchematic() {}
 
   virtual void changeValue( const char *value )=0;
+  virtual IDeviceGraph *getDeviceGraph( const char *tokenId )=0;
+  virtual void registerRender( IDevice *device )=0; // called within IDevice::init(), not create()
 };
 
 #endif

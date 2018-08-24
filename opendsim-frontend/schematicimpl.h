@@ -17,20 +17,27 @@
 #define SCHEMATICIMPL_H_
 
 #include <device/schematic.h>
+class IDeviceGraph;
 
 namespace dsim
 {
 
 class SchemaView;
 class ComponentGraphItem;
+class ComponentGraphImpl;
 
 class SchematicImpl : public ISchematic
 {
 public:
   SchematicImpl( SchemaView *schemaView, ComponentGraphItem *component );
 
+public:
   void reset();
+
+public:
   void changeValue( const char *value );
+  IDeviceGraph *getDeviceGraph( const char *tokenId );
+  void registerRender( IDevice *device );
 
 private:
   SchemaView *m_schemaView;

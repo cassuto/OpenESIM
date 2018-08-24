@@ -14,6 +14,7 @@
  */
 
 #include <QPainter>
+#include <QPixmap>
 
 #include "templatestyle.h"
 #include "mainwindow.h"
@@ -24,13 +25,20 @@ namespace dsim
 {
 
 ComponentGraphImpl::ComponentGraphImpl()
-              : m_painter( 0l )
+              : m_painter( new QPainter )
+              , m_pixBuffer( 0l )
               , m_selected( false )
 {
 }
 
 ComponentGraphImpl::~ComponentGraphImpl()
 {
+  delete m_painter;
+}
+
+void ComponentGraphImpl::setBuffer( QImage *pixBuffer )
+{
+  m_pixBuffer = pixBuffer;
 }
 
 void ComponentGraphImpl::setStyle( const char *style )
@@ -87,6 +95,11 @@ void ComponentGraphImpl::setPenStyle( LineStyle style )
   m_painter->setPen( pen );
 }
 
+void ComponentGraphImpl::begin()
+{
+  m_painter->begin( m_pixBuffer );
+}
+
 void ComponentGraphImpl::point( int x, int y )
 {
   m_painter->drawPoint( x, y );
@@ -115,6 +128,21 @@ void ComponentGraphImpl::ellipse( int x, int y, int w, int h )
 void ComponentGraphImpl::arc( int x, int y, int w, int h, int a, int alen )
 {
   m_painter->drawArc( x, y, w, h, a, alen );
+}
+
+void ComponentGraphImpl::fill( int r, int g, int b )
+{
+  m_pixBuffer->fill( QColor( r, g, b ) );
+}
+
+void ComponentGraphImpl::setPixel( int col, int row, unsigned int color )
+{
+  m_pixBuffer->setPixel( col, row, color );
+}
+
+void ComponentGraphImpl::end()
+{
+  m_painter->end();
 }
 
 } // namespace dsim

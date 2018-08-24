@@ -29,6 +29,7 @@
 #include "elementwire.h"
 #include "elementpin.h"
 #include "elementorigin.h"
+#include "elementpainter.h"
 #include "propertycontainerimpl.h"
 #include "componentgraphimpl.h"
 #include "componentgraphitem.h"
@@ -46,7 +47,7 @@ ComponentGraphItem::ComponentGraphItem( int id, SchemaScene *scene, bool edit, Q
                   , m_valueText( 0l )
                   , m_referenceText( 0l )
                   , m_properties( new PropertyContainerImpl )
-                  , m_deviceGraph( new ComponentGraphImpl )
+                  , m_deviceGraph( 0l )
 {
   m_schematic = new SchematicImpl( view(), this );
 
@@ -57,7 +58,6 @@ ComponentGraphItem::ComponentGraphItem( int id, SchemaScene *scene, bool edit, Q
 ComponentGraphItem::~ComponentGraphItem()
 {
   delete schematic();
-  delete deviceGraph();
   delete properties();
   delete device()->get();
   delete device();
@@ -191,6 +191,12 @@ void ComponentGraphItem::addComponentElementInner( ElementBase *element )
       pin->setComponent( this );
     }
   addToGroup( element->graphicsItem() );  // 'the item and child items will be reparented to this group' (Qt Documents)
+  if( 0==std::strcmp( element->classname(), "painter" ) )
+    if( !m_deviceGraph )
+      {
+        ElementPainter *painter = static_cast<ElementPainter *>(element);
+        m_deviceGraph = painter->deviceGraph(); // resolve the default graph (always be the one first appears)
+      }
 }
 
 ElementPin *ComponentGraphItem::atPin( const QPointF &pos )
@@ -313,6 +319,7 @@ void ComponentGraphItem::releaseSubElements()
         }
     }
   ElementGraphItem::releaseSubElements();
+  m_deviceGraph = 0l;
 }
 
 int ComponentGraphItem::serialize( LispDataset *dataset )
@@ -407,17 +414,6 @@ void ComponentGraphItem::paint( QPainter* painter, const QStyleOptionGraphicsIte
   painter->setPen( pen );
   painter->drawPoint( QPointF(0,0) );
 #endif
-
-  /*
-   * Render component graphics
-   */
-  if( m_device->valid() )
-    {
-      m_deviceGraph->setPainter( painter );
-      m_deviceGraph->setSelected( isSelected() );
-
-      m_device->get()->render_frame( schematic(), m_deviceGraph );
-    }
 }
 
 }

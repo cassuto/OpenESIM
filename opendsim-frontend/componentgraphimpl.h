@@ -18,6 +18,7 @@
 
 #include <device/graph.h>
 
+class QPixmap;
 class QPainter;
 
 namespace dsim
@@ -29,7 +30,7 @@ public:
   ComponentGraphImpl();
   ~ComponentGraphImpl();
 
-  void setPainter( QPainter *painter ) { m_painter = painter; }
+  void setBuffer( QImage *pixBuffer );
   void setSelected( bool selected ) { m_selected = selected; }
 
 public:
@@ -39,6 +40,7 @@ public:
   void setPenColor( int r, int g, int b );
   void setPenWidth( float w );
   void setPenStyle( LineStyle style );
+  void begin();
   void point( int x, int y );
   void line( int x1, int y1, int x2, int y2 );
   void rect( int x, int y, int w, int h );
@@ -50,8 +52,12 @@ public:
   int  textMapped( const char*, int, int, int *Height=0 );
   void fillRect( int, int, int, int, const ds_color_t& );
   void eraseRect( int, int, int, int );
+  void fill( int r, int g, int b );
+  void setPixel( int col, int row, unsigned int color );
+  void end();
 
 private:
+  QImage  *m_pixBuffer;
   QPainter *m_painter;
   bool      m_selected;
 };

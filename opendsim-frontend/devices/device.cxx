@@ -64,7 +64,7 @@ int IDevice::baseinit( const char *mdel_symbol, circuit_t *circuit )
           circuit_attach_element( circuit, m_mdel );
           return 0;
         }
-      return -DS_NO_MEMORY;
+      return -DS_CREATE_MODEL;
     }
   return 0;
 }

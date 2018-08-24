@@ -77,7 +77,8 @@ am_libdsimdevices_la_OBJECTS = libdsimdevices_la-1n4148.lo \
 	libdsimdevices_la-vsource-dc.lo \
 	libdsimdevices_la-vsource-dc-0v.lo \
 	libdsimdevices_la-voltprobe.lo libdsimdevices_la-atmega164.lo \
-	libdsimdevices_la-device.lo libdsimdevices_la-device-lib.lo \
+	libdsimdevices_la-lcdm5110.lo libdsimdevices_la-device.lo \
+	libdsimdevices_la-device-lib.lo \
 	libdsimdevices_la-propertyvalue.lo
 libdsimdevices_la_OBJECTS = $(am_libdsimdevices_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -230,8 +231,8 @@ libdsimdevices_la_SOURCES = 1n4148/1n4148.cxx diode/diode.cxx \
 	register/register.cxx capacitor/capacitor.cxx \
 	inductor/inductor.cxx vsource-dc/vsource-dc.cxx \
 	vsource-dc-0v/vsource-dc-0v.cxx voltprobe/voltprobe.cxx \
-	atmega164/atmega164.cxx device.cxx device-lib.cxx \
-	propertyvalue.cxx
+	atmega164/atmega164.cxx lcdm5110/lcdm5110.cxx device.cxx \
+	device-lib.cxx propertyvalue.cxx
 libdsimdevices_la_CFLAGS = -Wno-unused-function
 libdsimdevices_la_CPPFLAGS = -Wno-unused-function
 all: all-am
@@ -310,6 +311,7 @@ include ./$(DEPDIR)/libdsimdevices_la-device-lib.Plo
 include ./$(DEPDIR)/libdsimdevices_la-device.Plo
 include ./$(DEPDIR)/libdsimdevices_la-diode.Plo
 include ./$(DEPDIR)/libdsimdevices_la-inductor.Plo
+include ./$(DEPDIR)/libdsimdevices_la-lcdm5110.Plo
 include ./$(DEPDIR)/libdsimdevices_la-propertyvalue.Plo
 include ./$(DEPDIR)/libdsimdevices_la-register.Plo
 include ./$(DEPDIR)/libdsimdevices_la-voltprobe.Plo
@@ -399,6 +401,13 @@ libdsimdevices_la-atmega164.lo: atmega164/atmega164.cxx
 #	source='atmega164/atmega164.cxx' object='libdsimdevices_la-atmega164.lo' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-atmega164.lo `test -f 'atmega164/atmega164.cxx' || echo '$(srcdir)/'`atmega164/atmega164.cxx
+
+libdsimdevices_la-lcdm5110.lo: lcdm5110/lcdm5110.cxx
+	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-lcdm5110.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-lcdm5110.Tpo" -c -o libdsimdevices_la-lcdm5110.lo `test -f 'lcdm5110/lcdm5110.cxx' || echo '$(srcdir)/'`lcdm5110/lcdm5110.cxx; \
+	then mv -f "$(DEPDIR)/libdsimdevices_la-lcdm5110.Tpo" "$(DEPDIR)/libdsimdevices_la-lcdm5110.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-lcdm5110.Tpo"; exit 1; fi
+#	source='lcdm5110/lcdm5110.cxx' object='libdsimdevices_la-lcdm5110.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-lcdm5110.lo `test -f 'lcdm5110/lcdm5110.cxx' || echo '$(srcdir)/'`lcdm5110/lcdm5110.cxx
 
 libdsimdevices_la-device.lo: device.cxx
 	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-device.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-device.Tpo" -c -o libdsimdevices_la-device.lo `test -f 'device.cxx' || echo '$(srcdir)/'`device.cxx; \

@@ -439,11 +439,13 @@ int PropertyContainerImpl::readModel( circ_element_t *element, int valueid )
               }
             case MDEL_VAR_VOIDPTR:
               {
-                break;
+                delete val;
+                continue;
               }
             case MDEL_VAR_CONST_VOIDPTR:
               {
-                break;
+                delete val;
+                continue;
               }
             default:
               return -DS_INVALID_PROPERTY_TYPE;

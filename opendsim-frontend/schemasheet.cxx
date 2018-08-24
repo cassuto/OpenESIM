@@ -60,6 +60,7 @@ SchemaSheet::~SchemaSheet() { uninit(); }
 int SchemaSheet::init()
 {
   m_compiled = false;
+  m_renders.clear();
   m_matrix = matrix_create();
   if( m_matrix )
     {
@@ -75,6 +76,7 @@ void SchemaSheet::uninit()
     { circuit_free( m_circuit ); m_circuit = 0l; } // will free attached elements as well
   if( m_matrix )
     { matrix_free( m_matrix ); m_matrix = 0l; }
+  m_renders.clear();
   m_compiled = false;
 }
 
@@ -110,6 +112,9 @@ int SchemaSheet::createDevice( const DeviceLibraryEntry *entry, const char *refe
     }
   return -DS_NO_MEMORY;
 }
+
+void SchemaSheet::registerRender( const RenderData & render )
+{ m_renders.append( render ); }
 
 static inline int setsFind( int *sets, int x )
 {
@@ -242,19 +247,32 @@ int SchemaSheet::compile()
   circ_node_t *circNode;
   IDevice *device;
   int pinIndex; bool isInt = false;
+  int pintype = -0xff;
   foreach( SchemaNode *node, *(nodes()) )
     {
-      circNode = circ_node_create( m_circuit, true ); //!fixme AD netlist
+      circNode = circ_node_create( m_circuit, /*resolve later*/true );
       if( circNode )
         {
+          pintype = -0xff;
           circuit_attach_node( m_circuit, circNode );
+
           foreach( ElementAbstractPort *port, *(node->ports()) )
             {
               device = port->component()->device()->get();
               pinIndex = port->reference().toInt( &isInt )-1;     // parse target pin
               if( isInt && pinIndex >= 0 && pinIndex < device->pin_count() )
                 {
+                  if( pintype == -0xff )
+                    pintype = (int)device->pin( pinIndex )->type;
+                  else if ( pintype != (int)device->pin( pinIndex )->type )
+                    return -DS_PORT_TYPE_MISMATCH;
                   rc = circ_pin_set_node( device->pin( pinIndex ), circNode ); UPDATE_RC(rc);
+
+                  switch( pintype )
+                  {
+                    case PIN_TYPE_ANALOG: circNode->analog = true; break;
+                    case PIN_TYPE_DIGITAL: circNode->analog = false; break;
+                  }
                 }
               else
                 return -DS_INVALID_PIN_REFERENCE;
@@ -300,8 +318,14 @@ int SchemaSheet::runLoop()
       if( tick++ > 10000000 )
         {
           tick = 0;
-          m_instrumentManagement->clockTick();
           if( (rc = circuit_run_step( m_circuit )) ) return rc;
+          using namespace std;
+            for( QList<RenderData>::iterator it = m_renders.begin(); it != m_renders.end(); it++ )
+              {
+                RenderData render = *it;
+                if( int rc = render.m_device->render_frame( render.m_schematic, render.m_deviceGraph ) )
+                  return rc;
+              }
         }
       if( m_canceled ) break;
     }

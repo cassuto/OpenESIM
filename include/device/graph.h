@@ -75,6 +75,7 @@ public:
   virtual void setPenColor( int r, int g, int b )=0;
   virtual void setPenWidth( float w )=0;
   virtual void setPenStyle( LineStyle style )=0;
+  virtual void begin()=0;
   virtual void point( int x, int y )=0;
   virtual void line( int x1, int y1, int x2, int y2 )=0;
   virtual void rect( int x, int y, int w, int h )=0;
@@ -86,6 +87,9 @@ public:
   //virtual int  textMapped( const char*, int, int, int *Height=0 )=0;
   //virtual void fillRect( int, int, int, int, const graph_color& )=0;
   //virtual void eraseRect( int, int, int, int )=0;
+  virtual void fill( int r, int g, int b )=0;
+  virtual void setPixel( int col, int row, unsigned int color )=0;
+  virtual void end()=0;
 };
 
 #endif //!defined(CIRC_GRAPH_H_)

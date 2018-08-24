@@ -34,6 +34,7 @@ namespace dsim
 class SchemaView;
 class ComponentGraphItem;
 class SchematicImpl;
+class ComponentGraphImpl;
 class PropertyContainerImpl;
 class ElementAbstractPort;
 class InstrumentManagement;
@@ -53,11 +54,25 @@ public:
     QList<ElementAbstractPort *> m_ports;
   };
 
+  class RenderData
+  {
+  public:
+    RenderData( SchematicImpl *schematic, ComponentGraphImpl *deviceGraph, IDevice *device )
+      : m_schematic( schematic )
+      , m_deviceGraph( deviceGraph )
+      , m_device( device )
+  {}
+    SchematicImpl *m_schematic;
+    ComponentGraphImpl *m_deviceGraph;
+    IDevice *m_device;
+  };
+
   int init();
   void uninit();
   int reinit();
   int createDevice( const char *symbol, const char *reference, int id, SchematicImpl *schematic, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice );
   int createDevice( const DeviceLibraryEntry *entry, const char *reference, int id, SchematicImpl *schematic, PropertyContainerImpl *property, DS_OUT IDevice **ppdevice );
+  void registerRender( const RenderData & render );
 
   int generateNetlist();
   inline const QList<SchemaNode *> *nodes() const { return &m_nodes; }
@@ -83,6 +98,7 @@ private:
   bool               m_compiled;
   bool volatile      m_canceled;
   QFuture<int>       m_stepFuture;
+  QList<RenderData>  m_renders;
 };
 
 }

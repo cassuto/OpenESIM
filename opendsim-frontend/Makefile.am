@@ -46,7 +46,9 @@ opendsim_SOURCES = \
   elementline.cxx \
   elementjoint.cxx \
   elementellipse.cxx \
+  elementarc.cxx \
   elementorigin.cxx \
+  elementpainter.cxx \
   elementabstractport.cxx \
   staffgraphitem.cxx \
   staffpad.cxx \
@@ -67,6 +69,7 @@ opendsim_SOURCES = \
   propertywidgetcustom.cxx \
   propertywidgetcomponent.cxx \
   propertywidgetconfig.cxx \
+  propertywidgetpainter.cxx \
   propertycontainerimpl.cxx \
   propertyeditorwidget.cxx \
   propertymodel.cxx \
@@ -94,6 +97,7 @@ MOCHEADERS = \
   componentlibrarydialog.h \
   propertywidgetcustom.h \
   propertywidgetcomponent.h \
+  propertywidgetpainter.h \
   propertydialog.h \
   presscolorbox.h \
   netlistexplorerdialog.h \
