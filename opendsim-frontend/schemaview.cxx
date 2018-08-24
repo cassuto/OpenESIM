@@ -29,8 +29,10 @@
 #include "elementpin.h"
 #include "elementrect.h"
 #include "elementellipse.h"
+#include "elementarc.h"
 #include "elementjoint.h"
 #include "elementorigin.h"
+#include "elementpainter.h"
 #include "schemaview.h"
 
 namespace dsim
@@ -174,6 +176,16 @@ ElementBase *SchemaView::createElement( const char *classname, const QPointF &po
     {
       ElementEllipse *ellipseElement = new ElementEllipse( QRectF( pos, pos ), id, m_schemaGraph, editable );
       element = ellipseElement;
+    }
+  else if( 0==std::strcmp( classname, "arc" ) )
+    {
+      ElementArc *arcElement = new ElementArc( QRectF( pos, pos ), id, m_schemaGraph, editable );
+      element = arcElement;
+    }
+  else if( 0==std::strcmp( classname, "painter" ) )
+    {
+      ElementPainter *painterElement = new ElementPainter( QRectF( pos, pos ), id, m_schemaGraph, editable );
+      element = painterElement;
     }
   else if( 0==std::strcmp( classname, "origin" ) )
     {

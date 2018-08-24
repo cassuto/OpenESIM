@@ -13,27 +13,27 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef ELEMENTPAINTER_H_
-#define ELEMENTPAINTER_H_
+#ifndef ELEMENTARC_H_
+#define ELEMENTARC_H_
 
-#include <string>
 #include "elementgraphitem.h"
 #include "staffgraphitem.h"
 
 namespace dsim
 {
 
-class ComponentGraphImpl;
 class StaffPad;
 
-class ElementPainter : public ElementGraphItem<QGraphicsRectItem>, public StaffEvents
+class ElementArc : public ElementGraphItem<QGraphicsItem>, public StaffEvents
 {
 public:
-  ElementPainter( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsRectItem* parent = 0 );
-  ~ElementPainter();
+  ElementArc( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsRectItem* parent = 0 );
+  ~ElementArc();
 
-  const char *classname() const { return "painter"; }
-
+  const char *classname() const { return "arc"; }
+  QRectF boundingRect() const { return m_bounding; }
+  inline void setBoundingRect( const QRectF & rect ) { m_bounding = rect; }
+  void setArcAngle( int start, int span );
   void setStyle( const char *style );
   void setRectParent( const QRectF &rect );
   QRectF rectParent() const;
@@ -41,11 +41,8 @@ public:
 
   int serialize( LispDataset *dataset );
   int deserialize( LispDataset *dataset );
-  void setSelected( bool selected );
 
-  inline const std::string &tokenId() const { return m_tokenId; }
-  inline void setTokenId( const std::string &tokenId ) { m_tokenId = tokenId; }
-  inline ComponentGraphImpl *deviceGraph() const { return m_deviceGraph; }
+  void setSelected( bool selected );
 
 protected:
   void staffMoveEvent( int index, bool fineturning, QGraphicsSceneMouseEvent *event );
@@ -55,9 +52,9 @@ protected:
 private:
   void updatePads();
 
-  std::string m_tokenId;
-  QImage *m_pixBuffer;
-  ComponentGraphImpl *m_deviceGraph;
+  QRectF m_bounding;
+  int m_start;
+  int m_span;
   StaffPad *m_pads[4];
 };
 

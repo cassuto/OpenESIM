@@ -23,12 +23,15 @@
 #include "elementpin.h"
 #include "elementrect.h"
 #include "elementellipse.h"
+#include "elementarc.h"
+#include "elementpainter.h"
 #include "propertydialog.h"
 #include "propertywidgetcustom.h"
 #include "propertywidgettext.h"
 #include "propertywidgetpin.h"
 #include "propertywidgetcomponent.h"
 #include "propertywidgetconfig.h"
+#include "propertywidgetpainter.h"
 #include "mainwindow.h"
 #include "schemaview.h"
 
@@ -41,6 +44,8 @@ DECLARE_ELEMENT_CAST(ElementPin, "pin");
 DECLARE_ELEMENT_CAST(ComponentGraphItem, "component");
 DECLARE_ELEMENT_CAST(ElementRect, "rect");
 DECLARE_ELEMENT_CAST(ElementEllipse, "ellipse");
+DECLARE_ELEMENT_CAST(ElementArc, "arc");
+DECLARE_ELEMENT_CAST(ElementPainter, "painter");
 
 void SchemaView::createContextMenus()
 {
@@ -165,6 +170,15 @@ void SchemaView::onEditProperties( bool )
       else if( ElementEllipse *ellipse = element_cast<ElementEllipse *>(m_selectedElements) )
         {
           configLineFillText( settings, ellipse );
+        }
+      else if( ElementArc *arc = element_cast<ElementArc *>(m_selectedElements) )
+        {
+          configLineFillText( settings, arc );
+        }
+      else if( ElementPainter *painter = element_cast<ElementPainter *>(m_selectedElements) )
+        {
+          settings.addPropertyWidget( new PropertyWidgetPainter( painter, &settings ) );
+          configLineFillText( settings, painter );
         }
       else if( ElementText *text = element_cast<ElementText *>(m_selectedElements) )
         {

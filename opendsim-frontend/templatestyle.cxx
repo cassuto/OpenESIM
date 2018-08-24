@@ -92,7 +92,7 @@ StyleItem Templatestyle::lineStyle( const char *styleName, bool selected )
       if( selected )
         { style.color.r = 128; style.color.g = 0; style.color.b = 0; }
       else
-        { style.color.r = 0; style.color.g = 0; style.color.b = 128; }
+        { style.color.r = 128; style.color.g = 0; style.color.b = 128; }
     }
   return style;
 }
@@ -159,6 +159,7 @@ std::list<std::string> Templatestyle::templates()
 
   list<string> ret;
 
+  ret.push_front( string("painter") );
   ret.push_front( string("wire") );
   ret.push_front( string("pin") );
   ret.push_front( string("component") );

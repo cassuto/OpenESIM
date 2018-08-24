@@ -15,23 +15,21 @@
 
 #include <cmath>
 #include <frontend/error.h>
-#include <device/graph.h>
 
 #include "templatestyle.h"
 #include "lispdataset.h"
 #include "schemaview.h"
-#include "componentgraphimpl.h"
 #include "staffpad.h"
 
-#include "elementpainter.h"
+#include "elementarc.h"
 
 namespace dsim
 {
 
-ElementPainter::ElementPainter( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsRectItem* parent )
-          : ElementGraphItem<QGraphicsRectItem>( id, scene, edit, parent )
-          , m_pixBuffer( new QImage )
-          , m_deviceGraph( new ComponentGraphImpl )
+ElementArc::ElementArc( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsRectItem* parent )
+          : ElementGraphItem<QGraphicsItem>( id, scene, edit, parent )
+          , m_start( 0 )
+          , m_span( 0 )
 {
   if( edit )
     {
@@ -42,36 +40,37 @@ ElementPainter::ElementPainter( const QRectF &rect, int id, SchemaScene *scene, 
         }
     }
 
-  m_deviceGraph->setBuffer( m_pixBuffer );
   setRectParent( rect );
-  setStyle( "painter" );
+  setStyle( "component" );
   setFineturningEnabled( true );
 }
 
-ElementPainter::~ElementPainter()
+ElementArc::~ElementArc()
 {
-  delete m_pixBuffer;
 }
 
-void ElementPainter::setStyle( const char *style )
+void ElementArc::setArcAngle( int start, int span )
+{ m_start = start; m_span = span; update(); }
+
+void ElementArc::setStyle( const char *style )
 {
   ElementGraphItem::setStyle( style );
   update();
 }
 
-void ElementPainter::setRectParent( const QRectF &rect )
+void ElementArc::setRectParent( const QRectF &rect )
 {
   QRectF r( rect );
 
   setPos( r.topLeft() );
-  QGraphicsRectItem::setRect( mapRectFromParent( r ) );
+  setBoundingRect( mapRectFromParent( r ) );
   updatePads();
 }
 
-QRectF ElementPainter::rectParent() const
-{ return mapRectToParent( rect() ); }
+QRectF ElementArc::rectParent() const
+{ return mapRectToParent( boundingRect() ); }
 
-void ElementPainter::normalizeRect()
+void ElementArc::normalizeRect()
 {
   QRectF rect( rectParent().normalized() );
 
@@ -80,7 +79,7 @@ void ElementPainter::normalizeRect()
   setRectParent( rect );
 }
 
-int ElementPainter::serialize( LispDataset *dataset )
+int ElementArc::serialize( LispDataset *dataset )
 {
   int rc = ElementGraphItem::serialize( dataset );                  UPDATE_RC(rc);
 
@@ -90,11 +89,13 @@ int ElementPainter::serialize( LispDataset *dataset )
   rc = dataset->ser( y1 );                                          UPDATE_RC(rc);
   rc = dataset->ser( x2 );                                          UPDATE_RC(rc);
   rc = dataset->ser( y2 );                                          UPDATE_RC(rc);
-  rc = dataset->ser( m_tokenId );                                   UPDATE_RC(rc);
+  rc = dataset->ser( m_start );                                     UPDATE_RC(rc);
+  rc = dataset->ser( m_span );                                      UPDATE_RC(rc);
+
   return rc;
 }
 
-int ElementPainter::deserialize( LispDataset *dataset )
+int ElementArc::deserialize( LispDataset *dataset )
 {
   int rc = ElementGraphItem::deserialize( dataset );                UPDATE_RC(rc);
 
@@ -104,22 +105,24 @@ int ElementPainter::deserialize( LispDataset *dataset )
   rc = dataset->des( y1 );                                          UPDATE_RC(rc);
   rc = dataset->des( x2 );                                          UPDATE_RC(rc);
   rc = dataset->des( y2 );                                          UPDATE_RC(rc);
-  rc = dataset->des( m_tokenId );                                   UPDATE_RC(rc);
+  rc = dataset->des( m_start );                                     UPDATE_RC(rc);
+  rc = dataset->des( m_span );                                      UPDATE_RC(rc);
 
   QRectF rect;
   rect.setCoords( x1, y1, x2, y2 );
   setRectParent( rect.normalized() );
+  setArcAngle( m_start, m_span );
   return rc;
 }
 
-void ElementPainter::updatePads()
+void ElementArc::updatePads()
 {
   if( !isRoot() || !editable() ) return;
 
-  m_pads[0]->setPos( QGraphicsRectItem::boundingRect().topLeft() - m_pads[0]->central() );
-  m_pads[1]->setPos( QGraphicsRectItem::boundingRect().topRight() - m_pads[1]->central() );
-  m_pads[2]->setPos( QGraphicsRectItem::boundingRect().bottomLeft() - m_pads[2]->central() );
-  m_pads[3]->setPos( QGraphicsRectItem::boundingRect().bottomRight() - m_pads[3]->central() );
+  m_pads[0]->setPos( boundingRect().topLeft() - m_pads[0]->central() );
+  m_pads[1]->setPos( boundingRect().topRight() - m_pads[1]->central() );
+  m_pads[2]->setPos( boundingRect().bottomLeft() - m_pads[2]->central() );
+  m_pads[3]->setPos( boundingRect().bottomRight() - m_pads[3]->central() );
 
   for( int i=0; i<4; i++ )
     {
@@ -127,13 +130,13 @@ void ElementPainter::updatePads()
     }
 }
 
-void ElementPainter::setSelected( bool selected )
+void ElementArc::setSelected( bool selected )
 {
   ElementGraphItem::setSelected( selected );
   updatePads();
 }
 
-void ElementPainter::staffMoveEvent( int index, bool fineturning, QGraphicsSceneMouseEvent *event )
+void ElementArc::staffMoveEvent( int index, bool fineturning, QGraphicsSceneMouseEvent *event )
 {
   QPointF cp = fineturning ? event->scenePos() : togrid(event->scenePos());
   QRectF rect = rectParent();
@@ -168,15 +171,17 @@ void ElementPainter::staffMoveEvent( int index, bool fineturning, QGraphicsScene
   setRectParent( rect );
 }
 
-void ElementPainter::staffMouseReleaseEvent( int, QGraphicsSceneMouseEvent * )
+void ElementArc::staffMouseReleaseEvent( int, QGraphicsSceneMouseEvent * )
 { normalizeRect(); }
 
-void ElementPainter::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
+void ElementArc::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
 {
-  Templatestyle::apply( this, customLine(), customFill(), style(), isSelected() );
+  Templatestyle::apply( painter, customLine(), customFill(), style(), isSelected() );
 
-  QGraphicsRectItem::paint( painter, option, widget );
+  painter->drawArc( boundingRect().toRect(), m_start * 16, m_span * 16 );
   updatePads();
+
+  UNUSED( option ); UNUSED( widget );
 }
 
 }
