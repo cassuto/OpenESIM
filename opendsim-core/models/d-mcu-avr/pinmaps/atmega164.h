@@ -7,7 +7,7 @@
 
 static const pinmap_t pinmaps_atmega164[] =
 {
-  /* 1   */ {'C', 6, PIN_IO | PIN_ADC },
+  /* 1   */ {'C', 6, PIN_IO },
   /* 2   */ {'D', 0, PIN_IO },
   /* 3   */ {'D', 1, PIN_IO },
   /* 4   */ {'D', 2, PIN_IO },

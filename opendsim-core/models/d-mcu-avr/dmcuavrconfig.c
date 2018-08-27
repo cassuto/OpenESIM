@@ -85,6 +85,7 @@ LIB_FUNC(mcu_avr_config)( circ_element_t *element, int op, ... )
                     {
                       param->mcu = mcu;
                       param->analog_count = 0;
+                      param->adc_channels = 0;
                       /*
                        * RESET type of pins
                        */
@@ -97,6 +98,7 @@ LIB_FUNC(mcu_avr_config)( circ_element_t *element, int op, ... )
                             {
                               circ_pin_set_type( element->pin_vector[i], PIN_TYPE_ANALOG );
                               param->analog_count++;
+                              param->adc_channels++;
                             }
                           else if( (param->mcu->pinmap[i].typemask & PIN_VCC) ||
                               (param->mcu->pinmap[i].typemask & PIN_GND) ||

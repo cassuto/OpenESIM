@@ -42,6 +42,12 @@ LIB_FUNC(mcu_avr_stamp)( circ_element_t *element )
             if( (rc = circ_node_stamp_admit( PINNODE(element, i), element->pin_vector[i], 1/param->aref_in_imp )) )
               return rc;
         }
+      else if( param->mcu->pinmap[i].typemask & PIN_VCC )
+        {
+          if( element->pin_vector[i]->connected )
+            if( (rc = circ_node_stamp_admit( PINNODE(element, i), element->pin_vector[i], 1/param->vcc_in_imp )) )
+              return rc;
+        }
     }
   return 0;
 }

@@ -27,6 +27,7 @@ LIB_FUNC(mcu_avr_create)( circ_element_t *element )
   param->adc_in_imp = model_high_imp;
   param->dac_out_imp = model_cero_doub;
   param->aref_in_imp = model_high_imp;
+  param->vcc_in_imp = model_high_imp;
   param->vth = model_logic_vth;
   return 0;
 }

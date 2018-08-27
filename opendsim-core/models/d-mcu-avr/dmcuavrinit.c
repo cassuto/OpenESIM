@@ -74,7 +74,7 @@ get_reg_addr( const regmap_t *map, const char *entry )
  * Callback to process IRQs
  */
 static void
-uart_pty_out_cb( struct avr_irq_t* irq, uint32_t value, void* pparam )
+uart_pty_out_cb( struct avr_irq_t* irq, uint32_t value, void* pparam ) /* UDR register writing callback */
 {
   UNUSED( irq );
   circ_element_t* element = (circ_element_t *)pparam;
@@ -87,7 +87,26 @@ uart_pty_out_cb( struct avr_irq_t* irq, uint32_t value, void* pparam )
 }
 
 static void
-port_cb( struct avr_irq_t *irq, uint32_t value, void *pparam )
+port_cb( struct avr_irq_t *irq, uint32_t value, void *pparam ) /* port IRQ callback */
+{
+  UNUSED(irq);
+  UNUSED( value );
+  UNUSED( pparam );
+}
+
+static void
+port_reg_cb( struct avr_irq_t *irq, uint32_t value, void *pparam ) /* PORT register writing callback */
+{
+  UNUSED(irq);
+  mcuavr_port_t* port = (mcuavr_port_t *)pparam;
+  circ_pin_set_state( port->element->pin_vector[port->pinid], value > 0 ? SIG_HIGH : SIG_LOW );
+
+  if( port->element->pin_vector[port->pinid]->connected )
+    circuit_fast_update( port->element->circuit, PINNODE( port->element, port->pinid )  );
+}
+
+static void
+ddr_cb( struct avr_irq_t *irq, uint32_t value, void *pparam ) /* DDR register writing callback */
 {
   UNUSED(irq);
   circ_element_t* element = (circ_element_t *)pparam;
@@ -96,24 +115,14 @@ port_cb( struct avr_irq_t *irq, uint32_t value, void *pparam )
   UNUSED( value );
 }
 
-static void
-port_reg_cb( struct avr_irq_t *irq, uint32_t value, void *pparam )
+static void adc_cb( struct avr_irq_t* irq, uint32_t value, void* pparam ) /* ADC sampling callback */
 {
   UNUSED(irq);
   circ_element_t* element = (circ_element_t *)pparam;
   DEFINE_PARAM(param, element, mcu_avr_param_t);
-  UNUSED( param );
-  UNUSED( value );
-}
 
-static void
-ddr_cb( struct avr_irq_t *irq, uint32_t value, void *pparam )
-{
-  UNUSED(irq);
-  circ_element_t* element = (circ_element_t *)pparam;
-  DEFINE_PARAM(param, element, mcu_avr_param_t);
-  UNUSED( param );
-  UNUSED( value );
+  int channel = (int) value/524288;
+  avr_raise_irq( param->wr_adc_irqs[channel], circ_pin_get_volt( element->pin_vector[param->adc_channel_pinid[channel]] ) * 1000 );
 }
 
 extern int
@@ -147,10 +156,10 @@ mcu_avr_map_pins( avr_t *avr_processor, const regmap_t *regmap, const pinmap_t *
                               &(pinmap[i].bank),
                               pinmap[i].bankid );
 
-        avr_irq_register_notify( param->port_irqs[pinid], port_reg_cb, element );
+        avr_irq_register_notify( param->port_irqs[pinid], port_reg_cb, param->ports[pinid] );
 
         param->port_irqs[pinid] = avr_io_getirq( avr_processor, AVR_IOCTL_IOPORT_GETIRQ( pinmap[i].bank ), pinmap[i].bankid );
-        avr_irq_register_notify( param->port_irqs[pinid], port_cb, element );
+        avr_irq_register_notify( param->port_irqs[pinid], port_cb, param->ports[pinid] );
 
         /*
          * DDRX Register IRQs
@@ -176,7 +185,6 @@ mcu_avr_map_pins( avr_t *avr_processor, const regmap_t *regmap, const pinmap_t *
          * IRQ for writing ports
          */
         param->wr_port_irqs[pinid] = avr_io_getirq( avr_processor, AVR_IOCTL_IOPORT_GETIRQ(pinmap[i].bank), pinmap[i].bankid );
-
       }
     }
   return 0; // succeeded
@@ -343,15 +351,15 @@ LIB_FUNC(mcu_avr_init)( circ_element_t *element )
       if( param->mcu )
         {
           int pincount = param->mcu->pincount;
-          param->state = ds_heap_alloc( sizeof(logic_state_t) * pincount );
-          param->port_irqs = ds_heap_alloc( sizeof(avr_irq_t *) * pincount );
-          param->ddr_irqs = ds_heap_alloc( sizeof(avr_irq_t *) * pincount );
-          param->wr_port_irqs = ds_heap_alloc( sizeof(avr_irq_t *) * pincount );
-          if( param->state && param->port_irqs && param->ddr_irqs && param->wr_port_irqs )
+          param->state = (logic_state_t *)ds_heap_alloc( sizeof(logic_state_t) * pincount );
+          param->port_irqs = (avr_irq_t **)ds_heap_alloc( sizeof(avr_irq_t *) * pincount );
+          param->ddr_irqs = (avr_irq_t **)ds_heap_alloc( sizeof(avr_irq_t *) * pincount );
+          param->wr_port_irqs = (avr_irq_t **)ds_heap_alloc( sizeof(avr_irq_t *) * pincount );
+          param->wr_adc_irqs = (avr_irq_t **)ds_heap_alloc( sizeof(avr_irq_t *) * param->adc_channels );
+          param->ports = (mcuavr_port_t **)ds_heap_alloc( sizeof(mcuavr_port_t *) * pincount );
+          param->adc_channel_pinid = (int *)ds_heap_alloc( sizeof(int) * param->adc_channels );
+          if( param->state && param->port_irqs && param->ddr_irqs && param->wr_port_irqs && param->wr_adc_irqs && param->ports && param->adc_channel_pinid )
             {
-              if( (rc = mcu_avr_map_pins( param->avr_processor, param->mcu->regmap, param->mcu->pinmap, param, element )) )
-                return rc;
-
               param->innode = (circ_node_t **)ds_heap_alloc( sizeof(circ_node_t *) * param->analog_count );
               if( param->innode )
                 {
@@ -367,6 +375,7 @@ LIB_FUNC(mcu_avr_init)( circ_element_t *element )
                 return -DS_NO_MEMORY;
 
               int analog_i = 0;
+              int adc_i = 0;
               for( int i=0; i < pincount; i++ )
                 {
                   if( (param->mcu->pinmap[i].typemask & PIN_VCC) ||
@@ -388,9 +397,28 @@ LIB_FUNC(mcu_avr_init)( circ_element_t *element )
                         if( (rc = circ_node_add_logic( PINNODE(element, i), element )) ) /* digital field */
                           return rc;
                     }
+
+                  if( param->mcu->pinmap[i].typemask & PIN_ADC )
+                    {
+                      param->adc_channel_pinid[adc_i] = i;
+                      param->wr_adc_irqs[adc_i] = avr_io_getirq( param->avr_processor, AVR_IOCTL_ADC_GETIRQ, adc_i );
+                      adc_i++;
+                    }
+                  param->ports[i] = (mcuavr_port_t *)ds_heap_alloc( sizeof(mcuavr_port_t) );
+                  if( param->ports[i] )
+                    {
+                      param->ports[i]->element = element;
+                      param->ports[i]->pinid = i;
+                    }
+                  else
+                    return -DS_NO_MEMORY;
                 }
 
-              return 0; // succeeded
+              /* Register ADC sample IRQ callback */
+              avr_irq_t* adcIrq = avr_io_getirq( param->avr_processor, AVR_IOCTL_ADC_GETIRQ, ADC_IRQ_OUT_TRIGGER );
+              avr_irq_register_notify( adcIrq, adc_cb, element );
+
+              return mcu_avr_map_pins( param->avr_processor, param->mcu->regmap, param->mcu->pinmap, param, element );
             }
           else
             return -DS_NO_MEMORY;

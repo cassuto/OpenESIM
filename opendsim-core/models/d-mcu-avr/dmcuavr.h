@@ -10,6 +10,7 @@
 #include "sim_core.h"
 #include "avr_uart.h"
 #include "avr_ioport.h"
+#include "avr_adc.h"
 #include "regmaps/regmaps.h"
 #include "pinmaps/pinmaps.h"
 
@@ -20,6 +21,12 @@ typedef struct mmcu_s
   int               pincount;
   const pinmap_t *  pinmap;
 } mmcu_t;
+
+typedef struct mcuavr_port_s
+{
+  circ_element_t *element;
+  int pinid;
+} mcuavr_port_t;
 
 typedef struct mcu_avr_param_s
 {
@@ -33,13 +40,18 @@ typedef struct mcu_avr_param_s
   avr_irq_t **port_irqs;
   avr_irq_t **ddr_irqs;
   avr_irq_t **wr_port_irqs;
+  avr_irq_t **wr_adc_irqs;
+  int *adc_channel_pinid;
+  int adc_channels;
   logic_state_t * state;
   double adc_in_imp;
   double dac_out_imp;
   double aref_in_imp;
+  double vcc_in_imp;
   double vth;
   int analog_count;
   circ_node_t **innode;
+  mcuavr_port_t **ports;
 } mcu_avr_param_t;
 
 int LIB_FUNC(mcu_avr_create)( circ_element_t * );

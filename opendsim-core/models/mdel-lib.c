@@ -32,6 +32,7 @@ extern circ_element_descriptor_t mdel_register;
 extern circ_element_descriptor_t mdel_capacitor;
 extern circ_element_descriptor_t mdel_diode;
 extern circ_element_descriptor_t mdel_bjt;
+extern circ_element_descriptor_t mdel_pn;
 extern circ_element_descriptor_t mdel_mosfet;
 extern circ_element_descriptor_t mdel_opamp;
 extern circ_element_descriptor_t mdel_inductor;
@@ -52,6 +53,7 @@ static const circ_element_descriptor_t *element_descriptors[] =
     &mdel_capacitor,
     &mdel_diode,
     &mdel_bjt,
+    &mdel_pn,
     &mdel_mosfet,
     &mdel_opamp,
     &mdel_inductor,

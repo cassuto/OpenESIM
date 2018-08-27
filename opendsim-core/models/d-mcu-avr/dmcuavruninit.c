@@ -29,6 +29,8 @@ LIB_FUNC(mcu_avr_uninit)( circ_element_t *element )
   ds_heap_free( param->state );
   ds_heap_free( param->port_irqs );
   ds_heap_free( param->ddr_irqs );
+  ds_heap_free( param->wr_adc_irqs );
+  ds_heap_free( param->adc_channel_pinid );
 
   if( param->innode )
     {
@@ -38,4 +40,13 @@ LIB_FUNC(mcu_avr_uninit)( circ_element_t *element )
         }
     }
   ds_heap_free( param->innode );
+
+  if( param->ports )
+    {
+      for( int i=0; i < circ_element_get_pin_count(element); i++ )
+        {
+          ds_heap_free( param->ports[i] );
+        }
+    }
+  ds_heap_free( param->ports );
 }
