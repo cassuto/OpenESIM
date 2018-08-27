@@ -30,5 +30,5 @@ LIB_FUNC(lcd8544_reset)( circ_element_t *element )
   param->bE  = false;
   param->bD  = false;
 
-  mdel_logtrace( MDEL_DEBUG, ("LCD 8544 RESET.") );
+  mdel_logtrace( MDEL_DEBUG, ("LCD 8544 reset.") );
 }

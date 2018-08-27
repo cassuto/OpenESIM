@@ -49,105 +49,87 @@ inc_gdram_ptrs( lcd8544_param_t *param )
 int
 LIB_FUNC(lcd8544_event)( circ_element_t *element )
 {
-  int rc;
-  int ports = circ_element_get_pin_count(element)/2;
   logic_state_t state;
-
   DEFINE_PARAM(param, element, lcd8544_param_t);
 
-  for( int i=0; i < ports; i++ )
+  if( SIG_LOW == GET_STATE( element->pin_vector[0] ) ) /* ~RST */
     {
-      state = GET_STATE( element->pin_vector[i] );
-      if( state != param->state[i] )
+      lcd8544_reset( element );
+      return 0;
+    }
+  if( SIG_HIGH == GET_STATE( element->pin_vector[1] ) ) /* CS disabled */
+    {
+      param->cinBuf = 0; /* Initialize serial buffer */
+      param->inBit  = 0;
+      return 0;
+    }
+  param->dc = ( GET_STATE( element->pin_vector[2] ) == SIG_HIGH ); /* D/C */
+
+  state = GET_STATE( element->pin_vector[4] );
+  if( state == SIG_LOW || state == SIG_FALL )   /* an sclk falling edge */
+    {
+      param->lastScl = false;
+      return 0;
+    }
+  else if( param->lastScl ) return 0;           /* not a rising edge */
+  param->lastScl = true;
+
+  if( SIG_HIGH == GET_STATE( element->pin_vector[3] )  ) /* SDIN */
+    param->cinBuf |= 1;
+  else
+    param->cinBuf &= ~1;
+
+  if( param->inBit == 7 )
+    {
+      if( param->dc )                               /* Write Data */
         {
-          param->state[i] = state;
-          switch( i )
-          {
-            case 0: /* ~RST */
-              if( state == SIG_LOW ) lcd8544_reset( element );
-              break;
-
-            case 1: /* CS */
-              if( state == SIG_HIGH )
-                {
-                  param->cinBuf = 0; /* Initialize serial buffer */
-                  param->inBit  = 0;
-                }
-              break;
-
-            case 2: /* D/C */
-              param->dc = ( state == SIG_HIGH );
-              break;
-
-            case 3: /* SDIN */
-              if( state == SIG_HIGH ) param->cinBuf |= 1;
-              else                    param->cinBuf &= ~1; /* Clear bit 0 */
-              break;
-
-            case 4: /* SCLK */
-              if( state == SIG_LOW || state == SIG_FALL )   /* an sclk falling edge */
-                {
-                  param->lastScl = false;
-                  return 0;
-                }
-              else if( param->lastScl ) return 0;           /* not a rising edge */
-              param->lastScl = true;
-
-              if( param->inBit == 7 )
-                {
-                  if( param->dc )                               /* Write Data */
-                    {
-                      param->gdram[param->addrY][param->addrX] = param->cinBuf;
-                      inc_gdram_ptrs( param );
-                    }
-                  else                                          /* Write Command */
-                    {
-                      //if(param->cinBuf == 0) { //(NOP) }
-
-                      if((param->cinBuf & 0xF8) == 0x20)        /* Function set */
-                        {
-                          param->bH  = ((param->cinBuf & 1) == 1);
-                          param->bV  = ((param->cinBuf & 2) == 2);
-                          param->bPD = ((param->cinBuf & 4) == 4);
-                        }
-                      else
-                        {
-                          if(param->bH)
-                            {
-                              /* reserved for extended instruction set */
-                            }
-                          else                            /* Basic instruction set */
-                            {
-                              if((param->cinBuf & 0xFA) == 0x08)     /* Display control */
-                                {
-                                  param->bD = ((param->cinBuf & 0x04) == 0x04);
-                                  param->bE =  (param->cinBuf & 0x01);
-                                }
-                              else if((param->cinBuf & 0xF8) == 0x40) /* Set Y RAM address */
-                                {
-                                  int addrY = param->cinBuf & 0x07;
-                                  if( addrY<6 ) param->addrY = addrY;
-                                }
-                              else if((param->cinBuf & 0x80) == 0x80) /* Set X RAM address */
-                                {
-                                  int addrX = param->cinBuf & 0x7F;
-                                  if( addrX<84 ) param->addrX = addrX;
-                                }
-                            }
-                        }
-                    }
-                  param->inBit = 0;
-                }
-              else
-                {
-                  param->cinBuf <<= 1;
-                  param->inBit++;
-                }
-
-              break;
-          }
+          param->gdram[param->addrY][param->addrX] = param->cinBuf;
+          inc_gdram_ptrs( param );
         }
-    } // for
+      else                                          /* Write Command */
+        {
+          //if(param->cinBuf == 0) { //(NOP) }
+
+          if((param->cinBuf & 0xF8) == 0x20)        /* Function set */
+            {
+              param->bH  = ((param->cinBuf & 1) == 1);
+              param->bV  = ((param->cinBuf & 2) == 2);
+              param->bPD = ((param->cinBuf & 4) == 4);
+            }
+          else
+            {
+              if(param->bH)
+                {
+                  /* reserved for extended instruction set */
+                }
+              else                            /* Basic instruction set */
+                {
+                  if((param->cinBuf & 0xFA) == 0x08)     /* Display control */
+                    {
+                      param->bD = ((param->cinBuf & 0x04) == 0x04);
+                      param->bE =  (param->cinBuf & 0x01);
+                      mdel_logtrace( MDEL_DEBUG, ("LCD 8544 Write Command: D=%d E=%d.", param->bD, param->bE) );
+                    }
+                  else if((param->cinBuf & 0xF8) == 0x40) /* Set Y RAM address */
+                    {
+                      int addrY = param->cinBuf & 0x07;
+                      if( addrY<6 ) param->addrY = addrY;
+                    }
+                  else if((param->cinBuf & 0x80) == 0x80) /* Set X RAM address */
+                    {
+                      int addrX = param->cinBuf & 0x7F;
+                      if( addrX<84 ) param->addrX = addrX;
+                    }
+                }
+            }
+        }
+      param->inBit = 0;
+    }
+  else
+    {
+      param->cinBuf <<= 1;
+      param->inBit++;
+    }
 
   return 0;
 }
