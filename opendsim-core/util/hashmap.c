@@ -48,7 +48,6 @@ static pfnKeyComp comp_funcs[] =
     NULL
 };
 
-
 static unsigned long
 hash_string( hashmap_key_t key )
 {
@@ -274,11 +273,17 @@ hashmap_clear( hashmap_t *hashmap, pfn_free_elem free_elem )
       else if( hashmap->nodes[i] )
         {
           /* collect the whole bucket elements without free */
-          if ( LIKELY(hashmap->collected_tail) )
+          hashmap_node_t *bucket_tail = hashmap->nodes[i];
+          while( bucket_tail )
+            {
+              if( !bucket_tail->next ) break;
+              bucket_tail = bucket_tail->next;
+            }
+          if ( LIKELY(hashmap->collected_root) )
             hashmap->collected_tail->next = hashmap->nodes[i];
           else
             hashmap->collected_root = hashmap->nodes[i];
-          hashmap->collected_tail = hashmap->nodes[i];
+          hashmap->collected_tail = bucket_tail;
         }
       hashmap->nodes[i] = NULL;
     }
