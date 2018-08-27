@@ -63,6 +63,7 @@ double circuit_timestep( circuit_t *circuit );
 void circuit_set_non_linear_acc_index( circuit_t *circuit, int acc_index );
 double circuit_non_linear_accuracy( circuit_t *circuit );
 int circuit_run_step( circuit_t *circuit );
+int circuit_fast_update( circuit_t *circuit, const circ_node_t *node );
 int circuit_stop( circuit_t *circuit );
 int circuit_set_rate( circuit_t *circuit, int fps, int rate );
 int circuit_react_clock( circuit_t *circuit );

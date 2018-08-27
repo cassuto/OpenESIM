@@ -23,7 +23,12 @@ LIB_FUNC(bjt_stamp)( circ_element_t *element )
   double admit = 1/param->resist;
   int rc;
 
-  if( (rc = circ_node_stamp_admit( PINNODE(element, 0), element->pin_vector[0], admit )) )
-    return rc;
-  return circ_node_stamp_admit( PINNODE(element, 1), element->pin_vector[1], admit );
+  if( element->pin_vector[0]->connected )
+    if( (rc = circ_node_stamp_admit( PINNODE(element, 0), element->pin_vector[0], admit )) )
+      return rc;
+  if( element->pin_vector[1]->connected )
+    if( (rc = circ_node_stamp_admit( PINNODE(element, 1), element->pin_vector[1], admit )) )
+      return rc;
+
+  return 0;
 }

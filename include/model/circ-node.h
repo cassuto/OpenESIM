@@ -45,7 +45,8 @@ typedef struct circ_node_s
   hashmap_t admit;      /* double_node */
   double total_admit;
 
-  bool need_fast_update;
+  bool analog_fast_update;
+  bool digital_fast_update;
   bool curr_changed;
   bool admit_changed;
   bool changed;

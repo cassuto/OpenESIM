@@ -41,7 +41,7 @@ circ_element_get_pin_count( circ_element_t *element )
 #define circ_element_get_param(element, type) (type *)((element)->param)
 
 #define asim_element_init(element)          ((element)->u.asim->pfn_init( element ))
-#define asim_element_stamp(element)         ((element)->u.asim->pfn_stamp( element ))
+#define asim_element_stamp(element)         ((element)->u.asim->pfn_stamp ? (element)->u.asim->pfn_stamp( element ) : 0 )
 #define asim_element_vchanged(element)      ((element)->u.asim->pfn_vchanged( element ))
 #define asim_element_config(element)        (element)->u.asim->pfn_config
 #define asim_element_reset(element)         ((element)->u.asim->pfn_reset ? ((element)->u.asim->pfn_reset(element)) : 0 )

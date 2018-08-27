@@ -18,6 +18,7 @@
  */
 
 #define TRACE_UNIT "circ-frame"
+#define NDEBUG 1
 
 #include <dsim/barrier.h>
 #include <dsim/logtrace.h>
@@ -67,6 +68,7 @@ circuit_create( circ_matrix_t *matrix )
       circuit->fps = 20;
       circuit->steps_react = 50;
       circuit->steps_non_linear = 10;
+      circuit->non_linear_acc_index = 5;
     }
   return circuit;
 err_out:
@@ -84,35 +86,34 @@ circuit_init( circuit_t *circuit )
   hashmap_clear( &circuit->react_list, NULL /*collect*/ );
   hashmap_clear( &circuit->non_linear_list, NULL /*collect*/ );
 
+  circuit->step = 0l;
+  circuit->react_count = 0;
+  circuit->non_linear_count = 0;
+
   if( (rc = matrix_init( circuit_matrix(circuit), &circuit->analog_node_list )) )
     return rc;
 
   /* Initialize elements */
-  foreach_list( circ_element_t, element, &circuit->analog_element_list )
+  foreach_reversed_list( circ_element_t, element, &circuit->analog_element_list )
     if( (rc = asim_element_init( element )) )
       return rc;
 
-  foreach_list( circ_element_t, element, &circuit->digital_element_list )
+  foreach_reversed_list( circ_element_t, element, &circuit->digital_element_list )
     if( (rc = dsim_element_init( element )) )
       return rc;
 
   /* Initialize matrix */
-  foreach_list( circ_element_t, element, &circuit->analog_element_list )
+  foreach_reversed_list( circ_element_t, element, &circuit->analog_element_list )
     if( (rc = asim_element_stamp( element )) )
       return rc;
 
-  foreach_list( circ_node_t, node, &circuit->analog_node_list )
+  foreach_reversed_list( circ_node_t, node, &circuit->analog_node_list )
     if( (rc = circ_node_stamp_matrix( node )) )
       return rc;
 
   /* Set up initial parameters of each node */
   if( (rc = matrix_solve( circuit->circmatrix )) )
     return -DS_SOLVE_MATRIX;
-
-  circuit->step = 0l;
-  circuit->react_count = 0;
-  circuit->non_linear_count = 0;
-  circuit->non_linear_acc_index = 5;
 
   circuit_set_rate( circuit, circuit->fps, circuit->rate );
 
@@ -163,6 +164,17 @@ circuit_run_step( circuit_t *circuit )
     {
       circuit->step ++;
 
+      /* Switch ping-pong list for logical elements */
+      if( circuit->logic_list_curr_ping ) /* ping */
+        {
+          logic_list = &circuit->logic_list_ping;
+        }
+      else /* pong */
+        {
+          logic_list = &circuit->logic_list_pong;
+        }
+      circuit->logic_list_curr_ping = !circuit->logic_list_curr_ping;
+
       /* Run Reactive Elements */
       if( ++(circuit->react_count) == circuit->steps_react )
         {
@@ -183,16 +195,6 @@ circuit_run_step( circuit_t *circuit )
       hashmap_clear( &circuit->changed_fast_list, NULL /*collect*/ );
 
       /* Run logic elements */
-
-      if( circuit->logic_list_curr_ping ) /* ping */
-        {
-          logic_list = &circuit->logic_list_ping;
-        }
-      else /* pong */
-        {
-          logic_list = &circuit->logic_list_pong;
-        }
-      circuit->logic_list_curr_ping = !circuit->logic_list_curr_ping;
 
       foreach_list( circ_element_t, element, &circuit->analog_element_list )
         if( element->desc->mdel_type == MDEL_AD )
@@ -239,6 +241,37 @@ circuit_run_step( circuit_t *circuit )
           return rc;
     }
   return rc;
+}
+
+int
+circuit_fast_update( circuit_t *circuit, const circ_node_t *node )
+{
+  int rc;
+  if( node->analog_fast_update )
+    {
+      if( !hashmap_empty(&circuit->changed_node_list) )
+        if( (rc = solve_matrix( circuit )) )
+          return rc;
+
+      /* Run Changed Fast Analogous elements */
+      foreach_hashmap( list_voidptr_node_t, element, &circuit->changed_fast_list )
+        if( (rc = asim_element_vchanged( (circ_element_t*)(element->val) )) )
+          return rc;
+
+      hashmap_clear( &circuit->changed_fast_list, NULL /*collect*/ );
+    }
+  if( node->digital_fast_update )
+    {
+      hashmap_t *logic_list_curr = circuit->logic_list_curr_ping ? &circuit->logic_list_ping : &circuit->logic_list_pong;
+
+      /* Run Changed Fast Digital elements */
+      foreach_hashmap( list_voidptr_node_t, element, logic_list_curr )
+        if( (rc = dsim_element_event( (circ_element_t*)(element->val) )) )
+          return rc;
+      hashmap_clear( logic_list_curr, NULL /*collect*/ );
+    }
+
+  return 0;
 }
 
 int

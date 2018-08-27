@@ -21,7 +21,7 @@ template <class T>
   {
   public:
     explicit PointerProxy( T *ptr ) : m_ptr( ptr ) {}
-    PointerProxy( const PointerProxy &dev ) : m_ptr( dev.m_ptr ) {}
+    PointerProxy( PointerProxy &prx ) : m_ptr( prx.m_ptr ) {}
 
     inline void set( T *ptr )
       { m_ptr = ptr; }

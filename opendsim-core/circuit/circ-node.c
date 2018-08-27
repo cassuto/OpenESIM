@@ -71,7 +71,8 @@ circ_node_init( circ_node_t *node )
   node->changed = false;
   node->admit_changed = false;
   node->curr_changed = false;
-  node->need_fast_update = false;
+  node->analog_fast_update = false;
+  node->digital_fast_update = false;
   node->volt = .0f;
 
   list_clear( &node->changed_fast_list, NULL /*collect*/ );
@@ -218,14 +219,11 @@ circ_node_set_state( circ_node_t *node, logic_state_t state )
   int rc = 0;
   trace_assert( !node->analog );
 
-  if( node->logic_state != state )
-    {
-      node->logic_state = state;
+  node->logic_state = state;
 
-      foreach_list( list_voidptr_node_t, nd, &node->logic_list )
-        if( (rc = circuit_add_logic( node->circuit, nd->val )) )
-          return rc;
-    }
+  foreach_list( list_voidptr_node_t, nd, &node->logic_list )
+    if( (rc = circuit_add_logic( node->circuit, nd->val )) )
+      return rc;
   return 0;
 }
 
@@ -264,6 +262,7 @@ circ_node_connect_pin( circ_node_t *node, circ_pin_t *pin, int node_comp_index )
 int
 circ_node_add_changed_fast( circ_node_t *node, circ_element_t* element )
 {
+  node->analog_fast_update = true;
   if( element && !list_contains_voidptr( &node->changed_fast_list, element ) )
     {
       return list_insert_voidptr( &node->changed_fast_list, element );
@@ -294,6 +293,7 @@ circ_node_add_non_linear( circ_node_t *node, circ_element_t* element )
 int
 circ_node_add_logic( circ_node_t *node, circ_element_t* element )
 {
+  node->digital_fast_update = true;
   if( element && !list_contains_voidptr( &node->logic_list, element ) )
     {
       return list_insert_voidptr( &node->logic_list, element );

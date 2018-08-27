@@ -19,7 +19,7 @@ typedef struct
 
 int LIB_FUNC(bjt_create)( circ_element_t * );
 int LIB_FUNC(bjt_init)( circ_element_t * );
-int LIB_FUNC(bjt_stamp)( circ_element_t * );
+int LIB_FUNC(bjt_stamp)( circ_element_t *element );
 int LIB_FUNC(bjt_vchanged)( circ_element_t * );
 int LIB_FUNC(bjt_config)( circ_element_t *, int, ... );
 void LIB_FUNC(bjt_uninit)( circ_element_t * );

@@ -21,6 +21,7 @@ LIB_FUNC(bjt_init)( circ_element_t *element )
   int rc = 0;
   DEFINE_PARAM(param, element, bjt_param_t);
 
+  if( param->gain <= 0 ) param->gain = 100;
   if( (rc = set_resist( element, param, 400/param->gain )) )
     return rc;
 
@@ -43,8 +44,15 @@ LIB_FUNC(bjt_init)( circ_element_t *element )
       if( (rc = circ_node_add_non_linear( enod1, element )) )
         return rc;
 
-      if( param->is_PNP ) circ_pin_set_node( param->BE_juct->pin_vector[0], enod1 );
-      else        circ_pin_set_node( param->BE_juct->pin_vector[1], enod1 );
+      if( param->is_PNP )
+        {
+          rc = circ_pin_set_node( param->BE_juct->pin_vector[0], enod1 );
+        }
+      else
+        {
+          rc = circ_pin_set_node( param->BE_juct->pin_vector[1], enod1 );
+        }
+      if( rc ) return rc;
     }
   if( element->pin_vector[2]->connected ) /* B */
    {

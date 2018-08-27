@@ -99,7 +99,7 @@ circ_element_set_digital_pin( circ_element_t *element, int start, int end )
 {
   trace_assert( start < element->pin_count && end < element->pin_count );
   trace_assert( start <= end );
-  for( unsigned i=start; i <= end; i++ )
+  for( int i=start; i <= end; i++ )
     {
       circ_pin_set_type( element->pin_vector[i], PIN_TYPE_DIGITAL );
     }

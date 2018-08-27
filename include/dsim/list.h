@@ -152,6 +152,21 @@ void list_release( list_t *list, pfn_free_elem free_elem );
       NULL!=_valname; \
       _valname = list_entry(list_next(list_node(_valname)), _type))
 
+/*
+ * chain list reversed foreach
+ *
+ * note: never remove or free the node within foreach_list() code block, unless
+ * break; or return; after you did.
+ *
+ * @param _type Static Type of element pointer in the list, must be a pointer.
+ * @param _valname The symbol name of variable
+ * @param _list Pointer to the source list.
+ */
+#define foreach_reversed_list(_type, _valname, _list) \
+  for( _type *_valname = list_entry((_list)->tail, _type); \
+      NULL!=_valname; \
+      _valname = list_entry(list_prev(list_node(_valname)), _type))
+
 END_C_DECLS
 
 #endif //!defined(DSIM_LIST_H_)

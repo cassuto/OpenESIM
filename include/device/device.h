@@ -185,6 +185,8 @@ public:
 
 public:
   void setCircuit( circuit_t *circuit );
+  inline void resetId( int id ) { m_id = id; }
+  inline int id() const { return m_id; }
 
 protected:
   void           *reserved;

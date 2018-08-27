@@ -27,13 +27,14 @@ public:
   virtual ~InstrumentBase();
 
   virtual void setIndex( int index );
-  virtual void clockTick()=0; // Asynchronous, called when simulator runs a step
+  virtual int clockTick()=0; // Asynchronous, called when simulator runs a step
 
   virtual void open()=0;
   virtual void close()=0;
 
   void setProbeDevice( PointerProxy<IDevice> *probe );
   inline PointerProxy<IDevice> *probeDevice() const { return m_probeDevice; }
+
   inline int index() const { return m_index; }
 
 private:
