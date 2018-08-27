@@ -19,6 +19,7 @@
 #include <QList>
 #include <QHash>
 #include <QFuture>
+#include <QObject>
 #include <dsim/circmatrix.h>
 #include <dsim/circuit.h>
 
@@ -39,7 +40,7 @@ class PropertyContainerImpl;
 class ElementAbstractPort;
 class InstrumentManagement;
 
-class SchemaSheet
+class SchemaSheet : public QObject
 {
 public:
   SchemaSheet();
@@ -85,6 +86,8 @@ public:
   void setSchemaView( SchemaView *schemaView );
   inline SchemaView *schemaView() const { return m_schemaView; }
   inline InstrumentManagement *instrumentManagement() const { return m_instrumentManagement; }
+public:
+  void timerEvent( QTimerEvent* event );
 private:
   int runLoop();
 
@@ -99,6 +102,7 @@ private:
   bool volatile      m_canceled;
   QFuture<int>       m_stepFuture;
   QList<RenderData>  m_renders;
+  int                m_clkTimer;
 };
 
 }

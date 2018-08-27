@@ -319,40 +319,43 @@ int SchemaSheet::runStep()
 int SchemaSheet::runLoop()
 {
   int rc;
-  int tick = 0;
-  for( ;; )
-    {
-      if( tick++ > 10000000 )
-        {
-          tick = 0;
-          if( (rc = circuit_run_step( m_circuit )) ) return rc;
-          if( (rc = m_instrumentManagement->clockTick()) ) return rc;
-
-          using namespace std;
-            for( QList<RenderData>::iterator it = m_renders.begin(); it != m_renders.end(); it++ )
-              {
-                RenderData render = *it;
-                if( int rc = render.m_device->render_frame( render.m_schematic, render.m_deviceGraph ) )
-                  return rc;
-              }
-        }
-      if( m_canceled ) break;
-    }
+  if( (rc = circuit_run_step( m_circuit )) ) return rc;
   return 0;
+}
+
+void SchemaSheet::timerEvent( QTimerEvent* event )
+{
+  event->accept();
+  if( m_canceled ) return;
+
+  if( m_stepFuture.isFinished() )  // Run Circuit in a parallel thread
+    {
+      using namespace std;
+        for( QList<RenderData>::iterator it = m_renders.begin(); it != m_renders.end(); it++ )
+          {
+            RenderData render = *it;
+            render.m_device->render_frame( render.m_schematic, render.m_deviceGraph );
+          }
+      m_stepFuture = QtConcurrent::run( this, &SchemaSheet::runLoop );
+    }
+  m_instrumentManagement->clockTick();
 }
 
 int SchemaSheet::run()
 {
-  if( m_stepFuture.isFinished() )
-    {
-      m_canceled = false;
-      m_stepFuture = QtConcurrent::run( this, &SchemaSheet::runLoop );
-    }
+  m_clkTimer = startTimer( 1000 / m_circuit->rate );
+  m_canceled = false;
+
   return 0;
 }
 
 int SchemaSheet::end()
 {
+  if( m_clkTimer != 0 )
+    {
+      killTimer( m_clkTimer );
+      m_clkTimer = 0;
+    }
   m_canceled = true;
   m_stepFuture.waitForFinished();
 
