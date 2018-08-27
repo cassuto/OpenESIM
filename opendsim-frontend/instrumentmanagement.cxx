@@ -65,14 +65,6 @@ void InstrumentManagement::removeInstrument( const InstrumentPair &pair )
 rb_tree_t *InstrumentManagement::instrumentTree() const
 { return instrument_lib_get_tree(); }
 
-int InstrumentManagement::clockTick()
-{
-  int rc;
-  foreach( InstrumentPair pair, m_insts )
-    if( (rc = pair.base->clockTick()) )
-      return rc;
-  return 0;
-}
 
 int InstrumentManagement::serialize( LispDataset *dataset )
 {

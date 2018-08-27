@@ -40,6 +40,9 @@ private slots: // from class OscilloscopeInst
 private slots:
   void onHscaleChanged( int value );
   void onVscaleChanged( int value );
+  void onHposChanged( int value );
+  void onVposChanged( int value );
+  void onAutoConfigChanged( int checked );
 
 private:
   inst_oscilloscope *m_oscope;
@@ -49,6 +52,8 @@ private:
   QLabel         *m_freqLabel;
   QDial          *m_HscaleDial;
   QDial          *m_VscaleDial;
+  QDial          *m_HposDial;
+  QDial          *m_VposDial;
 };
 
 }

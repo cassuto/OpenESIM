@@ -42,7 +42,7 @@ public:
   static InstrumentLibraryEntry *libraryEntry();
   static InstrumentBase *construct( int index );
 
-  int clockTick();
+  int syncClockTick();
   void open();
   void close();
 
@@ -62,7 +62,7 @@ signals:
   void ampMaxMinChanged( double max, double min );
   void readSamples();
 
-private:
+public:
   int m_sampleSize;
   int *m_samples;
   int m_smplCount;

@@ -83,8 +83,18 @@ void inst_oscilloscope::open()
 void inst_oscilloscope::close()
 { m_form->hide(); }
 
-int inst_oscilloscope::clockTick() // asynchronous
+int inst_oscilloscope::syncClockTick() // asynchronous
 {
+  if( state() == OSCOPE_WAITING_TRIGGER )
+    {
+      if( ++m_waitingTiggerCount == 1000500 ) // timeout
+        {
+          m_ampli = 0;
+          m_waitingTiggerCount = 0;
+          clear();
+        }
+    }
+
   double sample = 0;
   if ( probeDevice() && probeDevice()->valid() ) sample = probeDevice()->get()->probe_value();
 
@@ -148,60 +158,50 @@ int inst_oscilloscope::clockTick() // asynchronous
       lastSample = sample;
     }
 
-  switch( state() )
-  {
-    case OSCOPE_WAITING_TRIGGER:
-      if( ++m_waitingTiggerCount == 1000500 ) // timeout
+  if( ++m_stepCount == 50000 )            // 5 ms Update
+    {
+      m_stepCount = 0;
+
+      double tick = 20*m_Hscale;
+      double val = tick/1e6;
+      QString unit = " S";
+
+      if( val < 1 )
         {
-          m_ampli = 0;
-          m_waitingTiggerCount = 0;
-          clear();
-        }
-      break;
-
-    case OSCOPE_SAMPLING:
-      if( ++m_stepCount == 50000 )            // 5 ms Update
-        {
-          m_stepCount = 0;
-
-          double tick = 20*m_Hscale;
-          double val = tick/1e6;
-          QString unit = " S";
-
+          unit = " mS";
+          val = tick/1e3;
           if( val < 1 )
             {
-              unit = " mS";
-              val = tick/1e3;
-              if( val < 1 )
-                {
-                  unit = " uS";
-                  val = tick;
-                }
-            }
-
-          emit divChanged( val, unit );
-          emit ampliChanged( m_ampli );
-
-          if( ++m_updtCount >= 20 )                        // 1 Seg Update
-            {
-              m_freq = m_numMax;
-              m_updtCount = 0;
-              m_numMax = 0;
-              emit freqChanged( m_freq );
-            }
-          if( m_smplCount == m_sampleSize )   // Data set Ready to display
-            {
-              emit readSamples();
-
-              setState( OSCOPE_PROCESSING );
-              m_smplCount = 0;
-              break;
+              unit = " uS";
+              val = tick;
             }
         }
-      /*
-       * Sampling signal and storing
-       */
-      if( m_smplCount == m_sampleSize ) break; // buffer is filled, waiting for reading
+
+      emit divChanged( val, unit );
+      emit ampliChanged( m_ampli );
+
+      if( ++m_updtCount >= 20 )                        // 1 Seg Update
+        {
+          m_freq = m_numMax;
+          m_updtCount = 0;
+          m_numMax = 0;
+          emit freqChanged( m_freq );
+        }
+      if( m_smplCount == m_sampleSize )   // Data set Ready to display
+        {
+          emit readSamples();
+
+          setState( OSCOPE_WAITING_TRIGGER ); // OSCOPE_PROCESSING );
+          m_smplCount = 0;
+          return 0;
+        }
+    }
+  /*
+   * Sampling signal and storing
+   */
+  if( state() == OSCOPE_SAMPLING )
+    {
+      if( m_smplCount == m_sampleSize ) return 0; // buffer is filled, waiting for reading
 
       if( Hpos < m_Hpos ) Hpos++;
       else
@@ -218,12 +218,8 @@ int inst_oscilloscope::clockTick() // asynchronous
                 }
             }
         }
-      break;
+    }
 
-    case OSCOPE_PROCESSING:
-    default:
-      return 0;
-  }
   return 0;
 }
 

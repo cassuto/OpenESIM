@@ -27,8 +27,8 @@ public:
   virtual ~InstrumentBase();
 
   virtual void setIndex( int index );
-  virtual int clockTick()=0; // Asynchronous, called when simulator runs a step
-
+  virtual int clockTick() { return 0; } // Asynchronous, called when simulator runs a step
+  virtual int syncClockTick() { return 0; }
   virtual void open()=0;
   virtual void close()=0;
 

@@ -34,7 +34,7 @@ OscopeRenderer::OscopeRenderer( int width, int height, QWidget *parent /*= 0l*/ 
             , m_vMax( 0 )
             , m_vMin( 0 )
             , m_margin( 15*m_scale )
-            , m_scale( ((double)width-30*m_scale)/140 )
+            , m_scale( ((double)width-30*m_scale)/512 )
 {
 }
 
@@ -48,6 +48,7 @@ void OscopeRenderer::setSamples( const int samples[], int size )
 {
   m_samples = samples;
   m_sampleSize = size;
+  m_scale = ((double)m_width-30*m_scale)/m_sampleSize;
   update();
 }
 
@@ -58,7 +59,7 @@ void OscopeRenderer::paintEvent( QPaintEvent* /* event */ )
   p.setRenderHint( QPainter::Antialiasing, true );
 
   p.setBrush( QColor( 10, 15, 50 ) );
-  p.drawRoundRect(0, 0, m_width, m_height );
+  p.drawRect(0, 0, m_width, m_height );
 
   QPen pen( QColor( 90, 90, 180 ), 1.5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin );
   p.setPen( pen );
@@ -83,7 +84,7 @@ void OscopeRenderer::paintEvent( QPaintEvent* /* event */ )
       p.setPen( pen2 );
 
       QPointF lastP = QPointF( m_margin, end-(double)m_samples[0]*m_scale );
-      for( int i=1; i<140; i++ )
+      for( int i=1; i<m_sampleSize; i++ )
         {
           QPointF thisP = QPointF( (double)i*m_scale+m_margin, end-(double)m_samples[i]*m_scale );
           p.drawLine( lastP, thisP );
