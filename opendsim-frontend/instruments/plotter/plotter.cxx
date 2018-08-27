@@ -50,7 +50,7 @@ InstrumentLibraryEntry *inst_plotter::libraryEntry()
 InstrumentBase *inst_plotter::construct( int index ) { return new inst_plotter( index ); }
 
 
-void inst_plotter::clockTick()
+int inst_plotter::clockTick()
 {
   int sample = probeDevice() && probeDevice()->valid() ? probeDevice()->get()->probe_value() * 100.0 : 0;
   if( sample != m_sample )
@@ -66,6 +66,7 @@ void inst_plotter::clockTick()
       emit printGrid();
     }
   emit printSample();
+  return 0;
 }
 
 void inst_plotter::open() { m_form->show(); }

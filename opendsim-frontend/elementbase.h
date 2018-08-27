@@ -63,7 +63,7 @@ public:
 
 public:
   inline int    id() const { return m_id; }
-  inline void   resetId( int id ) { m_id = id; }
+  virtual void   resetId( int id ) { m_id = id; }
   inline SchemaView *view() const { return m_schemaGraph->view(); }
   inline SchemaScene *scene() const { return m_schemaGraph; }
   inline QGraphicsItem *graphicsItem() const { return m_graphicsItem; }

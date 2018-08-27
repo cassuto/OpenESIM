@@ -49,6 +49,7 @@ public:
   int init( const char *deviceEntry, ElementText *valueText, ElementText *referenceText );
   int createDevice();
   int initDevice();
+  void resetId( int id );
 
   void setLayout();
   std::string reference();

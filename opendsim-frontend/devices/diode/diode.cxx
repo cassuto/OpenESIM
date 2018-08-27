@@ -46,6 +46,8 @@ int dev_diode::create( ISchematic *schematic, IPropertyContainer *properties )
 {
   int rc = IDevice::baseinit( "D", m_circuit );                 UPDATE_RC(rc);
 
+  rc = properties->readModel( m_mdel, 0 );                      UPDATE_RC(rc);
+
   UNUSED(schematic);
   return rc;
 }

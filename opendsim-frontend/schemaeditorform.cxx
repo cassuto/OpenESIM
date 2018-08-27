@@ -92,6 +92,8 @@ void SchemaEditorForm::createActions()
   modeDrawRect->setStatusTip(tr("Drawing a rectangle..."));
   modeDrawEllipse = new QAction(QIcon((":/bitmaps/modeellipse.png")), tr("Drawing a ellipse"), this);
   modeDrawEllipse->setStatusTip(tr("Drawing a ellipse..."));
+  modeDrawPainter = new QAction(QIcon((":/bitmaps/modepainter.png")), tr("Drawing a painter"), this);
+  modeDrawPainter->setStatusTip(tr("Drawing a painter..."));
   modeDrawText = new QAction(QIcon((":/bitmaps/modetext.png")), tr("Drawing a text"), this);
   modeDrawText->setStatusTip(tr("Drawing a text..."));
   modeInstrument = new QAction(QIcon((":/bitmaps/modeinst.png")), tr("Instrument Rack View"), this);
@@ -105,6 +107,8 @@ void SchemaEditorForm::createActions()
   connect( modeDrawRect, SIGNAL(triggered()), this, SLOT(onModeRect()) );
 
   connect( modeDrawEllipse, SIGNAL(triggered()), this, SLOT(onModeEllipse()) );
+
+  connect( modeDrawPainter, SIGNAL(triggered()), this, SLOT(onModePainter()) );
 
   connect( modeDrawText, SIGNAL(triggered()), this, SLOT(onModeText()) );
 
@@ -147,6 +151,7 @@ void SchemaEditorForm::createToolbars()
   if( dom->type() == DOM_SCHEMA_SYMBOL )
     {
       modeToolBar->addAction( modeDrawOrigin );
+      modeToolBar->addAction( modeDrawPainter );
     }
 
   modeToolBar->setIconSize( QSize(16, 16) );
@@ -174,6 +179,7 @@ void SchemaEditorForm::createWidgets()
   this->setCentralWidget( schema );
 
   dom->addItem( schema->view() );
+  dom->addItem( schsheet->instrumentManagement() );
 }
 
 void SchemaEditorForm::onModeSelection()
@@ -186,6 +192,8 @@ void SchemaEditorForm::onModeRect()
 { schema->setMode( MODE_RECT ); }
 void SchemaEditorForm::onModeEllipse()
 { schema->setMode( MODE_ELLIPSE ); }
+void SchemaEditorForm::onModePainter()
+{ schema->setMode( MODE_PAINTER ); }
 void SchemaEditorForm::onModeText()
 { schema->setMode( MODE_TEXT ); }
 void SchemaEditorForm::onModeScript()

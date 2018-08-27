@@ -314,8 +314,6 @@ int PropertyContainerImpl::deserialize( LispDataset *dataset )
                     return -DS_INVALID_PROPERTY_TYPE;
                 }
 
-                m_modelEntry->addValue( model );
-
             } // auto pop
         }
     }
@@ -370,8 +368,6 @@ int PropertyContainerImpl::deserialize( LispDataset *dataset )
                   default:
                     return -DS_INVALID_PROPERTY_TYPE;
                 }
-
-                m_deviceEntry->addValue( device );
 
             } // auto pop
         }

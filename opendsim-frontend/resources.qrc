@@ -27,5 +27,6 @@
         <file>bitmaps/rotateright.png</file>
         <file>bitmaps/xmirror.png</file>
         <file>bitmaps/ymirror.png</file>
+        <file>bitmaps/modepainter.png</file>
     </qresource>
 </RCC>

@@ -24,13 +24,15 @@ class QPainter;
 namespace dsim
 {
 
+class ElementPainter;
+
 class ComponentGraphImpl : public IDeviceGraph
 {
 public:
   ComponentGraphImpl();
   ~ComponentGraphImpl();
 
-  void setBuffer( QImage *pixBuffer );
+  void setBuffer( QImage *pixBuffer, ElementPainter *elementPainter );
   void setSelected( bool selected ) { m_selected = selected; }
 
 public:
@@ -59,6 +61,7 @@ public:
 private:
   QImage  *m_pixBuffer;
   QPainter *m_painter;
+  ElementPainter *m_elementPainter;
   bool      m_selected;
 };
 

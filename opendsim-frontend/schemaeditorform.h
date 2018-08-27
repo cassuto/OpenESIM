@@ -70,6 +70,7 @@ private slots:
   void onModeLine();
   void onModeRect();
   void onModeEllipse();
+  void onModePainter();
   void onModeText();
   void onModeScript();
   void onModeOrigin();
@@ -94,6 +95,7 @@ private:
           *modeDrawLine,
           *modeDrawRect,
           *modeDrawEllipse,
+          *modeDrawPainter,
           *modeDrawText,
           *modeDrawOrigin;
 

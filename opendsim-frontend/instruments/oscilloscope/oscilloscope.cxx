@@ -83,7 +83,7 @@ void inst_oscilloscope::open()
 void inst_oscilloscope::close()
 { m_form->hide(); }
 
-void inst_oscilloscope::clockTick() // asynchronous
+int inst_oscilloscope::clockTick() // asynchronous
 {
   double sample = 0;
   if ( probeDevice() && probeDevice()->valid() ) sample = probeDevice()->get()->probe_value();
@@ -222,8 +222,9 @@ void inst_oscilloscope::clockTick() // asynchronous
 
     case OSCOPE_PROCESSING:
     default:
-      return;
+      return 0;
   }
+  return 0;
 }
 
 void inst_oscilloscope::setSampleSize( int size )

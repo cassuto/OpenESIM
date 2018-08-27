@@ -254,8 +254,6 @@ int SchemaSheet::compile()
       if( circNode )
         {
           pintype = -0xff;
-          circuit_attach_node( m_circuit, circNode );
-
           foreach( ElementAbstractPort *port, *(node->ports()) )
             {
               device = port->component()->device()->get();
@@ -263,20 +261,29 @@ int SchemaSheet::compile()
               if( isInt && pinIndex >= 0 && pinIndex < device->pin_count() )
                 {
                   if( pintype == -0xff )
-                    pintype = (int)device->pin( pinIndex )->type;
+                    {
+                      pintype = (int)device->pin( pinIndex )->type;
+                      switch( device->pin( pinIndex )->type )
+                      {
+                        case PIN_TYPE_ANALOG: circNode->analog = true; break;
+                        case PIN_TYPE_DIGITAL: circNode->analog = false; break;
+                      }
+                    }
                   else if ( pintype != (int)device->pin( pinIndex )->type )
-                    return -DS_PORT_TYPE_MISMATCH;
-                  rc = circ_pin_set_node( device->pin( pinIndex ), circNode ); UPDATE_RC(rc);
+                    {
+                      circ_node_free( circNode );
+                      return -DS_PORT_TYPE_MISMATCH;
+                    }
 
-                  switch( pintype )
-                  {
-                    case PIN_TYPE_ANALOG: circNode->analog = true; break;
-                    case PIN_TYPE_DIGITAL: circNode->analog = false; break;
-                  }
+                  rc = circ_pin_set_node( device->pin( pinIndex ), circNode ); UPDATE_RC(rc);
                 }
               else
-                return -DS_INVALID_PIN_REFERENCE;
+                {
+                  circ_node_free( circNode );
+                  return -DS_INVALID_PIN_REFERENCE;
+                }
             }
+          circuit_attach_node( m_circuit, circNode );
         }
       else
         return -DS_CREATE_CIRCUIT_NODE;
@@ -319,6 +326,8 @@ int SchemaSheet::runLoop()
         {
           tick = 0;
           if( (rc = circuit_run_step( m_circuit )) ) return rc;
+          if( (rc = m_instrumentManagement->clockTick()) ) return rc;
+
           using namespace std;
             for( QList<RenderData>::iterator it = m_renders.begin(); it != m_renders.end(); it++ )
               {
@@ -371,6 +380,6 @@ bool SchemaSheet::running()
 { return m_stepFuture.isRunning() && m_canceled; }
 
 void SchemaSheet::setSchemaView( SchemaView *schemaView )
-{ m_schemaView = schemaView; }
+{ m_schemaView = schemaView; m_instrumentManagement->setSchemaView( schemaView ); }
 
 }

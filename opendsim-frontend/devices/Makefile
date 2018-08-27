@@ -76,9 +76,10 @@ am_libdsimdevices_la_OBJECTS = libdsimdevices_la-1n4148.lo \
 	libdsimdevices_la-capacitor.lo libdsimdevices_la-inductor.lo \
 	libdsimdevices_la-vsource-dc.lo \
 	libdsimdevices_la-vsource-dc-0v.lo \
-	libdsimdevices_la-voltprobe.lo libdsimdevices_la-atmega164.lo \
-	libdsimdevices_la-lcdm5110.lo libdsimdevices_la-device.lo \
-	libdsimdevices_la-device-lib.lo \
+	libdsimdevices_la-voltprobe.lo libdsimdevices_la-opamp.lo \
+	libdsimdevices_la-bjt_pnp.lo libdsimdevices_la-bjt_npn.lo \
+	libdsimdevices_la-atmega164.lo libdsimdevices_la-lcdm5110.lo \
+	libdsimdevices_la-device.lo libdsimdevices_la-device-lib.lo \
 	libdsimdevices_la-propertyvalue.lo
 libdsimdevices_la_OBJECTS = $(am_libdsimdevices_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -231,6 +232,7 @@ libdsimdevices_la_SOURCES = 1n4148/1n4148.cxx diode/diode.cxx \
 	register/register.cxx capacitor/capacitor.cxx \
 	inductor/inductor.cxx vsource-dc/vsource-dc.cxx \
 	vsource-dc-0v/vsource-dc-0v.cxx voltprobe/voltprobe.cxx \
+	opamp/opamp.cxx bjt_pnp/bjt_pnp.cxx bjt_npn/bjt_npn.cxx \
 	atmega164/atmega164.cxx lcdm5110/lcdm5110.cxx device.cxx \
 	device-lib.cxx propertyvalue.cxx
 libdsimdevices_la_CFLAGS = -Wno-unused-function
@@ -306,12 +308,15 @@ distclean-compile:
 
 include ./$(DEPDIR)/libdsimdevices_la-1n4148.Plo
 include ./$(DEPDIR)/libdsimdevices_la-atmega164.Plo
+include ./$(DEPDIR)/libdsimdevices_la-bjt_npn.Plo
+include ./$(DEPDIR)/libdsimdevices_la-bjt_pnp.Plo
 include ./$(DEPDIR)/libdsimdevices_la-capacitor.Plo
 include ./$(DEPDIR)/libdsimdevices_la-device-lib.Plo
 include ./$(DEPDIR)/libdsimdevices_la-device.Plo
 include ./$(DEPDIR)/libdsimdevices_la-diode.Plo
 include ./$(DEPDIR)/libdsimdevices_la-inductor.Plo
 include ./$(DEPDIR)/libdsimdevices_la-lcdm5110.Plo
+include ./$(DEPDIR)/libdsimdevices_la-opamp.Plo
 include ./$(DEPDIR)/libdsimdevices_la-propertyvalue.Plo
 include ./$(DEPDIR)/libdsimdevices_la-register.Plo
 include ./$(DEPDIR)/libdsimdevices_la-voltprobe.Plo
@@ -394,6 +399,27 @@ libdsimdevices_la-voltprobe.lo: voltprobe/voltprobe.cxx
 #	source='voltprobe/voltprobe.cxx' object='libdsimdevices_la-voltprobe.lo' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-voltprobe.lo `test -f 'voltprobe/voltprobe.cxx' || echo '$(srcdir)/'`voltprobe/voltprobe.cxx
+
+libdsimdevices_la-opamp.lo: opamp/opamp.cxx
+	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-opamp.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-opamp.Tpo" -c -o libdsimdevices_la-opamp.lo `test -f 'opamp/opamp.cxx' || echo '$(srcdir)/'`opamp/opamp.cxx; \
+	then mv -f "$(DEPDIR)/libdsimdevices_la-opamp.Tpo" "$(DEPDIR)/libdsimdevices_la-opamp.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-opamp.Tpo"; exit 1; fi
+#	source='opamp/opamp.cxx' object='libdsimdevices_la-opamp.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-opamp.lo `test -f 'opamp/opamp.cxx' || echo '$(srcdir)/'`opamp/opamp.cxx
+
+libdsimdevices_la-bjt_pnp.lo: bjt_pnp/bjt_pnp.cxx
+	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-bjt_pnp.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-bjt_pnp.Tpo" -c -o libdsimdevices_la-bjt_pnp.lo `test -f 'bjt_pnp/bjt_pnp.cxx' || echo '$(srcdir)/'`bjt_pnp/bjt_pnp.cxx; \
+	then mv -f "$(DEPDIR)/libdsimdevices_la-bjt_pnp.Tpo" "$(DEPDIR)/libdsimdevices_la-bjt_pnp.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-bjt_pnp.Tpo"; exit 1; fi
+#	source='bjt_pnp/bjt_pnp.cxx' object='libdsimdevices_la-bjt_pnp.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-bjt_pnp.lo `test -f 'bjt_pnp/bjt_pnp.cxx' || echo '$(srcdir)/'`bjt_pnp/bjt_pnp.cxx
+
+libdsimdevices_la-bjt_npn.lo: bjt_npn/bjt_npn.cxx
+	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-bjt_npn.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-bjt_npn.Tpo" -c -o libdsimdevices_la-bjt_npn.lo `test -f 'bjt_npn/bjt_npn.cxx' || echo '$(srcdir)/'`bjt_npn/bjt_npn.cxx; \
+	then mv -f "$(DEPDIR)/libdsimdevices_la-bjt_npn.Tpo" "$(DEPDIR)/libdsimdevices_la-bjt_npn.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-bjt_npn.Tpo"; exit 1; fi
+#	source='bjt_npn/bjt_npn.cxx' object='libdsimdevices_la-bjt_npn.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-bjt_npn.lo `test -f 'bjt_npn/bjt_npn.cxx' || echo '$(srcdir)/'`bjt_npn/bjt_npn.cxx
 
 libdsimdevices_la-atmega164.lo: atmega164/atmega164.cxx
 	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-atmega164.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-atmega164.Tpo" -c -o libdsimdevices_la-atmega164.lo `test -f 'atmega164/atmega164.cxx' || echo '$(srcdir)/'`atmega164/atmega164.cxx; \

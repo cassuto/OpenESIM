@@ -17,14 +17,18 @@
 #define INSTRUMENTMANAGEMENT_H_
 
 #include <QList>
+#include <string>
 #include <dsim/misc.h>
 #include <dsim/rbtree.h>
+#include "domitem.h"
 
 class InstrumentLibraryEntry;
 class InstrumentBase;
 
 namespace dsim
 {
+
+class SchemaView;
 
 class InstrumentPair
 {
@@ -37,7 +41,7 @@ public:
   bool operator==( const InstrumentPair &pair ) { return pair.entry == entry && pair.base == base; } // explicit
 };
 
-class InstrumentManagement
+class InstrumentManagement : public DomItem
 {
 public:
   InstrumentManagement();
@@ -47,10 +51,19 @@ public:
   void removeInstrument( const InstrumentPair &pair );
   rb_tree_t *instrumentTree() const;
   inline const QList<InstrumentPair> & instruments() const { return m_insts; }
-  void clockTick();
+  int clockTick();
+
+public:
+  int serialize( LispDataset *dataset );
+  int deserialize( LispDataset *dataset );
+
+public:
+  inline void setSchemaView( SchemaView *schemaView ) { m_schemaView = schemaView; }
+  inline SchemaView *schemaView() const { return m_schemaView; }
 
 private:
   QList<InstrumentPair> m_insts;
+  SchemaView *m_schemaView;
 };
 
 }

@@ -131,6 +131,12 @@ int ComponentGraphItem::initDevice()
   return device()->valid() ? device()->get()->init( schematic(), properties() ) : 0;
 }
 
+void ComponentGraphItem::resetId( int id )
+{
+  ElementGraphItem::resetId( id );
+  if( device()->valid() ) device()->get()->resetId( id ); // sync id between device and component
+}
+
 int ComponentGraphItem::findEntry( const char *symbol )
 {
   if( !(m_deviceEntry = device_lib_entry( symbol )) )

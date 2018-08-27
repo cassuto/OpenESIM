@@ -104,7 +104,7 @@ int ElementBase::addElement( ElementBase *element )
 {
   if( !element->ref() )
     {
-      trace_debug(("referenced element: %p %s\n", element, element->classname() ));
+      // trace_debug(("referenced element: %p %s\n", element, element->classname() ));
     }
   m_elements.append( element );
   return 0;

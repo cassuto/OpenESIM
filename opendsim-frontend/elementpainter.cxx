@@ -30,7 +30,7 @@ namespace dsim
 
 ElementPainter::ElementPainter( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsRectItem* parent )
           : ElementGraphItem<QGraphicsRectItem>( id, scene, edit, parent )
-          , m_pixBuffer( new QImage )
+          , m_pixBuffer( 0l )
           , m_deviceGraph( new ComponentGraphImpl )
 {
   if( edit )
@@ -42,7 +42,6 @@ ElementPainter::ElementPainter( const QRectF &rect, int id, SchemaScene *scene, 
         }
     }
 
-  m_deviceGraph->setBuffer( m_pixBuffer );
   setRectParent( rect );
   setStyle( "painter" );
   setFineturningEnabled( true );
@@ -64,8 +63,16 @@ void ElementPainter::setRectParent( const QRectF &rect )
   QRectF r( rect );
 
   setPos( r.topLeft() );
-  QGraphicsRectItem::setRect( mapRectFromParent( r ) );
+  QRectF mappedRect = mapRectFromParent( r );
+  QGraphicsRectItem::setRect( mappedRect );
   updatePads();
+
+  delete m_pixBuffer;
+  m_pixBuffer = new QImage( mappedRect.width()-1, mappedRect.height()-1, QImage::Format_MonoLSB );
+  m_pixBuffer->setColor( 1, qRgb(0,0,0) );
+  m_pixBuffer->setColor( 0, qRgb(205,219,187) );
+  m_pixBuffer->fill( 0 );
+  m_deviceGraph->setBuffer( m_pixBuffer, this );
 }
 
 QRectF ElementPainter::rectParent() const
@@ -176,6 +183,8 @@ void ElementPainter::paint( QPainter *painter, const QStyleOptionGraphicsItem *o
   Templatestyle::apply( this, customLine(), customFill(), style(), isSelected() );
 
   QGraphicsRectItem::paint( painter, option, widget );
+  if( m_pixBuffer )
+    painter->drawImage( 1, 1, *m_pixBuffer );
   updatePads();
 }
 

@@ -17,16 +17,17 @@
 #include <QPixmap>
 
 #include "templatestyle.h"
-#include "mainwindow.h"
 #include "elementgraphitem.h"
+#include "elementpainter.h"
 #include "componentgraphimpl.h"
 
 namespace dsim
 {
 
 ComponentGraphImpl::ComponentGraphImpl()
-              : m_painter( new QPainter )
-              , m_pixBuffer( 0l )
+              : m_pixBuffer( 0l )
+              , m_painter( new QPainter )
+              , m_elementPainter( 0l )
               , m_selected( false )
 {
 }
@@ -36,9 +37,10 @@ ComponentGraphImpl::~ComponentGraphImpl()
   delete m_painter;
 }
 
-void ComponentGraphImpl::setBuffer( QImage *pixBuffer )
+void ComponentGraphImpl::setBuffer( QImage *pixBuffer, ElementPainter *elementPainter )
 {
   m_pixBuffer = pixBuffer;
+  m_elementPainter = elementPainter;
 }
 
 void ComponentGraphImpl::setStyle( const char *style )
@@ -143,6 +145,7 @@ void ComponentGraphImpl::setPixel( int col, int row, unsigned int color )
 void ComponentGraphImpl::end()
 {
   m_painter->end();
+  m_elementPainter->update();
 }
 
 } // namespace dsim

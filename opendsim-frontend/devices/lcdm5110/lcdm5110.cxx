@@ -95,6 +95,8 @@ int dev_lcdm5110::render_frame( ISchematic *, IDeviceGraph *deviceGraph )
       rc = circ_element_config(( m_mdel, ELM_CONFIG_GET, 2/*disp*/, &D )); UPDATE_RC(rc);
       rc = circ_element_config(( m_mdel, ELM_CONFIG_GET, 3/*en*/, &E )); UPDATE_RC(rc);
 
+      deviceGraph->begin();
+
       if     ( PD )       deviceGraph->fill( 0, 0, 0 ); /* Power-Down mode */
       else if( !D && !E ) deviceGraph->fill( 128, 128, 128 ); /* Blank Display mode, blank the visuals */
       else if( !D && E )  deviceGraph->fill( 255, 255, 255 ); /* All segments on */
@@ -115,6 +117,7 @@ int dev_lcdm5110::render_frame( ISchematic *, IDeviceGraph *deviceGraph )
             }
         }
 
+      deviceGraph->end();
     }
   return 0;
 }

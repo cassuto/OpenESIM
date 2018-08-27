@@ -26,6 +26,7 @@
 #include "elementpin.h"
 #include "elementrect.h"
 #include "elementellipse.h"
+#include "elementpainter.h"
 #include "elementjoint.h"
 #include "elementorigin.h"
 
@@ -70,6 +71,7 @@ void SchemaView::setMode( DrawMode mode )
     case MODE_TEXT:
     case MODE_RECT:
     case MODE_ELLIPSE:
+    case MODE_PAINTER:
     case MODE_SCRIPT:
     case MODE_ORIGIN:
     case MODE_COMPONENT:
@@ -168,6 +170,15 @@ void SchemaView::setMode( DrawMode mode )
       {
         switchEventHandlers( &SchemaView::mousePressEllipse,
                              &SchemaView::mouseMoveEllipse,
+                             0l,
+                             0l,
+                             0l );
+        break;
+      }
+    case MODE_PAINTER:
+      {
+        switchEventHandlers( &SchemaView::mousePressPainter,
+                             &SchemaView::mouseMovePainter,
                              0l,
                              0l,
                              0l );
@@ -562,6 +573,75 @@ bool SchemaView::mouseMoveEllipse( QMouseEvent *event )
       rect.setBottomRight( togrid( mapToScene( event->pos() ) ) );
       ellipseElement->setRectParent( rect );
       ellipseElement->setVisible( true );
+
+      event->accept();
+      return false;
+    }
+  return true;
+}
+
+
+// ------------------------------------------------------------------ //
+// Mouse actions for painter mode
+// ------------------------------------------------------------------ //
+
+bool SchemaView::mousePressPainter( QMouseEvent *event )
+{
+  if( event->button() == Qt::LeftButton )
+    {
+      if( 0l == m_hintElement )
+        {
+          m_hintElement = createElement( "painter", QPoint( 0, 0 ) );
+          ElementPainter *painterElement = static_cast<ElementPainter *>(m_hintElement);
+          painterElement->setVisible( false );
+
+          QRectF rect( painterElement->rectParent() );
+          rect.setTopLeft( togrid( mapToScene( event->pos() ) ) );
+          painterElement->setRectParent( rect );
+
+          m_moving = true;
+          event->accept();
+          return false;
+        }
+      else if( m_moving )
+        {
+          ElementPainter *painterElement = static_cast<ElementPainter *>(m_hintElement);
+          QRectF rect = painterElement->rectParent();
+
+          if( rect.topLeft() != rect.bottomRight() ) // accept this ellipse
+            {
+              painterElement->setRectParent( rect );
+              painterElement->normalizeRect();
+              painterElement->setVisible( true );
+              m_hintElement = 0l;
+            }
+
+          m_moving = false;
+
+          setMode( MODE_SELECTION );
+          event->accept();
+          return false;
+        }
+    }
+  else if( event->button() == Qt::RightButton )
+    {
+      setMode( MODE_SELECTION ); // give up drawing
+
+      event->accept();
+      return false;
+    }
+  return true;
+}
+
+bool SchemaView::mouseMovePainter( QMouseEvent *event )
+{
+  if( m_moving )
+    {
+      ElementPainter *painterElement = static_cast<ElementPainter *>(m_hintElement);
+      QRectF rect( painterElement->rectParent() );
+      rect.setBottomRight( togrid( mapToScene( event->pos() ) ) );
+      painterElement->setRectParent( rect );
+      painterElement->setVisible( true );
 
       event->accept();
       return false;

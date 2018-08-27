@@ -33,7 +33,7 @@ public:
   static InstrumentLibraryEntry *libraryEntry();
   static InstrumentBase *construct( int index );
 
-  void clockTick();
+  int clockTick();
   void open();
   void close();
 

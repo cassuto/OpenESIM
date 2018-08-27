@@ -44,9 +44,7 @@ InstrumentRackForm::InstrumentRackForm( SchemaView *schemaView, InstrumentManage
 }
 
 InstrumentRackForm::~InstrumentRackForm()
-{
-  DebugBreakPoint();
-}
+{}
 
 void InstrumentRackForm::createActions()
 {

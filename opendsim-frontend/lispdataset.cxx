@@ -146,7 +146,7 @@ ds_scheme_synlist_t *DomEntry::leaf()
 { return m_syn_current; }
 
 void LispDataset::addItem( DomItem *item )
-{ m_items.push_front( item ); }
+{ m_items.push_back( item ); }
 
 void LispDataset::removeItem( DomItem *item )
 {
