@@ -20,10 +20,10 @@
 #include <string>
 #include <dsim/misc.h>
 #include <dsim/rbtree.h>
+#include <instrument/instrumentbase.h>
 #include "domitem.h"
 
 class InstrumentLibraryEntry;
-class InstrumentBase;
 
 namespace dsim
 {
@@ -51,7 +51,6 @@ public:
   void removeInstrument( const InstrumentPair &pair );
   rb_tree_t *instrumentTree() const;
   inline const QList<InstrumentPair> & instruments() const { return m_insts; }
-  int clockTick();
 
 public:
   int serialize( LispDataset *dataset );
@@ -60,6 +59,23 @@ public:
 public:
   inline void setSchemaView( SchemaView *schemaView ) { m_schemaView = schemaView; }
   inline SchemaView *schemaView() const { return m_schemaView; }
+
+  inline int clockTick()
+  {
+    int rc;
+    foreach( InstrumentPair pair, m_insts )
+      if( (rc = pair.base->clockTick()) )
+        return rc;
+    return 0;
+  }
+  inline int syncClockTick()
+  {
+    int rc;
+    foreach( InstrumentPair pair, m_insts )
+      if( (rc = pair.base->syncClockTick()) )
+        return rc;
+    return 0;
+  }
 
 private:
   QList<InstrumentPair> m_insts;

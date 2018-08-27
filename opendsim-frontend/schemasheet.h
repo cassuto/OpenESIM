@@ -90,6 +90,7 @@ public:
   void timerEvent( QTimerEvent* event );
 private:
   int runLoop();
+  friend int sch_sync_clk( void *opauqe );
 
 private:
   SchemaView        *m_schemaView;

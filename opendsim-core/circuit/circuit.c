@@ -155,7 +155,7 @@ solve_matrix( circuit_t *circuit )
 }
 
 int
-circuit_run_step( circuit_t *circuit )
+circuit_run_step( circuit_t *circuit, pfn_sync_clock clk, void *opaque )
 {
   int rc = 0;
   hashmap_t *logic_list;
@@ -238,6 +238,11 @@ circuit_run_step( circuit_t *circuit )
         }
       if( !hashmap_empty(&circuit->changed_node_list) )
         if( (rc = solve_matrix( circuit )) )
+          return rc;
+
+      /* sync simulation clock callback */
+      if( clk )
+        if( (rc = clk( opaque )) )
           return rc;
     }
   return rc;

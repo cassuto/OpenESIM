@@ -52,6 +52,7 @@ SchemaSheet::SchemaSheet()
             , m_matrix( 0l )
             , m_circuit( 0l )
             , m_compiled( false )
+            , m_clkTimer( 0 )
 
 {}
 
@@ -313,13 +314,19 @@ int SchemaSheet::compile()
   return 0;
 }
 
+int sch_sync_clk( void *opauqe )
+{
+  InstrumentManagement *instrumentManagement = static_cast<InstrumentManagement *>(opauqe);
+  return instrumentManagement->syncClockTick();
+}
+
 int SchemaSheet::runStep()
-{ return circuit_run_step( m_circuit ); }
+{ return circuit_run_step( m_circuit, sch_sync_clk, this->m_instrumentManagement ); }
 
 int SchemaSheet::runLoop()
 {
   int rc;
-  if( (rc = circuit_run_step( m_circuit )) ) return rc;
+  if( (rc = circuit_run_step( m_circuit, sch_sync_clk, this->m_instrumentManagement )) ) return rc;
   return 0;
 }
 
@@ -351,7 +358,7 @@ int SchemaSheet::run()
 
 int SchemaSheet::end()
 {
-  if( m_clkTimer != 0 )
+  if( m_clkTimer )
     {
       killTimer( m_clkTimer );
       m_clkTimer = 0;

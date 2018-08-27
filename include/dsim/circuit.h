@@ -56,13 +56,14 @@ typedef struct circuit_s
 
 typedef struct circ_node_s circ_node_t;
 typedef struct circ_element_s circ_element_t;
+typedef int (*pfn_sync_clock)( void *opaque );
 
 circuit_t *circuit_create( struct circ_matrix_s *matrix );
 int circuit_init( circuit_t *circuit );
 double circuit_timestep( circuit_t *circuit );
 void circuit_set_non_linear_acc_index( circuit_t *circuit, int acc_index );
 double circuit_non_linear_accuracy( circuit_t *circuit );
-int circuit_run_step( circuit_t *circuit );
+int circuit_run_step( circuit_t *circuit, pfn_sync_clock clk, void *opaque );
 int circuit_fast_update( circuit_t *circuit, const circ_node_t *node );
 int circuit_stop( circuit_t *circuit );
 int circuit_set_rate( circuit_t *circuit, int fps, int rate );
