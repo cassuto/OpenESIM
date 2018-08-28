@@ -50,6 +50,10 @@ private:
   QLabel         *m_divLabel;
   QLabel         *m_ampLabel;
   QLabel         *m_freqLabel;
+  QLabel         *m_Vmax;
+  QLabel         *m_Vmin;
+  QLabel         *m_coupling;
+  QCheckBox      *m_autoConfig;
   QDial          *m_HscaleDial;
   QDial          *m_VscaleDial;
   QDial          *m_HposDial;

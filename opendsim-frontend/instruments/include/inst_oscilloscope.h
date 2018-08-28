@@ -80,6 +80,7 @@ public:
   double m_prevVpos;
   double m_ampli;
   double m_filter;
+  double m_Vk;
 
   double max;
   double mid;

@@ -31,79 +31,79 @@ OscopeRenderer::OscopeRenderer( int width, int height, QWidget *parent /*= 0l*/ 
             , m_height( height )
             , m_hCenter( (double)width/2 )
             , m_vCenter( (double)height/2 )
-            , m_vMax( 0 )
-            , m_vMin( 0 )
-            , m_margin( 15*m_scale )
-            , m_scale( ((double)width-30*m_scale)/512 )
+            , m_scaleX( 0 )
+            , m_scaleY( 0 )
+            , m_margin( 0 )
 {
+  setSamples( 0l, 128 );
 }
 
 QSize OscopeRenderer::sizeHint() const { return QSize( m_width, m_height ); }
 
 QSize OscopeRenderer::minimumSizeHint() const { return QSize( m_width, m_height );  }
 
-void OscopeRenderer::setVsize( double max, double min ) { m_vMax = max; m_vMin = min; }
-
 void OscopeRenderer::setSamples( const int samples[], int size )
 {
+  if( m_sampleSize != size )
+    {
+      m_sampleSize = size;
+      m_scaleX = ((double)m_width)/180;
+      m_scaleY = ((double)m_height)/180;
+      m_margin = 2 * m_scaleX;
+      m_scaleX = ((double)m_width-4*m_scaleX)/m_sampleSize;
+      m_scaleY = ((double)m_height-4*m_scaleY)/m_sampleSize;
+    }
   m_samples = samples;
-  m_sampleSize = size;
-  m_scale = ((double)m_width-30*m_scale)/m_sampleSize;
   update();
 }
 
 void OscopeRenderer::paintEvent( QPaintEvent* /* event */ )
 {
-  QPainter p( this );
+  QPainter painter( this );
 
-  p.setRenderHint( QPainter::Antialiasing, true );
+  painter.setRenderHint( QPainter::Antialiasing, true );
 
-  p.setBrush( QColor( 10, 15, 50 ) );
-  p.drawRect(0, 0, m_width, m_height );
-
-  QPen pen( QColor( 90, 90, 180 ), 1.5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin );
-  p.setPen( pen );
+  painter.setBrush( QColor( 5, 9, 29 ) );
+  painter.drawRect(0, 0, m_width, m_height );
 
   double cero = m_margin;
-  double end = m_width-m_margin;
-  p.drawLine( cero, m_vCenter, end, m_vCenter );
-  p.drawLine( m_hCenter, cero, m_hCenter, end );
+  double endX = m_width - m_margin;
+  double endY = m_height - m_margin;
+  QPen pen( QColor( 75, 75, 75 ), 1.5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin );
+  painter.setPen( pen );
+  painter.drawLine( cero, m_vCenter, endX, m_vCenter );
+  painter.drawLine( m_hCenter, cero, m_hCenter, endY );
 
-  p.setPen( QColor( 70, 70, 140 ) );
+  painter.setPen( QColor( 72, 72, 72 ) );
 
-  for( double i=cero; i<end+1; i+=20*m_scale )
+  for( int x = cero; x<endX; x+=20*m_scaleX )
     {
-      p.drawLine( i, cero, i, end );
-      p.drawLine( cero, i, end, i );
+      painter.drawLine( x, cero, x, endY );
+      painter.drawLine(-x, cero,-x, endY );
+    }
+  for( int y = cero; y<endY; y+=20*m_scaleY )
+    {
+      painter.drawLine( cero, y, endX, y);
+      painter.drawLine( cero,-y, endX,-y);
     }
 
   if( m_samples )
     {
       QPen pen2( QColor( 240, 240, 100 ), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin );
 
-      p.setPen( pen2 );
+      painter.setPen( pen2 );
 
-      QPointF lastP = QPointF( m_margin, end-(double)m_samples[0]*m_scale );
+      QPointF lastP = QPointF( m_margin, m_vCenter-(double)m_samples[0]*m_scaleY );
       for( int i=1; i<m_sampleSize; i++ )
         {
-          QPointF thisP = QPointF( (double)i*m_scale+m_margin, end-(double)m_samples[i]*m_scale );
-          p.drawLine( lastP, thisP );
+          QPointF thisP = QPointF( (double)i*m_scaleX+m_margin, m_vCenter-(double)m_samples[i]*m_scaleY );
+          painter.drawLine( lastP, thisP );
           lastP = thisP;
         }
     }
 
   QPen pen3( QColor( 200, 200, 200 ), 1.5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin );
-  p.setPen( pen3 );
-
-  QFont font = p.font();
-  font.setPointSize(7);
-  font.setBold(true);
-  p.setFont( font );
-
-  p.drawText( cero, 1,     end, m_margin, Qt::AlignCenter, "Max: "+QString::number(m_vMax,'f', 2)+" V" );
-  p.drawText( cero, end+1, end, m_margin, Qt::AlignCenter, "Min: "+QString::number(m_vMin,'f', 2)+" V" );
-
-  p.end();
+  painter.setPen( pen3 );
 }
 
 }

@@ -27,7 +27,6 @@ public:
   OscopeRenderer( int width, int height, QWidget *parent = 0l );
 
   void setSamples( const int samples[], int size );
-  void setVsize( double max, double min );
 
 public:
   QSize sizeHint() const;
@@ -44,10 +43,9 @@ private:
   int m_height;
   double m_hCenter;
   double m_vCenter;
-  double m_vMax;
-  double m_vMin;
+  double m_scaleX;
+  double m_scaleY;
   double m_margin;
-  double m_scale;
 };
   
 }

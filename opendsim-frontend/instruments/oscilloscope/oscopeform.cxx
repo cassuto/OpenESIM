@@ -25,33 +25,41 @@ namespace dsim
 OscopeForm::OscopeForm( inst_oscilloscope *oscope, InstrumentPanel *parent /*= 0l*/ ) : InstrumentPanel( parent )
            , m_oscope( oscope )
 {
+  setWindowTitle( tr("Oscilloscope") );
   QHBoxLayout *centralLayout = new QHBoxLayout( this );
 
   m_renderer = new OscopeRenderer( 411, 341, this );
   centralLayout->addWidget( m_renderer );
 
   QVBoxLayout *pannelLayout = new QVBoxLayout();
+  QGridLayout *readoutLayout = new QGridLayout();
   m_divLabel = new QLabel( "Div:  0 S", this );
   m_ampLabel = new QLabel( "Amp: 0.00 V", this );
   m_freqLabel = new QLabel( "Freq: 000 Hz", this );
-  QCheckBox *autoConfig = new QCheckBox( tr("A"), this );
-  pannelLayout->addWidget( m_divLabel );
-  pannelLayout->addWidget( m_ampLabel );
-  pannelLayout->addWidget( m_freqLabel );
-  pannelLayout->addWidget( autoConfig );
-  pannelLayout->addStretch( 1 );
+  m_Vmax = new QLabel( "Vmax: 0.00 V", this );
+  m_Vmin = new QLabel( "Vmin: 0.00 V", this );
+  m_coupling = new QLabel( "Couple: AC", this );
+  m_autoConfig = new QCheckBox( tr("A"), this );
+  m_autoConfig->setChecked( m_oscope->m_auto );
+  readoutLayout->addWidget( m_divLabel, 0, 0, 1, 1 );
+  readoutLayout->addWidget( m_ampLabel, 1, 0, 1, 1 );
+  readoutLayout->addWidget( m_freqLabel, 2, 0, 1, 1 );
+  readoutLayout->addWidget( m_Vmax, 0, 1, 1, 1 );
+  readoutLayout->addWidget( m_Vmin, 1, 1, 1, 1 );
+  readoutLayout->addWidget( m_coupling, 2, 1, 1, 1);
+  readoutLayout->addWidget( m_autoConfig, 3, 0, 1, 1 );
 
   QGroupBox *frame = new QGroupBox( tr("Readout"), this );
-  frame->setLayout( pannelLayout );
-  centralLayout->addWidget( frame );
+  frame->setLayout( readoutLayout );
+  pannelLayout->addWidget( frame );
 
   QGridLayout *encoderTurns = new QGridLayout();
-  QLabel *label = new QLabel( tr("Scale:"), this );
+  QLabel *label = new QLabel( tr("Div:"), this );
   encoderTurns->addWidget( label, 0, 0, 1, 1 );
 
-  label = new QLabel( tr("X"), this );
+  label = new QLabel( tr("TIME"), this );
   encoderTurns->addWidget( label, 0, 1, 1, 1 );
-  label = new QLabel( tr("Y"), this );
+  label = new QLabel( tr("VOLT"), this );
   encoderTurns->addWidget( label, 0, 2, 1, 1 );
 
   m_HscaleDial = new QDial( this );
@@ -100,7 +108,9 @@ OscopeForm::OscopeForm( inst_oscilloscope *oscope, InstrumentPanel *parent /*= 0
 
   frame = new QGroupBox( tr("Adj."), this );
   frame->setLayout( encoderTurns );
-  centralLayout->addWidget( frame );
+  pannelLayout->addWidget( frame );
+
+  centralLayout->addLayout( pannelLayout );
 
   connect( m_HscaleDial, SIGNAL(valueChanged( int )), this, SLOT(onHscaleChanged( int )) );
 
@@ -110,7 +120,7 @@ OscopeForm::OscopeForm( inst_oscilloscope *oscope, InstrumentPanel *parent /*= 0
 
   connect( m_VposDial, SIGNAL(valueChanged( int )), this, SLOT(onVposChanged( int )) );
 
-  connect( autoConfig, SIGNAL(stateChanged( int )), this, SLOT(onAutoConfigChanged( int )) );
+  connect( m_autoConfig, SIGNAL(stateChanged( int )), this, SLOT(onAutoConfigChanged( int )) );
 }
 
 void OscopeForm::onDivChanged( double div, QString unit )
@@ -130,7 +140,8 @@ void OscopeForm::onFreqChanged( double freq )
 
 void OscopeForm::onAmpMaxMinChanged( double max, double min )
 {
-  UNUSED(max); UNUSED(min);
+  m_Vmax->setText( " Vmax: " +QString::number( max, 'f', 2 )+" V" );
+  m_Vmin->setText( " Vmin: " +QString::number( min, 'f', 2 )+" V" );
 }
 
 void OscopeForm::onReadSamples()
@@ -141,7 +152,8 @@ void OscopeForm::onReadSamples()
 
 void OscopeForm::onHscaleChanged( int value )
 {
-  if( m_oscope->m_auto ) return;
+  m_oscope->m_auto = false;
+  m_autoConfig->setChecked( false );
 
   if( value < m_oscope->m_prevHscale )
     {
@@ -158,7 +170,8 @@ void OscopeForm::onHscaleChanged( int value )
 
 void OscopeForm::onVscaleChanged( int value )
 {
-  if( m_oscope->m_auto ) return;
+  m_oscope->m_auto = false;
+  m_autoConfig->setChecked( false );
 
   double Vscale = (double)value;
   if( Vscale > m_oscope->m_prevVscale )
@@ -176,7 +189,8 @@ void OscopeForm::onVscaleChanged( int value )
 
 void OscopeForm::onHposChanged( int value )
 {
-  if( m_oscope->m_auto ) return;
+  m_oscope->m_auto = false;
+  m_autoConfig->setChecked( false );
 
   if( value < m_oscope->m_prevHpos )
     {
@@ -193,7 +207,8 @@ void OscopeForm::onHposChanged( int value )
 
 void OscopeForm::onVposChanged( int value )
 {
-  if( m_oscope->m_auto ) return;
+  m_oscope->m_auto = false;
+  m_autoConfig->setChecked( false );
 
   double Vpos = (double)value;
 

@@ -22,6 +22,7 @@ namespace dsim
 PlotterForm::PlotterForm( inst_plotter *plotter, InstrumentPanel *parent /*= 0l*/ ) : InstrumentPanel( parent )
             , m_plotter( plotter )
 {
+  setWindowTitle( tr("Plotter") );
   QVBoxLayout *layout = new QVBoxLayout( this );
   m_renderer = new PlotterRenderer( 1000, 200, this );
   layout->addWidget( m_renderer );

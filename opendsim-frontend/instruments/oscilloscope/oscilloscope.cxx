@@ -13,6 +13,7 @@
  *  Lesser General Public License for more details.
  */
 
+#include <cmath>
 #include "instrument-internal.h"
 
 #include "oscopeform.h"
@@ -37,6 +38,7 @@ inst_oscilloscope::inst_oscilloscope( int index )
                  , m_prevVpos( 0 )
                  , m_ampli( 0 )
                  , m_filter( 0.3 )
+                 , m_Vk( 20 )
                  , max( 0 )
                  , mid( 0 )
                  , min( 0 )
@@ -46,9 +48,9 @@ inst_oscilloscope::inst_oscilloscope( int index )
                  , m_numMax( 0 )
                  , down( false )
                  , up( false )
-                 , m_auto( false )
+                 , m_auto( true )
 {
-  setSampleSize( 512 );
+  setSampleSize( 128 );
   clear();
 
   m_form = new dsim::OscopeForm( this, 0l );
@@ -58,6 +60,8 @@ inst_oscilloscope::inst_oscilloscope( int index )
   connect( this, SIGNAL(ampliChanged( double )), m_form, SLOT(onAmpliChanged( double )) );
 
   connect( this, SIGNAL(freqChanged( double )), m_form, SLOT(onFreqChanged( double )) );
+
+  connect( this, SIGNAL(ampMaxMinChanged( double, double )), m_form, SLOT(onAmpMaxMinChanged( double, double )) );
 
   connect( this, SIGNAL(readSamples()), m_form, SLOT(onReadSamples()) );
 }
@@ -208,7 +212,7 @@ int inst_oscilloscope::syncClockTick() // asynchronous
         {
           if( ++m_Htick == m_Hscale )
             {
-              m_samples[m_smplCount] = ((sample-m_Vpos)*m_Vscale+2.5)*28;
+              m_samples[m_smplCount] = (sample-m_Vpos) * m_Vscale * m_Vk;
               m_smplCount++;
               m_Htick = 0;
               if( m_smplCount == m_sampleSize )
@@ -233,7 +237,7 @@ void inst_oscilloscope::setSampleSize( int size )
 
 void inst_oscilloscope::clear()
 {
-  for( int i=0; i<m_sampleSize; i++ ) m_samples[i] = 2.5*28;
+  for( int i=0; i<m_sampleSize; i++ ) m_samples[i] = 0;
   emit readSamples();
 
   setState( OSCOPE_WAITING_TRIGGER );
