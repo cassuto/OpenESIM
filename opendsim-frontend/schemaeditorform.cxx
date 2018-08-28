@@ -179,7 +179,10 @@ void SchemaEditorForm::createWidgets()
   this->setCentralWidget( schema );
 
   dom->addItem( schema->view() );
+  if( dom->type() == DOM_SCHEMA )
+    {
   dom->addItem( schsheet->instrumentManagement() );
+    }
 }
 
 void SchemaEditorForm::onModeSelection()

@@ -172,7 +172,7 @@ void ElementChord::paint( QPainter *painter, const QStyleOptionGraphicsItem *opt
 {
   Templatestyle::apply( painter, customLine(), customFill(), style(), isSelected() );
 
-  painter->drawChord( boundingRect(), m_a, m_alen );
+  painter->drawChord( boundingRect(), m_a * 16, m_alen * 16 );
   updatePads();
   UNUSED( option ); UNUSED( widget );
 }
