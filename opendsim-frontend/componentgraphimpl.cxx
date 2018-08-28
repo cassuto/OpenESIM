@@ -29,19 +29,20 @@ ComponentGraphImpl::ComponentGraphImpl()
               , m_painter( new QPainter )
               , m_elementPainter( 0l )
               , m_selected( false )
+              , m_width( 0 )
+              , m_height( 0 )
+              , m_format( BITMAP_FORMAT_DEFAULT )
 {
 }
 
 ComponentGraphImpl::~ComponentGraphImpl()
 {
+  delete m_pixBuffer;
   delete m_painter;
 }
 
-void ComponentGraphImpl::setBuffer( QImage *pixBuffer, ElementPainter *elementPainter )
-{
-  m_pixBuffer = pixBuffer;
-  m_elementPainter = elementPainter;
-}
+void ComponentGraphImpl::init( ElementPainter *elementPainter )
+{ m_elementPainter = elementPainter; }
 
 void ComponentGraphImpl::setStyle( const char *style )
 {
@@ -97,8 +98,40 @@ void ComponentGraphImpl::setPenStyle( LineStyle style )
   m_painter->setPen( pen );
 }
 
-void ComponentGraphImpl::begin()
+static inline QImage::Format mapBitmapFormat( BitmapFormat format )
 {
+  switch( format )
+  {
+    case BITMAP_FORMAT_MONO:        return QImage::Format_Mono;
+    case BITMAP_FORMAT_MONOLSB:     return QImage::Format_MonoLSB;
+    case BITMAP_FORMAT_RGB32:       return QImage::Format_RGB32;
+    case BITMAP_FORMAT_ARGB32:      return QImage::Format_ARGB32;
+    case BITMAP_FORMAT_RGB16:       return QImage::Format_RGB16;
+    case BITMAP_FORMAT_RGB666:      return QImage::Format_RGB666;
+    case BITMAP_FORMAT_RGB555:      return QImage::Format_RGB555;
+    case BITMAP_FORMAT_RGB888:      return QImage::Format_RGB888;
+    case BITMAP_FORMAT_DEFAULT:     return QImage::Format_ARGB32;
+    case BITMAP_FORMAT_INVALID:
+    default:                        return QImage::Format_Invalid;
+  }
+}
+
+void ComponentGraphImpl::createPixBuffer( BitmapFormat format )
+{
+  delete m_pixBuffer;
+  m_pixBuffer = new QImage( m_width, m_height, mapBitmapFormat( format ) );
+
+  m_format = format;
+  if( format == BITMAP_FORMAT_DEFAULT )
+    m_pixBuffer->fill( Qt::transparent );
+  else
+    m_pixBuffer->fill( 0 );
+}
+
+void ComponentGraphImpl::begin( BitmapFormat format /* = BITMAP_FORMAT_DEFAULT */ )
+{
+  if( m_format != format )
+    createPixBuffer( format );
   m_painter->begin( m_pixBuffer );
 }
 
@@ -137,6 +170,11 @@ void ComponentGraphImpl::fill( int r, int g, int b )
   m_pixBuffer->fill( QColor( r, g, b ) );
 }
 
+void ComponentGraphImpl::setColor( int index, int r, int g, int b )
+{
+  m_pixBuffer->setColor( index, qRgb( r, g, b ) );
+}
+
 void ComponentGraphImpl::setPixel( int col, int row, unsigned int color )
 {
   m_pixBuffer->setPixel( col, row, color );
@@ -145,6 +183,7 @@ void ComponentGraphImpl::setPixel( int col, int row, unsigned int color )
 void ComponentGraphImpl::end()
 {
   m_painter->end();
+  m_elementPainter->setPixBuffer( m_pixBuffer );
   m_elementPainter->update();
 }
 

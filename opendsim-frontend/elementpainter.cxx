@@ -45,11 +45,11 @@ ElementPainter::ElementPainter( const QRectF &rect, int id, SchemaScene *scene, 
   setRectParent( rect );
   setStyle( "painter" );
   setFineturningEnabled( true );
+  m_deviceGraph->init( this );
 }
 
 ElementPainter::~ElementPainter()
 {
-  delete m_pixBuffer;
 }
 
 void ElementPainter::setStyle( const char *style )
@@ -65,14 +65,8 @@ void ElementPainter::setRectParent( const QRectF &rect )
   setPos( r.topLeft() );
   QRectF mappedRect = mapRectFromParent( r );
   QGraphicsRectItem::setRect( mappedRect );
+  m_deviceGraph->setSize( mappedRect.width()-1, mappedRect.height()-1 );
   updatePads();
-
-  delete m_pixBuffer;
-  m_pixBuffer = new QImage( mappedRect.width()-1, mappedRect.height()-1, QImage::Format_MonoLSB );
-  m_pixBuffer->setColor( 1, qRgb(0,0,0) );
-  m_pixBuffer->setColor( 0, qRgb(205,219,187) );
-  m_pixBuffer->fill( 0 );
-  m_deviceGraph->setBuffer( m_pixBuffer, this );
 }
 
 QRectF ElementPainter::rectParent() const
@@ -116,6 +110,7 @@ int ElementPainter::deserialize( LispDataset *dataset )
   QRectF rect;
   rect.setCoords( x1, y1, x2, y2 );
   setRectParent( rect.normalized() );
+
   return rc;
 }
 

@@ -32,7 +32,9 @@ public:
   ComponentGraphImpl();
   ~ComponentGraphImpl();
 
-  void setBuffer( QImage *pixBuffer, ElementPainter *elementPainter );
+  inline void setSize( int width, int height ) { m_width = width; m_height = height; }
+  void init( ElementPainter *elementPainter );
+  void setElement( ElementPainter *elementPainter );
   void setSelected( bool selected ) { m_selected = selected; }
 
 public:
@@ -42,7 +44,7 @@ public:
   void setPenColor( int r, int g, int b );
   void setPenWidth( float w );
   void setPenStyle( LineStyle style );
-  void begin();
+  void begin( BitmapFormat format = BITMAP_FORMAT_DEFAULT );
   void point( int x, int y );
   void line( int x1, int y1, int x2, int y2 );
   void rect( int x, int y, int w, int h );
@@ -55,14 +57,20 @@ public:
   void fillRect( int, int, int, int, const ds_color_t& );
   void eraseRect( int, int, int, int );
   void fill( int r, int g, int b );
+  void setColor( int index, int r, int g, int b );
   void setPixel( int col, int row, unsigned int color );
   void end();
+
+private:
+  void createPixBuffer( BitmapFormat format );
 
 private:
   QImage  *m_pixBuffer;
   QPainter *m_painter;
   ElementPainter *m_elementPainter;
   bool      m_selected;
+  int       m_width, m_height;
+  BitmapFormat m_format;
 };
 
 }

@@ -51,6 +51,20 @@ enum ElemDirect
   ELEM_BOTTOM
 };
 
+enum BitmapFormat
+{
+  BITMAP_FORMAT_INVALID = 0,
+  BITMAP_FORMAT_DEFAULT,
+  BITMAP_FORMAT_MONO,
+  BITMAP_FORMAT_MONOLSB,
+  BITMAP_FORMAT_RGB32,
+  BITMAP_FORMAT_ARGB32,
+  BITMAP_FORMAT_RGB16,
+  BITMAP_FORMAT_RGB666,
+  BITMAP_FORMAT_RGB555,
+  BITMAP_FORMAT_RGB888
+};
+
 struct IRECT
 {
 public:
@@ -75,7 +89,7 @@ public:
   virtual void setPenColor( int r, int g, int b )=0;
   virtual void setPenWidth( float w )=0;
   virtual void setPenStyle( LineStyle style )=0;
-  virtual void begin()=0;
+  virtual void begin( BitmapFormat format = BITMAP_FORMAT_DEFAULT )=0;
   virtual void point( int x, int y )=0;
   virtual void line( int x1, int y1, int x2, int y2 )=0;
   virtual void rect( int x, int y, int w, int h )=0;
@@ -88,6 +102,7 @@ public:
   //virtual void fillRect( int, int, int, int, const graph_color& )=0;
   //virtual void eraseRect( int, int, int, int )=0;
   virtual void fill( int r, int g, int b )=0;
+  virtual void setColor( int index, int r, int g, int b )=0;
   virtual void setPixel( int col, int row, unsigned int color )=0;
   virtual void end()=0;
 };

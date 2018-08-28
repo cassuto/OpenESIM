@@ -46,6 +46,7 @@ public:
   inline const std::string &tokenId() const { return m_tokenId; }
   inline void setTokenId( const std::string &tokenId ) { m_tokenId = tokenId; }
   inline ComponentGraphImpl *deviceGraph() const { return m_deviceGraph; }
+  inline void setPixBuffer( QImage *pixbuffer ) { m_pixBuffer = pixbuffer; }
 
 protected:
   void staffMoveEvent( int index, bool fineturning, QGraphicsSceneMouseEvent *event );
