@@ -631,7 +631,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_unique_file="config.mk"
+ac_unique_file="config.guess"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 RCC
@@ -17787,9 +17787,9 @@ GIT="unknown"
 if test -d ".git"; then
 
 
-$as_echo "#define GIT \"f99d603\"" >>confdefs.h
+$as_echo "#define GIT \"ac411f4\"" >>confdefs.h
 
-  GIT=f99d603
+  GIT=ac411f4
   echo "Found Git clone... $GIT"
 fi
 

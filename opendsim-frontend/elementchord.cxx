@@ -21,15 +21,13 @@
 #include "schemaview.h"
 #include "staffpad.h"
 
-#include "elementarc.h"
+#include "elementchord.h"
 
 namespace dsim
 {
 
-ElementArc::ElementArc( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsItem* parent )
+ElementChord::ElementChord( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsItem* parent )
           : ElementGraphItem<QGraphicsItem>( id, scene, edit, parent )
-          , m_start( 0 )
-          , m_span( 0 )
 {
   if( edit )
     {
@@ -45,20 +43,17 @@ ElementArc::ElementArc( const QRectF &rect, int id, SchemaScene *scene, bool edi
   setFineturningEnabled( true );
 }
 
-ElementArc::~ElementArc()
+ElementChord::~ElementChord()
 {
 }
 
-void ElementArc::setArcAngle( int start, int span )
-{ m_start = start; m_span = span; update(); }
-
-void ElementArc::setStyle( const char *style )
+void ElementChord::setStyle( const char *style )
 {
   ElementGraphItem::setStyle( style );
   update();
 }
 
-void ElementArc::setRectParent( const QRectF &rect )
+void ElementChord::setRectParent( const QRectF &rect )
 {
   QRectF r( rect );
 
@@ -67,10 +62,10 @@ void ElementArc::setRectParent( const QRectF &rect )
   updatePads();
 }
 
-QRectF ElementArc::rectParent() const
-{ return mapRectToParent( boundingRect() ); }
+QRectF ElementChord::rectParent() const
+{ return mapRectToParent( m_bounding ); }
 
-void ElementArc::normalizeRect()
+void ElementChord::normalizeRect()
 {
   QRectF rect( rectParent().normalized() );
 
@@ -79,7 +74,7 @@ void ElementArc::normalizeRect()
   setRectParent( rect );
 }
 
-int ElementArc::serialize( LispDataset *dataset )
+int ElementChord::serialize( LispDataset *dataset )
 {
   int rc = ElementGraphItem::serialize( dataset );                  UPDATE_RC(rc);
 
@@ -89,13 +84,13 @@ int ElementArc::serialize( LispDataset *dataset )
   rc = dataset->ser( y1 );                                          UPDATE_RC(rc);
   rc = dataset->ser( x2 );                                          UPDATE_RC(rc);
   rc = dataset->ser( y2 );                                          UPDATE_RC(rc);
-  rc = dataset->ser( m_start );                                     UPDATE_RC(rc);
-  rc = dataset->ser( m_span );                                      UPDATE_RC(rc);
+  rc = dataset->ser( m_a );                                         UPDATE_RC(rc);
+  rc = dataset->ser( m_alen );                                      UPDATE_RC(rc);
 
   return rc;
 }
 
-int ElementArc::deserialize( LispDataset *dataset )
+int ElementChord::deserialize( LispDataset *dataset )
 {
   int rc = ElementGraphItem::deserialize( dataset );                UPDATE_RC(rc);
 
@@ -105,17 +100,16 @@ int ElementArc::deserialize( LispDataset *dataset )
   rc = dataset->des( y1 );                                          UPDATE_RC(rc);
   rc = dataset->des( x2 );                                          UPDATE_RC(rc);
   rc = dataset->des( y2 );                                          UPDATE_RC(rc);
-  rc = dataset->des( m_start );                                     UPDATE_RC(rc);
-  rc = dataset->des( m_span );                                      UPDATE_RC(rc);
+  rc = dataset->des( m_a );                                         UPDATE_RC(rc);
+  rc = dataset->des( m_alen );                                      UPDATE_RC(rc);
 
   QRectF rect;
   rect.setCoords( x1, y1, x2, y2 );
   setRectParent( rect.normalized() );
-  setArcAngle( m_start, m_span );
   return rc;
 }
 
-void ElementArc::updatePads()
+void ElementChord::updatePads()
 {
   if( !isRoot() || !editable() ) return;
 
@@ -130,13 +124,13 @@ void ElementArc::updatePads()
     }
 }
 
-void ElementArc::setSelected( bool selected )
+void ElementChord::setSelected( bool selected )
 {
   ElementGraphItem::setSelected( selected );
   updatePads();
 }
 
-void ElementArc::staffMoveEvent( int index, bool fineturning, QGraphicsSceneMouseEvent *event )
+void ElementChord::staffMoveEvent( int index, bool fineturning, QGraphicsSceneMouseEvent *event )
 {
   QPointF cp = fineturning ? event->scenePos() : togrid(event->scenePos());
   QRectF rect = rectParent();
@@ -171,16 +165,15 @@ void ElementArc::staffMoveEvent( int index, bool fineturning, QGraphicsSceneMous
   setRectParent( rect );
 }
 
-void ElementArc::staffMouseReleaseEvent( int, QGraphicsSceneMouseEvent * )
+void ElementChord::staffMouseReleaseEvent( int, QGraphicsSceneMouseEvent * )
 { normalizeRect(); }
 
-void ElementArc::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
+void ElementChord::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
 {
   Templatestyle::apply( painter, customLine(), customFill(), style(), isSelected() );
 
-  painter->drawArc( boundingRect().toRect(), m_start * 16, m_span * 16 );
+  painter->drawChord( boundingRect(), m_a, m_alen );
   updatePads();
-
   UNUSED( option ); UNUSED( widget );
 }
 

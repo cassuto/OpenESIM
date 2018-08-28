@@ -13,8 +13,8 @@
  *  Lesser General Public License for more details.
  */
 
-#ifndef ELEMENTARC_H_
-#define ELEMENTARC_H_
+#ifndef ELEMENTCHORD_H_
+#define ELEMENTCHORD_H_
 
 #include "elementgraphitem.h"
 #include "staffgraphitem.h"
@@ -24,16 +24,15 @@ namespace dsim
 
 class StaffPad;
 
-class ElementArc : public ElementGraphItem<QGraphicsItem>, public StaffEvents
+class ElementChord : public ElementGraphItem<QGraphicsItem>, public StaffEvents
 {
 public:
-  ElementArc( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsItem* parent = 0 );
-  ~ElementArc();
+  ElementChord( const QRectF &rect, int id, SchemaScene *scene, bool edit, QGraphicsItem* parent = 0 );
+  ~ElementChord();
 
-  const char *classname() const { return "arc"; }
+  const char *classname() const { return "chord"; }
   QRectF boundingRect() const { return m_bounding; }
   inline void setBoundingRect( const QRectF & rect ) { m_bounding = rect; }
-  void setArcAngle( int start, int span );
   void setStyle( const char *style );
   void setRectParent( const QRectF &rect );
   QRectF rectParent() const;
@@ -53,8 +52,8 @@ private:
   void updatePads();
 
   QRectF m_bounding;
-  int m_start;
-  int m_span;
+  int m_a;
+  int m_alen;
   StaffPad *m_pads[4];
 };
 

@@ -8,7 +8,7 @@ AM_INIT_AUTOMAKE([1.9])
 LT_PREREQ([2.4.6])
 LT_INIT
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_SRCDIR([config.mk])
+AC_CONFIG_SRCDIR([config.guess])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.

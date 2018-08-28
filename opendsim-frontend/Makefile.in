@@ -76,16 +76,17 @@ am_opendsim_OBJECTS = opendsim-edit.$(OBJEXT) \
 	elementtext.$(OBJEXT) elementrect.$(OBJEXT) \
 	elementline.$(OBJEXT) elementjoint.$(OBJEXT) \
 	elementellipse.$(OBJEXT) elementarc.$(OBJEXT) \
-	elementorigin.$(OBJEXT) elementpainter.$(OBJEXT) \
-	elementabstractport.$(OBJEXT) staffgraphitem.$(OBJEXT) \
-	staffpad.$(OBJEXT) schemaviewactions.$(OBJEXT) \
-	schemaviewmenus.$(OBJEXT) mainwindow.$(OBJEXT) \
-	schemawidget.$(OBJEXT) schemaview.$(OBJEXT) \
-	schemascene.$(OBJEXT) schemaeditorform.$(OBJEXT) \
-	componentpickwidget.$(OBJEXT) componentpicktree.$(OBJEXT) \
-	componentlibrarydialog.$(OBJEXT) propertydialog.$(OBJEXT) \
-	propertywidget.$(OBJEXT) propertywidgettext.$(OBJEXT) \
-	propertywidgetpin.$(OBJEXT) propertywidgetcustom.$(OBJEXT) \
+	elementchord.$(OBJEXT) elementorigin.$(OBJEXT) \
+	elementpainter.$(OBJEXT) elementabstractport.$(OBJEXT) \
+	staffgraphitem.$(OBJEXT) staffpad.$(OBJEXT) \
+	schemaviewactions.$(OBJEXT) schemaviewmenus.$(OBJEXT) \
+	mainwindow.$(OBJEXT) schemawidget.$(OBJEXT) \
+	schemaview.$(OBJEXT) schemascene.$(OBJEXT) \
+	schemaeditorform.$(OBJEXT) componentpickwidget.$(OBJEXT) \
+	componentpicktree.$(OBJEXT) componentlibrarydialog.$(OBJEXT) \
+	propertydialog.$(OBJEXT) propertywidget.$(OBJEXT) \
+	propertywidgettext.$(OBJEXT) propertywidgetpin.$(OBJEXT) \
+	propertywidgetcustom.$(OBJEXT) \
 	propertywidgetcomponent.$(OBJEXT) \
 	propertywidgetconfig.$(OBJEXT) propertywidgetpainter.$(OBJEXT) \
 	propertycontainerimpl.$(OBJEXT) propertyeditorwidget.$(OBJEXT) \
@@ -274,6 +275,7 @@ opendsim_SOURCES = \
   elementjoint.cxx \
   elementellipse.cxx \
   elementarc.cxx \
+  elementchord.cxx \
   elementorigin.cxx \
   elementpainter.cxx \
   elementabstractport.cxx \
@@ -435,6 +437,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementabstractport.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementarc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementbase.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementchord.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementellipse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementgraphitem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elementjoint.Po@am__quote@

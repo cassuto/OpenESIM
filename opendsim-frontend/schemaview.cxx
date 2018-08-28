@@ -33,6 +33,7 @@
 #include "elementjoint.h"
 #include "elementorigin.h"
 #include "elementpainter.h"
+#include "elementchord.h"
 #include "schemaview.h"
 
 namespace dsim
@@ -176,6 +177,11 @@ ElementBase *SchemaView::createElement( const char *classname, const QPointF &po
     {
       ElementEllipse *ellipseElement = new ElementEllipse( QRectF( pos, pos ), id, m_schemaGraph, editable );
       element = ellipseElement;
+    }
+  else if( 0==std::strcmp( classname, "chord" ) )
+    {
+      ElementChord *chordElement = new ElementChord( QRectF( pos, pos ), id, m_schemaGraph, editable );
+      element = chordElement;
     }
   else if( 0==std::strcmp( classname, "arc" ) )
     {

@@ -47,6 +47,7 @@ opendsim_SOURCES = \
   elementjoint.cxx \
   elementellipse.cxx \
   elementarc.cxx \
+  elementchord.cxx \
   elementorigin.cxx \
   elementpainter.cxx \
   elementabstractport.cxx \

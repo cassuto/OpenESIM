@@ -24,6 +24,7 @@
 #include "elementrect.h"
 #include "elementellipse.h"
 #include "elementarc.h"
+#include "elementchord.h"
 #include "elementpainter.h"
 #include "propertydialog.h"
 #include "propertywidgetcustom.h"
@@ -45,6 +46,7 @@ DECLARE_ELEMENT_CAST(ComponentGraphItem, "component");
 DECLARE_ELEMENT_CAST(ElementRect, "rect");
 DECLARE_ELEMENT_CAST(ElementEllipse, "ellipse");
 DECLARE_ELEMENT_CAST(ElementArc, "arc");
+DECLARE_ELEMENT_CAST(ElementChord, "chord");
 DECLARE_ELEMENT_CAST(ElementPainter, "painter");
 
 void SchemaView::createContextMenus()
@@ -174,6 +176,10 @@ void SchemaView::onEditProperties( bool )
       else if( ElementArc *arc = element_cast<ElementArc *>(m_selectedElements) )
         {
           configLineFillText( settings, arc );
+        }
+      else if( ElementChord *chord = element_cast<ElementChord *>(m_selectedElements) )
+        {
+          configLineFillText( settings, chord );
         }
       else if( ElementPainter *painter = element_cast<ElementPainter *>(m_selectedElements) )
         {
