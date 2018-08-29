@@ -164,7 +164,7 @@ circuit_run_step( circuit_t *circuit, pfn_sync_clock clk, void *opaque )
     {
       circuit->step ++;
 
-      /* Switch ping-pong list for logical elements */
+      /* Select ping-pong list for logical elements */
       if( circuit->logic_list_curr_ping ) /* ping */
         {
           logic_list = &circuit->logic_list_ping;
@@ -173,6 +173,7 @@ circuit_run_step( circuit_t *circuit, pfn_sync_clock clk, void *opaque )
         {
           logic_list = &circuit->logic_list_pong;
         }
+
       circuit->logic_list_curr_ping = !circuit->logic_list_curr_ping;
 
       /* Run Reactive Elements */
@@ -211,6 +212,7 @@ circuit_run_step( circuit_t *circuit, pfn_sync_clock clk, void *opaque )
 
       hashmap_clear( logic_list, NULL /*collect*/ );
 
+
       /* Run Non-Linear elements */
       if( ++(circuit->non_linear_count) == circuit->steps_non_linear )
         {
@@ -248,6 +250,7 @@ circuit_run_step( circuit_t *circuit, pfn_sync_clock clk, void *opaque )
   return rc;
 }
 
+/* Important: it's allowed only to call this within element_clock() callback */
 int
 circuit_fast_update( circuit_t *circuit, const circ_node_t *node )
 {

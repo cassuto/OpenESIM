@@ -106,12 +106,11 @@ matrix_init( circ_matrix_t *matrix, const list_t *node_list )
   matrix->node_list = node_list;
   matrix->num_nodes = list_size( matrix->node_list );
 
-  if( !matrix->num_nodes ) return -DS_FAULT;
-
   /*
    * Reallocate memory for matrix and vectors
    */
   free_vectors( matrix );
+  if( !matrix->num_nodes ) return 0;
   matrix->circ_matrix = matrix_alloc( matrix->num_nodes, matrix->num_nodes );
 
   matrix->node_volt = (double *)ds_heap_alloc( sizeof(double) * matrix->num_nodes );
@@ -195,6 +194,7 @@ int
 matrix_solve( circ_matrix_t *matrix )
 {
   int rc = 0;
+  if( !matrix->num_nodes ) return 0;
   if( !matrix->admit_changed && !matrix->curr_changed ) return 0;
 
   int n = matrix->num_nodes;
