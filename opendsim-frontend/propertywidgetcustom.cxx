@@ -16,7 +16,6 @@
 #include "propertywidgetcustom.h"
 
 #include <string>
-#include <cstdio>
 #include "templatestyle.h"
 #include "templatecustom.h"
 #include "presscolorbox.h"

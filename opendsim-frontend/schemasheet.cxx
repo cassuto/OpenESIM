@@ -341,7 +341,8 @@ void SchemaSheet::timerEvent( QTimerEvent* event )
         for( QList<RenderData>::iterator it = m_renders.begin(); it != m_renders.end(); it++ )
           {
             RenderData render = *it;
-            render.m_device->render_frame( render.m_schematic, render.m_deviceGraph );
+            if( render.m_deviceGraph )
+              render.m_device->render_frame( render.m_schematic, render.m_deviceGraph );
           }
       m_stepFuture = QtConcurrent::run( this, &SchemaSheet::runLoop );
     }

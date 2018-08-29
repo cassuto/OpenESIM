@@ -24,7 +24,6 @@
 #include <cstring>
 #include <sstream>
 #include <algorithm>
-#include <cstdio>
 
 #include "elementgraphitem.h" // for ElementBase::id()
 
