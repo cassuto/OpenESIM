@@ -32,6 +32,11 @@ libdsimdevices_la_SOURCES = \
   vsource-dc-0v/vsource-dc-0v.cxx \
   voltprobe/voltprobe.cxx \
   opamp/opamp.cxx \
+  and/and.cxx \
+  or/or.cxx \
+  xor/xor.cxx \
+  logicstate/logicstate.cxx \
+  drvsrc/drvsrc.cxx \
   bjt_pnp/bjt_pnp.cxx \
   bjt_npn/bjt_npn.cxx \
   atmega164/atmega164.cxx \

@@ -55,13 +55,16 @@ LIBOBJDIR =
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/adc/makefile.inc $(srcdir)/bjt/makefile.inc \
 	$(srcdir)/capacitor/makefile.inc $(srcdir)/d-and/makefile.inc \
-	$(srcdir)/d-buff/makefile.inc $(srcdir)/d-lcd8544/makefile.inc \
+	$(srcdir)/d-buff/makefile.inc $(srcdir)/d-drvsrc/makefile.inc \
+	$(srcdir)/d-lcd8544/makefile.inc \
 	$(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/d-or/makefile.inc \
 	$(srcdir)/d-xor/makefile.inc $(srcdir)/dac/makefile.inc \
 	$(srcdir)/dev/makefile.inc $(srcdir)/diode/makefile.inc \
-	$(srcdir)/inductor/makefile.inc $(srcdir)/mosfet/makefile.inc \
-	$(srcdir)/opamp/makefile.inc $(srcdir)/pn/makefile.inc \
-	$(srcdir)/register/makefile.inc $(srcdir)/vsource/makefile.inc
+	$(srcdir)/inductor/makefile.inc \
+	$(srcdir)/logicstate/makefile.inc \
+	$(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc \
+	$(srcdir)/pn/makefile.inc $(srcdir)/register/makefile.inc \
+	$(srcdir)/vsource/makefile.inc
 subdir = opendsim-core/models
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -200,7 +203,18 @@ am_libdsimmodels_la_OBJECTS = libdsimmodels_la-register.lo \
 	libdsimmodels_la-dlcd8544event.lo \
 	libdsimmodels_la-dlcd8544config.lo \
 	libdsimmodels_la-dlcd8544uninit.lo \
-	libdsimmodels_la-dlcd8544reset.lo libdsimmodels_la-dev.lo \
+	libdsimmodels_la-dlcd8544reset.lo libdsimmodels_la-d-drvsrc.lo \
+	libdsimmodels_la-ddrvsrccreate.lo \
+	libdsimmodels_la-ddrvsrcinit.lo \
+	libdsimmodels_la-ddrvsrcevent.lo \
+	libdsimmodels_la-ddrvsrcconfig.lo \
+	libdsimmodels_la-ddrvsrcclock.lo \
+	libdsimmodels_la-logicstate.lo \
+	libdsimmodels_la-logicstatecreate.lo \
+	libdsimmodels_la-logicstateinit.lo \
+	libdsimmodels_la-logicstateevent.lo \
+	libdsimmodels_la-logicstateconfig.lo \
+	libdsimmodels_la-logicstateuninit.lo libdsimmodels_la-dev.lo \
 	libdsimmodels_la-adevcreate.lo libdsimmodels_la-adevinit.lo \
 	libdsimmodels_la-adevstamp.lo libdsimmodels_la-adevvchanged.lo \
 	libdsimmodels_la-adevconfig.lo libdsimmodels_la-adevreset.lo \
@@ -470,8 +484,14 @@ libdsimmodels_la_SOURCES = register/register.c \
 	d-mcu-avr/thirdparty/sim/sim_io.c d-lcd8544/d-lcd8544.c \
 	d-lcd8544/dlcd8544create.c d-lcd8544/dlcd8544init.c \
 	d-lcd8544/dlcd8544event.c d-lcd8544/dlcd8544config.c \
-	d-lcd8544/dlcd8544uninit.c d-lcd8544/dlcd8544reset.c dev/dev.c \
-	dev/adevcreate.c dev/adevinit.cxx dev/adevstamp.cxx \
+	d-lcd8544/dlcd8544uninit.c d-lcd8544/dlcd8544reset.c \
+	d-drvsrc/d-drvsrc.c d-drvsrc/ddrvsrccreate.c \
+	d-drvsrc/ddrvsrcinit.c d-drvsrc/ddrvsrcevent.c \
+	d-drvsrc/ddrvsrcconfig.c d-drvsrc/ddrvsrcclock.c \
+	logicstate/logicstate.c logicstate/logicstatecreate.c \
+	logicstate/logicstateinit.c logicstate/logicstateevent.c \
+	logicstate/logicstateconfig.c logicstate/logicstateuninit.c \
+	dev/dev.c dev/adevcreate.c dev/adevinit.cxx dev/adevstamp.cxx \
 	dev/adevvchanged.cxx dev/adevconfig.c dev/adevreset.cxx \
 	dev/adevuninit.cxx dev/ddevcreate.c dev/ddevinit.cxx \
 	dev/ddevconfig.c dev/ddevreset.cxx dev/ddevuninit.cxx \
@@ -484,7 +504,7 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .cxx .lo .o .obj
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/register/makefile.inc $(srcdir)/capacitor/makefile.inc $(srcdir)/diode/makefile.inc $(srcdir)/pn/makefile.inc $(srcdir)/bjt/makefile.inc $(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc $(srcdir)/inductor/makefile.inc $(srcdir)/vsource/makefile.inc $(srcdir)/dac/makefile.inc $(srcdir)/adc/makefile.inc $(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc $(srcdir)/d-and/makefile.inc $(srcdir)/d-buff/makefile.inc $(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/d-lcd8544/makefile.inc $(srcdir)/dev/makefile.inc $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/register/makefile.inc $(srcdir)/capacitor/makefile.inc $(srcdir)/diode/makefile.inc $(srcdir)/pn/makefile.inc $(srcdir)/bjt/makefile.inc $(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc $(srcdir)/inductor/makefile.inc $(srcdir)/vsource/makefile.inc $(srcdir)/dac/makefile.inc $(srcdir)/adc/makefile.inc $(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc $(srcdir)/d-and/makefile.inc $(srcdir)/d-buff/makefile.inc $(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/d-lcd8544/makefile.inc $(srcdir)/d-drvsrc/makefile.inc $(srcdir)/logicstate/makefile.inc $(srcdir)/dev/makefile.inc $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -593,6 +613,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-capacitorvchanged.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-and.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-buff.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-drvsrc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-lcd8544.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-or.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-xor.Plo@am__quote@
@@ -616,6 +637,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddevinit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddevreset.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddevuninit.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddrvsrcclock.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddrvsrcconfig.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddrvsrccreate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddrvsrcevent.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddrvsrcinit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dev.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-diode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-diodeconfig.Plo@am__quote@
@@ -648,6 +674,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-inductorstamp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-inductoruninit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-inductorvchanged.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-logicstate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-logicstateconfig.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-logicstatecreate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-logicstateevent.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-logicstateinit.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-logicstateuninit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-mdel-lib.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-mdel-parameter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-mosfet.Plo@am__quote@
@@ -1948,6 +1980,90 @@ libdsimmodels_la-dlcd8544reset.lo: d-lcd8544/dlcd8544reset.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dlcd8544reset.lo `test -f 'd-lcd8544/dlcd8544reset.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544reset.c
 
+libdsimmodels_la-d-drvsrc.lo: d-drvsrc/d-drvsrc.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-d-drvsrc.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-d-drvsrc.Tpo" -c -o libdsimmodels_la-d-drvsrc.lo `test -f 'd-drvsrc/d-drvsrc.c' || echo '$(srcdir)/'`d-drvsrc/d-drvsrc.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-d-drvsrc.Tpo" "$(DEPDIR)/libdsimmodels_la-d-drvsrc.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-d-drvsrc.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-drvsrc/d-drvsrc.c' object='libdsimmodels_la-d-drvsrc.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-d-drvsrc.lo `test -f 'd-drvsrc/d-drvsrc.c' || echo '$(srcdir)/'`d-drvsrc/d-drvsrc.c
+
+libdsimmodels_la-ddrvsrccreate.lo: d-drvsrc/ddrvsrccreate.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-ddrvsrccreate.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-ddrvsrccreate.Tpo" -c -o libdsimmodels_la-ddrvsrccreate.lo `test -f 'd-drvsrc/ddrvsrccreate.c' || echo '$(srcdir)/'`d-drvsrc/ddrvsrccreate.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-ddrvsrccreate.Tpo" "$(DEPDIR)/libdsimmodels_la-ddrvsrccreate.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-ddrvsrccreate.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-drvsrc/ddrvsrccreate.c' object='libdsimmodels_la-ddrvsrccreate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-ddrvsrccreate.lo `test -f 'd-drvsrc/ddrvsrccreate.c' || echo '$(srcdir)/'`d-drvsrc/ddrvsrccreate.c
+
+libdsimmodels_la-ddrvsrcinit.lo: d-drvsrc/ddrvsrcinit.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-ddrvsrcinit.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-ddrvsrcinit.Tpo" -c -o libdsimmodels_la-ddrvsrcinit.lo `test -f 'd-drvsrc/ddrvsrcinit.c' || echo '$(srcdir)/'`d-drvsrc/ddrvsrcinit.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-ddrvsrcinit.Tpo" "$(DEPDIR)/libdsimmodels_la-ddrvsrcinit.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-ddrvsrcinit.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-drvsrc/ddrvsrcinit.c' object='libdsimmodels_la-ddrvsrcinit.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-ddrvsrcinit.lo `test -f 'd-drvsrc/ddrvsrcinit.c' || echo '$(srcdir)/'`d-drvsrc/ddrvsrcinit.c
+
+libdsimmodels_la-ddrvsrcevent.lo: d-drvsrc/ddrvsrcevent.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-ddrvsrcevent.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-ddrvsrcevent.Tpo" -c -o libdsimmodels_la-ddrvsrcevent.lo `test -f 'd-drvsrc/ddrvsrcevent.c' || echo '$(srcdir)/'`d-drvsrc/ddrvsrcevent.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-ddrvsrcevent.Tpo" "$(DEPDIR)/libdsimmodels_la-ddrvsrcevent.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-ddrvsrcevent.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-drvsrc/ddrvsrcevent.c' object='libdsimmodels_la-ddrvsrcevent.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-ddrvsrcevent.lo `test -f 'd-drvsrc/ddrvsrcevent.c' || echo '$(srcdir)/'`d-drvsrc/ddrvsrcevent.c
+
+libdsimmodels_la-ddrvsrcconfig.lo: d-drvsrc/ddrvsrcconfig.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-ddrvsrcconfig.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-ddrvsrcconfig.Tpo" -c -o libdsimmodels_la-ddrvsrcconfig.lo `test -f 'd-drvsrc/ddrvsrcconfig.c' || echo '$(srcdir)/'`d-drvsrc/ddrvsrcconfig.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-ddrvsrcconfig.Tpo" "$(DEPDIR)/libdsimmodels_la-ddrvsrcconfig.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-ddrvsrcconfig.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-drvsrc/ddrvsrcconfig.c' object='libdsimmodels_la-ddrvsrcconfig.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-ddrvsrcconfig.lo `test -f 'd-drvsrc/ddrvsrcconfig.c' || echo '$(srcdir)/'`d-drvsrc/ddrvsrcconfig.c
+
+libdsimmodels_la-ddrvsrcclock.lo: d-drvsrc/ddrvsrcclock.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-ddrvsrcclock.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-ddrvsrcclock.Tpo" -c -o libdsimmodels_la-ddrvsrcclock.lo `test -f 'd-drvsrc/ddrvsrcclock.c' || echo '$(srcdir)/'`d-drvsrc/ddrvsrcclock.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-ddrvsrcclock.Tpo" "$(DEPDIR)/libdsimmodels_la-ddrvsrcclock.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-ddrvsrcclock.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-drvsrc/ddrvsrcclock.c' object='libdsimmodels_la-ddrvsrcclock.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-ddrvsrcclock.lo `test -f 'd-drvsrc/ddrvsrcclock.c' || echo '$(srcdir)/'`d-drvsrc/ddrvsrcclock.c
+
+libdsimmodels_la-logicstate.lo: logicstate/logicstate.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-logicstate.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-logicstate.Tpo" -c -o libdsimmodels_la-logicstate.lo `test -f 'logicstate/logicstate.c' || echo '$(srcdir)/'`logicstate/logicstate.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-logicstate.Tpo" "$(DEPDIR)/libdsimmodels_la-logicstate.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-logicstate.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='logicstate/logicstate.c' object='libdsimmodels_la-logicstate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-logicstate.lo `test -f 'logicstate/logicstate.c' || echo '$(srcdir)/'`logicstate/logicstate.c
+
+libdsimmodels_la-logicstatecreate.lo: logicstate/logicstatecreate.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-logicstatecreate.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-logicstatecreate.Tpo" -c -o libdsimmodels_la-logicstatecreate.lo `test -f 'logicstate/logicstatecreate.c' || echo '$(srcdir)/'`logicstate/logicstatecreate.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-logicstatecreate.Tpo" "$(DEPDIR)/libdsimmodels_la-logicstatecreate.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-logicstatecreate.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='logicstate/logicstatecreate.c' object='libdsimmodels_la-logicstatecreate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-logicstatecreate.lo `test -f 'logicstate/logicstatecreate.c' || echo '$(srcdir)/'`logicstate/logicstatecreate.c
+
+libdsimmodels_la-logicstateinit.lo: logicstate/logicstateinit.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-logicstateinit.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-logicstateinit.Tpo" -c -o libdsimmodels_la-logicstateinit.lo `test -f 'logicstate/logicstateinit.c' || echo '$(srcdir)/'`logicstate/logicstateinit.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-logicstateinit.Tpo" "$(DEPDIR)/libdsimmodels_la-logicstateinit.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-logicstateinit.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='logicstate/logicstateinit.c' object='libdsimmodels_la-logicstateinit.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-logicstateinit.lo `test -f 'logicstate/logicstateinit.c' || echo '$(srcdir)/'`logicstate/logicstateinit.c
+
+libdsimmodels_la-logicstateevent.lo: logicstate/logicstateevent.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-logicstateevent.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-logicstateevent.Tpo" -c -o libdsimmodels_la-logicstateevent.lo `test -f 'logicstate/logicstateevent.c' || echo '$(srcdir)/'`logicstate/logicstateevent.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-logicstateevent.Tpo" "$(DEPDIR)/libdsimmodels_la-logicstateevent.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-logicstateevent.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='logicstate/logicstateevent.c' object='libdsimmodels_la-logicstateevent.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-logicstateevent.lo `test -f 'logicstate/logicstateevent.c' || echo '$(srcdir)/'`logicstate/logicstateevent.c
+
+libdsimmodels_la-logicstateconfig.lo: logicstate/logicstateconfig.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-logicstateconfig.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-logicstateconfig.Tpo" -c -o libdsimmodels_la-logicstateconfig.lo `test -f 'logicstate/logicstateconfig.c' || echo '$(srcdir)/'`logicstate/logicstateconfig.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-logicstateconfig.Tpo" "$(DEPDIR)/libdsimmodels_la-logicstateconfig.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-logicstateconfig.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='logicstate/logicstateconfig.c' object='libdsimmodels_la-logicstateconfig.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-logicstateconfig.lo `test -f 'logicstate/logicstateconfig.c' || echo '$(srcdir)/'`logicstate/logicstateconfig.c
+
+libdsimmodels_la-logicstateuninit.lo: logicstate/logicstateuninit.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-logicstateuninit.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-logicstateuninit.Tpo" -c -o libdsimmodels_la-logicstateuninit.lo `test -f 'logicstate/logicstateuninit.c' || echo '$(srcdir)/'`logicstate/logicstateuninit.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-logicstateuninit.Tpo" "$(DEPDIR)/libdsimmodels_la-logicstateuninit.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-logicstateuninit.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='logicstate/logicstateuninit.c' object='libdsimmodels_la-logicstateuninit.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-logicstateuninit.lo `test -f 'logicstate/logicstateuninit.c' || echo '$(srcdir)/'`logicstate/logicstateuninit.c
+
 libdsimmodels_la-dev.lo: dev/dev.c
 @am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dev.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dev.Tpo" -c -o libdsimmodels_la-dev.lo `test -f 'dev/dev.c' || echo '$(srcdir)/'`dev/dev.c; \
 @am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dev.Tpo" "$(DEPDIR)/libdsimmodels_la-dev.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dev.Tpo"; exit 1; fi
@@ -2147,7 +2263,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/adc $(distdir)/bjt $(distdir)/capacitor $(distdir)/d-and $(distdir)/d-buff $(distdir)/d-lcd8544 $(distdir)/d-mcu-avr $(distdir)/d-or $(distdir)/d-xor $(distdir)/dac $(distdir)/dev $(distdir)/diode $(distdir)/inductor $(distdir)/mosfet $(distdir)/opamp $(distdir)/pn $(distdir)/register $(distdir)/vsource
+	$(mkdir_p) $(distdir)/adc $(distdir)/bjt $(distdir)/capacitor $(distdir)/d-and $(distdir)/d-buff $(distdir)/d-drvsrc $(distdir)/d-lcd8544 $(distdir)/d-mcu-avr $(distdir)/d-or $(distdir)/d-xor $(distdir)/dac $(distdir)/dev $(distdir)/diode $(distdir)/inductor $(distdir)/logicstate $(distdir)/mosfet $(distdir)/opamp $(distdir)/pn $(distdir)/register $(distdir)/vsource
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

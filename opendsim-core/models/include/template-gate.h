@@ -42,6 +42,7 @@ LIB_FUNC(FNN(create))( circ_element_t *element )
 {
   DEFINE_PARAM(param, element, d_gate_param_t);
 
+  circ_element_set_digital_pin( element, 0, circ_element_get_pin_count(element)-1 );
   param->inputs_count = 2;
   return 0;
 }
@@ -56,8 +57,9 @@ LIB_FUNC(FNN(init))( circ_element_t *element )
 
   for( int i=0; i < param->inputs_count; i++ )
     {
-      if( (rc = circ_node_add_logic( PINNODE(element, i), element )) )
-        return rc;
+      if( element->pin_vector[i]->connected )
+        if( (rc = circ_node_add_logic( PINNODE(element, i), element )) )
+          return rc;
     }
 
   return 0;
@@ -67,17 +69,16 @@ static int
 LIB_FUNC(FNN(event))( circ_element_t *element )
 {
   int inputs = 0;
+  logic_state_t state;
   DEFINE_PARAM(param, element, d_gate_param_t);
 
   for( int i=0; i < param->inputs_count; i++ )
     {
-      logic_state_t  state = GET_STATE( element->pin_vector[i] );
+      state = GET_STATE( element->pin_vector[i] );
       if( logic_high( state ) ) inputs++;
-
-      state = D_GATE_OPERATOR(inputs, param->inputs_count) ? SIG_HIGH : SIG_LOW;
-      return circ_node_set_state( PINNODE(element, param->inputs_count), state );
     }
-  return 0;
+  state = D_GATE_OPERATOR(inputs, param->inputs_count) ? SIG_HIGH : SIG_LOW;
+  return circ_node_set_state( PINNODE(element, param->inputs_count), state );
 }
 
 /* configuration procedure */
@@ -130,7 +131,9 @@ LIB_FUNC(FNN(config))( circ_element_t *element, int op, ... )
           case 0: /* Input pins count */
             {
               param->inputs_count = va_arg( vlist, int );
-              rc = circ_element_set_pins( element, param->inputs_count+1 );
+              if( (rc = circ_element_set_pins( element, param->inputs_count+1 )) )
+                break;
+              circ_element_set_digital_pin( element, 0, param->inputs_count );
               break;
             }
           default:

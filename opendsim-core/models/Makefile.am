@@ -42,6 +42,8 @@ include d-and/makefile.inc
 include d-buff/makefile.inc
 include d-mcu-avr/makefile.inc
 include d-lcd8544/makefile.inc
+include d-drvsrc/makefile.inc
+include logicstate/makefile.inc
 include dev/makefile.inc
 
 libdsimmodels_la_SOURCES += mdel-parameter.c \

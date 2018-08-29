@@ -77,9 +77,12 @@ am_libdsimdevices_la_OBJECTS = libdsimdevices_la-1n4148.lo \
 	libdsimdevices_la-vsource-dc.lo \
 	libdsimdevices_la-vsource-dc-0v.lo \
 	libdsimdevices_la-voltprobe.lo libdsimdevices_la-opamp.lo \
-	libdsimdevices_la-bjt_pnp.lo libdsimdevices_la-bjt_npn.lo \
-	libdsimdevices_la-atmega164.lo libdsimdevices_la-lcdm5110.lo \
-	libdsimdevices_la-device.lo libdsimdevices_la-device-lib.lo \
+	libdsimdevices_la-and.lo libdsimdevices_la-or.lo \
+	libdsimdevices_la-xor.lo libdsimdevices_la-logicstate.lo \
+	libdsimdevices_la-drvsrc.lo libdsimdevices_la-bjt_pnp.lo \
+	libdsimdevices_la-bjt_npn.lo libdsimdevices_la-atmega164.lo \
+	libdsimdevices_la-lcdm5110.lo libdsimdevices_la-device.lo \
+	libdsimdevices_la-device-lib.lo \
 	libdsimdevices_la-propertyvalue.lo
 libdsimdevices_la_OBJECTS = $(am_libdsimdevices_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -232,7 +235,9 @@ libdsimdevices_la_SOURCES = 1n4148/1n4148.cxx diode/diode.cxx \
 	register/register.cxx capacitor/capacitor.cxx \
 	inductor/inductor.cxx vsource-dc/vsource-dc.cxx \
 	vsource-dc-0v/vsource-dc-0v.cxx voltprobe/voltprobe.cxx \
-	opamp/opamp.cxx bjt_pnp/bjt_pnp.cxx bjt_npn/bjt_npn.cxx \
+	opamp/opamp.cxx and/and.cxx or/or.cxx xor/xor.cxx \
+	logicstate/logicstate.cxx drvsrc/drvsrc.cxx \
+	bjt_pnp/bjt_pnp.cxx bjt_npn/bjt_npn.cxx \
 	atmega164/atmega164.cxx lcdm5110/lcdm5110.cxx device.cxx \
 	device-lib.cxx propertyvalue.cxx
 libdsimdevices_la_CFLAGS = -Wno-unused-function
@@ -307,6 +312,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-1n4148.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-and.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-atmega164.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-bjt_npn.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-bjt_pnp.Plo@am__quote@
@@ -314,14 +320,18 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-device-lib.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-device.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-diode.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-drvsrc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-inductor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-lcdm5110.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-logicstate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-opamp.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-or.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-propertyvalue.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-register.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-voltprobe.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-vsource-dc-0v.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-vsource-dc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimdevices_la-xor.Plo@am__quote@
 
 .cxx.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -406,6 +416,41 @@ libdsimdevices_la-opamp.lo: opamp/opamp.cxx
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='opamp/opamp.cxx' object='libdsimdevices_la-opamp.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-opamp.lo `test -f 'opamp/opamp.cxx' || echo '$(srcdir)/'`opamp/opamp.cxx
+
+libdsimdevices_la-and.lo: and/and.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-and.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-and.Tpo" -c -o libdsimdevices_la-and.lo `test -f 'and/and.cxx' || echo '$(srcdir)/'`and/and.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsimdevices_la-and.Tpo" "$(DEPDIR)/libdsimdevices_la-and.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-and.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='and/and.cxx' object='libdsimdevices_la-and.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-and.lo `test -f 'and/and.cxx' || echo '$(srcdir)/'`and/and.cxx
+
+libdsimdevices_la-or.lo: or/or.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-or.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-or.Tpo" -c -o libdsimdevices_la-or.lo `test -f 'or/or.cxx' || echo '$(srcdir)/'`or/or.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsimdevices_la-or.Tpo" "$(DEPDIR)/libdsimdevices_la-or.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-or.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='or/or.cxx' object='libdsimdevices_la-or.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-or.lo `test -f 'or/or.cxx' || echo '$(srcdir)/'`or/or.cxx
+
+libdsimdevices_la-xor.lo: xor/xor.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-xor.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-xor.Tpo" -c -o libdsimdevices_la-xor.lo `test -f 'xor/xor.cxx' || echo '$(srcdir)/'`xor/xor.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsimdevices_la-xor.Tpo" "$(DEPDIR)/libdsimdevices_la-xor.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-xor.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='xor/xor.cxx' object='libdsimdevices_la-xor.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-xor.lo `test -f 'xor/xor.cxx' || echo '$(srcdir)/'`xor/xor.cxx
+
+libdsimdevices_la-logicstate.lo: logicstate/logicstate.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-logicstate.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-logicstate.Tpo" -c -o libdsimdevices_la-logicstate.lo `test -f 'logicstate/logicstate.cxx' || echo '$(srcdir)/'`logicstate/logicstate.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsimdevices_la-logicstate.Tpo" "$(DEPDIR)/libdsimdevices_la-logicstate.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-logicstate.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='logicstate/logicstate.cxx' object='libdsimdevices_la-logicstate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-logicstate.lo `test -f 'logicstate/logicstate.cxx' || echo '$(srcdir)/'`logicstate/logicstate.cxx
+
+libdsimdevices_la-drvsrc.lo: drvsrc/drvsrc.cxx
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-drvsrc.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-drvsrc.Tpo" -c -o libdsimdevices_la-drvsrc.lo `test -f 'drvsrc/drvsrc.cxx' || echo '$(srcdir)/'`drvsrc/drvsrc.cxx; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libdsimdevices_la-drvsrc.Tpo" "$(DEPDIR)/libdsimdevices_la-drvsrc.Plo"; else rm -f "$(DEPDIR)/libdsimdevices_la-drvsrc.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='drvsrc/drvsrc.cxx' object='libdsimdevices_la-drvsrc.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdsimdevices_la-drvsrc.lo `test -f 'drvsrc/drvsrc.cxx' || echo '$(srcdir)/'`drvsrc/drvsrc.cxx
 
 libdsimdevices_la-bjt_pnp.lo: bjt_pnp/bjt_pnp.cxx
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimdevices_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdsimdevices_la-bjt_pnp.lo -MD -MP -MF "$(DEPDIR)/libdsimdevices_la-bjt_pnp.Tpo" -c -o libdsimdevices_la-bjt_pnp.lo `test -f 'bjt_pnp/bjt_pnp.cxx' || echo '$(srcdir)/'`bjt_pnp/bjt_pnp.cxx; \

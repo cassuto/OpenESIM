@@ -1,0 +1,9 @@
+(format ssymbol 1 )
+(origin 4 -4 )
+(elements
+  (text 1 () 0 "pin" () () () 4 -9 "IN" )
+  (text 2 () 0 "pin" () () () -7 -15.5 "1" )
+  (pin 3 (1 2 ) 0 "pin" () () () -20 -4 24 #f #t 0 )
+  (painter 4 () 0 "painter" () () () 4 -12 20 4 "" )
+  (origin 5 () 0 "component" () () () 4 -4 )
+)

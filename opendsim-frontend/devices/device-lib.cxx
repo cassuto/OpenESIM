@@ -37,6 +37,11 @@
 #include "inductor.h"
 #include "voltprobe.h"
 #include "opamp.h"
+#include "and.h"
+#include "or.h"
+#include "xor.h"
+#include "logicstate.h"
+#include "drvsrc.h"
 #include "bjt_pnp.h"
 #include "bjt_npn.h"
 #include "atmega164.h"
@@ -142,6 +147,11 @@ int device_lib_init()
   rc = Entry( dev_bjt_npn::libraryEntry() );    UPDATE_RC(rc);
   rc = Entry( dev_atmega164::libraryEntry() );  UPDATE_RC(rc);
   rc = Entry( dev_lcdm5110::libraryEntry() );   UPDATE_RC(rc);
+  rc = Entry( dev_and::libraryEntry() );        UPDATE_RC(rc);
+  rc = Entry( dev_or::libraryEntry() );         UPDATE_RC(rc);
+  rc = Entry( dev_xor::libraryEntry() );        UPDATE_RC(rc);
+  rc = Entry( dev_logicstate::libraryEntry() ); UPDATE_RC(rc);
+  rc = Entry( dev_drvsrc::libraryEntry() );     UPDATE_RC(rc);
 
   return 0;
 }
