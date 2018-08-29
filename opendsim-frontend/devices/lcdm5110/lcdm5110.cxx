@@ -86,40 +86,37 @@ int dev_lcdm5110::config( int op, ... )
 
 int dev_lcdm5110::render_frame( ISchematic *, IDeviceGraph *deviceGraph )
 {
-  if( deviceGraph )
+  int rc;
+  int PD, D, E;
+
+  rc = circ_element_config(( m_mdel, ELM_CONFIG_GET, 1/*pd*/, &PD )); UPDATE_RC(rc);
+  rc = circ_element_config(( m_mdel, ELM_CONFIG_GET, 2/*disp*/, &D )); UPDATE_RC(rc);
+  rc = circ_element_config(( m_mdel, ELM_CONFIG_GET, 3/*en*/, &E )); UPDATE_RC(rc);
+
+  deviceGraph->begin( BITMAP_FORMAT_MONOLSB );
+  deviceGraph->setColor( 1, 0, 0, 0 );
+  deviceGraph->setColor( 0, 205,219,187 );
+
+  if     ( PD )       deviceGraph->fill( 0, 0, 0 ); /* Power-Down mode */
+  else if( !D && !E ) deviceGraph->fill( 128, 128, 128 ); /* Blank Display mode, blank the visuals */
+  else if( !D && E )  deviceGraph->fill( 255, 255, 255 ); /* All segments on */
+  else
     {
-      int rc;
-      int PD, D, E;
-
-      rc = circ_element_config(( m_mdel, ELM_CONFIG_GET, 1/*pd*/, &PD )); UPDATE_RC(rc);
-      rc = circ_element_config(( m_mdel, ELM_CONFIG_GET, 2/*disp*/, &D )); UPDATE_RC(rc);
-      rc = circ_element_config(( m_mdel, ELM_CONFIG_GET, 3/*en*/, &E )); UPDATE_RC(rc);
-
-      deviceGraph->begin( BITMAP_FORMAT_MONOLSB );
-      deviceGraph->setColor( 1, 0, 0, 0 );
-      deviceGraph->setColor( 0, 205,219,187 );
-
-      if     ( PD )       deviceGraph->fill( 0, 0, 0 ); /* Power-Down mode */
-      else if( !D && !E ) deviceGraph->fill( 128, 128, 128 ); /* Blank Display mode, blank the visuals */
-      else if( !D && E )  deviceGraph->fill( 255, 255, 255 ); /* All segments on */
-      else
+      for(int row=0;row<6;row++)
         {
-          for(int row=0;row<6;row++)
+          for( int col=0;col<84;col++ )
             {
-              for( int col=0;col<84;col++ )
+              char abyte = (*m_gdram)[row][col];
+              for( int bit=0; bit<8; bit++ )
                 {
-                  char abyte = (*m_gdram)[row][col];
-                  for( int bit=0; bit<8; bit++ )
-                    {
-                      /* This takes inverse video mode into account: */
-                      deviceGraph->setPixel( col, row*8+bit, (abyte & 1) ^ ((D && E) ? 1 : 0) );
-                      abyte >>= 1;
-                    }
+                  /* This takes inverse video mode into account: */
+                  deviceGraph->setPixel( col, row*8+bit, (abyte & 1) ^ ((D && E) ? 1 : 0) );
+                  abyte >>= 1;
                 }
             }
         }
-
-      deviceGraph->end();
     }
+
+  deviceGraph->end();
   return 0;
 }
