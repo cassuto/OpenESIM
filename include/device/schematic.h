@@ -27,6 +27,8 @@ public:
   virtual void changeValue( const char *value )=0;
   virtual IDeviceGraph *getDeviceGraph( const char *tokenId )=0;
   virtual void registerRender( IDevice *device )=0; // called within IDevice::init(), not create()
+  virtual void acceptRenderEvent( bool accept )=0;
+  virtual void update()=0;
 };
 
 #endif

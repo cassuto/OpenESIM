@@ -173,6 +173,7 @@ void ElementPainter::staffMoveEvent( int index, bool fineturning, QGraphicsScene
 void ElementPainter::staffMouseReleaseEvent( int, QGraphicsSceneMouseEvent * )
 { normalizeRect(); }
 
+
 void ElementPainter::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
 {
   Templatestyle::apply( this, customLine(), customFill(), style(), isSelected() );

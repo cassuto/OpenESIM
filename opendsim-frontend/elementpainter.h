@@ -24,6 +24,7 @@ namespace dsim
 {
 
 class ComponentGraphImpl;
+class SchematicImpl;
 class StaffPad;
 
 class ElementPainter : public ElementGraphItem<QGraphicsRectItem>, public StaffEvents

@@ -17,6 +17,7 @@
 #define COMPONENTGRAPHIMPL_H_
 
 #include <device/graph.h>
+#include <string>
 
 class QPixmap;
 class QPainter;
@@ -34,8 +35,8 @@ public:
 
   inline void setSize( int width, int height ) { m_width = width; m_height = height; }
   void init( ElementPainter *elementPainter );
-  void setElement( ElementPainter *elementPainter );
   void setSelected( bool selected ) { m_selected = selected; }
+  inline const char *tokenId() const { return m_tokenId.c_str(); }
 
 public:
   void setStyle( const char *style );
@@ -52,8 +53,8 @@ public:
   void roundRect( int x, int y, int w, int h, int xRnd, int yRnd );
   void ellipse( int x, int y, int w, int h );
   void arc( int x, int y, int w, int h, int a, int alen );
-  int  text( const char*, int, int, int *Height=0 );
-  int  textMapped( const char*, int, int, int *Height=0 );
+  int  text( const char *text, int x, int y, int r=-1, int g=-1, int b=-1, bool bold = false, bool italic = false, int *height=0 );
+  int  text( const char *text, int x, int y, int r=-1, int g=-1, int b=-1, int pixsize = -1, bool bold = false, bool italic = false, int *height=0 );
   void fillRect( int, int, int, int, const ds_color_t& );
   void eraseRect( int, int, int, int );
   void fill( int r, int g, int b );
@@ -71,6 +72,7 @@ private:
   bool      m_selected;
   int       m_width, m_height;
   BitmapFormat m_format;
+  std::string m_tokenId;
 };
 
 }

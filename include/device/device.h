@@ -39,7 +39,18 @@ enum device_type
   DEV_DIGITAL
 };
 
-typedef enum io_type
+typedef enum
+{
+  RENDER_EVENT_NOP = 0,
+  RENDER_EVENT_MOUSE_PRESS,
+  RENDER_EVENT_MOUSE_MOVE,
+  RENDER_EVENT_MOUSE_RELEASE,
+  RENDER_EVENT_MOUSE_DBCLICK,
+  RENDER_EVENT_KEY_PRESS,
+  RENDER_EVENT_KEY_RELEASE,
+} render_event_t;
+
+typedef enum
 {
   IOTYPE_PASSIVE = 0,
   IOTYPE_INPUT,
@@ -50,7 +61,7 @@ typedef enum io_type
   IOTYPE_PULLDOWN
 } io_type_t;
 
-typedef enum probe_type
+typedef enum
 {
   PROBE_NONE = 0,
   PROBE_VOLTAGE,
@@ -149,6 +160,7 @@ public:
   virtual circ_pin_t *  pin( int index );
   virtual int           config( int op, ... );
   virtual int           render_frame( ISchematic *, IDeviceGraph * ) { return 0; }
+  virtual int           render_event( ISchematic *, IDeviceGraph *, render_event_t /*event*/, int /*x*/, int /*y*/, long /*flags*/ ) { return 0; }
   virtual int           uninit() { return 0; }
 
   //

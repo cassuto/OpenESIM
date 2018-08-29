@@ -17,6 +17,7 @@
 #define SCHEMATICIMPL_H_
 
 #include <device/schematic.h>
+#include <device/device.h>
 class IDeviceGraph;
 
 namespace dsim
@@ -33,15 +34,19 @@ public:
 
 public:
   void reset();
+  void emitEvent( render_event_t event, int x, int y, long flags );
 
 public:
   void changeValue( const char *value );
   IDeviceGraph *getDeviceGraph( const char *tokenId );
   void registerRender( IDevice *device );
+  void acceptRenderEvent( bool accept );
+  void update();
 
 private:
   SchemaView *m_schemaView;
   ComponentGraphItem *m_component;
+  bool          m_acceptRenderEvent;
 };
 
 }

@@ -97,8 +97,8 @@ public:
   virtual void roundRect( int x, int y, int w, int h, int xRnd, int yRnd )=0;
   virtual void ellipse( int x, int y, int w, int h )=0;
   virtual void arc( int x, int y, int w, int h, int a, int alen )=0;
-  //virtual int  text( const char*, int, int, int *Height=0 )=0;
-  //virtual int  textMapped( const char*, int, int, int *Height=0 )=0;
+  virtual int  text( const char *text, int x, int y, int r=-1, int g=-1, int b=-1, bool bold = false, bool italic = false, int *height=0 )=0;
+  virtual int  text( const char *text, int x, int y, int r=-1, int g=-1, int b=-1, int pixsize = -1, bool bold = false, bool italic = false, int *height=0 )=0;
   //virtual void fillRect( int, int, int, int, const graph_color& )=0;
   //virtual void eraseRect( int, int, int, int )=0;
   virtual void fill( int r, int g, int b )=0;

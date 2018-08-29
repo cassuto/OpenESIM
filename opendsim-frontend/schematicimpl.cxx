@@ -27,12 +27,25 @@ namespace dsim
 SchematicImpl::SchematicImpl( SchemaView *schemaView, ComponentGraphItem *component )
               : m_schemaView( schemaView )
               , m_component( component )
+              , m_acceptRenderEvent( false )
 {}
 
 void SchematicImpl::reset() {}
 
 void SchematicImpl::registerRender( IDevice *device )
 { m_schemaView->sheet()->registerRender( SchemaSheet::RenderData( this, m_component->deviceGraph(), device ) ); }
+
+void SchematicImpl::acceptRenderEvent( bool accept )
+{ m_acceptRenderEvent = accept; }
+
+void SchematicImpl::update()
+{ m_component->update(); }
+
+void SchematicImpl::emitEvent( render_event_t event, int x, int y, long flags )
+{
+  if( m_acceptRenderEvent && m_component->device()->valid() )
+    m_component->device()->get()->render_event( this, m_component->deviceGraph(), event, x, y, flags );
+}
 
 void SchematicImpl::changeValue( const char *value )
 {

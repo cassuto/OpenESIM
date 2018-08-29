@@ -382,9 +382,42 @@ QVariant ComponentGraphItem::itemChange( GraphicsItemChange change, const QVaria
   return value;
 }
 
+
+void ComponentGraphItem::keyPressEvent( QKeyEvent *event )
+{
+  ElementGraphItem::keyPressEvent( event );
+  schematic()->emitEvent( RENDER_EVENT_KEY_PRESS, -1, -1, event->key() );
+}
+void ComponentGraphItem::keyReleaseEvent( QKeyEvent *event )
+{
+  ElementGraphItem::keyReleaseEvent( event );
+  schematic()->emitEvent( RENDER_EVENT_KEY_RELEASE, -1, -1, event->key() );
+}
+void ComponentGraphItem::mousePressEvent( QGraphicsSceneMouseEvent *event )
+{
+  ElementGraphItem::mousePressEvent( event );
+  QPointF pos = mapFromScene( event->scenePos() );
+  schematic()->emitEvent( RENDER_EVENT_MOUSE_PRESS, pos.x(), pos.y(), 0 );
+}
+void ComponentGraphItem::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
+{
+  ElementGraphItem::mouseMoveEvent( event );
+  QPointF pos = mapFromScene( event->scenePos() );
+  schematic()->emitEvent( RENDER_EVENT_MOUSE_MOVE, pos.x(), pos.y(), 0 );
+}
+void ComponentGraphItem::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
+{
+  ElementGraphItem::mouseDoubleClickEvent( event );
+  QPointF pos = mapFromScene( event->scenePos() );
+  schematic()->emitEvent( RENDER_EVENT_MOUSE_DBCLICK, pos.x(), pos.y(), 0 );
+}
+
 void ComponentGraphItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
   ElementGraphItem::mouseReleaseEvent( event );
+
+  QPointF pos = mapFromScene( event->scenePos() );
+  schematic()->emitEvent( RENDER_EVENT_MOUSE_RELEASE, pos.x(), pos.y(), 0 );
 
   foreach( ElementBase *element, elements() )
     {

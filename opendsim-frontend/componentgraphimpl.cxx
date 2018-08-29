@@ -33,6 +33,7 @@ ComponentGraphImpl::ComponentGraphImpl()
               , m_height( 0 )
               , m_format( BITMAP_FORMAT_DEFAULT )
 {
+  createPixBuffer( m_format );
 }
 
 ComponentGraphImpl::~ComponentGraphImpl()
@@ -42,7 +43,7 @@ ComponentGraphImpl::~ComponentGraphImpl()
 }
 
 void ComponentGraphImpl::init( ElementPainter *elementPainter )
-{ m_elementPainter = elementPainter; }
+{ m_elementPainter = elementPainter; m_tokenId = elementPainter->tokenId(); }
 
 void ComponentGraphImpl::setStyle( const char *style )
 {
@@ -110,7 +111,7 @@ static inline QImage::Format mapBitmapFormat( BitmapFormat format )
     case BITMAP_FORMAT_RGB666:      return QImage::Format_RGB666;
     case BITMAP_FORMAT_RGB555:      return QImage::Format_RGB555;
     case BITMAP_FORMAT_RGB888:      return QImage::Format_RGB888;
-    case BITMAP_FORMAT_DEFAULT:     return QImage::Format_ARGB32;
+    case BITMAP_FORMAT_DEFAULT:     return QImage::Format_RGB32;
     case BITMAP_FORMAT_INVALID:
     default:                        return QImage::Format_Invalid;
   }
@@ -163,6 +164,48 @@ void ComponentGraphImpl::ellipse( int x, int y, int w, int h )
 void ComponentGraphImpl::arc( int x, int y, int w, int h, int a, int alen )
 {
   m_painter->drawArc( x, y, w, h, a, alen );
+}
+
+int ComponentGraphImpl::text( const char *text, int x, int y, int r, int g, int b, bool bold, bool italic, int *height )
+{
+  QPen lastPen = m_painter->pen();
+  if( r>0 && g>0 && b>0 )
+    m_painter->setPen( QColor( r, g, b ) );
+  QFont lastFont = m_painter->font();
+  QFont nfont = lastFont;
+  nfont.setBold( bold );
+  nfont.setItalic( italic );
+  m_painter->setFont( nfont );
+  m_painter->drawText( QPoint(x, y), text );
+  if( height )
+    {
+      *height = m_painter->fontMetrics().height();
+    }
+  m_painter->setPen( lastPen );
+  m_painter->setFont( lastFont );
+  return 0;
+}
+
+int ComponentGraphImpl::text( const char *text, int x, int y, int r, int g, int b, int pixsize, bool bold, bool italic, int *height )
+{
+  QPen lastPen = m_painter->pen();
+  if( r>0 && g>0 && b>0 )
+    m_painter->setPen( QColor( r, g, b ) );
+  QFont lastFont = m_painter->font();
+  QFont nfont = lastFont;
+  nfont.setBold( bold );
+  nfont.setItalic( italic );
+  if( pixsize > 0 )
+    nfont.setPixelSize( pixsize );
+  m_painter->setFont( nfont );
+  m_painter->drawText( QPoint(x, y), text );
+  if( height )
+    {
+      *height = m_painter->fontMetrics().height();
+    }
+  m_painter->setPen( lastPen );
+  m_painter->setFont( lastFont );
+  return 0;
 }
 
 void ComponentGraphImpl::fill( int r, int g, int b )
