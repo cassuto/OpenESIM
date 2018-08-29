@@ -94,9 +94,18 @@ hashmap_empty( hashmap_t *hashmap )
  */
 #define hashmap_collect(hashmap, node) \
   do { \
-      hashmap_node(node)->next = (hashmap)->collected_root; \
-      (hashmap)->collected_root = hashmap_node(node); \
-      } while(0)
+      hashmap_node_t *bucket_tail = hashmap_node(node); \
+      while( bucket_tail ) \
+        { \
+          if( !bucket_tail->next ) break; \
+          bucket_tail = bucket_tail->next; \
+        } \
+      if ( LIKELY((hashmap)->collected_root) ) \
+        (hashmap)->collected_tail->next = hashmap_node(node); \
+      else \
+        (hashmap)->collected_root = hashmap_node(node); \
+      (hashmap)->collected_tail = bucket_tail; \
+    } while(0)
 
 #define hashmap_alloc_node(hashmap, type)\
   ({ \
@@ -152,7 +161,7 @@ hashmap_empty( hashmap_t *hashmap )
 /*
  * hashmap foreach
  *
- * note: never remove or free the node within foreach_hashmap() code block, unless
+ * NOTE: never remove or free the node within foreach_hashmap() code block, unless
  * break; or return; after you did.
  *
  * @param _type Static Type of element pointer in the list, must be a pointer.
