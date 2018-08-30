@@ -5,7 +5,7 @@
 
 typedef struct buff_param_s
 {
-  logic_state_t *state;
+  bool reversed;
 } buff_param_t;
 
 int LIB_FUNC(buff_create)( circ_element_t * );

@@ -28,6 +28,19 @@ typedef enum
 
 #define logic_high(state) ( state == SIG_HIGH || state == SIG_RISE )
 #define logic_low(state) ( state == SIG_LOW || state == SIG_FALL )
+#define logic_reversed(state) \
+  ({ \
+      logic_state_t _resed; \
+      switch( state ) \
+      { \
+        case SIG_LOW: _resed = SIG_HIGH; break; \
+        case SIG_RISE: _resed = SIG_FALL; break; \
+        case SIG_HIGH: _resed = SIG_LOW; break; \
+        case SIG_FALL: _resed = SIG_RISE; break; \
+        case SIG_FLOAT: _resed = SIG_FLOAT; break; \
+      } \
+      (_resed); \
+    })
 
 
 #endif //!defined(LOGIC_SIGNAL_H_)

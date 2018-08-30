@@ -55,12 +55,13 @@ LIBOBJDIR =
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/adc/makefile.inc $(srcdir)/bjt/makefile.inc \
 	$(srcdir)/capacitor/makefile.inc $(srcdir)/d-and/makefile.inc \
-	$(srcdir)/d-buff/makefile.inc $(srcdir)/d-drvsrc/makefile.inc \
+	$(srcdir)/d-buff/makefile.inc $(srcdir)/d-demux/makefile.inc \
+	$(srcdir)/d-drvsrc/makefile.inc \
 	$(srcdir)/d-lcd8544/makefile.inc \
-	$(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/d-or/makefile.inc \
-	$(srcdir)/d-xor/makefile.inc $(srcdir)/dac/makefile.inc \
-	$(srcdir)/dev/makefile.inc $(srcdir)/diode/makefile.inc \
-	$(srcdir)/inductor/makefile.inc \
+	$(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/d-mux/makefile.inc \
+	$(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc \
+	$(srcdir)/dac/makefile.inc $(srcdir)/dev/makefile.inc \
+	$(srcdir)/diode/makefile.inc $(srcdir)/inductor/makefile.inc \
 	$(srcdir)/logicstate/makefile.inc \
 	$(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc \
 	$(srcdir)/pn/makefile.inc $(srcdir)/register/makefile.inc \
@@ -203,7 +204,12 @@ am_libdsimmodels_la_OBJECTS = libdsimmodels_la-register.lo \
 	libdsimmodels_la-dlcd8544event.lo \
 	libdsimmodels_la-dlcd8544config.lo \
 	libdsimmodels_la-dlcd8544uninit.lo \
-	libdsimmodels_la-dlcd8544reset.lo libdsimmodels_la-d-drvsrc.lo \
+	libdsimmodels_la-dlcd8544reset.lo libdsimmodels_la-d-mux.lo \
+	libdsimmodels_la-dmuxcreate.lo libdsimmodels_la-dmuxinit.lo \
+	libdsimmodels_la-dmuxevent.lo libdsimmodels_la-dmuxconfig.lo \
+	libdsimmodels_la-d-demux.lo libdsimmodels_la-ddemuxcreate.lo \
+	libdsimmodels_la-ddemuxinit.lo libdsimmodels_la-ddemuxevent.lo \
+	libdsimmodels_la-ddemuxconfig.lo libdsimmodels_la-d-drvsrc.lo \
 	libdsimmodels_la-ddrvsrccreate.lo \
 	libdsimmodels_la-ddrvsrcinit.lo \
 	libdsimmodels_la-ddrvsrcevent.lo \
@@ -485,6 +491,10 @@ libdsimmodels_la_SOURCES = register/register.c \
 	d-lcd8544/dlcd8544create.c d-lcd8544/dlcd8544init.c \
 	d-lcd8544/dlcd8544event.c d-lcd8544/dlcd8544config.c \
 	d-lcd8544/dlcd8544uninit.c d-lcd8544/dlcd8544reset.c \
+	d-mux/d-mux.c d-mux/dmuxcreate.c d-mux/dmuxinit.c \
+	d-mux/dmuxevent.c d-mux/dmuxconfig.c d-demux/d-demux.c \
+	d-demux/ddemuxcreate.c d-demux/ddemuxinit.c \
+	d-demux/ddemuxevent.c d-demux/ddemuxconfig.c \
 	d-drvsrc/d-drvsrc.c d-drvsrc/ddrvsrccreate.c \
 	d-drvsrc/ddrvsrcinit.c d-drvsrc/ddrvsrcevent.c \
 	d-drvsrc/ddrvsrcconfig.c d-drvsrc/ddrvsrcclock.c \
@@ -504,7 +514,7 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .cxx .lo .o .obj
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/register/makefile.inc $(srcdir)/capacitor/makefile.inc $(srcdir)/diode/makefile.inc $(srcdir)/pn/makefile.inc $(srcdir)/bjt/makefile.inc $(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc $(srcdir)/inductor/makefile.inc $(srcdir)/vsource/makefile.inc $(srcdir)/dac/makefile.inc $(srcdir)/adc/makefile.inc $(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc $(srcdir)/d-and/makefile.inc $(srcdir)/d-buff/makefile.inc $(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/d-lcd8544/makefile.inc $(srcdir)/d-drvsrc/makefile.inc $(srcdir)/logicstate/makefile.inc $(srcdir)/dev/makefile.inc $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/register/makefile.inc $(srcdir)/capacitor/makefile.inc $(srcdir)/diode/makefile.inc $(srcdir)/pn/makefile.inc $(srcdir)/bjt/makefile.inc $(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc $(srcdir)/inductor/makefile.inc $(srcdir)/vsource/makefile.inc $(srcdir)/dac/makefile.inc $(srcdir)/adc/makefile.inc $(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc $(srcdir)/d-and/makefile.inc $(srcdir)/d-buff/makefile.inc $(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/d-lcd8544/makefile.inc $(srcdir)/d-mux/makefile.inc $(srcdir)/d-demux/makefile.inc $(srcdir)/d-drvsrc/makefile.inc $(srcdir)/logicstate/makefile.inc $(srcdir)/dev/makefile.inc $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -613,8 +623,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-capacitorvchanged.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-and.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-buff.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-demux.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-drvsrc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-lcd8544.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-mux.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-or.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-xor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dac.Plo@am__quote@
@@ -630,6 +642,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dbuffevent.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dbuffinit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dbuffuninit.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddemuxconfig.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddemuxcreate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddemuxevent.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddemuxinit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddevclock.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddevconfig.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddevcreate.Plo@am__quote@
@@ -667,6 +683,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavrstamp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavruninit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmcuavrvchanged.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmuxconfig.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmuxcreate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmuxevent.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dmuxinit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-inductor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-inductorconfig.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-inductorcreate.Plo@am__quote@
@@ -1980,6 +2000,76 @@ libdsimmodels_la-dlcd8544reset.lo: d-lcd8544/dlcd8544reset.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dlcd8544reset.lo `test -f 'd-lcd8544/dlcd8544reset.c' || echo '$(srcdir)/'`d-lcd8544/dlcd8544reset.c
 
+libdsimmodels_la-d-mux.lo: d-mux/d-mux.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-d-mux.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-d-mux.Tpo" -c -o libdsimmodels_la-d-mux.lo `test -f 'd-mux/d-mux.c' || echo '$(srcdir)/'`d-mux/d-mux.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-d-mux.Tpo" "$(DEPDIR)/libdsimmodels_la-d-mux.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-d-mux.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mux/d-mux.c' object='libdsimmodels_la-d-mux.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-d-mux.lo `test -f 'd-mux/d-mux.c' || echo '$(srcdir)/'`d-mux/d-mux.c
+
+libdsimmodels_la-dmuxcreate.lo: d-mux/dmuxcreate.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dmuxcreate.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dmuxcreate.Tpo" -c -o libdsimmodels_la-dmuxcreate.lo `test -f 'd-mux/dmuxcreate.c' || echo '$(srcdir)/'`d-mux/dmuxcreate.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dmuxcreate.Tpo" "$(DEPDIR)/libdsimmodels_la-dmuxcreate.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dmuxcreate.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mux/dmuxcreate.c' object='libdsimmodels_la-dmuxcreate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dmuxcreate.lo `test -f 'd-mux/dmuxcreate.c' || echo '$(srcdir)/'`d-mux/dmuxcreate.c
+
+libdsimmodels_la-dmuxinit.lo: d-mux/dmuxinit.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dmuxinit.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dmuxinit.Tpo" -c -o libdsimmodels_la-dmuxinit.lo `test -f 'd-mux/dmuxinit.c' || echo '$(srcdir)/'`d-mux/dmuxinit.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dmuxinit.Tpo" "$(DEPDIR)/libdsimmodels_la-dmuxinit.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dmuxinit.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mux/dmuxinit.c' object='libdsimmodels_la-dmuxinit.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dmuxinit.lo `test -f 'd-mux/dmuxinit.c' || echo '$(srcdir)/'`d-mux/dmuxinit.c
+
+libdsimmodels_la-dmuxevent.lo: d-mux/dmuxevent.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dmuxevent.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dmuxevent.Tpo" -c -o libdsimmodels_la-dmuxevent.lo `test -f 'd-mux/dmuxevent.c' || echo '$(srcdir)/'`d-mux/dmuxevent.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dmuxevent.Tpo" "$(DEPDIR)/libdsimmodels_la-dmuxevent.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dmuxevent.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mux/dmuxevent.c' object='libdsimmodels_la-dmuxevent.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dmuxevent.lo `test -f 'd-mux/dmuxevent.c' || echo '$(srcdir)/'`d-mux/dmuxevent.c
+
+libdsimmodels_la-dmuxconfig.lo: d-mux/dmuxconfig.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dmuxconfig.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dmuxconfig.Tpo" -c -o libdsimmodels_la-dmuxconfig.lo `test -f 'd-mux/dmuxconfig.c' || echo '$(srcdir)/'`d-mux/dmuxconfig.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dmuxconfig.Tpo" "$(DEPDIR)/libdsimmodels_la-dmuxconfig.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dmuxconfig.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-mux/dmuxconfig.c' object='libdsimmodels_la-dmuxconfig.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dmuxconfig.lo `test -f 'd-mux/dmuxconfig.c' || echo '$(srcdir)/'`d-mux/dmuxconfig.c
+
+libdsimmodels_la-d-demux.lo: d-demux/d-demux.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-d-demux.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-d-demux.Tpo" -c -o libdsimmodels_la-d-demux.lo `test -f 'd-demux/d-demux.c' || echo '$(srcdir)/'`d-demux/d-demux.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-d-demux.Tpo" "$(DEPDIR)/libdsimmodels_la-d-demux.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-d-demux.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-demux/d-demux.c' object='libdsimmodels_la-d-demux.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-d-demux.lo `test -f 'd-demux/d-demux.c' || echo '$(srcdir)/'`d-demux/d-demux.c
+
+libdsimmodels_la-ddemuxcreate.lo: d-demux/ddemuxcreate.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-ddemuxcreate.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-ddemuxcreate.Tpo" -c -o libdsimmodels_la-ddemuxcreate.lo `test -f 'd-demux/ddemuxcreate.c' || echo '$(srcdir)/'`d-demux/ddemuxcreate.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-ddemuxcreate.Tpo" "$(DEPDIR)/libdsimmodels_la-ddemuxcreate.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-ddemuxcreate.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-demux/ddemuxcreate.c' object='libdsimmodels_la-ddemuxcreate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-ddemuxcreate.lo `test -f 'd-demux/ddemuxcreate.c' || echo '$(srcdir)/'`d-demux/ddemuxcreate.c
+
+libdsimmodels_la-ddemuxinit.lo: d-demux/ddemuxinit.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-ddemuxinit.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-ddemuxinit.Tpo" -c -o libdsimmodels_la-ddemuxinit.lo `test -f 'd-demux/ddemuxinit.c' || echo '$(srcdir)/'`d-demux/ddemuxinit.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-ddemuxinit.Tpo" "$(DEPDIR)/libdsimmodels_la-ddemuxinit.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-ddemuxinit.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-demux/ddemuxinit.c' object='libdsimmodels_la-ddemuxinit.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-ddemuxinit.lo `test -f 'd-demux/ddemuxinit.c' || echo '$(srcdir)/'`d-demux/ddemuxinit.c
+
+libdsimmodels_la-ddemuxevent.lo: d-demux/ddemuxevent.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-ddemuxevent.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-ddemuxevent.Tpo" -c -o libdsimmodels_la-ddemuxevent.lo `test -f 'd-demux/ddemuxevent.c' || echo '$(srcdir)/'`d-demux/ddemuxevent.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-ddemuxevent.Tpo" "$(DEPDIR)/libdsimmodels_la-ddemuxevent.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-ddemuxevent.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-demux/ddemuxevent.c' object='libdsimmodels_la-ddemuxevent.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-ddemuxevent.lo `test -f 'd-demux/ddemuxevent.c' || echo '$(srcdir)/'`d-demux/ddemuxevent.c
+
+libdsimmodels_la-ddemuxconfig.lo: d-demux/ddemuxconfig.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-ddemuxconfig.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-ddemuxconfig.Tpo" -c -o libdsimmodels_la-ddemuxconfig.lo `test -f 'd-demux/ddemuxconfig.c' || echo '$(srcdir)/'`d-demux/ddemuxconfig.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-ddemuxconfig.Tpo" "$(DEPDIR)/libdsimmodels_la-ddemuxconfig.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-ddemuxconfig.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-demux/ddemuxconfig.c' object='libdsimmodels_la-ddemuxconfig.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-ddemuxconfig.lo `test -f 'd-demux/ddemuxconfig.c' || echo '$(srcdir)/'`d-demux/ddemuxconfig.c
+
 libdsimmodels_la-d-drvsrc.lo: d-drvsrc/d-drvsrc.c
 @am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-d-drvsrc.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-d-drvsrc.Tpo" -c -o libdsimmodels_la-d-drvsrc.lo `test -f 'd-drvsrc/d-drvsrc.c' || echo '$(srcdir)/'`d-drvsrc/d-drvsrc.c; \
 @am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-d-drvsrc.Tpo" "$(DEPDIR)/libdsimmodels_la-d-drvsrc.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-d-drvsrc.Tpo"; exit 1; fi
@@ -2263,7 +2353,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/adc $(distdir)/bjt $(distdir)/capacitor $(distdir)/d-and $(distdir)/d-buff $(distdir)/d-drvsrc $(distdir)/d-lcd8544 $(distdir)/d-mcu-avr $(distdir)/d-or $(distdir)/d-xor $(distdir)/dac $(distdir)/dev $(distdir)/diode $(distdir)/inductor $(distdir)/logicstate $(distdir)/mosfet $(distdir)/opamp $(distdir)/pn $(distdir)/register $(distdir)/vsource
+	$(mkdir_p) $(distdir)/adc $(distdir)/bjt $(distdir)/capacitor $(distdir)/d-and $(distdir)/d-buff $(distdir)/d-demux $(distdir)/d-drvsrc $(distdir)/d-lcd8544 $(distdir)/d-mcu-avr $(distdir)/d-mux $(distdir)/d-or $(distdir)/d-xor $(distdir)/dac $(distdir)/dev $(distdir)/diode $(distdir)/inductor $(distdir)/logicstate $(distdir)/mosfet $(distdir)/opamp $(distdir)/pn $(distdir)/register $(distdir)/vsource
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

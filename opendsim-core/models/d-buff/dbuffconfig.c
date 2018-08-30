@@ -40,6 +40,7 @@ LIB_FUNC(buff_config)( circ_element_t *element, int op, ... )
         static model_variable_prop_t prop_list[] =
             {
               { "inc", "Number of Input port", MDEL_VAR_INTEGER },
+              { "rev", "Reversed output", MDEL_VAR_BOOL }
             };
         *prop = prop_list;
       }
@@ -51,6 +52,7 @@ LIB_FUNC(buff_config)( circ_element_t *element, int op, ... )
         switch ( param_id )
         {
           case 0: *(va_arg( vlist, int* )) = circ_element_get_pin_count(element) / 2; break;
+          case 1: *(va_arg( vlist, int* )) = (int)param->reversed; break;
           default: rc = -DS_FAULT;
         }
       }
@@ -66,7 +68,12 @@ LIB_FUNC(buff_config)( circ_element_t *element, int op, ... )
               int n = va_arg( vlist, int );
               if( (rc = circ_element_set_pins( element, n * 2 )) )
                 break;
-              circ_element_set_digital_pin( element, 0, n-1 );
+              circ_element_set_digital_pin( element, 0, n*2-1 );
+              break;
+            }
+          case 1: /* Reversed output */
+            {
+              param->reversed = (bool)(va_arg( vlist, int ));
               break;
             }
           default:

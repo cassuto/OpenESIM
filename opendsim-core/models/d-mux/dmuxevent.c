@@ -13,14 +13,30 @@
  *  Lesser General Public License for more details.
  */
 
-#include "d-drvsrc.h"
+#include "d-mux.h"
+
+static int bindec_table[3] = { 1, 2, 4 };
 
 int
-LIB_FUNC(drvsrc_create)( circ_element_t *element )
+LIB_FUNC(mux_event)( circ_element_t *element )
 {
-  DEFINE_PARAM(param, element, drvsrc_param_t);
+  int port = 0;
+  for( int i=8; i<11; i++ )
+    {
+      if( SIG_HIGH == GET_STATE( element->pin_vector[i] ) ) port += bindec_table[i-8];
+    }
 
-  circ_element_set_digital_pin( element, 0, circ_element_get_pin_count(element)-1 );
-  param->state = SIG_FLOAT;
+  logic_state_t out = GET_STATE( element->pin_vector[port] );
+  if( SIG_LOW == GET_STATE( element->pin_vector[11] ) )
+    {
+      circ_pin_set_state( element->pin_vector[12], out );
+      circ_pin_set_state( element->pin_vector[13], logic_reversed(out) );
+    }
+  else
+    {
+      circ_pin_set_state( element->pin_vector[12], SIG_FLOAT );
+      circ_pin_set_state( element->pin_vector[13], SIG_FLOAT );
+    }
+
   return 0;
 }

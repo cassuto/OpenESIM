@@ -22,18 +22,9 @@ LIB_FUNC(buff_init)( circ_element_t *element )
   int ports = circ_element_get_pin_count(element);
   DEFINE_PARAM(param, element, buff_param_t);
 
-  param->state = (logic_state_t*)ds_heap_alloc( ports * sizeof(logic_state_t) );
-
-  if( param->state )
-    {
-      circ_element_set_digital_pin( element, 0, ports-1 );
-
-      memset( param->state, 0, ports * sizeof(logic_state_t) );
-      for( int i=0; i < ports; i++ )
-        if( element->pin_vector[i]->connected )
-          if( (rc = circ_node_add_logic( PINNODE(element, i), element )) )
-            return rc;
-      return 0;
-    }
-  return -DS_NO_MEMORY;
+  for( int i=0; i < ports; i++ )
+    if( element->pin_vector[i]->connected )
+      if( (rc = circ_node_add_logic( PINNODE(element, i), element )) )
+        return rc;
+  return 0;
 }

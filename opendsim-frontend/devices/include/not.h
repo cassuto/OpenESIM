@@ -13,10 +13,21 @@
  *  Lesser General Public License for more details.
  */
 
-#include "d-buff.h"
+#ifndef DEVICE_NOT_H_
+#define DEVICE_NOT_H_
 
-void
-LIB_FUNC(buff_uninit)( circ_element_t *element )
+#include "device-lib-internal.h"
+
+class dev_not : public IDevice
 {
-  DEFINE_PARAM(param, element, buff_param_t);
-}
+public:
+  dev_not( const char *reference, int id, void *reserved );
+
+  static DeviceLibraryEntry *libraryEntry();
+  static IDevice *construct( const char *reference, int id, void *reserved );
+
+  int create( ISchematic *schematic, IPropertyContainer *properties );
+  int init( ISchematic *schematic, IPropertyContainer *properties );
+};
+
+#endif

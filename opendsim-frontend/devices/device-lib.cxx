@@ -40,8 +40,15 @@
 #include "and.h"
 #include "or.h"
 #include "xor.h"
+#include "not.h"
+#include "nand.h"
+#include "nor.h"
+#include "nxor.h"
+#include "buff.h"
 #include "logicstate.h"
 #include "drvsrc.h"
+#include "mux.h"
+#include "demux.h"
 #include "bjt_pnp.h"
 #include "bjt_npn.h"
 #include "atmega164.h"
@@ -150,8 +157,15 @@ int device_lib_init()
   rc = Entry( dev_and::libraryEntry() );        UPDATE_RC(rc);
   rc = Entry( dev_or::libraryEntry() );         UPDATE_RC(rc);
   rc = Entry( dev_xor::libraryEntry() );        UPDATE_RC(rc);
+  rc = Entry( dev_not::libraryEntry() );        UPDATE_RC(rc);
+  rc = Entry( dev_nand::libraryEntry() );       UPDATE_RC(rc);
+  rc = Entry( dev_nor::libraryEntry() );        UPDATE_RC(rc);
+  rc = Entry( dev_nxor::libraryEntry() );       UPDATE_RC(rc);
+  rc = Entry( dev_buff::libraryEntry() );       UPDATE_RC(rc);
   rc = Entry( dev_logicstate::libraryEntry() ); UPDATE_RC(rc);
   rc = Entry( dev_drvsrc::libraryEntry() );     UPDATE_RC(rc);
+  rc = Entry( dev_mux::libraryEntry() );        UPDATE_RC(rc);
+  rc = Entry( dev_demux::libraryEntry() );      UPDATE_RC(rc);
 
   return 0;
 }

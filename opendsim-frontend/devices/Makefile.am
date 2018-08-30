@@ -35,8 +35,15 @@ libdsimdevices_la_SOURCES = \
   and/and.cxx \
   or/or.cxx \
   xor/xor.cxx \
+  not/not.cxx \
+  nand/nand.cxx \
+  nor/nor.cxx \
+  nxor/nxor.cxx \
+  buff/buff.cxx \
   logicstate/logicstate.cxx \
   drvsrc/drvsrc.cxx \
+  mux/mux.cxx \
+  demux/demux.cxx \
   bjt_pnp/bjt_pnp.cxx \
   bjt_npn/bjt_npn.cxx \
   atmega164/atmega164.cxx \

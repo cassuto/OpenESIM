@@ -42,8 +42,11 @@ extern circ_element_descriptor_t mdel_adc;
 extern circ_element_descriptor_t mdel_or;
 extern circ_element_descriptor_t mdel_xor;
 extern circ_element_descriptor_t mdel_and;
+extern circ_element_descriptor_t mdel_buff;
 extern circ_element_descriptor_t mdel_mcu_avr;
-extern circ_element_descriptor_t mdel_lcd8545;
+extern circ_element_descriptor_t mdel_lcd8544;
+extern circ_element_descriptor_t mdel_mux;
+extern circ_element_descriptor_t mdel_demux;
 extern circ_element_descriptor_t mdel_logicstate;
 extern circ_element_descriptor_t mdel_drvsrc;
 extern circ_element_descriptor_t mdel_ddev;
@@ -65,8 +68,11 @@ static const circ_element_descriptor_t *element_descriptors[] =
     &mdel_or,
     &mdel_xor,
     &mdel_and,
+    &mdel_buff,
     &mdel_mcu_avr,
-    &mdel_lcd8545,
+    &mdel_lcd8544,
+    &mdel_mux,
+    &mdel_demux,
     &mdel_logicstate,
     &mdel_drvsrc,
     &mdel_adev,

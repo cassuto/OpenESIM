@@ -29,4 +29,4 @@ void LIB_FUNC(lcd8544_uninit)( circ_element_t * );
 
 void LIB_INT_FUNC(lcd8544_clear)( lcd8544_param_t *param );
 
-#endif //!defined(D_BUFF_H_)
+#endif //!defined(D_LCD8544_H_)

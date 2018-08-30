@@ -17787,9 +17787,9 @@ GIT="unknown"
 if test -d ".git"; then
 
 
-$as_echo "#define GIT \"92ada6f\"" >>confdefs.h
+$as_echo "#define GIT \"e2b0ff0\"" >>confdefs.h
 
-  GIT=92ada6f
+  GIT=e2b0ff0
   echo "Found Git clone... $GIT"
 fi
 

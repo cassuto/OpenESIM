@@ -13,10 +13,31 @@
  *  Lesser General Public License for more details.
  */
 
-#include "d-buff.h"
+#include "d-demux.h"
 
-void
-LIB_FUNC(buff_uninit)( circ_element_t *element )
+int
+LIB_FUNC(demux_config)( circ_element_t *element, int op, ... )
 {
-  DEFINE_PARAM(param, element, buff_param_t);
+  DEFINE_PARAM(param, element, demux_param_t);
+  int rc = 0;
+  va_list vlist;
+  va_start( vlist, op );
+
+  UNUSED(param);
+
+  switch( op )
+  {
+    case ELM_CONFIG_LIST_COUNT: /* Query the number of parameters */
+      {
+        int *count = va_arg( vlist, int* );
+        *count = 0;
+      }
+      break;
+
+    default:
+      rc = -DS_UNIMPLEMENTED;
+  }
+
+  va_end( vlist );
+  return rc;
 }

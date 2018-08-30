@@ -25,16 +25,18 @@ dsim_descriptor_t dsim_lcd8544 =
 
     .pfn_init = lcd8544_init,           /* callback function to initialize the simulator model */
 
-    .pfn_event = lcd8544_event,         /* callback function to inform volt changed */
-
     .pfn_config = lcd8544_config,       /* callback function to configure the element */
 
     .pfn_reset = lcd8544_reset,         /* callback function to reset the status */
 
-    .pfn_uninit = lcd8544_uninit        /* callback function to terminate the parameters */
+    .pfn_uninit = lcd8544_uninit,       /* callback function to terminate the parameters */
+
+    .pfn_clock = NULL,                  /* callback function to inform clock signal triggered */
+
+    .pfn_event = lcd8544_event,         /* callback function to inform volt changed */
   };
 
-circ_element_descriptor_t mdel_lcd8545 =
+circ_element_descriptor_t mdel_lcd8544 =
   {
     .param_size = sizeof(lcd8544_param_t),
 

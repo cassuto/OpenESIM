@@ -13,33 +13,35 @@
  *  Lesser General Public License for more details.
  */
 
-#include "d-buff.h"
+#include "d-demux.h"
+
+static int bindec_table[3] = { 1, 2, 4 };
 
 int
-LIB_FUNC(buff_event)( circ_element_t *element )
+LIB_FUNC(demux_event)( circ_element_t *element )
 {
-  int rc;
-  int ports = circ_element_get_pin_count(element)/2;
-
-  DEFINE_PARAM(param, element, buff_param_t);
-
-  if( param->reversed )
+  int port = 0;
+  for( int i=8; i<11; i++ )
     {
-      for( int i=0; i < ports; i++ )
+      if( SIG_HIGH == GET_STATE( element->pin_vector[i] ) ) port += bindec_table[i-8];
+    }
+
+  logic_state_t out = GET_STATE( element->pin_vector[12] );
+  if( SIG_LOW == GET_STATE( element->pin_vector[11] ) )
+    {
+      circ_pin_set_state( element->pin_vector[port], out );
+      for( int i=0; i<8; i++ )
         {
-          logic_state_t state = GET_STATE( element->pin_vector[i] );
-          if( (rc = circ_pin_set_state( element->pin_vector[ports+i], logic_reversed(state) )) )
-            return rc;
+          if( i != port ) circ_pin_set_state( element->pin_vector[i], SIG_LOW );
         }
     }
   else
     {
-      for( int i=0; i < ports; i++ )
+      for( int i=0; i<8; i++ )
         {
-          logic_state_t state = GET_STATE( element->pin_vector[i] );
-          if( (rc = circ_pin_set_state( element->pin_vector[ports+i], state )) )
-            return rc;
+          circ_pin_set_state( element->pin_vector[i], SIG_FLOAT );
         }
     }
+
   return 0;
 }

@@ -13,10 +13,11 @@
  *  Lesser General Public License for more details.
  */
 
-#include "d-buff.h"
+#include "d-demux.h"
 
-void
-LIB_FUNC(buff_uninit)( circ_element_t *element )
+int
+LIB_FUNC(demux_create)( circ_element_t *element )
 {
-  DEFINE_PARAM(param, element, buff_param_t);
+  circ_element_set_digital_pin( element, 0, circ_element_get_pin_count(element)-1 );
+  return 0;
 }

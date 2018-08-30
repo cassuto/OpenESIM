@@ -35,6 +35,7 @@
 typedef struct
 {
   int inputs_count;
+  bool reversed;
 } d_gate_param_t;
 
 static int
@@ -44,6 +45,7 @@ LIB_FUNC(FNN(create))( circ_element_t *element )
 
   circ_element_set_digital_pin( element, 0, circ_element_get_pin_count(element)-1 );
   param->inputs_count = 2;
+  param->reversed = false;
   return 0;
 }
 
@@ -77,8 +79,11 @@ LIB_FUNC(FNN(event))( circ_element_t *element )
       state = GET_STATE( element->pin_vector[i] );
       if( logic_high( state ) ) inputs++;
     }
-  state = D_GATE_OPERATOR(inputs, param->inputs_count) ? SIG_HIGH : SIG_LOW;
-  return circ_node_set_state( PINNODE(element, param->inputs_count), state );
+  if( param->reversed )
+    state = D_GATE_OPERATOR(inputs, param->inputs_count) ? SIG_LOW : SIG_HIGH;
+  else
+    state = D_GATE_OPERATOR(inputs, param->inputs_count) ? SIG_HIGH : SIG_LOW;
+  return circ_pin_set_state( element->pin_vector[param->inputs_count], state );
 }
 
 /* configuration procedure */
@@ -96,7 +101,7 @@ LIB_FUNC(FNN(config))( circ_element_t *element, int op, ... )
     case ELM_CONFIG_LIST_COUNT:
       {
         int *count = va_arg( vlist, int* );
-        *count = 1;
+        *count = 2;
       }
       break;
 
@@ -105,7 +110,8 @@ LIB_FUNC(FNN(config))( circ_element_t *element, int op, ... )
         const model_variable_prop_t **prop = va_arg( vlist, const model_variable_prop_t ** );
         static model_variable_prop_t prop_list[] =
             {
-              { "inc", "Number of Input ports", MDEL_VAR_INTEGER }
+              { "inc", "Number of Input ports", MDEL_VAR_INTEGER },
+              { "rev", "Reversed output", MDEL_VAR_BOOL }
             };
         *prop = prop_list;
       }
@@ -117,6 +123,7 @@ LIB_FUNC(FNN(config))( circ_element_t *element, int op, ... )
         switch ( param_id )
         {
           case 0: *(va_arg( vlist, int* )) = param->inputs_count; break;
+          case 1: *(va_arg( vlist, int* )) = (int)param->reversed; break;
           default:
             rc = -DS_FAULT;
         }
@@ -134,6 +141,11 @@ LIB_FUNC(FNN(config))( circ_element_t *element, int op, ... )
               if( (rc = circ_element_set_pins( element, param->inputs_count+1 )) )
                 break;
               circ_element_set_digital_pin( element, 0, param->inputs_count );
+              break;
+            }
+          case 1: /* Reversed output */
+            {
+              param->reversed = (bool)(va_arg( vlist, int ));
               break;
             }
           default:

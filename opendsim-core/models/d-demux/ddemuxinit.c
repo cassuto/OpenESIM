@@ -13,10 +13,17 @@
  *  Lesser General Public License for more details.
  */
 
-#include "d-buff.h"
+#include "d-demux.h"
 
-void
-LIB_FUNC(buff_uninit)( circ_element_t *element )
+int
+LIB_FUNC(demux_init)( circ_element_t *element )
 {
-  DEFINE_PARAM(param, element, buff_param_t);
+  int rc;
+  for( int i=0; i<12; i++ )
+    {
+      if( element->pin_vector[i]->connected )
+        if( (rc = circ_node_add_logic( PINNODE(element, i), element )) )
+          return rc;
+    }
+  return 0;
 }

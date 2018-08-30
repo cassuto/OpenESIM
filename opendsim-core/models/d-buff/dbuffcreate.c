@@ -18,6 +18,9 @@
 int
 LIB_FUNC(buff_create)( circ_element_t *element )
 {
-  UNUSED(element);
+  DEFINE_PARAM(param, element, buff_param_t);
+
+  circ_element_set_digital_pin( element, 0, circ_element_get_pin_count(element)-1 );
+  param->reversed = false;
   return 0;
 }
