@@ -57,6 +57,8 @@ DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/capacitor/makefile.inc $(srcdir)/d-and/makefile.inc \
 	$(srcdir)/d-buff/makefile.inc $(srcdir)/d-demux/makefile.inc \
 	$(srcdir)/d-drvsrc/makefile.inc \
+	$(srcdir)/d-flipflop-delay/makefile.inc \
+	$(srcdir)/d-flipflop-jk/makefile.inc \
 	$(srcdir)/d-lcd8544/makefile.inc \
 	$(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/d-mux/makefile.inc \
 	$(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc \
@@ -209,8 +211,18 @@ am_libdsimmodels_la_OBJECTS = libdsimmodels_la-register.lo \
 	libdsimmodels_la-dmuxevent.lo libdsimmodels_la-dmuxconfig.lo \
 	libdsimmodels_la-d-demux.lo libdsimmodels_la-ddemuxcreate.lo \
 	libdsimmodels_la-ddemuxinit.lo libdsimmodels_la-ddemuxevent.lo \
-	libdsimmodels_la-ddemuxconfig.lo libdsimmodels_la-d-drvsrc.lo \
-	libdsimmodels_la-ddrvsrccreate.lo \
+	libdsimmodels_la-ddemuxconfig.lo \
+	libdsimmodels_la-d-flipflop-delay.lo \
+	libdsimmodels_la-dflipflopdelaycreate.lo \
+	libdsimmodels_la-dflipflopdelayinit.lo \
+	libdsimmodels_la-dflipflopdelayevent.lo \
+	libdsimmodels_la-dflipflopdelayconfig.lo \
+	libdsimmodels_la-d-flipflop-jk.lo \
+	libdsimmodels_la-dflipflopjkcreate.lo \
+	libdsimmodels_la-dflipflopjkinit.lo \
+	libdsimmodels_la-dflipflopjkevent.lo \
+	libdsimmodels_la-dflipflopjkconfig.lo \
+	libdsimmodels_la-d-drvsrc.lo libdsimmodels_la-ddrvsrccreate.lo \
 	libdsimmodels_la-ddrvsrcinit.lo \
 	libdsimmodels_la-ddrvsrcevent.lo \
 	libdsimmodels_la-ddrvsrcconfig.lo \
@@ -495,18 +507,27 @@ libdsimmodels_la_SOURCES = register/register.c \
 	d-mux/dmuxevent.c d-mux/dmuxconfig.c d-demux/d-demux.c \
 	d-demux/ddemuxcreate.c d-demux/ddemuxinit.c \
 	d-demux/ddemuxevent.c d-demux/ddemuxconfig.c \
-	d-drvsrc/d-drvsrc.c d-drvsrc/ddrvsrccreate.c \
-	d-drvsrc/ddrvsrcinit.c d-drvsrc/ddrvsrcevent.c \
-	d-drvsrc/ddrvsrcconfig.c d-drvsrc/ddrvsrcclock.c \
-	logicstate/logicstate.c logicstate/logicstatecreate.c \
-	logicstate/logicstateinit.c logicstate/logicstateevent.c \
-	logicstate/logicstateconfig.c logicstate/logicstateuninit.c \
-	dev/dev.c dev/adevcreate.c dev/adevinit.cxx dev/adevstamp.cxx \
-	dev/adevvchanged.cxx dev/adevconfig.c dev/adevreset.cxx \
-	dev/adevuninit.cxx dev/ddevcreate.c dev/ddevinit.cxx \
-	dev/ddevconfig.c dev/ddevreset.cxx dev/ddevuninit.cxx \
-	dev/ddevclock.cxx dev/ddevevent.cxx mdel-parameter.c \
-	mdel-lib.c
+	d-flipflop-delay/d-flipflop-delay.c \
+	d-flipflop-delay/dflipflopdelaycreate.c \
+	d-flipflop-delay/dflipflopdelayinit.c \
+	d-flipflop-delay/dflipflopdelayevent.c \
+	d-flipflop-delay/dflipflopdelayconfig.c \
+	d-flipflop-jk/d-flipflop-jk.c \
+	d-flipflop-jk/dflipflopjkcreate.c \
+	d-flipflop-jk/dflipflopjkinit.c \
+	d-flipflop-jk/dflipflopjkevent.c \
+	d-flipflop-jk/dflipflopjkconfig.c d-drvsrc/d-drvsrc.c \
+	d-drvsrc/ddrvsrccreate.c d-drvsrc/ddrvsrcinit.c \
+	d-drvsrc/ddrvsrcevent.c d-drvsrc/ddrvsrcconfig.c \
+	d-drvsrc/ddrvsrcclock.c logicstate/logicstate.c \
+	logicstate/logicstatecreate.c logicstate/logicstateinit.c \
+	logicstate/logicstateevent.c logicstate/logicstateconfig.c \
+	logicstate/logicstateuninit.c dev/dev.c dev/adevcreate.c \
+	dev/adevinit.cxx dev/adevstamp.cxx dev/adevvchanged.cxx \
+	dev/adevconfig.c dev/adevreset.cxx dev/adevuninit.cxx \
+	dev/ddevcreate.c dev/ddevinit.cxx dev/ddevconfig.c \
+	dev/ddevreset.cxx dev/ddevuninit.cxx dev/ddevclock.cxx \
+	dev/ddevevent.cxx mdel-parameter.c mdel-lib.c
 libdsimmodels_la_LIBADD = $(LIBELF_LIBS) $(LIBSOCKET_LD)
 libdsimmodels_la_CFLAGS = -Wno-unused-function
 libdsimmodels_la_CPPFLAGS = -Wno-unused-function
@@ -514,7 +535,7 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .cxx .lo .o .obj
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/register/makefile.inc $(srcdir)/capacitor/makefile.inc $(srcdir)/diode/makefile.inc $(srcdir)/pn/makefile.inc $(srcdir)/bjt/makefile.inc $(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc $(srcdir)/inductor/makefile.inc $(srcdir)/vsource/makefile.inc $(srcdir)/dac/makefile.inc $(srcdir)/adc/makefile.inc $(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc $(srcdir)/d-and/makefile.inc $(srcdir)/d-buff/makefile.inc $(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/d-lcd8544/makefile.inc $(srcdir)/d-mux/makefile.inc $(srcdir)/d-demux/makefile.inc $(srcdir)/d-drvsrc/makefile.inc $(srcdir)/logicstate/makefile.inc $(srcdir)/dev/makefile.inc $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/register/makefile.inc $(srcdir)/capacitor/makefile.inc $(srcdir)/diode/makefile.inc $(srcdir)/pn/makefile.inc $(srcdir)/bjt/makefile.inc $(srcdir)/mosfet/makefile.inc $(srcdir)/opamp/makefile.inc $(srcdir)/inductor/makefile.inc $(srcdir)/vsource/makefile.inc $(srcdir)/dac/makefile.inc $(srcdir)/adc/makefile.inc $(srcdir)/d-or/makefile.inc $(srcdir)/d-xor/makefile.inc $(srcdir)/d-and/makefile.inc $(srcdir)/d-buff/makefile.inc $(srcdir)/d-mcu-avr/makefile.inc $(srcdir)/d-lcd8544/makefile.inc $(srcdir)/d-mux/makefile.inc $(srcdir)/d-demux/makefile.inc $(srcdir)/d-flipflop-delay/makefile.inc $(srcdir)/d-flipflop-jk/makefile.inc $(srcdir)/d-drvsrc/makefile.inc $(srcdir)/logicstate/makefile.inc $(srcdir)/dev/makefile.inc $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -625,6 +646,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-buff.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-demux.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-drvsrc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-flipflop-delay.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-flipflop-jk.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-lcd8544.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-mux.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-d-or.Plo@am__quote@
@@ -659,6 +682,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddrvsrcevent.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-ddrvsrcinit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dev.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dflipflopdelayconfig.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dflipflopdelaycreate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dflipflopdelayevent.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dflipflopdelayinit.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dflipflopjkconfig.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dflipflopjkcreate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dflipflopjkevent.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-dflipflopjkinit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-diode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-diodeconfig.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdsimmodels_la-diodecreate.Plo@am__quote@
@@ -2070,6 +2101,76 @@ libdsimmodels_la-ddemuxconfig.lo: d-demux/ddemuxconfig.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-ddemuxconfig.lo `test -f 'd-demux/ddemuxconfig.c' || echo '$(srcdir)/'`d-demux/ddemuxconfig.c
 
+libdsimmodels_la-d-flipflop-delay.lo: d-flipflop-delay/d-flipflop-delay.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-d-flipflop-delay.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-d-flipflop-delay.Tpo" -c -o libdsimmodels_la-d-flipflop-delay.lo `test -f 'd-flipflop-delay/d-flipflop-delay.c' || echo '$(srcdir)/'`d-flipflop-delay/d-flipflop-delay.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-d-flipflop-delay.Tpo" "$(DEPDIR)/libdsimmodels_la-d-flipflop-delay.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-d-flipflop-delay.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-flipflop-delay/d-flipflop-delay.c' object='libdsimmodels_la-d-flipflop-delay.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-d-flipflop-delay.lo `test -f 'd-flipflop-delay/d-flipflop-delay.c' || echo '$(srcdir)/'`d-flipflop-delay/d-flipflop-delay.c
+
+libdsimmodels_la-dflipflopdelaycreate.lo: d-flipflop-delay/dflipflopdelaycreate.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dflipflopdelaycreate.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dflipflopdelaycreate.Tpo" -c -o libdsimmodels_la-dflipflopdelaycreate.lo `test -f 'd-flipflop-delay/dflipflopdelaycreate.c' || echo '$(srcdir)/'`d-flipflop-delay/dflipflopdelaycreate.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dflipflopdelaycreate.Tpo" "$(DEPDIR)/libdsimmodels_la-dflipflopdelaycreate.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dflipflopdelaycreate.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-flipflop-delay/dflipflopdelaycreate.c' object='libdsimmodels_la-dflipflopdelaycreate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dflipflopdelaycreate.lo `test -f 'd-flipflop-delay/dflipflopdelaycreate.c' || echo '$(srcdir)/'`d-flipflop-delay/dflipflopdelaycreate.c
+
+libdsimmodels_la-dflipflopdelayinit.lo: d-flipflop-delay/dflipflopdelayinit.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dflipflopdelayinit.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dflipflopdelayinit.Tpo" -c -o libdsimmodels_la-dflipflopdelayinit.lo `test -f 'd-flipflop-delay/dflipflopdelayinit.c' || echo '$(srcdir)/'`d-flipflop-delay/dflipflopdelayinit.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dflipflopdelayinit.Tpo" "$(DEPDIR)/libdsimmodels_la-dflipflopdelayinit.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dflipflopdelayinit.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-flipflop-delay/dflipflopdelayinit.c' object='libdsimmodels_la-dflipflopdelayinit.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dflipflopdelayinit.lo `test -f 'd-flipflop-delay/dflipflopdelayinit.c' || echo '$(srcdir)/'`d-flipflop-delay/dflipflopdelayinit.c
+
+libdsimmodels_la-dflipflopdelayevent.lo: d-flipflop-delay/dflipflopdelayevent.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dflipflopdelayevent.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dflipflopdelayevent.Tpo" -c -o libdsimmodels_la-dflipflopdelayevent.lo `test -f 'd-flipflop-delay/dflipflopdelayevent.c' || echo '$(srcdir)/'`d-flipflop-delay/dflipflopdelayevent.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dflipflopdelayevent.Tpo" "$(DEPDIR)/libdsimmodels_la-dflipflopdelayevent.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dflipflopdelayevent.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-flipflop-delay/dflipflopdelayevent.c' object='libdsimmodels_la-dflipflopdelayevent.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dflipflopdelayevent.lo `test -f 'd-flipflop-delay/dflipflopdelayevent.c' || echo '$(srcdir)/'`d-flipflop-delay/dflipflopdelayevent.c
+
+libdsimmodels_la-dflipflopdelayconfig.lo: d-flipflop-delay/dflipflopdelayconfig.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dflipflopdelayconfig.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dflipflopdelayconfig.Tpo" -c -o libdsimmodels_la-dflipflopdelayconfig.lo `test -f 'd-flipflop-delay/dflipflopdelayconfig.c' || echo '$(srcdir)/'`d-flipflop-delay/dflipflopdelayconfig.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dflipflopdelayconfig.Tpo" "$(DEPDIR)/libdsimmodels_la-dflipflopdelayconfig.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dflipflopdelayconfig.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-flipflop-delay/dflipflopdelayconfig.c' object='libdsimmodels_la-dflipflopdelayconfig.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dflipflopdelayconfig.lo `test -f 'd-flipflop-delay/dflipflopdelayconfig.c' || echo '$(srcdir)/'`d-flipflop-delay/dflipflopdelayconfig.c
+
+libdsimmodels_la-d-flipflop-jk.lo: d-flipflop-jk/d-flipflop-jk.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-d-flipflop-jk.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-d-flipflop-jk.Tpo" -c -o libdsimmodels_la-d-flipflop-jk.lo `test -f 'd-flipflop-jk/d-flipflop-jk.c' || echo '$(srcdir)/'`d-flipflop-jk/d-flipflop-jk.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-d-flipflop-jk.Tpo" "$(DEPDIR)/libdsimmodels_la-d-flipflop-jk.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-d-flipflop-jk.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-flipflop-jk/d-flipflop-jk.c' object='libdsimmodels_la-d-flipflop-jk.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-d-flipflop-jk.lo `test -f 'd-flipflop-jk/d-flipflop-jk.c' || echo '$(srcdir)/'`d-flipflop-jk/d-flipflop-jk.c
+
+libdsimmodels_la-dflipflopjkcreate.lo: d-flipflop-jk/dflipflopjkcreate.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dflipflopjkcreate.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dflipflopjkcreate.Tpo" -c -o libdsimmodels_la-dflipflopjkcreate.lo `test -f 'd-flipflop-jk/dflipflopjkcreate.c' || echo '$(srcdir)/'`d-flipflop-jk/dflipflopjkcreate.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dflipflopjkcreate.Tpo" "$(DEPDIR)/libdsimmodels_la-dflipflopjkcreate.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dflipflopjkcreate.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-flipflop-jk/dflipflopjkcreate.c' object='libdsimmodels_la-dflipflopjkcreate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dflipflopjkcreate.lo `test -f 'd-flipflop-jk/dflipflopjkcreate.c' || echo '$(srcdir)/'`d-flipflop-jk/dflipflopjkcreate.c
+
+libdsimmodels_la-dflipflopjkinit.lo: d-flipflop-jk/dflipflopjkinit.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dflipflopjkinit.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dflipflopjkinit.Tpo" -c -o libdsimmodels_la-dflipflopjkinit.lo `test -f 'd-flipflop-jk/dflipflopjkinit.c' || echo '$(srcdir)/'`d-flipflop-jk/dflipflopjkinit.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dflipflopjkinit.Tpo" "$(DEPDIR)/libdsimmodels_la-dflipflopjkinit.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dflipflopjkinit.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-flipflop-jk/dflipflopjkinit.c' object='libdsimmodels_la-dflipflopjkinit.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dflipflopjkinit.lo `test -f 'd-flipflop-jk/dflipflopjkinit.c' || echo '$(srcdir)/'`d-flipflop-jk/dflipflopjkinit.c
+
+libdsimmodels_la-dflipflopjkevent.lo: d-flipflop-jk/dflipflopjkevent.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dflipflopjkevent.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dflipflopjkevent.Tpo" -c -o libdsimmodels_la-dflipflopjkevent.lo `test -f 'd-flipflop-jk/dflipflopjkevent.c' || echo '$(srcdir)/'`d-flipflop-jk/dflipflopjkevent.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dflipflopjkevent.Tpo" "$(DEPDIR)/libdsimmodels_la-dflipflopjkevent.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dflipflopjkevent.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-flipflop-jk/dflipflopjkevent.c' object='libdsimmodels_la-dflipflopjkevent.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dflipflopjkevent.lo `test -f 'd-flipflop-jk/dflipflopjkevent.c' || echo '$(srcdir)/'`d-flipflop-jk/dflipflopjkevent.c
+
+libdsimmodels_la-dflipflopjkconfig.lo: d-flipflop-jk/dflipflopjkconfig.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-dflipflopjkconfig.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-dflipflopjkconfig.Tpo" -c -o libdsimmodels_la-dflipflopjkconfig.lo `test -f 'd-flipflop-jk/dflipflopjkconfig.c' || echo '$(srcdir)/'`d-flipflop-jk/dflipflopjkconfig.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-dflipflopjkconfig.Tpo" "$(DEPDIR)/libdsimmodels_la-dflipflopjkconfig.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-dflipflopjkconfig.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='d-flipflop-jk/dflipflopjkconfig.c' object='libdsimmodels_la-dflipflopjkconfig.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -c -o libdsimmodels_la-dflipflopjkconfig.lo `test -f 'd-flipflop-jk/dflipflopjkconfig.c' || echo '$(srcdir)/'`d-flipflop-jk/dflipflopjkconfig.c
+
 libdsimmodels_la-d-drvsrc.lo: d-drvsrc/d-drvsrc.c
 @am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdsimmodels_la_CPPFLAGS) $(CPPFLAGS) $(libdsimmodels_la_CFLAGS) $(CFLAGS) -MT libdsimmodels_la-d-drvsrc.lo -MD -MP -MF "$(DEPDIR)/libdsimmodels_la-d-drvsrc.Tpo" -c -o libdsimmodels_la-d-drvsrc.lo `test -f 'd-drvsrc/d-drvsrc.c' || echo '$(srcdir)/'`d-drvsrc/d-drvsrc.c; \
 @am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libdsimmodels_la-d-drvsrc.Tpo" "$(DEPDIR)/libdsimmodels_la-d-drvsrc.Plo"; else rm -f "$(DEPDIR)/libdsimmodels_la-d-drvsrc.Tpo"; exit 1; fi
@@ -2353,7 +2454,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/adc $(distdir)/bjt $(distdir)/capacitor $(distdir)/d-and $(distdir)/d-buff $(distdir)/d-demux $(distdir)/d-drvsrc $(distdir)/d-lcd8544 $(distdir)/d-mcu-avr $(distdir)/d-mux $(distdir)/d-or $(distdir)/d-xor $(distdir)/dac $(distdir)/dev $(distdir)/diode $(distdir)/inductor $(distdir)/logicstate $(distdir)/mosfet $(distdir)/opamp $(distdir)/pn $(distdir)/register $(distdir)/vsource
+	$(mkdir_p) $(distdir)/adc $(distdir)/bjt $(distdir)/capacitor $(distdir)/d-and $(distdir)/d-buff $(distdir)/d-demux $(distdir)/d-drvsrc $(distdir)/d-flipflop-delay $(distdir)/d-flipflop-jk $(distdir)/d-lcd8544 $(distdir)/d-mcu-avr $(distdir)/d-mux $(distdir)/d-or $(distdir)/d-xor $(distdir)/dac $(distdir)/dev $(distdir)/diode $(distdir)/inductor $(distdir)/logicstate $(distdir)/mosfet $(distdir)/opamp $(distdir)/pn $(distdir)/register $(distdir)/vsource
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

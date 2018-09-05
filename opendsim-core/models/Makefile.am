@@ -44,6 +44,8 @@ include d-mcu-avr/makefile.inc
 include d-lcd8544/makefile.inc
 include d-mux/makefile.inc
 include d-demux/makefile.inc
+include d-flipflop-delay/makefile.inc
+include d-flipflop-jk/makefile.inc
 include d-drvsrc/makefile.inc
 include logicstate/makefile.inc
 include dev/makefile.inc
