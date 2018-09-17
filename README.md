@@ -27,10 +27,10 @@ All the electronic models and compnents are flexible and extensible, so more and
 There are mainly three directories of root dir:
 | filename | description |
 |:--------:|:-----------:|
-| `opendsim-core`          | Core library (Backend), including utilities, scheme-lisp parser and circuit simulation framework.
-| `opendsim-frontend`      | Console and GUI part
-| `opendsim-symbols`       | Schematic symbols of all devices
-| `include`                | C/C++ Header Files that contains exported and common definitions
+| `opendsim-core`          | Core library (Backend), including utilities, scheme-lisp parser and circuit simulation framework. |
+| `opendsim-frontend`      | Console and GUI part |
+| `opendsim-symbols`       | Schematic symbols of all devices |
+| `include`                | C/C++ Header Files that contains exported and common definitions |
 
 `opendsim-core` directories view:
 
