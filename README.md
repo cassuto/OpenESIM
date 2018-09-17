@@ -24,23 +24,44 @@ All the electronic models and compnents are flexible and extensible, so more and
 
 # Viewing Project Tree
 
-There are mainly three directories of this item:
-- opendsim-core          : Core library (Backend), including utilities, scheme-lisp parser and circuit simulation framework.
-- opendsim-frontend      : Console and GUI part
-- opendsim-symbols       : Schematic symbols of all devices
+There are mainly three directories of root dir:
+| filename | description |
+|:--------:|:-----------:|
+| `opendsim-core`          | Core library (Backend), including utilities, scheme-lisp parser and circuit simulation framework.
+| `opendsim-frontend`      | Console and GUI part
+| `opendsim-symbols`       | Schematic symbols of all devices
+| `include`                | C/C++ Header Files that contains exported and common definitions
+
+`opendsim-core` directories view:
+
+| filename | description |
+|:--------:|:-----------:|
+| `circuit` | Simulation framework of circuit object |
+| `math` | Mathemathematical procedures, for example, matrix. |
+| `models` | Primitive model library |
+| `scheme-lisp` | A simple scheme-lisp parser for common purpose. |
+| `util` | Utilities foundation |
+
+`opendsim-frontend` directories view:
+
+| filename | description |
+|:--------:|:-----------:|
+| `devices` | Device models library |
+| `instruments` | Virtual Instrument library |
+| `include` | Private C/C++ Header files that is limited within frontend |
 
 # Concepts
 
 Three-layout simulation system:
-- Layout-1               : Primitive model
-- Layout-2               : Device Package
-- Layout-3               : Schematic
+- `Layout-1`               : Primitive model
+- `Layout-2`               : Device Package
+- `Layout-3`               : Schematic
 
-Layout-1: The primitive models is constructed by C/C++ language, which is accessible to node admittance matrix and logic event subsystem.They pay a low-level and important role of the whole simulator.
+`Layout-1`: The primitive models is constructed by C/C++ language, which is accessible to node admittance matrix and logic event subsystem.They pay a low-level and important role of the whole simulator.
 
-Layout-2: The device package is described by one or more primitive models and their physical connections.Maybe extra initial configuration of models should be provided as well.They also deal with what will be shown on schematic and process real-time GUI events sent by user, making a reflection if circuit status is changed. 
+`Layout-2`: The device package is described by one or more primitive models and their physical connections.Maybe extra initial configuration of models should be provided as well.They also deal with what will be shown on schematic and process real-time GUI events sent by user, making a reflection if circuit status is changed. 
 
-Layout-3: The schematic is what we inputed to computer and what we expected to process. A schematic consisted of devices, configuration, physical nodes (like vertex in graph theory) and connections (like edges).
+`Layout-3`: The schematic is what we inputed to computer and what we expected to process. A schematic consisted of devices, configuration, physical nodes (like vertex in graph theory) and connections (like edges).
 
 # How to build
 
