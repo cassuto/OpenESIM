@@ -1,9 +1,9 @@
-# OpenDSIM - an opensource A/D mixed circuit simulator)
+# *OpenDSIM* - an opensource A/D mixed circuit simulator)
 
 ------
-![passing](https://camo.githubusercontent.com/948ddd4d1b81323800104755c8ed392d5410f5e2/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6275696c642d70617373696e672d677265656e2e737667) ![unstable](https://camo.githubusercontent.com/31a260091d356cea706b3792d242699cfa2c1f04/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f7374617475732d756e737461626c652d6c69676874677265656e2e737667)
+![Build status](https://img.shields.io/badge/opendsim-0.1-blue.svg) ![Build status](https://img.shields.io/badge/build-passing-orange.svg) ![Item status](https://img.shields.io/badge/status-unstable-lightgreen.svg)
 
-OpenDSIM is A/D circuit simulator designed for analogous and digital circuit validation, which allows you to test a physical circuit in a real-time interactive environment with virtual instruments and analysis.
+OpenDSIM is a circuit simulator designed for analogous and digital circuit validation, which allows you to test a physical circuit in a real-time interactive environment with virtual instruments and analysis.
 
 Based on node admittance analysis and event-driven logical model, it can simulate linear, non-linear, reactive and logical blocks (both combined and sequential logic).
 There are various kinds of virtual electronic instruments such as voltage and current probe, plotter, oscilloscope and so on, which can be connected to the circuit directly and operated real-time.
@@ -14,7 +14,7 @@ All the electronic models and compnents are flexible and extensible, so more and
 # Why OpenDSIM
 - Extensible and Flexible
 > Unified interface of models and devices.Easy to extend new one to support new component or analysis.
-- Read Time and Interactive
+- Real Time and Interactive
 > Measure, analysis or operate the circuit real-time, just like a virtual laboratory where you can do what you want.
 - Both Analog and Digital
 > Inline AD/DA bridge that process both analogous and digital circuit. Effective digital simulation framework separated from analog part provides higher performance.
