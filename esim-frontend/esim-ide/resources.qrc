@@ -1,0 +1,40 @@
+<RCC>
+    <qresource prefix="/">
+        <file>assets/export.png</file>
+        <file>assets/fileclose.png</file>
+        <file>assets/filecloseall.png</file>
+        <file>assets/filenew.png</file>
+        <file>assets/fileopen.png</file>
+        <file>assets/filesave.png</file>
+        <file>assets/filesaveall.png</file>
+        <file>assets/global.png</file>
+        <file>assets/gotonext.png</file>
+        <file>assets/gotoprev.png</file>
+        <file>assets/groups.png</file>
+        <file>assets/insertarc.png</file>
+        <file>assets/insertchord.png</file>
+        <file>assets/insertdevice.png</file>
+        <file>assets/insertellipse.png</file>
+        <file>assets/insertline.png</file>
+        <file>assets/insertorigin.png</file>
+        <file>assets/insertpin.png</file>
+        <file>assets/insertrect.png</file>
+        <file>assets/inserttext.png</file>
+        <file>assets/insertvins.png</file>
+        <file>assets/modeselection.png</file>
+        <file>assets/print.png</file>
+        <file>assets/printsetup.png</file>
+        <file>assets/redo.png</file>
+        <file>assets/schedule.png</file>
+        <file>assets/undo.png</file>
+        <file>assets/greenpen.xpm</file>
+        <file>assets/whitepen.xpm</file>
+        <file>assets/zoomcenter.png</file>
+        <file>assets/zoomin.png</file>
+        <file>assets/zoomout.png</file>
+        <file>assets/zoomfit.png</file>
+        <file>assets/copy.png</file>
+        <file>assets/cut.png</file>
+        <file>assets/paste.png</file>
+    </qresource>
+</RCC>

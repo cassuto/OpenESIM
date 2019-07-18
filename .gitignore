@@ -1,0 +1,18 @@
+#
+# Eclipse project configuration
+#
+.cproject
+.project
+.pydevproject
+.settings/
+
+#
+# Qt
+#
+build-*/
+*.pro.user
+
+#
+# Python
+#
+__pycache__/
