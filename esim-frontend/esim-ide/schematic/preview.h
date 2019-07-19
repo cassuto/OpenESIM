@@ -42,7 +42,7 @@ class PreviewSchematic : public QWidget
  private:
    Schematic *m_document;
    int m_thresholdX, m_thresholdY;
-   float m_scaleX, m_scaleY;
+   float m_viewW, m_viewH;
  signals:
    void resize(int width, int height);
 };

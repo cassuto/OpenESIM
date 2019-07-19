@@ -150,10 +150,10 @@ void Schematic::togrid(int *x, int *y) const {
  * @brief Map from logical coordinate to device coordinate.
  */
 int Schematic::mapToDeviceX(int x) const {
-  return float(x) * m_scale + m_viewX1;
+  return float(x + m_viewX1) * m_scale;
 }
 int Schematic::mapToDeviceY(int y) const {
-  return float(y) * m_scale + m_viewY1;
+  return float(y + m_viewY1) * m_scale;
 }
 int Schematic::mapToDeviceDx(int dx) const {
   return float(dx) * m_scale;
@@ -170,10 +170,10 @@ void Schematic::mapToDevice(int *x, int *y, int cx, int cy) const {
  * @brief Map from device coordinate to logical coordinate.
  */
 int Schematic::mapToLogicalX(int x) const {
-  return float(x - m_viewX1) / m_scale;
+  return float(x) / m_scale - m_viewX1;
 }
 int Schematic::mapToLogicalY(int y) const {
-  return float(y - m_viewY1) / m_scale;
+  return float(y) / m_scale - m_viewY1;
 }
 int Schematic::mapToLogicalDx(int dx) const {
   return float(dx) / m_scale;
@@ -778,12 +778,12 @@ void Schematic::appendAnchor(const anchor &anchor)
  * @param preview Indicate whether to render preview
  * @param previewThresholdX Height threshold determines whether to show each element in preview.
  * @param previewThresholdY Width threshold
- * @param previewScaleX Scale factor for preview.
- * @param previewScaleY
+ * @param previewW
+ * @param previewH
  */
 void Schematic::render(RenderDevice *device, int cx, int cy, int w, int h, bool preview,
                        int previewThresholdX/*=-1*/, int previewThresholdY/*=-1*/,
-                       float previewScaleX/*=0*/, float previewScaleY/*=0*/)
+                       int previewW/*=-1*/, int previewH/*=-1*/)
 {
   int xd = mapToDeviceX(0);
   int yd = mapToDeviceY(0);
@@ -834,22 +834,44 @@ void Schematic::render(RenderDevice *device, int cx, int cy, int w, int h, bool 
     }
   else // preview
     {
+      QPen pen = device->painter->pen();
+
+      device->painter->setPen(QColor(0, 0, 128));
+      int viewX1 = m_viewX1, viewY1 = m_viewY1 + 50;
+      int viewX2 = m_viewX2, viewY2 = m_viewY2 - 50;
+
+      float scaleX2 = float(previewW) / (m_viewX2-m_viewX1);
+      float scaleY2 = float(previewH) / (m_viewY2-m_viewY1);
+      int vpW = int((viewX2 - viewX1) * scaleX2);
+      int vpH = int((viewY2 - viewY1) * scaleY2);
+
+      float scaleX = float(vpW) / (m_viewX2-m_viewX1);
+      float scaleY = float(vpH) / (m_viewY2-m_viewY1);
+
+      // Draw schematic bounding
+      device->painter->drawRect(int(viewX1 * scaleX2), int(viewY1 * scaleY2), vpW, vpH);
+
+      // Draw element bounding
+      device->painter->setPen(QColor(0, 0, 0));
+
       for(std::list<Element *>::const_iterator i=m_elements.begin(); i!=m_elements.end(); i++)
         {
           Element *element = *i;
 
           int x1, y1, x2, y2;
           element->bounding(&x1, &y1, &x2, &y2);
-          x1 = float(x1) * previewScaleX + m_viewX1, y1 = float(y1) * previewScaleY + m_viewY1;
-          x2 = float(x2) * previewScaleX + m_viewX1, y2 = float(y2) * previewScaleY + m_viewY1;
+          x1 = float(x1 + viewX1) * scaleX, y1 = float(y1 + viewY1) * scaleY;
+          x2 = float(x2 + viewX1) * scaleX, y2 = float(y2 + viewY1) * scaleY;
           int w = std::abs(x2-x1)+1;
           int h = std::abs(y2-y1)+1;
 
           if (w > previewThresholdX && h > previewThresholdY)
             {
-              element->renderBounding(device, m_viewX1, m_viewY1, previewScaleX, previewScaleY);
+              element->renderBounding(device, viewX1, viewY1, scaleX, scaleY);
             }
         }
+
+      device->painter->setPen(pen);
     }
 }
 

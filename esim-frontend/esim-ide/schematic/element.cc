@@ -379,36 +379,35 @@ void Element::renderAnchors(RenderDevice *device, Schematic *document)
 
 void Element::renderBounding(RenderDevice *device, int viewX1, int viewY1, float scaleX, float scaleY)
 {
-  QPen pen = device->painter->pen();
   int x1, y1, x2, y2, radius, a0, a1;
   int type = this->locationType();
   if (type & S0_POS_2P)
     {
       this->locate(locateGetPos, 4 * sizeof(int*), &x1, &y1, &x2, &y2);
-      x1 = float(x1) * scaleX + viewX1, y1 = float(y1) * scaleY + viewY1;
-      x2 = float(x2) * scaleX + viewX1, y2 = float(y2) * scaleY + viewY1;
+      x1 = float(x1 + viewX1) * scaleX, y1 = float(y1 + viewY1) * scaleY;
+      x2 = float(x2 + viewX1) * scaleX, y2 = float(y2 + viewY1) * scaleY;
 
       device->painter->drawLine(x1, y1, x2, y2);
     }
   else if (type & S0_POS_1P)
     {
       this->locate(locateGetPos, 2 * sizeof(int*), &x1, &y1);
-      x1 = float(x1) * scaleX + viewX1, y1 = float(y1) * scaleY + viewY1;
+      x1 = float(x1 + viewX1) * scaleX, y1 = float(y1 + viewY1) * scaleY;
 
       device->painter->drawPoint(x1, y1);
     }
   else if (type & S0_POS_4P)
     {
       this->locate(locateGetPos, 4 * sizeof(int*), &x1, &y1, &x2, &y2);
-      x1 = float(x1) * scaleX + viewX1, y1 = float(y1) * scaleY + viewY1;
-      x2 = float(x2) * scaleX + viewX1, y2 = float(y2) * scaleY + viewY1;
+      x1 = float(x1 + viewX1) * scaleX, y1 = float(y1 + viewY1) * scaleY;
+      x2 = float(x2 + viewX1) * scaleX, y2 = float(y2 + viewY1) * scaleY;
 
       device->painter->drawRect(s_min(x1,x2), s_min(y1,y2), std::abs(x2-x1), std::abs(y2-y1));
     }
   else if (type & S0_POS_1P1R)
     {
       this->locate(locateGetPos, 3 * sizeof(int*), &x1, &y1, &radius);
-      x1 = float(x1) * scaleX + viewX1, y1 = float(y1) * scaleY + viewY1;
+      x1 = float(x1 + viewX1) * scaleX, y1 = float(y1 + viewY1) * scaleY;
       int radiusX = float(radius) * scaleX;
       int radiusY = float(radius) * scaleY;
 
@@ -417,13 +416,12 @@ void Element::renderBounding(RenderDevice *device, int viewX1, int viewY1, float
   else if (type & S0_POS_2P1D)
     {
       this->locate(locateGetArc, 5 * sizeof(int*), &x1, &y1, &radius, &a0, &a1);
-      x1 = float(x1) * scaleX + viewX1, y1 = float(y1) * scaleY + viewY1;
+      x1 = float(x1 + viewX1) * scaleX, y1 = float(y1 + viewY1) * scaleY;
       int radiusX = float(radius) * scaleX;
       int radiusY = float(radius) * scaleY;
 
       device->painter->drawArc(QRect(x1-radiusX, y1-radiusY, radiusX<<1, radiusY<<1), a0, a1);
     }
-  device->painter->setPen(pen);
 }
 
 } // namespace schematic
