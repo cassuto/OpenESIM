@@ -28,14 +28,14 @@ void SchematicUndoEditCommand::undo()
 {
   std::stringstream ss(m_prevStream);
   m_viewport->document()->importElements(ss, m_elements);
-  m_viewport->update();
+  m_viewport->changed(true);
 }
 
 void SchematicUndoEditCommand::redo()
 {
   std::stringstream ss(m_nextStream);
   m_viewport->document()->importElements(ss, m_elements);
-  m_viewport->update();
+  m_viewport->changed(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ SchematicUndoInsertCommand::~SchematicUndoInsertCommand()
   if (m_elementAttached)
     {
       m_viewport->document()->removeElement(m_instance);
-      m_viewport->update();
+      m_viewport->changed(true);
     }
 }
 
@@ -68,7 +68,7 @@ void SchematicUndoInsertCommand::undo()
   if (m_elementAttached)
     {
       m_viewport->document()->detachElement(m_instance);
-      m_viewport->update();
+      m_viewport->changed(true);
       m_elementAttached = false;
     }
 }
@@ -78,7 +78,7 @@ void SchematicUndoInsertCommand::redo()
   if (!m_elementAttached)
     {
       m_viewport->document()->attachElement(m_instance);
-      m_viewport->update();
+      m_viewport->changed(true);
       m_elementAttached = true;
     }
 }
@@ -98,7 +98,7 @@ SchematicUndoDeleteCommand::SchematicUndoDeleteCommand(const QString &command,
     m_canRelease(true)
 {
   m_viewport->document()->detachElement(m_instance);
-  m_viewport->update();
+  m_viewport->changed(true);
 }
 
 SchematicUndoDeleteCommand::~SchematicUndoDeleteCommand()
@@ -114,7 +114,7 @@ void SchematicUndoDeleteCommand::undo()
   if (m_canRelease)
     {
       m_viewport->document()->attachElement(m_instance);
-      m_viewport->update();
+      m_viewport->changed(true);
       m_canRelease = false;
     }
 }
@@ -124,7 +124,7 @@ void SchematicUndoDeleteCommand::redo()
   if (!m_canRelease)
     {
       m_viewport->document()->detachElement(m_instance);
-      m_viewport->update();
+      m_viewport->changed(true);
       m_canRelease = true;
     }
 }

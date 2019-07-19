@@ -34,6 +34,7 @@ class PreviewSchematic : public QWidget
   PreviewSchematic(Schematic *document, QWidget *parent = 0l);
    ~PreviewSchematic();
 
+   QSize sizeHint() const;
  protected:
    void resizeEvent(QResizeEvent * event);
    void paintEvent(QPaintEvent *event);
@@ -41,6 +42,7 @@ class PreviewSchematic : public QWidget
  private:
    Schematic *m_document;
    int m_thresholdX, m_thresholdY;
+   float m_scaleX, m_scaleY;
  signals:
    void resize(int width, int height);
 };

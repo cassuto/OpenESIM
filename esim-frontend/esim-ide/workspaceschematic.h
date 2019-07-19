@@ -7,6 +7,7 @@ namespace schematic
 {
   class SchematicView;
 }
+class QDockWidget;
 
 namespace esim
 {
@@ -30,6 +31,10 @@ public:
   inline bool symbolMode() const { return m_symbolMode; }
 
 protected:
+  void readSettings();
+  void writeSettings();
+
+protected:
   bool m_symbolMode;
   schematic::SchematicView *m_schematicView;
   QAction *m_actionSelection,
@@ -42,6 +47,7 @@ protected:
           *m_actionInsertChord,
           *m_actionInsertText,
           *m_actionInsertOrigin;
+  QDockWidget *m_navigation;
   float m_scaleMax;
   float m_scaleMin;
   float m_scaleStep;

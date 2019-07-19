@@ -17,11 +17,13 @@
 #include "persistencedom.h"
 #include "errtrace.h"
 #include "schematic.h"
+#include "renderdevice.h"
 #include "util.h"
 #include <sstream>
 #include <cassert>
 #include <cmath>
 #include <climits>
+#include <QPainter>
 
 namespace schematic
 {
@@ -164,12 +166,12 @@ void Element::getAnchors(int *anctype, int *num)
     }
   else if (type & S0_POS_1P1R)
     {
-      *anctype = AnchorCircle;
+      *anctype = AnchorOrthogonal;
       *num = 4;
     }
   else if (type & S0_POS_2P1D)
     {
-      *anctype = AnchorArc;
+      *anctype = AnchorTshaped;
       *num = 3;
     }
 }
@@ -238,7 +240,7 @@ void Element::moveAnchor(int type, int point, int cx, int cy, int dx, int dy)
         break;
       }
 
-    case AnchorCircle:
+    case AnchorOrthogonal:
       {
         int x1, y1, radus;
         this->locate(locateGetPos, 3 * sizeof(int*), &x1, &y1, &radus);
@@ -261,7 +263,7 @@ void Element::moveAnchor(int type, int point, int cx, int cy, int dx, int dy)
         break;
       }
 
-    case AnchorArc:
+    case AnchorTshaped:
       {
         int sX1, sY1, sX2, sY2, distance;
         this->locate(locateGetPos, 5 * sizeof(int*), &sX1, &sY1, &sX2, &sY2, &distance);
@@ -329,7 +331,7 @@ void Element::renderAnchors(RenderDevice *device, Schematic *document)
       }
       break;
 
-    case AnchorCircle:
+    case AnchorOrthogonal:
       {
         this->locate(locateGetPos, 3 * sizeof(int*), &x1, &y1, &radius);
         int cx = document->mapToDeviceX(x1), cy = document->mapToDeviceY(y1);
@@ -348,7 +350,7 @@ void Element::renderAnchors(RenderDevice *device, Schematic *document)
       }
       break;
 
-    case AnchorArc:
+    case AnchorTshaped:
       {
         this->locate(locateGetArc, 5 * sizeof(int*), &x1, &y1, &radius, &a1, &a2);
         int sX1, sY1, sX2, sY2, distance;
@@ -373,6 +375,55 @@ void Element::renderAnchors(RenderDevice *device, Schematic *document)
       }
       break;
   }
+}
+
+void Element::renderBounding(RenderDevice *device, int viewX1, int viewY1, float scaleX, float scaleY)
+{
+  QPen pen = device->painter->pen();
+  int x1, y1, x2, y2, radius, a0, a1;
+  int type = this->locationType();
+  if (type & S0_POS_2P)
+    {
+      this->locate(locateGetPos, 4 * sizeof(int*), &x1, &y1, &x2, &y2);
+      x1 = float(x1) * scaleX + viewX1, y1 = float(y1) * scaleY + viewY1;
+      x2 = float(x2) * scaleX + viewX1, y2 = float(y2) * scaleY + viewY1;
+
+      device->painter->drawLine(x1, y1, x2, y2);
+    }
+  else if (type & S0_POS_1P)
+    {
+      this->locate(locateGetPos, 2 * sizeof(int*), &x1, &y1);
+      x1 = float(x1) * scaleX + viewX1, y1 = float(y1) * scaleY + viewY1;
+
+      device->painter->drawPoint(x1, y1);
+    }
+  else if (type & S0_POS_4P)
+    {
+      this->locate(locateGetPos, 4 * sizeof(int*), &x1, &y1, &x2, &y2);
+      x1 = float(x1) * scaleX + viewX1, y1 = float(y1) * scaleY + viewY1;
+      x2 = float(x2) * scaleX + viewX1, y2 = float(y2) * scaleY + viewY1;
+
+      device->painter->drawRect(s_min(x1,x2), s_min(y1,y2), std::abs(x2-x1), std::abs(y2-y1));
+    }
+  else if (type & S0_POS_1P1R)
+    {
+      this->locate(locateGetPos, 3 * sizeof(int*), &x1, &y1, &radius);
+      x1 = float(x1) * scaleX + viewX1, y1 = float(y1) * scaleY + viewY1;
+      int radiusX = float(radius) * scaleX;
+      int radiusY = float(radius) * scaleY;
+
+      device->painter->drawEllipse(x1-radiusX, y1-radiusY, radiusX << 1, radiusY << 1);
+    }
+  else if (type & S0_POS_2P1D)
+    {
+      this->locate(locateGetArc, 5 * sizeof(int*), &x1, &y1, &radius, &a0, &a1);
+      x1 = float(x1) * scaleX + viewX1, y1 = float(y1) * scaleY + viewY1;
+      int radiusX = float(radius) * scaleX;
+      int radiusY = float(radius) * scaleY;
+
+      device->painter->drawArc(QRect(x1-radiusX, y1-radiusY, radiusX<<1, radiusY<<1), a0, a1);
+    }
+  device->painter->setPen(pen);
 }
 
 } // namespace schematic

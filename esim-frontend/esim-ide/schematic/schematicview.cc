@@ -92,6 +92,7 @@ void SchematicViewport::setSize(int w, int h)
 {
   m_document->setSizeRect(0, 0, w, h);
   adjSize(w, h);
+  changed();
 }
 
 /**
@@ -105,6 +106,16 @@ void SchematicViewport::setSize(int type)
     {
       setSize(width, height);
     }
+}
+
+/**
+ * @brief When schematic document is modified, call this.
+ * @param update Whether to redraw view.
+ */
+void SchematicViewport::changed(bool doupdate/*=false*/)
+{
+  if (doupdate) { update(); }
+  emit schematicChanged();
 }
 
 /**
@@ -128,6 +139,23 @@ void SchematicViewport::adjSize(int w /*=-1*/, int h /*=-1*/)
 }
 
 /**
+ * Unified Modification Management Mechanism:
+ * Patterns of schematic modification and how to process:
+ *
+ *      1. Edit: i.e. Changing attributes of element.
+ *              beginEdit() ---> (accepted) ---> setModified(true) ---> endEdit()
+ *                               (rejected) -------------------------------^
+ *
+ *      2. Insert: Attaching an element to document.
+ *              (accepted) ---> endInsert()
+ *
+ *      3. Delete: Detaching an element from document.
+ *              (accepted) ---> endDelete()
+ *
+ * New pattern goes here...
+ */
+
+/**x
  * @brief Called before beginning element editing.
  */
 void SchematicViewport::beginEdit(const std::vector<Element *> &targets)
@@ -141,6 +169,10 @@ void SchematicViewport::beginEdit(Element *element)
   std::vector<Element *> targets;
   targets.push_back(element);
   beginEdit(targets);
+}
+void SchematicViewport::setModified(bool val)
+{
+  m_modified = val;
 }
 /**
  * @brief Called after ended element editing, which creates a restore point for undo.
@@ -157,6 +189,7 @@ void SchematicViewport::endEdit(const QString &command, const std::vector<Elemen
       m_undoStack->push(cmd);
 
       setModified(false);
+      changed();
     }
 }
 void SchematicViewport::endEdit(const QString &command, Element *element)
@@ -164,11 +197,6 @@ void SchematicViewport::endEdit(const QString &command, Element *element)
   std::vector<Element *> targets;
   targets.push_back(element);
   endEdit(command, targets);
-}
-
-void SchematicViewport::setModified(bool val)
-{
-  m_modified = val;
 }
 
 void SchematicViewport::endInsert(Element *target)
@@ -182,6 +210,7 @@ void SchematicViewport::endInsert(Element *target)
   m_undoStack->push(new SchematicUndoInsertCommand(QString("insert element \"%1\"").arg(target->classname()),
                                                    this, target,
                                                    m_undoPrevStream.str()));
+  changed();
 }
 
 void SchematicViewport::endDelete(Element *target)
@@ -195,6 +224,7 @@ void SchematicViewport::endDelete(Element *target)
   m_undoStack->push(new SchematicUndoDeleteCommand(QString("delete element \"%1\"").arg(target->classname()),
                                                    this, target,
                                                    m_undoPrevStream.str()));
+  changed();
 }
 
 void SchematicViewport::paintEvent(QPaintEvent *event)

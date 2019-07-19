@@ -43,6 +43,7 @@ public:
   void scale(float factor);
   void setSize(int w, int h);
   void setSize(int type);
+  void changed(bool update = false);
 
   void keyPressEvent(QKeyEvent *event);
 protected:
@@ -127,6 +128,7 @@ private slots:
   void slotAssureSelectionMenuTriggered(QAction *action);
 signals:
   void modeChanged(int mode, const char *classname);
+  void schematicChanged();
 };
 
 class SchematicView : public QScrollArea

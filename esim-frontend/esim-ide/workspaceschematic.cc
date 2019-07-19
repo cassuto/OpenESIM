@@ -28,6 +28,9 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QDockWidget>
+#include <QSettings>
+#include <QDebug>
+#include <QFile>
 #include <fstream>
 #include <cstring>
 #include <cassert>
@@ -227,11 +230,15 @@ WorkspaceSchematic::WorkspaceSchematic(MainWindow *mainWindow, bool symbolMode, 
   /*
    * Docker - Navigation
    */
-  QDockWidget *navigation = this->addWidget(new QDockWidget);
-  navigation->setWindowTitle(tr("Navigation"));
-  schematic::PreviewSchematic *preview = new schematic::PreviewSchematic(m_schematicView->document(), navigation);
-  navigation->setWidget(preview);
-  mainWindow->addDockWidget(Qt::RightDockWidgetArea, navigation);
+  m_navigation = this->addWidget(new QDockWidget);
+  m_navigation->setWindowTitle(tr("Navigation"));
+  schematic::PreviewSchematic *preview = new schematic::PreviewSchematic(m_schematicView->document(), m_navigation);
+  m_navigation->setWidget(preview);
+  m_navigation->setMinimumSize(100, 100);
+  mainWindow->addDockWidget(Qt::RightDockWidgetArea, m_navigation);
+  m_navigation->setMaximumHeight(200);
+
+  connect(m_schematicView->view(), SIGNAL(schematicChanged()), preview, SLOT(update()));
 
   /*
    * Docker - History
@@ -241,6 +248,26 @@ WorkspaceSchematic::WorkspaceSchematic(MainWindow *mainWindow, bool symbolMode, 
   QUndoView *undoView = new QUndoView(undoStack, history);
   history->setWidget(undoView);
   mainWindow->addDockWidget(Qt::RightDockWidgetArea, history);
+
+  readSettings();
+}
+
+void WorkspaceSchematic::readSettings()
+{
+  QSettings settings;
+  settings.beginGroup(QString::fromUtf8("Navigation Dock"));
+  {
+  }
+  settings.endGroup();
+}
+
+void WorkspaceSchematic::writeSettings()
+{
+  QSettings settings;
+  settings.beginGroup(QString::fromUtf8("Navigation Dock"));
+  {
+  }
+  settings.endGroup();
 }
 
 QWidget *WorkspaceSchematic::view() const
@@ -357,7 +384,7 @@ void WorkspaceSchematic::slotZoomOut(bool checked)
 
 void WorkspaceSchematic::slotZoomFit(bool checked)
 {
-  m_schematicView->document()->setScale(1.0);
+  m_schematicView->view()->scale(1.0);
   m_schematicView->view()->update();
 }
 

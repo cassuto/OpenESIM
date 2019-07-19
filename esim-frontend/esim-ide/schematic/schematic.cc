@@ -778,8 +778,12 @@ void Schematic::appendAnchor(const anchor &anchor)
  * @param preview Indicate whether to render preview
  * @param previewThresholdX Height threshold determines whether to show each element in preview.
  * @param previewThresholdY Width threshold
+ * @param previewScaleX Scale factor for preview.
+ * @param previewScaleY
  */
-void Schematic::render(RenderDevice *device, int cx, int cy, int w, int h, bool preview, int previewThresholdX/*=-1*/, int previewThresholdY/*=-1*/)
+void Schematic::render(RenderDevice *device, int cx, int cy, int w, int h, bool preview,
+                       int previewThresholdX/*=-1*/, int previewThresholdY/*=-1*/,
+                       float previewScaleX/*=0*/, float previewScaleY/*=0*/)
 {
   int xd = mapToDeviceX(0);
   int yd = mapToDeviceY(0);
@@ -830,22 +834,20 @@ void Schematic::render(RenderDevice *device, int cx, int cy, int w, int h, bool 
     }
   else // preview
     {
-      for(std::list::const_iterator i=m_elements.begin(); i!=m_elements.end(); i++)
+      for(std::list<Element *>::const_iterator i=m_elements.begin(); i!=m_elements.end(); i++)
         {
           Element *element = *i;
 
           int x1, y1, x2, y2;
           element->bounding(&x1, &y1, &x2, &y2);
-          x1 = mapToDeviceX(x1), y1 = mapToDeviceY(y1);
-          x2 = mapToDeviceX(x2), y2 = mapToDeviceY(y2);
+          x1 = float(x1) * previewScaleX + m_viewX1, y1 = float(y1) * previewScaleY + m_viewY1;
+          x2 = float(x2) * previewScaleX + m_viewX1, y2 = float(y2) * previewScaleY + m_viewY1;
           int w = std::abs(x2-x1)+1;
           int h = std::abs(y2-y1)+1;
 
           if (w > previewThresholdX && h > previewThresholdY)
             {
-              QPen pen = device->painter->pen();
-              device->painter->drawRect(x1, y1, w, h);
-              device->painter->setPen(pen);
+              element->renderBounding(device, m_viewX1, m_viewY1, previewScaleX, previewScaleY);
             }
         }
     }

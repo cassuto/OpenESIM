@@ -50,6 +50,10 @@ int main(int argc, char *argv[])
 {
   qInstallMessageHandler(messageOutput);
 
+  QCoreApplication::setOrganizationName("OpenESIM");
+  QCoreApplication::setOrganizationDomain("openesim.com");
+  QCoreApplication::setApplicationName("OpenESIM");
+
   QApplication app(argc, argv);
   esim::MainWindow *w = new esim::MainWindow();
   w->show();

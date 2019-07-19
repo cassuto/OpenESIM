@@ -13,34 +13,57 @@ namespace schematic
 {
 
 /**
- * @brief Indicate how to size the element. In form of bitmask.
- *       Each flag could be set simultaneously. Please assure that
- *       there is at least one flag named 'S0_*' set.
+ * @brief Indicate how to locate and size element. bitmask.
+ *       Each flag could be set simultaneously, but assure
+ *       there is at least one 'S0_*' flag set.
  */
 enum ElementLocationType {
-  S0_POS_2P = 1,       // setPos(x1, y1, x2, y2)
-  S0_POS_1P = 1<<2,    // setPos(x1, y1)
-  S0_POS_4P = 1<<3,    // setPos(x1, y1, x2, y2, x3, y3, x4, y4)
-  S0_POS_1P1R = 1<<4,  // setPos(x1, y1, radius)
-  S0_POS_2P1D  = 1<<5,  // setPos(stringX1, stringY1, stringX2, stringY2, distance)
-  S1_ROTATION_1A = 1<<6, // setRotation(a1)
+  S0_POS_2P = 1,       /**< Pos(x1, y1, x2, y2) */
+  S0_POS_1P = 1<<2,    /**< Pos(x1, y1) */
+  S0_POS_4P = 1<<3,    /**< Pos(x1, y1, x2, y2, x3, y3, x4, y4) */
+  S0_POS_1P1R = 1<<4,  /**< Pos(x1, y1, radius) */
+  S0_POS_2P1D  = 1<<5, /**< Pos(stringX1, stringY1, stringX2, stringY2, distance)
+                            Arc(cx, cy, radius, a0, a1) */
+  S1_ROTATION_1A = 1<<6, /**< Rotation(a1) */
 };
 
 enum LocateOpcode {
-  locateSetPos,
+  locateSetPos,         // Pos()
   locateGetPos,
-  locateSetArc,
+  locateSetArc,         // Arc()
   locateGetArc,
-  locateSetRotation,
+  locateSetRotation,    // Rotation()
   locateGetRotation,
 };
 
 enum AnchorType
 {
   AnchorNone,
+  /**
+   * AnchorPoint: for instance:
+   *
+   *                         *--------*
+   *   *-----------*         |        |
+   *                         *--------*
+   *      2 points            4 points
+   */
   AnchorPoint,
-  AnchorCircle,
-  AnchorArc,
+  /**
+   * AnchorOrthogonal(4 points): for instance:
+   *         *
+   *         |
+   *   *-----+-----*
+   *         |
+   *         *
+   */
+  AnchorOrthogonal,
+  /**
+   * AnchorTshaped(3 points): for instance:
+   *   *-----+-----*
+   *         |
+   *         *
+   */
+  AnchorTshaped,
 };
 
 class Schematic;
@@ -121,6 +144,7 @@ public:
   void getAnchors(int *type, int *num);
   void moveAnchor(int type, int point, int cx, int cy, int dx, int dy);
   void renderAnchors(RenderDevice *device, Schematic *document);
+  void renderBounding(RenderDevice *device, int viewX1, int viewY1, float scaleX, float scaleY);
 
 protected:
   /*

@@ -31,7 +31,9 @@ public:
   Schematic(bool symbolMode);
   ~Schematic();
 
-  void render(RenderDevice *device, int cx, int cy, int width, int height, bool preview, int previewThresholdX=-1, int previewThresholdY=-1);
+  void render(RenderDevice *device, int cx, int cy, int width, int height, bool preview,
+              int previewThresholdX=-1, int previewThresholdY=-1,
+              float previewScaleX=0, float previewScaleY=0);
 
   bool getStandardSize(int type, int *width, int *height);
   void setSizeRect(int x1, int y1, int x2, int y2);

@@ -64,7 +64,9 @@ PreviewSchematic::PreviewSchematic(Schematic *document, QWidget *parent /*= 0l*/
     QWidget(parent),
     m_document(document),
     m_thresholdX(-1),
-    m_thresholdY(-1)
+    m_thresholdY(-1),
+    m_scaleX(1.0),
+    m_scaleY(1.0)
 {
 }
 
@@ -72,11 +74,20 @@ PreviewSchematic::~PreviewSchematic()
 {
 }
 
+QSize PreviewSchematic::sizeHint() const
+{
+  return QSize(270, 50);
+}
+
 void PreviewSchematic::resizeEvent(QResizeEvent * event)
 {
   int w = event->size().width(), h = event->size().height();
-  m_thresholdX = int(w * 0.1);
-  m_thresholdY = int(h * 0.1);
+  int x1, y1, sw, sh;
+  m_document->getSizeRect(&x1, &y1, &sw, &sh);
+  m_thresholdX = int(w * 0.01);
+  m_thresholdY = int(h * 0.01);
+  m_scaleX = float(w) / sw;
+  m_scaleY = float(h) / sh;
   emit resize(w, h);
 }
 
@@ -86,7 +97,8 @@ void PreviewSchematic::paintEvent(QPaintEvent *event)
   RenderDevice device(m_document, &painter);
   QRect rect(event->rect());
   m_document->render(&device, rect.top(), rect.left(), rect.width(), rect.height(),
-                     /*preview*/true, m_thresholdX, m_thresholdY);
+                     /*preview*/true,
+                     m_thresholdX, m_thresholdY, m_scaleX, m_scaleY);
 }
 
 }
